@@ -1,6 +1,6 @@
 # PPTX-Planner
 
 LLMによるスライド作成を、工程と成果物を定めたワークフローとして行うための方法論と実装。
-PPTXの生成は [SlideCraft](https://github.com/zyuuryuu/slidecraft) が担い、このリポジトリはその上流の設計と検査を扱う。
+このリポジトリは、PPTXを生成する前の設計と検査を扱う。PPTXの生成は差し替えられる部品とし、特定の実装に依存しない。
 
 - [スライド作成工程の定義(草案)](docs/process.md)
