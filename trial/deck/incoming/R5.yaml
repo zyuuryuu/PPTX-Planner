@@ -1,0 +1,132 @@
+# R5 収集結果。stance は書かない。
+# 結果: Q4.1 answered / Q4.2 partial / Q4.3 partial
+- id: F500
+  statement: 2013年のTarget侵害で、侵入検知製品FireEyeはデータ持ち出し用マルウェアの導入のたびに緊急アラートを出したが、Targetのセキュリティチームは反応せず、自動削除も許可していなかった(報道を引いた上院の報告)
+  kind: fact
+  source: 米上院商務委員会 多数党スタッフ報告「A "Kill Chain" Analysis of the 2013 Target Data Breach」
+  locator: https://www.commerce.senate.gov/services/files/24d3c229-4f2f-405d-b8db-a3a67f183883 、Executive Summary に続く本文(攻撃経過の節)
+  as_of: 2014-03-26
+  quote: "According to a Bloomberg Businessweek report, Target’s FireEye malware intrusion detection system triggered urgent alerts with each installation of the data exfiltration malware. However, Target’s security team neither reacted to the alarms nor allowed the FireEye software to automatically delete the malware in question."
+  qualifiers: [Bloomberg Businessweekの報道を引用した記述, 報告自身は新たな技術的事実を示していない公開情報ベースのスタッフ報告, 2013年の1事案]
+  origin: Bloomberg Businessweekの報道(上院報告が引用)
+  answers: [Q4.1, Q4.2]
+  verified: true
+- id: F501
+  statement: 同じ上院報告は、Target職員がFireEyeの汎用名のアラートを、頻繁に警報が鳴る状況なら誤検知とみなした可能性があると述べている(推定の記述)
+  kind: fact
+  source: 米上院商務委員会 多数党スタッフ報告「A "Kill Chain" Analysis of the 2013 Target Data Breach」
+  locator: https://www.commerce.senate.gov/services/files/24d3c229-4f2f-405d-b8db-a3a67f183883 、攻撃経過の節「D. Exploitation – Attackers Payload Deployed in Victim’s Network」
+  as_of: 2014-03-26
+  quote: "According to Businessweek, the FireEye software sent an alert with the generic name “malware.binary” to Target security staff. It is possible that Target staff could have viewed this alert as a false positive if the system was frequently alarming."
+  qualifiers: [「可能性がある」という推測の記述であり確認された原因ではない, Bloomberg Businessweekの報道を引用, 2013年の1事案]
+  origin: Bloomberg Businessweekの報道(上院報告が引用)
+  answers: [Q4.1]
+  verified: true
+- id: F502
+  statement: SOCの運用では、チケットの処理数で担当者を評価するSOCがあり、チケットを閉じる圧力が人的な誤りと疲労・燃え尽きを生むとされる(先行研究を引いた記述)
+  kind: fact
+  source: Alahmadi, Axon, Martinovic「99% False Positives: A Qualitative Study of SOC Analysts’ Perspectives on Security Alarms」USENIX Security 2022
+  locator: https://www.usenix.org/system/files/sec22-alahmadi.pdf 、1 Introduction
+  as_of: 2022-08
+  quote: "Analysts are also under constant pressure to close tickets, as some SOCs evaluate their practitioners’ performance accordingly [40]. This process not only leads to human error [13] but causes analyst fatigue and burnout [40]."
+  qualifiers: [一部のSOC, 文献[13][40]を引いた序論の記述でありこの論文の測定結果ではない]
+  origin: 同論文の文献[13][40](Sundaramurthyらの先行研究ほか)
+  answers: [Q4.1]
+  verified: true
+- id: F503
+  statement: SOC実務者21人の質的調査では、誤検知とされるアラームの多くは、組織の正当な振る舞いで説明できる「本物のアラーム」であり、分析者が無視を選ぶことがあるとされた
+  kind: fact
+  source: Alahmadi, Axon, Martinovic「99% False Positives」USENIX Security 2022
+  locator: https://www.usenix.org/system/files/sec22-alahmadi.pdf 、Abstract
+  as_of: 2022-08
+  quote: "Our results highlight that, despite the perceived volume of FPs, most are attributed to benign triggers—true alarms, explained by legitimate behavior in the organization’s environment, which analysts may choose to ignore."
+  qualifiers: [実務者21人(7つのSOC)の質的調査, 無視の対象は「無害な正当な振る舞い」のアラーム]
+  origin: Alahmadi et al. の聞き取り調査(一次)
+  answers: [Q4.1]
+  verified: true
+- id: F504
+  statement: SOCの分析者12人に実際のアラームを判断させた調査で、判断の正答は83%だったが、説明が実際の根本原因を反映していたのは39%だった
+  value: 83
+  unit: "%"
+  kind: fact
+  source: Moosmann, Pekaric, Apruzzese「Can SOC Operators Explain their Decisions while Triaging Alarms? A Real-World Study」DIMVA 2026 採択(arXiv:2604.22001)
+  locator: https://arxiv.org/abs/2604.22001 Abstract、Introduction の Contributions
+  as_of: 2026-04-23
+  metric: アラーム判定の正答率
+  quote: "The decision was correct in 83% of the answers, but 61% of the explanations were incorrect or imprecise"
+  qualifiers: [SOC分析者12人, 6件のアラーム事例, 一般化を主張しない研究, 2025年4月に実施, 真陽性・偽陽性別の誤り内訳は未確認(本文Sec.4は未精読)]
+  origin: Moosmann et al. の現地調査(一次)
+  answers: [Q4.1]
+  verified: true
+- id: F505
+  statement: 同調査では、一部の事例は体系的に判断が難しいと受け取られ、参加者は「情報が足りない」と述べた(必要なツールは提供されていたにもかかわらず)
+  kind: fact
+  source: Moosmann, Pekaric, Apruzzese(arXiv:2604.22001)
+  locator: https://arxiv.org/abs/2604.22001 、Introduction の Contributions
+  as_of: 2026-04-23
+  quote: "some cases were perceived as systematically harder to triage, with participants commenting that there was “missing information” (even though they were provided with all the necessary tooling)."
+  qualifiers: [SOC分析者12人, 事前・事後の質問票の定性分析, 一般化を主張しない研究]
+  origin: Moosmann et al. の現地調査(一次)
+  answers: [Q4.1]
+  verified: true
+- id: F506
+  statement: 分析者が使うSOCの運用で、過去の誤検知の経験からアラートを無視したことがあると答えた割合は56%(RSA Conference 2018での179人の調査。ベンダーの調査)
+  value: 56
+  unit: "%"
+  kind: fact
+  source: Imperva「Survey: 27 Percent of IT professionals receive more than 1 million security alerts daily」
+  locator: https://www.imperva.com/blog/2018/05/27-percent-of-it-professionals-receive-more-than-1-million-security-alerts-daily/
+  as_of: 2018-05-28
+  metric: 過去の誤検知を理由にアラートを無視したことがある回答者の割合
+  quote: "In our survey, 56 percent of IT professionals admitted to having ignored an alert based on past false-positive experiences."
+  qualifiers: [ITの専門職179人(RSA Conference 2018の場での調査), 自己申告, 調査会社がセキュリティ製品のベンダーであり製品の宣伝を含む資料(一次情報として扱わない)]
+  origin: Imperva自社調査
+  answers: [Q4.1]
+  verified: true
+- id: F507
+  statement: IDCとFireEyeの調査記事は、キューが一杯のときにアラートを無視するセキュリティ管理者・分析者が3分の1を超えると報じている
+  kind: fact
+  source: Cybersecurity Dive「One-third of analysts ignore security alerts, survey finds」(IDC調査、FireEye共同)
+  locator: https://www.cybersecuritydive.com/news/security-alert-analyst-SOC-idc-fireeye/595111/
+  as_of: 2021-02-16
+  quote: "More than one-third of IT security managers and security analysts ignore threat alerts when the queue is full"
+  qualifiers: [米国企業のSOC勤務300人とMSSP50社の調査, FireEyeが共同のベンダー調査(一次情報として扱わない), 報道記事を経由した記述で元の報告書は未確認]
+  origin: IDCとFireEyeの共同調査(元の報告書は未確認)
+  answers: [Q4.1]
+  verified: true
+- id: F508
+  statement: Tier-1分析者の現地実験で、エスカレーションすべきアラートは、そうでないアラートより調査の操作数が平均で多く、分析者は時間と認知の負担をかけて調べる
+  kind: fact
+  source: Kersten, Beelen, Zambon, Snijders, Allodi「A Field Study to Uncover and a Tool to Support the Alert Investigation Process of Tier-1 Analysts」USEC 2025
+  locator: https://ndss-symposium.org/wp-content/uploads/usec25-34.pdf 、結論前の議論の節
+  as_of: 2025-02-24
+  quote: "Moreover, we find that alerts that ought to be escalated (i.e., Att alerts) require more actions on average to investigate than NAtt ones. Therefore, analysts are more likely to spend time and cognitive effort when analyzing escalation-worthy alerts."
+  qualifiers: [商用SOCと協力したthink-aloud実験, 分析者は5人(400件の調査), 上げるのが遅れる誤りを直接測った結果ではない]
+  origin: Kersten et al. の実験(一次)
+  answers: [Q4.2]
+  verified: true
+- id: F509
+  statement: SOC分析者12人の事前調査で、不確かなときにチケットを作って引き継ぐと答えたのは33%にとどまり、同僚に相談する92%、自分で調べる71%と比べて少なかった
+  value: 33
+  unit: "%"
+  kind: fact
+  source: Moosmann, Pekaric, Apruzzese(arXiv:2604.22001)
+  locator: https://arxiv.org/pdf/2604.22001 、付録 0.A.3 の事前調査の結果(Dealing with uncertainties)
+  as_of: 2026-04-23
+  metric: 不確かなときにチケットを作って引き継ぐと答えた分析者の割合
+  quote: "Dealing with uncertainties 92% stated that they consulted colleagues in case of uncertainties; however 71% participants also relied on their own research, analysing additional logs and comparing with existing playbooks. Only 33% stated that they would create a ticket and pass the case on if they were unsure."
+  qualifiers: [SOC分析者12人, 事前の質問票での自己申告, 実際のエスカレーション遅れの測定ではない, 一般化を主張しない研究]
+  origin: Moosmann et al. の事前調査(一次)
+  answers: [Q4.2]
+  verified: true
+- id: F510
+  statement: 顧客に報告する立場のMSSPの分析者は、能力不足と見られることや罰金を避けるため、疑わしいアラームをできる限り全て顧客に上げる圧力を受ける
+  kind: fact
+  source: Alahmadi, Axon, Martinovic「99% False Positives」USENIX Security 2022
+  locator: https://www.usenix.org/system/files/sec22-alahmadi.pdf 、Findings の「Type of SOC」
+  as_of: 2022-08
+  quote: "However, monitoring for such a customer introduces pressure on the analysts to raise every possible suspicious alarm to avoid appearing incompetent or receiving possible fines (A1, A2, D6, E7). As D6 remarks: “Being analysts, most of them are afraid not to raise them to the customer. They do tend to raise quite a lot of alarms to the customers, obviously to be on the safe side.”"
+  qualifiers: [MSSP(外部委託のSOC)の分析者の証言(参加者A1, A2, D6, E7), 実務者21人の質的調査, 上げ過ぎの割合は未測定]
+  origin: Alahmadi et al. の聞き取り調査(一次)
+  answers: [Q4.3]
+  verified: true
