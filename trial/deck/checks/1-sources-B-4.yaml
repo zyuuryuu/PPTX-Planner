@@ -1,21 +1,22 @@
 検査の名前: 素材台帳の重大な検査の再検査(引用の実在と切り取り、statement と qualifiers の照合)。B-1 と B-2 の不合格の解消確認
 対象: trial/deck/incoming/R2.yaml、R4.yaml、R5.yaml(F200〜F221、F400〜F414、F500〜F510。48件)
 判定者: Claude Sonnet 5.5(claude-sonnet-5-5)
+判定に使ったコミット: R4 は c0bb875(R4: 検査B-1・B-2の指摘を反映)を含む HEAD。R2 と R5 は a9cb61f 時点。F404、F405、F407、F409、F410 は c0bb875 の版で判定し直した(最初の判定は c0bb875 の前の版)。
 回: B-4(別セッションの再検査とは独立。B-3 は読んでいない)
 方法: 出典を取得して全文を照合した(PDF は pdftotext、HTML はタグを除去。空白、引用符、行末のハイフン、脚注番号を正規化)。CISA の PDF は直接取得が 403 だったため、WebFetch が保存した同じ URL の PDF を pdftotext で読んだ。arXiv は abs ページで採択を確認した。記憶による判定はしていない。
 再検査の範囲: B-1 か B-2 のどちらかで不合格だった事実と、直されて quote、statement、qualifiers、locator が変わった事実、新しい事実(F219〜F221)。前回どちらでも合格で直されていない13件(F202、F217、F218、F400、F401、F412、F414、F500、F501、F502、F505、F507、F510)は再検査せず、新しい指摘を出していない。
 件数:
   再検査した件数: 35
-  合格: 21
-  不合格: 14
+  合格: 25
+  不合格: 10
   判定できない: 0
   再検査しなかった件数: 13
-不合格の事実: [F200, F203, F204, F207, F209, F214, F216, F402, F404, F405, F407, F408, F409, F410]
+不合格の事実: [F200, F203, F204, F207, F209, F214, F216, F402, F404, F408]
 主な指摘:
-  - 前回の指摘がそのまま残っている(直されていない)もの: F203、F204(標本数「未確認」)、F214、F216、F405、F407、F408、F409、F410、F402(qualifiers)、F209(in most cases)
-  - 直したことで statement が quote の外の内容を含むままになったもの: F404(表の5分と30分は quote にない)、F408、F409、F410
+  - 前回の指摘がそのまま残っている(直されていない)もの: F203、F204(標本数「未確認」)、F214、F216、F408、F402(qualifiers)、F209(in most cases)
+  - 直したことで statement が quote の外の内容を含むままになったもの: F404(表の5分と30分は quote にない)、F408
   - 新しく見つかったもの: F207 の qualifiers「1日あたり24K〜134Kに対する割合」は誤り。0.01%、27.37%、48.91% は表4の2020-12〜2022-07(14,429,534件)の割合。F200 も同じ期間の限定を落としている
-  - 解消したもの(21件)は、F201、F205、F206、F208、F210、F211、F212、F213、F215、F219、F220、F221、F403、F406、F411、F413、F503、F504、F506、F508、F509
+  - 解消したもの(25件)は、F201、F205、F206、F208、F210、F211、F212、F213、F215、F219、F220、F221、F403、F405、F406、F407、F409、F410、F411、F413、F503、F504、F506、F508、F509
 結果:
   F200:
     判定: 不合格
@@ -109,30 +110,27 @@
     理由: quote は1つの連続した段落に実在(「...」を除いた)。
   F404:
     判定: 不合格
-    理由: statement の後半「同じ手順書の表では、P1はTier 2へ5分以内、P2は30分以内」は quote(フロー図のラベル2つ)にない。値は表に実在する("P1 … Escalate to Tier 2 … 5 min"、"P2 … Escalate to Tier 2 … 30 min")が、qualifiers も「表の文面の写しは quote に含めていない」と認める。前回の B-2 の指摘(P1 は表では5分)を、quote を広げずに statement に入れた。
+    理由: 'コミット c0bb875 で qualifiers に雛形の注記が加わったが、statement は直っていない。statement の後半「同じ手順書の表では、P1はTier 2へ5分以内、P2は30分以内」は quote(フロー図のラベル2つ)にない。値は表に実在する("P1 … Escalate to Tier 2 … 5 min"、"P2 … Escalate to Tier 2 … 30 min")が、qualifiers も「表の文面の写しは quote に含めていない」と認める。「Replace with your actual contacts.」は同ページに実在する。'
     直し方: 表の2行を quote に加えるか、statement からその一文を外して qualifiers だけに置く。
   F405:
-    判定: 不合格(軽微)
-    理由: 前回の B-2 の指摘が未解消。qualifiers の「P1(最重大)の場合の規則」は、2つ目の引用 "Over-escalate if unsure" には当たらない。これは Do's の一般規則で、P1 に限らない。
+    判定: 合格
+    理由: 'コミット c0bb875 で解消。statement が1つ目(P1)と2つ目(一般の規則)を分け、qualifiers も2つ目は Do''s の一般規則で P1 に限らないと書く。2つの引用は Escalation Rules に実在する。'
   F406:
     判定: 合格
     理由: quote に "Hard escalation triggers:" を加えた。原文は triggers を7つ挙げ、statement は「例として」と書く。
   F407:
-    判定: 不合格
-    理由: 前回の B-1 の指摘(quote を広げる)が未解消。1つ目の quote は文の途中で切れる。原文は "exceeds your predefined technical scope or requires deeper investigation than simple monitoring allows" と、条件を2つ挙げる。statement は「上げる条件は、事前に定めた担当者の技術的な守備範囲を超えたとき」と条件を1つに絞る。qualifiers に続きの文があることを書いても、quote を広げる条件を満たさない。
-    直し方: quote を文末まで広げ、statement に2つ目の条件を入れる。
+    判定: 合格
+    理由: 'コミット c0bb875 で解消。quote を "or requires deeper investigation than simple monitoring allows" まで広げ、statement に2つ目の条件を入れた。原文は ss のページに実在する。'
   F408:
     判定: 不合格
     理由: '前回の B-1 の指摘が未解消。statement の「FCEB は、重大度によらず全てのサイバーセキュリティインシデントを CISA に速やかに報告する」は quote にない。原文は "Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA" と、次の文に置く。qualifiers の書式は直った。as_of の 2021-11 は解消。'
     直し方: Note の文を quote に加える。
   F409:
-    判定: 不合格
-    理由: 前回の B-1 の指摘が未解消。statement の通知先の例(CIO、情報セキュリティ責任者、組織内外の他のインシデント対応チーム)は quote にない(quote は "parties that are typically notified include:" で終わり、qualifiers も「quote の直後の箇条書き」と認める)。原文は "External incident response teams (if appropriate)" で、statement の「組織内外」は "(if appropriate)" を落とす。
-    直し方: 箇条書きを quote に加える。
+    判定: 合格
+    理由: 'コミット c0bb875 で解消。statement は quote の範囲に収まる(通知先の例を外した)。qualifiers の通知先の一覧は、原文の箇条書き11項目と合う。'
   F410:
-    判定: 不合格
-    理由: 前回の B-1 と B-2 の指摘が未解消。statement の要因(機能への影響、情報への影響、復旧の可能性)は quote にない。quote の "as a result of resource limitations"(資源の制約のため先着順にしない)が statement にも qualifiers にもない。
-    直し方: 要因の箇条書きを quote に加え、「資源の制約のもとで」を statement に入れる。
+    判定: 合格
+    理由: 'コミット c0bb875 で解消。statement は quote の範囲に収まり、「資源に限りがあるため先着順ではなく」を含む。要因の3つは qualifiers に書く。「最も重要なものの1つ」は原文の perhaps を反映した言い方である。'
   F411:
     判定: 合格
     理由: quote を拡張した(原文の連続した文)。statement の「15分程度」は "perhaps 15 minutes" と合う。
