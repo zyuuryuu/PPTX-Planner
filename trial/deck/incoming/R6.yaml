@@ -99,13 +99,13 @@
   verified: false
 
 - id: F607
-  statement: Microsoft Defender XDR は、アラートの分類として、脅威の種別を付ける True positive(実在の脅威を正確に示す)、活動の種別を付ける Informational, expected activity(技術的には正確だが正常な振る舞いや模擬の脅威活動。セキュリティテスト、レッドチームの活動、信頼するアプリや利用者の想定内の異常な振る舞いに使う)、False positive(悪意のある活動がないのに作られたアラート、誤報)を定めている
+  statement: Microsoft Defender XDR は、アラートの分類として、脅威の種別を付ける True positive(実在の脅威を正確に示す)、活動の種別を付ける Informational, expected activity(技術的には正確だが正常な振る舞いや模擬の脅威活動。通常は無視してよいが、実際の攻撃者や悪意のあるソフトによる同様の活動では今後も検知されることを期待するもの。セキュリティテスト、レッドチームの活動、信頼するアプリや利用者の想定内の異常な振る舞いに使う)、False positive(悪意のある活動がないのに作られたアラート、誤報)を定めている
   kind: fact
   source: Microsoft Learn, Investigate alerts in Microsoft Defender XDR
   locator: 'https://learn.microsoft.com/en-us/defender-xdr/investigate-alerts  節 "Manage alert status and classification"'
   as_of: 2026-11-09
   quote: "True positive with a type of threat. Use this classification for alerts that accurately indicate a real threat. [...] Informational, expected activity with a type of activity. Use this option for alerts that are technically accurate, but represent normal behavior or simulated threat activity. You generally want to ignore these alerts but expect them for similar activities in the future where the activities are triggered by actual attackers or malware. Use the options in this category to classify alerts for security tests, red team activity, and expected unusual behavior from trusted apps and users. False positive for types of alerts that were created even when there's no malicious activity or for a false alarm. Use the options in this category to classify alerts that are mistakenly identified as normal events or activities as malicious or suspicious. Unlike alerts for 'Informational, expected activity', which can also be useful for catching real threats, you generally don't want to see these alerts again."
-  qualifiers: [製品の定義(Microsoft Defender XDR), "[...] は収集セッションによる省略", True positive は「with a type of threat」、Informational, expected activity は「with a type of activity」を選ぶ, False positive も「the options in this category」から選ぶ]
+  qualifiers: [製品の定義(Microsoft Defender XDR), "[...] は収集セッションによる省略", "True positive は「with a type of threat」、Informational, expected activity は「with a type of activity」を選ぶ", False positive も「the options in this category」から選ぶ]
   origin: Microsoft(製品の公式文書)
   answers: [Q3.1.1]
   verified: false
@@ -129,7 +129,7 @@
   locator: 'https://learn.microsoft.com/en-us/defender-endpoint/defender-endpoint-false-positives-negatives  節 "Part 1: Review and classify alerts"'
   as_of: 2026-09-02
   quote: "Before you classify or suppress an alert, determine whether the alert is accurate, a false positive, or benign. [...] The alert is accurate — Assign the alert, and then investigate it further. The alert is a false positive — 1. Classify the alert as a false positive. 2. Suppress the alert. 3. Create an indicator for Microsoft Defender for Endpoint. 4. Submit a file to Microsoft for analysis. The alert is accurate, but benign (unimportant) — Classify the alert as a true positive, and then suppress the alert."
-  qualifiers: [製品の定義(Microsoft Defender for Endpoint), "[...] は収集セッションによる省略、表の列の区切りの「—」は収集セッションが付けた", 正確だが無害なアラートの分類が F607 の Informational, expected activity と一致しない(同じ会社の製品の文書の間で扱いが異なる)]
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), "[...] は収集セッションによる省略、表の列の区切りの「—」は収集セッションが付けた", "正確だが無害なアラートの分類が F607 の Informational, expected activity と一致しない(同じ会社の製品の文書の間で扱いが異なる)"]
   origin: Microsoft(製品の公式文書)
   answers: [Q3.1.1]
   verified: false
@@ -149,7 +149,7 @@
   verified: false
 
 - id: F611
-  statement: NIST SP 800-61 Rev.3 は、エスカレーションは一般に資源や時間枠を増やすことを指し、エレベーションは通常より上位の管理者を対応に関与させることを示すと説明し、対応の資源の追加や戦略の変更が必要なインシデントを見つけるために、進行中の全インシデントの状況を追跡し検証するよう推奨している
+  statement: NIST SP 800-61 Rev.3 は、エスカレーションは一般に資源や時間枠を増やすことを指し、エレベーションは、通常、上位の管理者を対応に関与させることを示すと説明し、対応の資源の追加や戦略の変更が必要なインシデントを見つけるために、進行中の全インシデントの状況を追跡し検証するよう推奨している
   kind: fact
   source: NIST SP 800-61 Rev. 3
   locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, RS.MA-04 (p.28)'
@@ -217,10 +217,10 @@
   statement: サウジアラビア国家サイバーセキュリティ庁(NCA)のEDR標準のひな形は、EDRのエージェントが、プロセス、接続、活動量、データの転送などの端末のデータを中央のデータベースに集め、収集するデータにプロセス、接続、ファイル、ドライバ、自動起動、システム、マシン、利用者の領域を含めることを求めている
   kind: fact
   source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
-  locator: 'https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  2 Data Collection and Monitoring, Objective と 2-6, 2-7 (p.6-7)'
+  locator: 'https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  2 Data Collection and Monitoring, Objective と 2-6, 2-7 (下端の番号 p.6-7、PDF の7-8ページ目)'
   as_of: 2023-11
-  quote: "Objective: EDR software agents must properly monitor and collect endpoint data, such as processes, connections, volume of activity and data transfers into a central database. [...] 2-6 EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity. Relevant data for EDR solution must include information covering the following areas: Processes, Connections, Files, Drivers, Autorun, System, Machine, Users. 2-7 Additional data sources may be used, including but not limited to: logs, performance monitoring, file details, running processes, and configuration data."
-  qualifiers: [組織が自組織に合わせて直して使う例示のひな形(文書の Disclaimer), 版 1.0, as_of は PDF の作成日, "[...] は収集セッションによる省略", "「Objective:」と項番(2-6、2-7)は表の列の見出しと番号で、収集セッションが本文と連結した", 2-7 の箇条(原文は「•」付き)をコンマで連結した]
+  quote: "Objective: EDR software agents must properly monitor and collect endpoint data, such as processes, connections, volume of activity and data transfers into a central database. [...] 2-6 EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity. 2-7 Relevant data for EDR solution must include information covering the following areas: Processes, Connections, Files, Drivers, Autorun, System, Machine, Users. Additional data sources may be used, including but not limited to: logs, performance monitoring, file details, running processes, and configuration data."
+  qualifiers: [組織が自組織に合わせて直して使う例示のひな形(文書の Disclaimer), 版 1.0, as_of は PDF の作成日, "[...] は収集セッションによる省略", "「Objective:」と項番(2-6、2-7)は表の左列の見出しと番号で、収集セッションが右列の本文の先頭に置いて連結した。行 2-7 は Relevant data ... から configuration data. までの1つの行", 2-7 の箇条(原文は「•」付き)をコンマで連結した]
   origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
   answers: [Q1.1.1]
   verified: false
@@ -229,10 +229,10 @@
   statement: NCAのEDR標準のひな形は、EDRが全端末から集めたデータに基づいて脅威のパターンを識別し、新しいデータのパターンを過去のものと比べて未知と既知の悪意のある活動を識別し、振る舞いによる脅威の検知の機能を持ち、MITRE ATT&CK などの知識ベースを使い、検知に重大度と確信度でリスクの点数を付けることを求めている
   kind: fact
   source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
-  locator: 'https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  3 Data Analysis and Threat Pattern Identification, 3-3〜3-7 (p.8)'
+  locator: 'https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  3 Data Analysis and Threat Pattern Identification, 3-3〜3-7 (下端の番号 p.8、PDF の9ページ目)'
   as_of: 2023-11
   quote: "3-3 EDR solution must identify threat patterns based on aggregated data from all endpoints, rather than a single one. 3-4 EDR solution must compare new dataset patterns to the previous ones, in order to identify previously unknown or known malicious activities. 3-5 EDR solution must provide behavioral threat detection capabilities. 3-6 EDR solution must use globally accessible knowledge databases concerning cybersecurity threat categorization (e.g., MITRE ATT&CK globally accessible knowledge base of adversary tactics and techniques based on real-world observations). 3-7 EDR solution must assign risk scorings and categorize cyber-threats based on criticality and confidence. Criticality estimates the impact on the cyber environment of a potentially ineffective detection. Confidence means how likely it is that the detection is valid and not a false-positive."
-  qualifiers: [組織が自組織に合わせて直して使う例示のひな形, 版 1.0, as_of は PDF の作成日, 要件(must)であり製品の実際の動作の記述ではない]
+  qualifiers: [組織が自組織に合わせて直して使う例示のひな形, 版 1.0, as_of は PDF の作成日, 要件(must)であり製品の実際の動作の記述ではない, "項番(3-3〜3-7)は表の左列の番号で、収集セッションが右列の本文の先頭に置いて連結した"]
   origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
   answers: [Q1.1.1]
   verified: false
@@ -247,7 +247,7 @@
   locator: 'https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response  本文'
   as_of: 2026-06-02
   quote: "Inspired by the \"assume breach\" mindset, Defender for Endpoint continuously collects behavioral cyber telemetry. This includes process information, network activities, deep optics into the kernel and memory manager, user login activities, registry and file system changes, and others. The information is stored for six months, enabling an analyst to travel back in time to the start of an attack."
-  qualifiers: [製品の定義(Microsoft Defender for Endpoint), 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2(Applies to)]
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2 と Microsoft Defender XDR(Applies to)]
   origin: Microsoft(製品の公式文書)
   answers: [Q1.1.1]
   verified: false
@@ -259,7 +259,7 @@
   locator: 'https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response  本文と Note'
   as_of: 2026-06-02
   quote: "When a threat is detected, alerts are created in the system for an analyst to investigate. Alerts with the same attack techniques or attributed to the same attacker are aggregated into an entity called an incident. [...] Defender for Endpoint detection is not intended to be an auditing or logging solution that records every operation or activity that happens on a given endpoint. Our sensor has an internal throttling mechanism, so the high rate of repeat identical events don't flood the logs."
-  qualifiers: [製品の定義(Microsoft Defender for Endpoint), 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2(Applies to), "[...] は収集セッションによる省略"]
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2 と Microsoft Defender XDR(Applies to), "[...] は収集セッションによる省略"]
   origin: Microsoft(製品の公式文書)
   answers: [Q1.1.1]
   verified: false
