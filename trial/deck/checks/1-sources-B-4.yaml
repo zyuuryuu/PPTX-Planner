@@ -76,7 +76,7 @@
     理由: quote を "debatable whether this can truly be considered a false positive" まで広げ、statement も議論の余地を述べる。§6.2.3.2 に実在。
   F213:
     判定: 合格
-    理由: statement は定義の紹介に縮み、quote に合う。注: quote は Introduction に1箇所だけ実在し、locator の「RQ2 … および §3」は前回の B-1 の指摘のまま(直されていない。軽微)。
+    理由: 'statement は定義の紹介に縮み、quote に合う。注: quote は Introduction に1箇所だけ実在し、locator の「RQ2 … および §3」は前回の B-1 の指摘のまま(直されていない。軽微)。'
   F214:
     判定: 不合格(軽微)
     理由: 前回の B-2 の指摘が未解消。quote の主体は "Some analysts"(一部の分析者)で、qualifiers に「一部の」がなく、statement も「SOC実務者の証言」と主体を広げる。
@@ -93,7 +93,7 @@
     理由: 新規。quote は §6 RQ2 の Summary に実在("When the analyst reported a 99% FP rate, this is found to be mostly benign triggers and not necessarily a measurement of the performance of the technology itself.")。qualifiers に1人の発言であることがある。
   F220:
     判定: 合格
-    理由: 新規。quote は Yang らの §6.2 に実在。参照 [4] は Alahmadi らの論文で、qualifiers の記述と合う。
+    理由: '新規。quote は Yang らの §6.2 に実在。参照 [4] は Alahmadi らの論文で、qualifiers の記述と合う。'
   F221:
     判定: 合格
     理由: 新規。quote は §6.4 External Pen Test に実在。value 2.7、unit 百万件、92%(Log4j、2022年前半)が合う。
@@ -102,7 +102,7 @@
     条件:
       1_quote_exists: 合格(PDF の Determine Investigation Scope に実在)
       4_qualifiers: 不合格
-    理由: 前回の B-1 の指摘が未解消。qualifiers の適用範囲が「確認された悪性のサイバー活動を含む」を落とす。原文は "applies to incidents that involve confirmed malicious cyber activity and for which a major incident … has been declared or not yet been reasonably ruled out"。as_of の 2021-11(表紙 "Publication: November 2021")は解消。
+    理由: '前回の B-1 の指摘が未解消。qualifiers の適用範囲が「確認された悪性のサイバー活動を含む」を落とす。原文は "applies to incidents that involve confirmed malicious cyber activity and for which a major incident … has been declared or not yet been reasonably ruled out"。as_of の 2021-11(表紙 "Publication: November 2021")は解消。'
     直し方: qualifiers に「確認された悪性のサイバー活動を含むインシデント」を加える。
   F403:
     判定: 合格
@@ -123,7 +123,7 @@
     直し方: quote を文末まで広げ、statement に2つ目の条件を入れる。
   F408:
     判定: 不合格
-    理由: 前回の B-1 の指摘が未解消。statement の「FCEB は、重大度によらず全てのサイバーセキュリティインシデントを CISA に速やかに報告する」は quote にない。原文は "Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA" と、次の文に置く。qualifiers の書式は直った。as_of の 2021-11 は解消。
+    理由: '前回の B-1 の指摘が未解消。statement の「FCEB は、重大度によらず全てのサイバーセキュリティインシデントを CISA に速やかに報告する」は quote にない。原文は "Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA" と、次の文に置く。qualifiers の書式は直った。as_of の 2021-11 は解消。'
     直し方: Note の文を quote に加える。
   F409:
     判定: 不合格
