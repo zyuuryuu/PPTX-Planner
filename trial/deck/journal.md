@@ -12,6 +12,11 @@
 | 4 | 1 | 検査(再検査) | 直した探索の計画 | claude-opus-5-5 | session_01LpWHczHs4KNqqP5DRsLEJN |
 | 5 | 1 | 検査(再検査2) | 再検査の指摘6件の解消 | claude-sonnet-5-5 | session_01LpWHd3za7AMGc5uBFgAdgj |
 | 6 | 1 | 検査 | 足した問い Q1.1.4 の枝と、調査依頼 R1〜R5 の文面 | claude-haiku-5-5 | session_01LpWHd48RsyaqgvXYV9qjkL |
+| 7 | 1 | 収集 | R1 前提の技術(Q1.1.1、Q1.2、Q1.3) | claude-sonnet-5-5 | session_01LpWHd26FcE7GFT5A9sdhrp |
+| 8 | 1 | 収集 | R2 アラートの量と誤検知(Q1.1.2〜Q1.1.4) | claude-sonnet-5-5 | session_01LpWHd4KSuSrdZYzyADBKTg |
+| 9 | 1 | 収集 | R3 手順と閉じる基準(Q2.1、Q2.2、Q3.1.1、Q3.1.2) | claude-sonnet-5-5 | session_01LpWHd4hQktFmCV6FrJPjpm |
+| 10 | 1 | 収集 | R4 調査の継続と上げる基準(Q3.2、Q3.3.1、Q3.3.3) | claude-sonnet-5-5 | session_01LpWHd4BPysseRWwHh3MSWG |
+| 11 | 1 | 収集 | R5 一次解析の誤り(Q4.1〜Q4.3) | claude-sonnet-5-5 | session_01LpWHd1kKJUcPrRraXYjoo5 |
 
 ## 工程0 依頼の確定
 
@@ -96,6 +101,8 @@
 - 依頼者に計画を平易な言葉で見せ、承認を求めた。問いを章ごとに箇条書きにし、high の問いに印を付けた。YAMLは見せていない(全文の場所だけ伝えた)。
 - 計画の承認の返事: YAMLは読まず、一覧で判断。「よくある誤検知のパターンには何があるか」を足せばOK。Q1.1.4 として Q1.1 の下に足し、Q1.1 の軸を直した。承認を `status.yaml` に記録(afd7ac3)。
 - 調査依頼を5つ(R1〜R5)作り、`requests/` に置いた。末端の問いの文面をそのまま写した。依頼の文面の検査と、足した枝の再検査を、収集の前に検査セッションに出した(表の6)。
+- 依頼の文面の検査(`checks/1-requests-1.yaml`): 不合格0。Q1.1 の枝の4条件も合格。注記: Q1.1.3 と Q1.1.4、Q1.1.1 と Q1.1.4 の答えが重なりうる(工程2で見る)。
+- 収集セッションを5つ起こした(表の7〜11)。収集セッションには `requests/` の自分の依頼だけを読ませた。
 - 返事: 数えたことはなく、日々の対応からの実感。資料に数字として載せるなら、依頼者の数字ではなく出典のあるものにしてほしい。`testimony`(依頼者の実感)として台帳に記録し、数字の根拠には Q1.1.3 の収集の結果を使う。
 
 ### 詰まった点
