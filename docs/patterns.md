@@ -45,34 +45,38 @@ renderers: {}
 
 ## 付属する型の候補
 
-| 区分 | 型 | 主張の種類 | 形が伝える含意 |
-|---|---|---|---|
-| 数量 | 棒グラフ | 項目の比較 | `comparable`、`proportional` |
-| 数量 | 積み上げ棒グラフ | 構成比(複数の対象を比べる場合) | `partition`、`proportional`、`comparable` |
-| 数量 | 折れ線グラフ | 推移 | `ordered`、`proportional` |
-| 数量 | 円グラフ | 構成比(項目が少ない場合) | `partition`、`proportional` |
-| 数量 | 散布図 | 相関 | `proportional` |
-| 数量 | 度数の分布図 | 分布 | `ordered`、`proportional` |
-| 数量 | 大きな数字 | 言い切り(1つの数値を述べる場合) | `emphasized` |
-| 概念 | 段階の流れ | 手順 | `ordered` |
-| 概念 | 階層の木 | 構造・階層 | `hierarchical` |
-| 概念 | 2案の対比 | 対比(2案) | `opposed`、`comparable` |
-| 概念 | 前後の対比 | 対比(前後) | `opposed`、`ordered` |
-| 概念 | 因果の連鎖 | 因果 | `causal`、`ordered` |
-| 概念 | 2軸の配置 | 位置づけ | `independent-axes`、`comparable` |
-| 概念 | 箇条書き | 並列の列挙 | なし |
-| 概念 | 言い切り | 言い切り | `emphasized` |
-| 共通 | 表 | 項目の比較(指標が複数の場合)、並列の列挙(項目が共通の観点を持つ場合) | `comparable` |
-| 仕組みの記述 | 構成図 | 構成 | `connected` |
-| 仕組みの記述 | ER図 | 要素の関係 | `connected` |
-| 仕組みの記述 | シーケンス図 | やり取り | `ordered`、`connected` |
-| 仕組みの記述 | 状態遷移図 | 状態の遷移 | `connected` |
-| 仕組みの記述 | フローチャート | 分岐のある流れ | `ordered`、`connected` |
-| 仕組みの記述 | ガントチャート | 日程 | `ordered`、`proportional` |
-| 画像 | 注釈つきの画像(番号の印) | 手順(画面上の操作など、実物の上で順を示す場合) | `ordered` |
-| 画像 | 注釈つきの画像(引き出しの説明) | 構成(実物の部位を説明する場合)、実物の提示 | `connected` |
-| 画像 | 画像の前後の対比 | 対比(前後を実物で示す場合) | `opposed`、`ordered` |
-| 画像 | 引用した図 | 実物の提示 | なし |
+| 区分 | 型 | 識別子 | 主張の種類 | 土台 | 形が伝える含意 |
+|---|---|---|---|---|---|
+| 数量 | 棒グラフ | `bar-chart` | 項目の比較 | なし | `comparable`、`proportional` |
+| 数量 | 積み上げ棒グラフ | `stacked-bar-chart` | 構成比(収容量を超えた場合の型。複数の対象を比べる) | なし | `partition`、`proportional`、`comparable` |
+| 数量 | 折れ線グラフ | `line-chart` | 推移 | なし | `ordered`、`proportional` |
+| 数量 | 円グラフ | `pie-chart` | 構成比 | なし | `partition`、`proportional` |
+| 数量 | 散布図 | `scatter-chart` | 相関 | なし | `proportional` |
+| 数量 | 度数の分布図 | `histogram` | 分布 | なし | `ordered`、`proportional` |
+| 概念 | 段階の流れ | `step-flow` | 手順 | なし | `ordered` |
+| 概念 | 階層の木 | `tree` | 構造・階層 | なし | `hierarchical` |
+| 概念 | 2案の対比 | `versus` | 2案の対比 | なし | `opposed`、`comparable` |
+| 概念 | 前後の対比 | `before-after` | 前後の対比 | なし | `opposed`、`ordered` |
+| 概念 | 因果の連鎖 | `cause-chain` | 因果 | なし | `causal`、`ordered` |
+| 概念 | 2軸の配置 | `two-axis` | 位置づけ | なし | `independent-axes`、`comparable` |
+| 概念 | 箇条書き | `plain-list` | 並列の列挙 | なし | なし |
+| 概念 | 言い切り | `statement` | 言い切り | なし | `emphasized` |
+| 概念 | 大きな数字 | `big-number` | 言い切り(収容量の区分を問わず、1つの数値を述べる場合) | なし | `emphasized` |
+| 共通 | 表 | `table` | 収容量を超えた場合の型として、項目の比較、並列の列挙で使う | なし | `comparable` |
+| 仕組みの記述 | 構成図 | `architecture-diagram` | 構成 | なし | `connected` |
+| 仕組みの記述 | ER図 | `er-diagram` | 要素の関係 | なし | `connected` |
+| 仕組みの記述 | シーケンス図 | `sequence-diagram` | やり取り | なし | `ordered`、`connected` |
+| 仕組みの記述 | 状態遷移図 | `state-diagram` | 状態の遷移 | なし | `connected` |
+| 仕組みの記述 | フローチャート | `flowchart` | 分岐のある流れ | なし | `ordered`、`connected` |
+| 仕組みの記述 | ガントチャート | `gantt-chart` | 日程 | なし | `ordered`、`proportional` |
+| 画像 | 注釈つきの画像(番号の印) | `annotated-image-steps` | 手順 | 画像 | `ordered` |
+| 画像 | 注釈つきの画像(引き出しの説明) | `annotated-image-callouts` | 構成 | 画像 | `connected` |
+| 画像 | 画像の前後の対比 | `image-before-after` | 前後の対比 | 画像 | `opposed`、`ordered` |
+| 画像 | 実物の提示 | `exhibit-image` | 実物の提示 | 画像 | なし |
+
+土台は、型が画像の素材の上に描かれるかどうかを示す。同じ主張の種類でも、画像を土台にする場合は別の型を使う。表現の対応表は、主張の種類、量の区分、土台の3つを鍵にする。
+
+「言い切り」の種類には、型が2つある(言い切り、大きな数字)。数値を1つだけ述べる場合に大きな数字を使う。この書き分けの鍵は未確定である。
 
 横に並べた箱(カード)は、付属する型に含めない。全体を1つの基準で分けたものを示す場合には使えるが、その場合の主張の種類は構造・階層であり、分類の軸の明示を条件とする。並列の列挙には使わない。
 
