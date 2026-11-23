@@ -1,0 +1,548 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>仕組みの図(確認用)</title><style>body{font-family:sans-serif;margin:24px;max-width:1200px}svg{max-width:100%;height:auto;border:1px solid #ddd;margin:8px 0 24px}</style>
+<h1>SIEM と EDR がアラートを出すまで(確認用の図)</h1>
+<p>出典に書かれている要素とつながりだけを描いています。青は仕組みの記述、茶色の点線は標準の要件(「〜しなければならない」)、緑は特定の製品の記述です。「方式は出典になし」は、どう渡るかが出典に書かれていない箇所です。</p>
+<h2>SIEM(NIST の一般の記述)</h2><svg width="1487pt" height="473pt"
+ viewBox="0.00 0.00 1486.50 473.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 469)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-469 1482.5,-469 1482.5,4 -4,4"/>
+<text text-anchor="middle" x="739.25" y="-451.4" font-family="WenQuanYi Zen Hei" font-size="12.00">SIEM(NIST の一般の記述)</text>
+<!-- D&#45;correlated&#45;entry -->
+<g id="node1" class="node">
+<title>D&#45;correlated&#45;entry</title>
+<polygon fill="none" stroke="#1f5fbf" points="157,-342 0,-342 0,-306 163,-306 163,-336 157,-342"/>
+<polyline fill="none" stroke="#1f5fbf" points="157,-342 157,-336 "/>
+<polyline fill="none" stroke="#1f5fbf" points="163,-336 157,-336 "/>
+<text text-anchor="middle" x="81.5" y="-321.2" font-family="WenQuanYi Zen Hei" font-size="11.00">相関の結果の新しいログ項目</text>
+</g>
+<!-- D&#45;infra&#45;alert -->
+<g id="node2" class="node">
+<title>D&#45;infra&#45;alert</title>
+<polygon fill="none" stroke="#1f5fbf" points="267.5,-342 211.5,-342 211.5,-306 273.5,-306 273.5,-336 267.5,-342"/>
+<polyline fill="none" stroke="#1f5fbf" points="267.5,-342 267.5,-336 "/>
+<polyline fill="none" stroke="#1f5fbf" points="273.5,-336 267.5,-336 "/>
+<text text-anchor="middle" x="242.5" y="-321.2" font-family="WenQuanYi Zen Hei" font-size="11.00">アラート</text>
+</g>
+<!-- D&#45;significant&#45;event -->
+<g id="node3" class="node">
+<title>D&#45;significant&#45;event</title>
+<polygon fill="none" stroke="#1f5fbf" points="736,-128 647,-128 647,-92 742,-92 742,-122 736,-128"/>
+<polyline fill="none" stroke="#1f5fbf" points="736,-128 736,-122 "/>
+<polyline fill="none" stroke="#1f5fbf" points="742,-122 736,-122 "/>
+<text text-anchor="middle" x="694.5" y="-107.2" font-family="WenQuanYi Zen Hei" font-size="11.00">重要なイベント</text>
+</g>
+<!-- E&#45;log&#45;source -->
+<g id="node4" class="node">
+<title>E&#45;log&#45;source</title>
+<path fill="none" stroke="#1f5fbf" d="M989.5,-128C989.5,-128 929.5,-128 929.5,-128 923.5,-128 917.5,-122 917.5,-116 917.5,-116 917.5,-104 917.5,-104 917.5,-98 923.5,-92 929.5,-92 929.5,-92 989.5,-92 989.5,-92 995.5,-92 1001.5,-98 1001.5,-104 1001.5,-104 1001.5,-116 1001.5,-116 1001.5,-122 995.5,-128 989.5,-128"/>
+<text text-anchor="middle" x="959.5" y="-107.2" font-family="WenQuanYi Zen Hei" font-size="11.00">ログの発生源</text>
+</g>
+<!-- E&#45;siem&#45;agent -->
+<g id="node6" class="node">
+<title>E&#45;siem&#45;agent</title>
+<path fill="none" stroke="#1f5fbf" d="M562.5,-36C562.5,-36 466.5,-36 466.5,-36 460.5,-36 454.5,-30 454.5,-24 454.5,-24 454.5,-12 454.5,-12 454.5,-6 460.5,0 466.5,0 466.5,0 562.5,0 562.5,0 568.5,0 574.5,-6 574.5,-12 574.5,-12 574.5,-24 574.5,-24 574.5,-30 568.5,-36 562.5,-36"/>
+<text text-anchor="middle" x="514.5" y="-15.2" font-family="WenQuanYi Zen Hei" font-size="11.00">SIEMのエージェント</text>
+</g>
+<!-- E&#45;log&#45;source&#45;&gt;E&#45;siem&#45;agent -->
+<g id="edge7" class="edge">
+<title>E&#45;log&#45;source&#45;&gt;E&#45;siem&#45;agent</title>
+<path fill="none" stroke="#1f5fbf" d="M917.23,-100.45C840.62,-84.96 678.11,-52.09 584.63,-33.18"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="585.19,-29.73 574.7,-31.17 583.8,-36.59 585.19,-29.73"/>
+<text text-anchor="middle" x="822" y="-66.8" font-family="WenQuanYi Zen Hei" font-size="9.00">エージェントを入れる</text>
+<text text-anchor="middle" x="822" y="-56.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;siem&#45;server -->
+<g id="node9" class="node">
+<title>E&#45;siem&#45;server</title>
+<path fill="none" stroke="#1f5fbf" d="M562,-250C562,-250 511,-250 511,-250 505,-250 499,-244 499,-238 499,-238 499,-226 499,-226 499,-220 505,-214 511,-214 511,-214 562,-214 562,-214 568,-214 574,-220 574,-226 574,-226 574,-238 574,-238 574,-244 568,-250 562,-250"/>
+<text text-anchor="middle" x="536.5" y="-229.2" font-family="WenQuanYi Zen Hei" font-size="11.00">SIEMサーバ</text>
+</g>
+<!-- E&#45;log&#45;source&#45;&gt;E&#45;siem&#45;server -->
+<g id="edge9" class="edge">
+<title>E&#45;log&#45;source&#45;&gt;E&#45;siem&#45;server</title>
+<path fill="none" stroke="#1f5fbf" d="M917.28,-123.51C901.11,-129.2 882.87,-136.75 867.5,-146 838.63,-163.38 841.22,-182.15 810.5,-196 771.23,-213.7 652.15,-223.8 584.61,-228.24"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="583.99,-224.77 574.23,-228.91 584.44,-231.76 583.99,-224.77"/>
+<text text-anchor="middle" x="908.5" y="-168.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ホストがログを送る</text>
+</g>
+<!-- E&#45;siem -->
+<g id="node5" class="node">
+<title>E&#45;siem</title>
+<path fill="none" stroke="#1f5fbf" d="M418.5,-342C418.5,-342 388.5,-342 388.5,-342 382.5,-342 376.5,-336 376.5,-330 376.5,-330 376.5,-318 376.5,-318 376.5,-312 382.5,-306 388.5,-306 388.5,-306 418.5,-306 418.5,-306 424.5,-306 430.5,-312 430.5,-318 430.5,-318 430.5,-330 430.5,-330 430.5,-336 424.5,-342 418.5,-342"/>
+<text text-anchor="middle" x="403.5" y="-321.2" font-family="WenQuanYi Zen Hei" font-size="11.00">SIEM</text>
+</g>
+<!-- E&#45;siem&#45;db -->
+<g id="node7" class="node">
+<title>E&#45;siem&#45;db</title>
+<path fill="none" stroke="#1f5fbf" d="M405.5,-128C405.5,-128 311.5,-128 311.5,-128 305.5,-128 299.5,-122 299.5,-116 299.5,-116 299.5,-104 299.5,-104 299.5,-98 305.5,-92 311.5,-92 311.5,-92 405.5,-92 405.5,-92 411.5,-92 417.5,-98 417.5,-104 417.5,-104 417.5,-116 417.5,-116 417.5,-122 411.5,-128 405.5,-128"/>
+<text text-anchor="middle" x="358.5" y="-107.2" font-family="WenQuanYi Zen Hei" font-size="11.00">データベースサーバ</text>
+</g>
+<!-- E&#45;siem&#45;&gt;E&#45;siem&#45;db -->
+<g id="edge6" class="edge">
+<title>E&#45;siem&#45;&gt;E&#45;siem&#45;db</title>
+<path fill="none" stroke="#1f5fbf" d="M390.28,-305.83C380.26,-291.7 367.27,-270.7 361.5,-250 350.98,-212.27 352.59,-166.52 355.18,-138.08"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="358.67,-138.39 356.2,-128.08 351.71,-137.68 358.67,-138.39"/>
+<text text-anchor="middle" x="423" y="-239.8" font-family="WenQuanYi Zen Hei" font-size="9.00">1台以上のデータベースサーバ</text>
+<text text-anchor="middle" x="423" y="-229.8" font-family="WenQuanYi Zen Hei" font-size="9.00">を持つ</text>
+<text text-anchor="middle" x="423" y="-219.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;siem&#45;&gt;E&#45;siem&#45;server -->
+<g id="edge5" class="edge">
+<title>E&#45;siem&#45;&gt;E&#45;siem&#45;server</title>
+<path fill="none" stroke="#1f5fbf" d="M428.83,-305.86C449.81,-291.66 479.82,-271.36 502.82,-255.79"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="504.94,-258.58 511.26,-250.08 501.02,-252.78 504.94,-258.58"/>
+<text text-anchor="middle" x="539.5" y="-280.8" font-family="WenQuanYi Zen Hei" font-size="9.00">1台以上のログサーバを持つ</text>
+<text text-anchor="middle" x="539.5" y="-270.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;siem&#45;agent&#45;&gt;E&#45;siem&#45;server -->
+<g id="edge8" class="edge">
+<title>E&#45;siem&#45;agent&#45;&gt;E&#45;siem&#45;server</title>
+<path fill="none" stroke="#1f5fbf" d="M511.8,-36.05C509.6,-50.81 506.68,-72.75 505.5,-92 502.64,-138.61 505.68,-151.71 520.5,-196 521.43,-198.79 522.52,-201.66 523.68,-204.49"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="520.56,-206.09 527.78,-213.85 526.97,-203.28 520.56,-206.09"/>
+<text text-anchor="middle" x="569" y="-112.8" font-family="WenQuanYi Zen Hei" font-size="9.00">正規化したログデータを分析と</text>
+<text text-anchor="middle" x="569" y="-102.8" font-family="WenQuanYi Zen Hei" font-size="9.00">保存のために送る</text>
+</g>
+<!-- E&#45;siem&#45;infra -->
+<g id="node8" class="node">
+<title>E&#45;siem&#45;infra</title>
+<path fill="none" stroke="#1f5fbf" d="M303.5,-444C303.5,-444 181.5,-444 181.5,-444 175.5,-444 169.5,-438 169.5,-432 169.5,-432 169.5,-420 169.5,-420 169.5,-414 175.5,-408 181.5,-408 181.5,-408 303.5,-408 303.5,-408 309.5,-408 315.5,-414 315.5,-420 315.5,-420 315.5,-432 315.5,-432 315.5,-438 309.5,-444 303.5,-444"/>
+<text text-anchor="middle" x="242.5" y="-429.2" font-family="WenQuanYi Zen Hei" font-size="11.00">SIEM を基にしたログ管理</text>
+<text text-anchor="middle" x="242.5" y="-417.2" font-family="WenQuanYi Zen Hei" font-size="11.00">基盤</text>
+</g>
+<!-- E&#45;siem&#45;infra&#45;&gt;D&#45;correlated&#45;entry -->
+<g id="edge14" class="edge">
+<title>E&#45;siem&#45;infra&#45;&gt;D&#45;correlated&#45;entry</title>
+<path fill="none" stroke="#1f5fbf" d="M169.31,-419.16C146.98,-414.2 123.79,-405.41 106.5,-390 95.6,-380.29 89.42,-365.28 85.93,-352.13"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="89.29,-351.11 83.68,-342.12 82.46,-352.65 89.29,-351.11"/>
+<text text-anchor="middle" x="170" y="-382.8" font-family="WenQuanYi Zen Hei" font-size="9.00">相関の結果として新しいログ項</text>
+<text text-anchor="middle" x="170" y="-372.8" font-family="WenQuanYi Zen Hei" font-size="9.00">目を作る</text>
+<text text-anchor="middle" x="170" y="-362.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;siem&#45;infra&#45;&gt;D&#45;infra&#45;alert -->
+<g id="edge15" class="edge">
+<title>E&#45;siem&#45;infra&#45;&gt;D&#45;infra&#45;alert</title>
+<path fill="none" stroke="#1f5fbf" d="M241.33,-407.92C240.99,-402.22 240.67,-395.84 240.5,-390 240.12,-376.67 240.12,-373.33 240.5,-360 240.57,-357.44 240.68,-354.79 240.8,-352.13"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="244.29,-352.25 241.33,-342.08 237.3,-351.88 244.29,-352.25"/>
+<text text-anchor="middle" x="304" y="-382.8" font-family="WenQuanYi Zen Hei" font-size="9.00">さらに調査が必要であることを</text>
+<text text-anchor="middle" x="304" y="-372.8" font-family="WenQuanYi Zen Hei" font-size="9.00">示すアラートを生成する</text>
+<text text-anchor="middle" x="304" y="-362.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;siem&#45;infra&#45;&gt;E&#45;siem -->
+<g id="edge13" class="edge">
+<title>E&#45;siem&#45;infra&#45;&gt;E&#45;siem</title>
+<path fill="none" stroke="#1f5fbf" d="M315.55,-416.03C334.98,-410.86 354.88,-402.74 370.5,-390 382.46,-380.25 390.51,-365.04 395.67,-351.79"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="399.04,-352.75 399.06,-342.16 392.44,-350.43 399.04,-352.75"/>
+<text text-anchor="middle" x="445" y="-382.8" font-family="WenQuanYi Zen Hei" font-size="9.00">SIEM ソフトウェアを基に</text>
+<text text-anchor="middle" x="445" y="-372.8" font-family="WenQuanYi Zen Hei" font-size="9.00">する</text>
+<text text-anchor="middle" x="445" y="-362.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;siem&#45;server&#45;&gt;D&#45;significant&#45;event -->
+<g id="edge12" class="edge">
+<title>E&#45;siem&#45;server&#45;&gt;D&#45;significant&#45;event</title>
+<path fill="none" stroke="#1f5fbf" d="M531.01,-213.88C526.12,-195.03 521.92,-164.91 537.5,-146 562.61,-115.53 585.98,-136.66 624.5,-128 628.55,-127.09 632.73,-126.13 636.93,-125.15"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="637.8,-128.54 646.73,-122.83 636.19,-121.73 637.8,-128.54"/>
+<text text-anchor="middle" x="601" y="-188.8" font-family="WenQuanYi Zen Hei" font-size="9.00">全てのログ源のデータを分析し</text>
+<text text-anchor="middle" x="601" y="-178.8" font-family="WenQuanYi Zen Hei" font-size="9.00">、事象を相関させ、重要なイベ</text>
+<text text-anchor="middle" x="601" y="-168.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ントを特定して優先順位を付け</text>
+<text text-anchor="middle" x="601" y="-158.8" font-family="WenQuanYi Zen Hei" font-size="9.00">る</text>
+<text text-anchor="middle" x="601" y="-148.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;siem&#45;server&#45;&gt;E&#45;log&#45;source -->
+<g id="edge10" class="edge">
+<title>E&#45;siem&#45;server&#45;&gt;E&#45;log&#45;source</title>
+<path fill="none" stroke="#1f5fbf" d="M574.21,-228.86C602.51,-225.51 640.8,-217.08 667.5,-196 687.32,-180.35 673.71,-160.33 694.5,-146 711.64,-134.19 834.93,-121.74 907.15,-115.35"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="907.76,-118.81 917.42,-114.45 907.15,-111.84 907.76,-118.81"/>
+<text text-anchor="middle" x="749" y="-168.8" font-family="WenQuanYi Zen Hei" font-size="9.00">サーバがログを取りに行く</text>
+</g>
+<!-- E&#45;siem&#45;server&#45;&gt;E&#45;siem&#45;db -->
+<g id="edge11" class="edge">
+<title>E&#45;siem&#45;server&#45;&gt;E&#45;siem&#45;db</title>
+<path fill="none" stroke="#1f5fbf" d="M498.67,-220.64C490.09,-218.38 480.99,-216.05 472.5,-214 435.81,-205.15 417.94,-220.81 389.5,-196 372.8,-181.43 365.09,-157.1 361.54,-138.2"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="364.95,-137.4 359.92,-128.08 358.04,-138.5 364.95,-137.4"/>
+<text text-anchor="middle" x="429" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ログの保存先</text>
+<text text-anchor="middle" x="429" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;src&#45;app -->
+<g id="node10" class="node">
+<title>E&#45;src&#45;app</title>
+<path fill="none" stroke="#1f5fbf" d="M1017.5,-250C1017.5,-250 901.5,-250 901.5,-250 895.5,-250 889.5,-244 889.5,-238 889.5,-238 889.5,-226 889.5,-226 889.5,-220 895.5,-214 901.5,-214 901.5,-214 1017.5,-214 1017.5,-214 1023.5,-214 1029.5,-220 1029.5,-226 1029.5,-226 1029.5,-238 1029.5,-238 1029.5,-244 1023.5,-250 1017.5,-250"/>
+<text text-anchor="middle" x="959.5" y="-229.2" font-family="WenQuanYi Zen Hei" font-size="11.00">アプリケーションサーバ</text>
+</g>
+<!-- E&#45;src&#45;app&#45;&gt;E&#45;log&#45;source -->
+<g id="edge3" class="edge">
+<title>E&#45;src&#45;app&#45;&gt;E&#45;log&#45;source</title>
+<path fill="none" stroke="#1f5fbf" d="M958.33,-213.92C957.99,-208.22 957.67,-201.84 957.5,-196 956.87,-173.79 956.87,-168.21 957.5,-146 957.57,-143.44 957.68,-140.79 957.8,-138.13"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="961.29,-138.25 958.33,-128.08 954.3,-137.88 961.29,-138.25"/>
+<text text-anchor="middle" x="1007.5" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ログの発生源の種類の例</text>
+<text text-anchor="middle" x="1007.5" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;src&#45;os -->
+<g id="node11" class="node">
+<title>E&#45;src&#45;os</title>
+<path fill="none" stroke="#1f5fbf" d="M1106.5,-250C1106.5,-250 1076.5,-250 1076.5,-250 1070.5,-250 1064.5,-244 1064.5,-238 1064.5,-238 1064.5,-226 1064.5,-226 1064.5,-220 1070.5,-214 1076.5,-214 1076.5,-214 1106.5,-214 1106.5,-214 1112.5,-214 1118.5,-220 1118.5,-226 1118.5,-226 1118.5,-238 1118.5,-238 1118.5,-244 1112.5,-250 1106.5,-250"/>
+<text text-anchor="middle" x="1091.5" y="-229.2" font-family="WenQuanYi Zen Hei" font-size="11.00">OS</text>
+</g>
+<!-- E&#45;src&#45;os&#45;&gt;E&#45;log&#45;source -->
+<g id="edge1" class="edge">
+<title>E&#45;src&#45;os&#45;&gt;E&#45;log&#45;source</title>
+<path fill="none" stroke="#1f5fbf" d="M1089.64,-213.99C1086.69,-194.96 1079.2,-164.4 1060.5,-146 1047.29,-133 1029.01,-124.81 1011.63,-119.67"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="1012.11,-116.17 1001.54,-116.97 1010.3,-122.94 1012.11,-116.17"/>
+<text text-anchor="middle" x="1135.5" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ログの発生源の種類の例</text>
+<text text-anchor="middle" x="1135.5" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;src&#45;physical -->
+<g id="node12" class="node">
+<title>E&#45;src&#45;physical</title>
+<path fill="none" stroke="#1f5fbf" d="M1299,-250C1299,-250 1160,-250 1160,-250 1154,-250 1148,-244 1148,-238 1148,-238 1148,-226 1148,-226 1148,-220 1154,-214 1160,-214 1160,-214 1299,-214 1299,-214 1305,-214 1311,-220 1311,-226 1311,-226 1311,-238 1311,-238 1311,-244 1305,-250 1299,-250"/>
+<text text-anchor="middle" x="1229.5" y="-229.2" font-family="WenQuanYi Zen Hei" font-size="11.00">物理セキュリティの制御機器</text>
+</g>
+<!-- E&#45;src&#45;physical&#45;&gt;E&#45;log&#45;source -->
+<g id="edge4" class="edge">
+<title>E&#45;src&#45;physical&#45;&gt;E&#45;log&#45;source</title>
+<path fill="none" stroke="#1f5fbf" d="M1227.06,-213.96C1223.29,-194.3 1214.08,-162.56 1192.5,-146 1164.97,-124.87 1071.57,-116.37 1011.71,-113.05"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="1011.85,-109.55 1001.68,-112.52 1011.49,-116.54 1011.85,-109.55"/>
+<text text-anchor="middle" x="1272.5" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ログの発生源の種類の例</text>
+<text text-anchor="middle" x="1272.5" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;src&#45;secsw -->
+<g id="node13" class="node">
+<title>E&#45;src&#45;secsw</title>
+<path fill="none" stroke="#1f5fbf" d="M1446.5,-250C1446.5,-250 1352.5,-250 1352.5,-250 1346.5,-250 1340.5,-244 1340.5,-238 1340.5,-238 1340.5,-226 1340.5,-226 1340.5,-220 1346.5,-214 1352.5,-214 1352.5,-214 1446.5,-214 1446.5,-214 1452.5,-214 1458.5,-220 1458.5,-226 1458.5,-226 1458.5,-238 1458.5,-238 1458.5,-244 1452.5,-250 1446.5,-250"/>
+<text text-anchor="middle" x="1399.5" y="-229.2" font-family="WenQuanYi Zen Hei" font-size="11.00">セキュリティソフト</text>
+</g>
+<!-- E&#45;src&#45;secsw&#45;&gt;E&#45;log&#45;source -->
+<g id="edge2" class="edge">
+<title>E&#45;src&#45;secsw&#45;&gt;E&#45;log&#45;source</title>
+<path fill="none" stroke="#1f5fbf" d="M1390.83,-213.83C1379.65,-193.72 1358.2,-161.24 1329.5,-146 1275.78,-117.48 1100.5,-111.98 1011.85,-111.07"/>
+<polygon fill="#1f5fbf" stroke="#1f5fbf" points="1011.77,-107.57 1001.74,-110.98 1011.71,-114.57 1011.77,-107.57"/>
+<text text-anchor="middle" x="1428.5" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ログの発生源の種類の例</text>
+<text text-anchor="middle" x="1428.5" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+</g>
+</svg>
+
+<h2>SIEM の製品の例(Microsoft Sentinel)</h2><svg width="468pt" height="359pt"
+ viewBox="0.00 0.00 468.00 359.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 355)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-355 464,-355 464,4 -4,4"/>
+<text text-anchor="middle" x="230" y="-337.4" font-family="WenQuanYi Zen Hei" font-size="12.00">SIEM の製品の例(Microsoft Sentinel)</text>
+<!-- D&#45;ms&#45;external&#45;alert -->
+<g id="node1" class="node">
+<title>D&#45;ms&#45;external&#45;alert</title>
+<polygon fill="none" stroke="#2e7d32" points="168,-146 0,-146 0,-102 174,-102 174,-140 168,-146"/>
+<polyline fill="none" stroke="#2e7d32" points="168,-146 168,-140 "/>
+<polyline fill="none" stroke="#2e7d32" points="174,-140 168,-140 "/>
+<text text-anchor="middle" x="87" y="-133.2" font-family="WenQuanYi Zen Hei" font-size="11.00">ほかの Microsoft </text>
+<text text-anchor="middle" x="87" y="-121.2" font-family="WenQuanYi Zen Hei" font-size="11.00">のセキュリティ製品で生成され</text>
+<text text-anchor="middle" x="87" y="-109.2" font-family="WenQuanYi Zen Hei" font-size="11.00">たアラート</text>
+</g>
+<!-- D&#45;sentinel&#45;incident -->
+<g id="node4" class="node">
+<title>D&#45;sentinel&#45;incident</title>
+<polygon fill="none" stroke="#2e7d32" points="203,-36 125,-36 125,0 209,0 209,-30 203,-36"/>
+<polyline fill="none" stroke="#2e7d32" points="203,-36 203,-30 "/>
+<polyline fill="none" stroke="#2e7d32" points="209,-30 203,-30 "/>
+<text text-anchor="middle" x="167" y="-15.2" font-family="WenQuanYi Zen Hei" font-size="11.00">インシデント</text>
+</g>
+<!-- D&#45;ms&#45;external&#45;alert&#45;&gt;D&#45;sentinel&#45;incident -->
+<g id="edge6" class="edge">
+<title>D&#45;ms&#45;external&#45;alert&#45;&gt;D&#45;sentinel&#45;incident</title>
+<path fill="none" stroke="#2e7d32" d="M103.19,-101.95C115.98,-85.33 133.88,-62.06 147.47,-44.4"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="150.42,-46.29 153.75,-36.23 144.88,-42.02 150.42,-46.29"/>
+<text text-anchor="middle" x="202.5" y="-76.8" font-family="WenQuanYi Zen Hei" font-size="9.00">Microsoft セキュリ</text>
+<text text-anchor="middle" x="202.5" y="-66.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ティのルールがアラートからイ</text>
+<text text-anchor="middle" x="202.5" y="-56.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ンシデントを作る</text>
+</g>
+<!-- D&#45;sentinel&#45;alert -->
+<g id="node2" class="node">
+<title>D&#45;sentinel&#45;alert</title>
+<polygon fill="none" stroke="#2e7d32" points="402,-142 346,-142 346,-106 408,-106 408,-136 402,-142"/>
+<polyline fill="none" stroke="#2e7d32" points="402,-142 402,-136 "/>
+<polyline fill="none" stroke="#2e7d32" points="408,-136 402,-136 "/>
+<text text-anchor="middle" x="377" y="-121.2" font-family="WenQuanYi Zen Hei" font-size="11.00">アラート</text>
+</g>
+<!-- D&#45;sentinel&#45;alert&#45;&gt;D&#45;sentinel&#45;incident -->
+<g id="edge5" class="edge">
+<title>D&#45;sentinel&#45;alert&#45;&gt;D&#45;sentinel&#45;incident</title>
+<path fill="none" stroke="#2e7d32" d="M354.92,-105.81C334.55,-90.59 303.01,-68.58 273,-54 255.87,-45.67 236.26,-38.58 218.61,-33"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="219.62,-29.65 209.03,-30.06 217.57,-36.34 219.62,-29.65"/>
+<text text-anchor="middle" x="386.5" y="-71.8" font-family="WenQuanYi Zen Hei" font-size="9.00">集約と相関によってインシデン</text>
+<text text-anchor="middle" x="386.5" y="-61.8" font-family="WenQuanYi Zen Hei" font-size="9.00">トにまとめる</text>
+</g>
+<!-- D&#45;sentinel&#45;data -->
+<g id="node3" class="node">
+<title>D&#45;sentinel&#45;data</title>
+<polygon fill="none" stroke="#2e7d32" points="281,-142 203,-142 203,-106 287,-106 287,-136 281,-142"/>
+<polyline fill="none" stroke="#2e7d32" points="281,-142 281,-136 "/>
+<polyline fill="none" stroke="#2e7d32" points="287,-136 281,-136 "/>
+<text text-anchor="middle" x="245" y="-121.2" font-family="WenQuanYi Zen Hei" font-size="11.00">集めたデータ</text>
+</g>
+<!-- E&#45;sentinel -->
+<g id="node5" class="node">
+<title>E&#45;sentinel</title>
+<path fill="none" stroke="#2e7d32" d="M362,-330C362,-330 298,-330 298,-330 292,-330 286,-324 286,-318 286,-318 286,-306 286,-306 286,-300 292,-294 298,-294 298,-294 362,-294 362,-294 368,-294 374,-300 374,-306 374,-306 374,-318 374,-318 374,-324 368,-330 362,-330"/>
+<text text-anchor="middle" x="330" y="-315.2" font-family="WenQuanYi Zen Hei" font-size="11.00">Microsoft Sent</text>
+<text text-anchor="middle" x="330" y="-303.2" font-family="WenQuanYi Zen Hei" font-size="11.00">inel</text>
+</g>
+<!-- E&#45;sentinel&#45;rule -->
+<g id="node6" class="node">
+<title>E&#45;sentinel&#45;rule</title>
+<path fill="none" stroke="#2e7d32" d="M354.5,-238C354.5,-238 305.5,-238 305.5,-238 299.5,-238 293.5,-232 293.5,-226 293.5,-226 293.5,-214 293.5,-214 293.5,-208 299.5,-202 305.5,-202 305.5,-202 354.5,-202 354.5,-202 360.5,-202 366.5,-208 366.5,-214 366.5,-214 366.5,-226 366.5,-226 366.5,-232 360.5,-238 354.5,-238"/>
+<text text-anchor="middle" x="330" y="-217.2" font-family="WenQuanYi Zen Hei" font-size="11.00">分析ルール</text>
+</g>
+<!-- E&#45;sentinel&#45;&gt;E&#45;sentinel&#45;rule -->
+<g id="edge1" class="edge">
+<title>E&#45;sentinel&#45;&gt;E&#45;sentinel&#45;rule</title>
+<path fill="none" stroke="#2e7d32" d="M330,-293.65C330,-280.82 330,-263.11 330,-248.38"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="333.5,-248.3 330,-238.3 326.5,-248.3 333.5,-248.3"/>
+<text text-anchor="middle" x="389" y="-268.8" font-family="WenQuanYi Zen Hei" font-size="9.00">脅威検知のルールを提供する</text>
+<text text-anchor="middle" x="389" y="-258.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;sentinel&#45;rule&#45;&gt;D&#45;sentinel&#45;alert -->
+<g id="edge4" class="edge">
+<title>E&#45;sentinel&#45;rule&#45;&gt;D&#45;sentinel&#45;alert</title>
+<path fill="none" stroke="#2e7d32" d="M358.01,-201.81C363.93,-196.82 369.46,-190.84 373,-184 377.94,-174.46 379.51,-162.86 379.64,-152.48"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="383.13,-152.13 379.33,-142.24 376.13,-152.34 383.13,-152.13"/>
+<text text-anchor="middle" x="419" y="-176.8" font-family="WenQuanYi Zen Hei" font-size="9.00">アラートを生成する</text>
+<text text-anchor="middle" x="419" y="-166.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;sentinel&#45;rule&#45;&gt;D&#45;sentinel&#45;data -->
+<g id="edge3" class="edge">
+<title>E&#45;sentinel&#45;rule&#45;&gt;D&#45;sentinel&#45;data</title>
+<path fill="none" stroke="#2e7d32" d="M293.24,-214.79C273.66,-210.47 251.17,-201.72 239,-184 232.68,-174.8 232.79,-162.82 235.01,-152.06"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="238.43,-152.81 237.65,-142.24 231.68,-150.99 238.43,-152.81"/>
+<text text-anchor="middle" x="302.5" y="-176.8" font-family="WenQuanYi Zen Hei" font-size="9.00">集めたデータに問い合わせて分</text>
+<text text-anchor="middle" x="302.5" y="-166.8" font-family="WenQuanYi Zen Hei" font-size="9.00">析する</text>
+</g>
+<!-- E&#45;sentinel&#45;source -->
+<g id="node7" class="node">
+<title>E&#45;sentinel&#45;source</title>
+<path fill="none" stroke="#2e7d32" d="M177,-238C177,-238 117,-238 117,-238 111,-238 105,-232 105,-226 105,-226 105,-214 105,-214 105,-208 111,-202 117,-202 117,-202 177,-202 177,-202 183,-202 189,-208 189,-214 189,-214 189,-226 189,-226 189,-232 183,-238 177,-238"/>
+<text text-anchor="middle" x="147" y="-217.2" font-family="WenQuanYi Zen Hei" font-size="11.00">データソース</text>
+</g>
+<!-- E&#45;sentinel&#45;source&#45;&gt;D&#45;sentinel&#45;data -->
+<g id="edge2" class="edge">
+<title>E&#45;sentinel&#45;source&#45;&gt;D&#45;sentinel&#45;data</title>
+<path fill="none" stroke="#2e7d32" d="M147.96,-201.89C149.43,-190.06 153.09,-174.61 162,-164 166.83,-158.25 179.37,-151.44 193.29,-145.14"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="194.8,-148.3 202.56,-141.08 192,-141.88 194.8,-148.3"/>
+<text text-anchor="middle" x="194" y="-171.8" font-family="WenQuanYi Zen Hei" font-size="9.00">データを集める</text>
+</g>
+</g>
+</svg>
+
+<h2>EDR(一般の記述と、標準の要件)</h2><svg width="611pt" height="187pt"
+ viewBox="0.00 0.00 611.00 187.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 183)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-183 607,-183 607,4 -4,4"/>
+<text text-anchor="middle" x="301.5" y="-165.4" font-family="WenQuanYi Zen Hei" font-size="12.00">EDR(一般の記述と、標準の要件)</text>
+<!-- D&#45;edr&#45;detection -->
+<g id="node1" class="node">
+<title>D&#45;edr&#45;detection</title>
+<polygon fill="none" stroke="#b5651d" stroke-dasharray="5,2" points="48,-36 0,-36 0,0 54,0 54,-30 48,-36"/>
+<polyline fill="none" stroke="#b5651d" stroke-dasharray="5,2" points="48,-36 48,-30 "/>
+<polyline fill="none" stroke="#b5651d" stroke-dasharray="5,2" points="54,-30 48,-30 "/>
+<text text-anchor="middle" x="27" y="-15.2" font-family="WenQuanYi Zen Hei" font-size="11.00">検知</text>
+</g>
+<!-- E&#45;edr -->
+<g id="node2" class="node">
+<title>E&#45;edr</title>
+<path fill="none" stroke="#1f5fbf" d="M123,-158C123,-158 93,-158 93,-158 87,-158 81,-152 81,-146 81,-146 81,-134 81,-134 81,-128 87,-122 93,-122 93,-122 123,-122 123,-122 129,-122 135,-128 135,-134 135,-134 135,-146 135,-146 135,-152 129,-158 123,-158"/>
+<text text-anchor="middle" x="108" y="-137.2" font-family="WenQuanYi Zen Hei" font-size="11.00">EDR</text>
+</g>
+<!-- E&#45;edr&#45;&gt;D&#45;edr&#45;detection -->
+<g id="edge3" class="edge">
+<title>E&#45;edr&#45;&gt;D&#45;edr&#45;detection</title>
+<path fill="none" stroke="#b5651d" stroke-dasharray="5,2" d="M80.99,-136.08C60.73,-132.31 34.31,-123.7 21,-104 9.59,-87.12 12.2,-63.8 17.04,-45.85"/>
+<polygon fill="#b5651d" stroke="#b5651d" points="20.4,-46.84 19.97,-36.25 13.7,-44.8 20.4,-46.84"/>
+<text text-anchor="middle" x="84.5" y="-96.8" font-family="WenQuanYi Zen Hei" font-size="9.00">全端末から集めたデータで脅威</text>
+<text text-anchor="middle" x="84.5" y="-86.8" font-family="WenQuanYi Zen Hei" font-size="9.00">のパターンを識別し、振る舞い</text>
+<text text-anchor="middle" x="84.5" y="-76.8" font-family="WenQuanYi Zen Hei" font-size="9.00">による検知を行い、リスクの点</text>
+<text text-anchor="middle" x="84.5" y="-66.8" font-family="WenQuanYi Zen Hei" font-size="9.00">数を付ける</text>
+<text text-anchor="middle" x="84.5" y="-56.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;it&#45;staff -->
+<g id="node6" class="node">
+<title>E&#45;it&#45;staff</title>
+<ellipse fill="none" stroke="#b5651d" stroke-dasharray="5,2" cx="188" cy="-18" rx="48.92" ry="18"/>
+<text text-anchor="middle" x="188" y="-15.2" font-family="WenQuanYi Zen Hei" font-size="11.00">IT部門の職員</text>
+</g>
+<!-- E&#45;edr&#45;&gt;E&#45;it&#45;staff -->
+<g id="edge4" class="edge">
+<title>E&#45;edr&#45;&gt;E&#45;it&#45;staff</title>
+<path fill="none" stroke="#b5651d" stroke-dasharray="5,2" d="M135.15,-122.77C142.33,-117.49 149.58,-111.12 155,-104 168.14,-86.73 176.67,-63.58 181.76,-45.8"/>
+<polygon fill="#b5651d" stroke="#b5651d" points="185.17,-46.6 184.37,-36.04 178.41,-44.8 185.17,-46.6"/>
+<text text-anchor="middle" x="229" y="-76.8" font-family="WenQuanYi Zen Hei" font-size="9.00">自動で記録し、通知する</text>
+</g>
+<!-- E&#45;edr&#45;agent -->
+<g id="node3" class="node">
+<title>E&#45;edr&#45;agent</title>
+<path fill="none" stroke="#b5651d" stroke-dasharray="5,2" d="M451,-158C451,-158 359,-158 359,-158 353,-158 347,-152 347,-146 347,-146 347,-134 347,-134 347,-128 353,-122 359,-122 359,-122 451,-122 451,-122 457,-122 463,-128 463,-134 463,-134 463,-146 463,-146 463,-152 457,-158 451,-158"/>
+<text text-anchor="middle" x="405" y="-137.2" font-family="WenQuanYi Zen Hei" font-size="11.00">EDRのエージェント</text>
+</g>
+<!-- E&#45;edr&#45;central&#45;db -->
+<g id="node4" class="node">
+<title>E&#45;edr&#45;central&#45;db</title>
+<path fill="none" stroke="#b5651d" stroke-dasharray="5,2" d="M372,-36C372,-36 278,-36 278,-36 272,-36 266,-30 266,-24 266,-24 266,-12 266,-12 266,-6 272,0 278,0 278,0 372,0 372,0 378,0 384,-6 384,-12 384,-12 384,-24 384,-24 384,-30 378,-36 372,-36"/>
+<text text-anchor="middle" x="325" y="-15.2" font-family="WenQuanYi Zen Hei" font-size="11.00">中央のデータベース</text>
+</g>
+<!-- E&#45;edr&#45;agent&#45;&gt;E&#45;edr&#45;central&#45;db -->
+<g id="edge2" class="edge">
+<title>E&#45;edr&#45;agent&#45;&gt;E&#45;edr&#45;central&#45;db</title>
+<path fill="none" stroke="#b5651d" stroke-dasharray="5,2" d="M346.67,-124.31C337.31,-119.37 328.8,-112.78 323,-104 311.85,-87.11 313.21,-63.94 316.89,-46.05"/>
+<polygon fill="#b5651d" stroke="#b5651d" points="320.32,-46.76 319.24,-36.22 313.51,-45.13 320.32,-46.76"/>
+<text text-anchor="middle" x="386.5" y="-86.8" font-family="WenQuanYi Zen Hei" font-size="9.00">端末のデータを中央のデータベ</text>
+<text text-anchor="middle" x="386.5" y="-76.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ースに集める</text>
+<text text-anchor="middle" x="386.5" y="-66.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;endpoint -->
+<g id="node5" class="node">
+<title>E&#45;endpoint</title>
+<path fill="none" stroke="#1f5fbf" d="M501,-36C501,-36 471,-36 471,-36 465,-36 459,-30 459,-24 459,-24 459,-12 459,-12 459,-6 465,0 471,0 471,0 501,0 501,0 507,0 513,-6 513,-12 513,-12 513,-24 513,-24 513,-30 507,-36 501,-36"/>
+<text text-anchor="middle" x="486" y="-15.2" font-family="WenQuanYi Zen Hei" font-size="11.00">端末</text>
+</g>
+<!-- E&#45;edr&#45;agent&#45;&gt;E&#45;endpoint -->
+<g id="edge1" class="edge">
+<title>E&#45;edr&#45;agent&#45;&gt;E&#45;endpoint</title>
+<path fill="none" stroke="#b5651d" stroke-dasharray="5,2" d="M434.24,-121.76C441.07,-116.7 447.84,-110.7 453,-104 466.23,-86.8 474.75,-63.64 479.82,-45.84"/>
+<polygon fill="#b5651d" stroke="#b5651d" points="483.23,-46.63 482.41,-36.07 476.46,-44.84 483.23,-46.63"/>
+<text text-anchor="middle" x="539.5" y="-86.8" font-family="WenQuanYi Zen Hei" font-size="9.00">エージェントが端末のデータを</text>
+<text text-anchor="middle" x="539.5" y="-76.8" font-family="WenQuanYi Zen Hei" font-size="9.00">監視して集める</text>
+<text text-anchor="middle" x="539.5" y="-66.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+</g>
+</svg>
+
+<h2>EDR の製品の例(Microsoft Defender for Endpoint ほか)</h2><svg width="641pt" height="277pt"
+ viewBox="0.00 0.00 640.90 277.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 273)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-273 636.9,-273 636.9,4 -4,4"/>
+<text text-anchor="middle" x="316.45" y="-255.4" font-family="WenQuanYi Zen Hei" font-size="12.00">EDR の製品の例(Microsoft Defender for Endpoint ほか)</text>
+<!-- D&#45;mde&#45;alert -->
+<g id="node1" class="node">
+<title>D&#45;mde&#45;alert</title>
+<polygon fill="none" stroke="#2e7d32" points="123.9,-138 67.9,-138 67.9,-102 129.9,-102 129.9,-132 123.9,-138"/>
+<polyline fill="none" stroke="#2e7d32" points="123.9,-138 123.9,-132 "/>
+<polyline fill="none" stroke="#2e7d32" points="129.9,-132 123.9,-132 "/>
+<text text-anchor="middle" x="98.9" y="-117.2" font-family="WenQuanYi Zen Hei" font-size="11.00">アラート</text>
+</g>
+<!-- D&#45;mde&#45;incident -->
+<g id="node2" class="node">
+<title>D&#45;mde&#45;incident</title>
+<polygon fill="none" stroke="#2e7d32" points="134.9,-36 56.9,-36 56.9,0 140.9,0 140.9,-30 134.9,-36"/>
+<polyline fill="none" stroke="#2e7d32" points="134.9,-36 134.9,-30 "/>
+<polyline fill="none" stroke="#2e7d32" points="140.9,-30 134.9,-30 "/>
+<text text-anchor="middle" x="98.9" y="-15.2" font-family="WenQuanYi Zen Hei" font-size="11.00">インシデント</text>
+</g>
+<!-- D&#45;mde&#45;alert&#45;&gt;D&#45;mde&#45;incident -->
+<g id="edge3" class="edge">
+<title>D&#45;mde&#45;alert&#45;&gt;D&#45;mde&#45;incident</title>
+<path fill="none" stroke="#2e7d32" d="M98.9,-101.58C98.9,-86.38 98.9,-64.07 98.9,-46.46"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="102.4,-46.22 98.9,-36.22 95.4,-46.22 102.4,-46.22"/>
+<text text-anchor="middle" x="148.9" y="-71.8" font-family="WenQuanYi Zen Hei" font-size="9.00">インシデントにまとめる</text>
+<text text-anchor="middle" x="148.9" y="-61.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- D&#45;sym&#45;malicious -->
+<g id="node3" class="node">
+<title>D&#45;sym&#45;malicious</title>
+<polygon fill="none" stroke="#2e7d32" points="586.9,-36 418.9,-36 418.9,0 592.9,0 592.9,-30 586.9,-36"/>
+<polyline fill="none" stroke="#2e7d32" points="586.9,-36 586.9,-30 "/>
+<polyline fill="none" stroke="#2e7d32" points="592.9,-30 586.9,-30 "/>
+<text text-anchor="middle" x="505.9" y="-21.2" font-family="WenQuanYi Zen Hei" font-size="11.00">悪意のある可能性のある振る舞</text>
+<text text-anchor="middle" x="505.9" y="-9.2" font-family="WenQuanYi Zen Hei" font-size="11.00">い</text>
+</g>
+<!-- E&#45;analyst -->
+<g id="node4" class="node">
+<title>E&#45;analyst</title>
+<ellipse fill="none" stroke="#2e7d32" cx="43.9" cy="-226" rx="43.8" ry="18"/>
+<text text-anchor="middle" x="43.9" y="-223.2" font-family="WenQuanYi Zen Hei" font-size="11.00">アナリスト</text>
+</g>
+<!-- E&#45;analyst&#45;&gt;D&#45;mde&#45;alert -->
+<g id="edge4" class="edge">
+<title>E&#45;analyst&#45;&gt;D&#45;mde&#45;alert</title>
+<path fill="none" stroke="#2e7d32" d="M38.77,-207.96C35.38,-193.24 33,-171.9 41.9,-156 45.92,-148.8 52.1,-142.91 58.93,-138.14"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="61.11,-140.91 67.81,-132.7 57.46,-134.94 61.11,-140.91"/>
+<text text-anchor="middle" x="82.9" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">アラートを調査する</text>
+<text text-anchor="middle" x="82.9" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;defender&#45;portal -->
+<g id="node5" class="node">
+<title>E&#45;defender&#45;portal</title>
+<path fill="none" stroke="#2e7d32" d="M320.9,-138C320.9,-138 224.9,-138 224.9,-138 218.9,-138 212.9,-132 212.9,-126 212.9,-126 212.9,-114 212.9,-114 212.9,-108 218.9,-102 224.9,-102 224.9,-102 320.9,-102 320.9,-102 326.9,-102 332.9,-108 332.9,-114 332.9,-114 332.9,-126 332.9,-126 332.9,-132 326.9,-138 320.9,-138"/>
+<text text-anchor="middle" x="272.9" y="-123.2" font-family="WenQuanYi Zen Hei" font-size="11.00">統合された Defender</text>
+<text text-anchor="middle" x="272.9" y="-111.2" font-family="WenQuanYi Zen Hei" font-size="11.00"> のポータル</text>
+</g>
+<!-- E&#45;mde -->
+<g id="node6" class="node">
+<title>E&#45;mde</title>
+<path fill="none" stroke="#2e7d32" d="M304.9,-248C304.9,-248 240.9,-248 240.9,-248 234.9,-248 228.9,-242 228.9,-236 228.9,-236 228.9,-216 228.9,-216 228.9,-210 234.9,-204 240.9,-204 240.9,-204 304.9,-204 304.9,-204 310.9,-204 316.9,-210 316.9,-216 316.9,-216 316.9,-236 316.9,-236 316.9,-242 310.9,-248 304.9,-248"/>
+<text text-anchor="middle" x="272.9" y="-235.2" font-family="WenQuanYi Zen Hei" font-size="11.00">Microsoft Defe</text>
+<text text-anchor="middle" x="272.9" y="-223.2" font-family="WenQuanYi Zen Hei" font-size="11.00">nder for Endpo</text>
+<text text-anchor="middle" x="272.9" y="-211.2" font-family="WenQuanYi Zen Hei" font-size="11.00">int</text>
+</g>
+<!-- E&#45;mde&#45;&gt;D&#45;mde&#45;alert -->
+<g id="edge2" class="edge">
+<title>E&#45;mde&#45;&gt;D&#45;mde&#45;alert</title>
+<path fill="none" stroke="#2e7d32" d="M228.69,-207.09C214.99,-200.98 200.04,-193.72 186.9,-186 166.12,-173.8 144.32,-157.72 127.61,-144.61"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="129.38,-141.55 119.38,-138.06 125.03,-147.03 129.38,-141.55"/>
+<text text-anchor="middle" x="226.4" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">アラートを作る</text>
+<text text-anchor="middle" x="226.4" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;mde&#45;&gt;E&#45;defender&#45;portal -->
+<g id="edge5" class="edge">
+<title>E&#45;mde&#45;&gt;E&#45;defender&#45;portal</title>
+<path fill="none" stroke="#2e7d32" d="M272.9,-203.95C272.9,-187.93 272.9,-165.74 272.9,-148.34"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="276.4,-148.23 272.9,-138.23 269.4,-148.23 276.4,-148.23"/>
+<text text-anchor="middle" x="312.4" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">端末の信号を送る</text>
+<text text-anchor="middle" x="312.4" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;mde&#45;sensor -->
+<g id="node7" class="node">
+<title>E&#45;mde&#45;sensor</title>
+<path fill="none" stroke="#2e7d32" d="M411.9,-138C411.9,-138 373.9,-138 373.9,-138 367.9,-138 361.9,-132 361.9,-126 361.9,-126 361.9,-114 361.9,-114 361.9,-108 367.9,-102 373.9,-102 373.9,-102 411.9,-102 411.9,-102 417.9,-102 423.9,-108 423.9,-114 423.9,-114 423.9,-126 423.9,-126 423.9,-132 417.9,-138 411.9,-138"/>
+<text text-anchor="middle" x="392.9" y="-117.2" font-family="WenQuanYi Zen Hei" font-size="11.00">センサー</text>
+</g>
+<!-- E&#45;mde&#45;&gt;E&#45;mde&#45;sensor -->
+<g id="edge1" class="edge">
+<title>E&#45;mde&#45;&gt;E&#45;mde&#45;sensor</title>
+<path fill="none" stroke="#2e7d32" d="M316.95,-211.57C331.57,-205.51 347.1,-197.15 358.9,-186 370.03,-175.47 378.21,-160.48 383.75,-147.55"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="387.04,-148.75 387.48,-138.17 380.54,-146.17 387.04,-148.75"/>
+<text text-anchor="middle" x="419.4" y="-178.8" font-family="WenQuanYi Zen Hei" font-size="9.00">Defender for E</text>
+<text text-anchor="middle" x="419.4" y="-168.8" font-family="WenQuanYi Zen Hei" font-size="9.00">ndpoint のセンサー</text>
+<text text-anchor="middle" x="419.4" y="-158.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;sep -->
+<g id="node8" class="node">
+<title>E&#45;sep</title>
+<path fill="none" stroke="#2e7d32" d="M542.4,-244C542.4,-244 469.4,-244 469.4,-244 463.4,-244 457.4,-238 457.4,-232 457.4,-232 457.4,-220 457.4,-220 457.4,-214 463.4,-208 469.4,-208 469.4,-208 542.4,-208 542.4,-208 548.4,-208 554.4,-214 554.4,-220 554.4,-220 554.4,-232 554.4,-232 554.4,-238 548.4,-244 542.4,-244"/>
+<text text-anchor="middle" x="505.9" y="-229.2" font-family="WenQuanYi Zen Hei" font-size="11.00">Symantec Endpo</text>
+<text text-anchor="middle" x="505.9" y="-217.2" font-family="WenQuanYi Zen Hei" font-size="11.00">int Protection</text>
+</g>
+<!-- E&#45;sym&#45;edr -->
+<g id="node9" class="node">
+<title>E&#45;sym&#45;edr</title>
+<path fill="none" stroke="#2e7d32" d="M537.4,-138C537.4,-138 474.4,-138 474.4,-138 468.4,-138 462.4,-132 462.4,-126 462.4,-126 462.4,-114 462.4,-114 462.4,-108 468.4,-102 474.4,-102 474.4,-102 537.4,-102 537.4,-102 543.4,-102 549.4,-108 549.4,-114 549.4,-114 549.4,-126 549.4,-126 549.4,-132 543.4,-138 537.4,-138"/>
+<text text-anchor="middle" x="505.9" y="-117.2" font-family="WenQuanYi Zen Hei" font-size="11.00">Symantec EDR</text>
+</g>
+<!-- E&#45;sep&#45;&gt;E&#45;sym&#45;edr -->
+<g id="edge6" class="edge">
+<title>E&#45;sep&#45;&gt;E&#45;sym&#45;edr</title>
+<path fill="none" stroke="#2e7d32" d="M505.9,-207.83C505.9,-191.64 505.9,-167.13 505.9,-148.27"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="509.4,-148.2 505.9,-138.2 502.4,-148.2 509.4,-148.2"/>
+<text text-anchor="middle" x="545.4" y="-173.8" font-family="WenQuanYi Zen Hei" font-size="9.00">端末の事象</text>
+<text text-anchor="middle" x="545.4" y="-163.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+<!-- E&#45;sym&#45;edr&#45;&gt;D&#45;sym&#45;malicious -->
+<g id="edge7" class="edge">
+<title>E&#45;sym&#45;edr&#45;&gt;D&#45;sym&#45;malicious</title>
+<path fill="none" stroke="#2e7d32" d="M505.9,-101.58C505.9,-86.38 505.9,-64.07 505.9,-46.46"/>
+<polygon fill="#2e7d32" stroke="#2e7d32" points="509.4,-46.22 505.9,-36.22 502.4,-46.22 509.4,-46.22"/>
+<text text-anchor="middle" x="569.4" y="-76.8" font-family="WenQuanYi Zen Hei" font-size="9.00">振る舞いの分析で悪意のある可</text>
+<text text-anchor="middle" x="569.4" y="-66.8" font-family="WenQuanYi Zen Hei" font-size="9.00">能性のある振る舞いを識別する</text>
+<text text-anchor="middle" x="569.4" y="-56.8" font-family="WenQuanYi Zen Hei" font-size="9.00">(方式は出典になし)</text>
+</g>
+</g>
+</svg>
+
+<h2>出典に書かれておらず、描いていない箇所</h2><ul><li>SIEM(NIST SP 800-92): エージェント型で、ログの発生源の中のログがエージェントに渡る経路と方式。</li><li>SIEM(NIST SP 800-92): SIEMサーバからデータベースサーバへログが渡る経路(R-server-db は保存先を表すだけ)。</li><li>SIEM(NIST SP 800-92): SIEM 自身がアラートを生成すること。アラートの生成は、ログ管理基盤の記述(F705)にだけあり、</li><li>SIEM(NIST SP 800-92): アラートを受け取る人や画面。3.1 の第3層(コンソール)はログ管理基盤一般の記述で、アラートを受け取るとは書かれていない。</li><li>EDR(NCA): 中央のデータベースから、脅威のパターンを識別する分析への経路。</li><li>EDR(NCA): EDR のエージェントが端末の上で動くこと(「エージェント型で導入する」とだけある)。端末からエージェントへの段の送り方。</li><li>EDR(NCA)から SIEM への経路。NCA の 4-2(F708)は SIEM などとの統合と共有を求めるが、向きと内容を書いていない。</li><li>EDR(NCA): インシデント。NCA のひな形には、検知や通知をインシデントにまとめる記述がない。</li><li>EDR(Microsoft Defender for Endpoint): テレメトリがどこからどこへ集められるか(出典は集める主体だけを書く)。</li><li>EDR(Microsoft Defender for Endpoint)から Microsoft Sentinel への経路。F711 の「ほかの Microsoft のセキュリティ製品」に Defender for Endpoint が含まれるとは、読んだ出典に書かれていない。</li></ul></html>
