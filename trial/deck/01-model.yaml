@@ -109,7 +109,10 @@ elements:
     kind: component
     name: SIEM を基にしたログ管理基盤(log management infrastructure based on security information and event management software)
     evidence: [F715, F705]
-    note: ログ管理基盤は通常(typically)、syslog 型の集中ログソフトウェアか SIEM ソフトウェアのどちらかを基にする(F715)。このうち SIEM を基にするもの
+    note: >-
+      ログ管理基盤は通常(typically)、syslog 型の集中ログソフトウェアか SIEM ソフトウェアのどちらかを基にする(F715)。この要素は、そのうち SIEM を基にするものを指す。
+      SIEM を基にしない基盤(syslog 型)もある。一部の機能を基盤の3層のどこに置くかは、主に使うソフトウェアの種類で決まる(F715。3.2 の末尾)。
+      出典は相関の結果やアラートを作る機能を3層のどこ(SIEMサーバなど)に置くかを書いていないため、つながりの起点を SIEMサーバではなくこの要素にした
   - id: D-correlated-entry
     basis: description
     kind: data
@@ -407,7 +410,7 @@ relations:
     to: E-siem
     label: SIEM ソフトウェアを基にする
     mode: unknown
-    condition: 通常(typically)。syslog 型の集中ログソフトウェアを基にする場合もある
+    condition: 定義による(SIEM を基にした基盤を指す要素であるため)
     evidence: [F715]
   - id: R-infra-correlated-entry
     basis: description

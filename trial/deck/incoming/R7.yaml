@@ -83,13 +83,13 @@
   verified: false
 
 - id: F715
-  statement: ログ管理基盤は、ログデータを生成、転送、保存、分析、廃棄するための機器、ソフトウェア、ネットワーク、媒体からなる。第3章は、ログ管理基盤の中で行われる基本の機能を述べた後、ログ管理ソフトウェアの2つの主な種類として syslog 型の集中ログソフトウェアと SIEM ソフトウェアを扱う。ログ管理基盤は、通常、syslog 型の集中ログソフトウェアか SIEM ソフトウェアのどちらかを基にする
+  statement: ログ管理基盤は、ログデータを生成、転送、保存、分析、廃棄するための機器、ソフトウェア、ネットワーク、媒体からなる。第3章は、ログ管理基盤の中で行われる基本の機能を述べた後、ログ管理ソフトウェアの2つの主な種類として syslog 型の集中ログソフトウェアと SIEM ソフトウェアを扱う。ログ管理基盤は通常、3.2 の機能の大半または全てを含み、一部の機能を3層のどこに置くかは、主に使うログ管理ソフトウェアの種類で決まる。ログ管理基盤は、通常、syslog 型の集中ログソフトウェアか SIEM ソフトウェアのどちらかを基にする
   kind: fact
   source: NIST SP 800-92 Guide to Computer Security Log Management
-  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  第3章 Log Management Infrastructure の冒頭(p.3-1)と 3.6 Summary(p.3-11)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  第3章 Log Management Infrastructure の冒頭(p.3-1)、3.2 Functions の末尾(p.3-5)、3.6 Summary(p.3-11)
   as_of: 2006-09
-  quote: "A log management infrastructure consists of the hardware, software, networks, and media used to generate, transmit, store, analyze, and dispose of log data. [...] It then describes the basic functions performed within a log management infrastructure. Next, it examines the two major categories of log management software: syslog-based centralized logging software and security information and event management software. [...] Log management infrastructures, which are typically based on either syslog-based centralized logging software or security information and event management software, usually use a three-tiered design."
-  qualifiers: [2006年版, "原文の脚注番号(20)は除いた", "'[...]' は収集セッションによる省略。前半は第3章の冒頭、後半は 3.6 Summary", "SIEM を基にするのは 'typically'(通常)で、syslog 型を基にする場合もある", "'basic functions'(基本の機能)は 3.2 Functions の節(F705 の出典)を指す"]
+  quote: "A log management infrastructure consists of the hardware, software, networks, and media used to generate, transmit, store, analyze, and dispose of log data. [...] It then describes the basic functions performed within a log management infrastructure. Next, it examines the two major categories of log management software: syslog-based centralized logging software and security information and event management software. [...] A log management infrastructure usually encompasses most or all of the functions described in this section. Section 3.1 describes the components and architectures of log management infrastructures. The placement of some of the log functions among the three tiers of the log management infrastructure depends primarily on the type of log management software used. [...] Log management infrastructures, which are typically based on either syslog-based centralized logging software or security information and event management software, usually use a three-tiered design."
+  qualifiers: [2006年版, "原文の脚注番号(20)は除いた", "'[...]' は収集セッションによる省略。1つ目の部分は第3章の冒頭、2つ目は 3.2 Functions の末尾(this section は 3.2 を指す)、3つ目は 3.6 Summary", "3.2 の機能を含むのは 'usually'(通常)。機能の置き場所がソフトウェアの種類で決まるのは 'primarily'(主に)で、'some of the log functions'(一部の機能)について", "SIEM を基にするのは 'typically'(通常)で、syslog 型を基にする場合もある", "'basic functions'(基本の機能)は 3.2 Functions の節(F705 の出典)を指す"]
   origin: NIST SP 800-92
   answers: []
   verified: false
