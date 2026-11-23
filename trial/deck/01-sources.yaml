@@ -33,13 +33,14 @@
   quote: Regardless of how it receives log data (through agents or an agentless method), an SIEM server analyzes the data from all the different log sources, correlates events among the log entries, identifies and prioritizes significant events, and initiates responses to events if desired.
   qualifiers:
   - 2006年版
-  - 旧版(archived)の記述
   - 応答の開始は「必要な場合」
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
+  - 優先順位付けは一部のSIEM製品の機能。脚注37に 'Some SIEM products can prioritize events based on correlating events with other sources of information, such as the result of vulnerability scans.' とある
   origin: NIST SP 800-92
   answers:
   - Q1.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -54,20 +55,21 @@
   quote: Event correlation is finding relationships between two or more log entries. The most common form of event correlation is rule-based correlation, which matches multiple log entries from a single source or multiple sources based on logged values, such as timestamps, IP addresses, and event types.
   qualifiers:
   - 2006年版
-  - 旧版(archived)の記述
   - ログ管理ソフトウェア一般の機能として記述
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
+  - 同じ節に 'Event correlation can also be performed in other ways, such as using statistical methods or visualization tools.' とあり、ルール以外の相関もある
   origin: NIST SP 800-92
   answers:
   - Q1.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F102
-  statement: シグネチャ検知は、既知の脅威に対応するパターンを観測イベントと比較して潜在的なインシデントを見つける。既知の脅威には非常に有効だが、未知の脅威や回避された脅威には効果が乏しい
+  statement: シグネチャ検知は、既知の脅威に対応するパターン(シグネチャ)を観測イベントと比較して、潜在的なインシデントを見つける方式である
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.1 Signature-Based Detection
@@ -75,56 +77,120 @@
   quote: A signature is a pattern that corresponds to a known threat. Signature-based detection is the process of comparing signatures against observed events to identify possible incidents.
   qualifiers:
   - 2007年版
-  - 旧版の記述
   - IDPS(侵入検知防止システム)の検知方式として記述。EDRやSIEMそのものの定義ではない
   - 後続の文で「未知の脅威には largely ineffective」と述べる
+  - SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)
   origin: NIST SP 800-94
   answers:
   - Q1.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
+  request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F121
+  statement: シグネチャ検知は、既知の脅威の検知には非常に有効だが、未知の脅威、回避手法で偽装された脅威、既知の脅威の多くの変種の検知にはほとんど効果がない
+  kind: fact
+  source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.1 Signature-Based Detection
+  as_of: 2007-02
+  quote: Signature-based detection is very effective at detecting known threats but largely ineffective at detecting previously unknown threats, threats disguised by the use of evasion techniques, and many variants of known threats.
+  qualifiers:
+  - 2007年版
+  - IDPS(侵入検知防止システム)の検知方式として記述。EDRやSIEMそのものの定義ではない
+  - 後続の文で「未知の脅威には largely ineffective」と述べる
+  - SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)
+  origin: NIST SP 800-94
+  answers:
+  - Q1.1.1
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F103
-  statement: 振る舞い異常検知は、通常とみなす活動の定義(プロファイル)を観測イベントと比較し、大きな逸脱を見つける。未知の脅威の検知に有効である
+  statement: 振る舞い異常検知は、通常とみなす活動の定義(プロファイル)を観測イベントと比較し、大きな逸脱を見つける方式である
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.2 Anomaly-Based Detection
   as_of: 2007-02
   quote: Anomaly-based detection is the process of comparing definitions of what activity is considered normal against observed events to identify significant deviations.
   qualifiers:
-  - 2007年版
-  - 旧版の記述
   - IDPSの検知方式として記述。EDRやSIEMそのものの定義ではない
+  - SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)
   origin: NIST SP 800-94
   answers:
   - Q1.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
+- id: F122
+  statement: 振る舞い異常検知の主な利点は、未知の脅威の検知に非常に有効でありうることである
+  kind: fact
+  source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.2 Anomaly-Based Detection
+  as_of: 2007-02
+  quote: The major benefit of anomaly-based detection methods is that they can be very effective at detecting previously unknown threats.
+  qualifiers:
+  - IDPSの検知方式として記述。EDRやSIEMそのものの定義ではない
+  - 原文は 'can be very effective'(有効でありうる)
+  - SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)
+  origin: NIST SP 800-94
+  answers:
+  - Q1.1.1
+  verified: true
+  collected_verified: false
+  request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F123
+  statement: 振る舞い異常検知を用いる製品は、通常の活動でもプロファイルから大きくずれるものがあると、特に多様または動的な環境で、多くの誤検知を出すことが多い
+  kind: fact
+  source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.2 Anomaly-Based Detection
+  as_of: 2007-02
+  quote: Anomaly-based IDPS products often produce many false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments.
+  qualifiers:
+  - IDPSの検知方式として記述。EDRやSIEMそのものの定義ではない
+  - 原文は 'often'(多い)で、'especially in more diverse or dynamic environments'(特に多様または動的な環境)の限定が付く
+  - SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)
+  origin: NIST SP 800-94
+  answers:
+  - Q1.1.1
+  verified: true
+  collected_verified: false
+  request: R1
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F104
-  statement: ホスト型IDPSは、単一ホストの特性とそのホスト内のイベント(システムログ、実行中のプロセス、アプリケーション活動、ファイルの変更など)を監視する
+  statement: ホスト型IDPSは、単一ホストの特性とそのホスト内のイベントを不審な活動について監視する。監視しうる特性の例として、そのホスト宛のネットワーク通信、システムログ、実行中のプロセス、アプリケーション活動、ファイルへのアクセスと変更、システムとアプリケーションの設定変更が挙げられている
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 第2章 IDPS技術の種類(Host-Based)
   as_of: 2007-02
   quote: Host-Based, which monitors the characteristics of a single host and the events occurring within that host for suspicious activity. Examples of the types of characteristics a host-based IDPS might monitor are network traffic (only for that host), system logs, running processes, application activity, file access and modification, and system and application configuration changes.
   qualifiers:
+  - 原文は 'might monitor' と 'Examples'(監視しうるものの例であり、必ず監視するものではない)
   - 2007年版
-  - 旧版の記述
   - 端末上で動くエージェント型の検知技術の記述。EDRという語は用いていない
+  - SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)
   origin: NIST SP 800-94
   answers:
   - Q1.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -139,13 +205,13 @@
   quote: Security software logs primarily contain computer security-related information. Section 2.1.1 describes them. Operating system logs (described in Section 2.1.2) and application logs (described in Section 2.1.3) typically contain a variety of information, including computer security-related data.
   qualifiers:
   - 2006年版
-  - 旧版(archived)の記述
-  - ログを3分類(セキュリティソフト、OS、アプリケーション)する整理
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
+  - 特に関心のあるログの種類として挙げた3つで、全てではない。同じ節の続きに、スイッチや無線アクセスポイントなどのネットワーク機器のログ、ネットワーク監視ソフトのログもセキュリティに関係しうるとある
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -160,33 +226,34 @@
   quote: Intrusion detection and intrusion prevention systems record detailed information on suspicious behavior and detected attacks, as well as any actions intrusion prevention systems performed to stop malicious activity in progress.
   qualifiers:
   - 2006年版
-  - 旧版(archived)の記述
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F107
-  statement: マルウェア対策ソフトのログは、検出したマルウェア、駆除の試み、隔離を記録する
+  statement: マルウェア対策ソフトの最も一般的な形であるウイルス対策ソフトは、通常、検出した全てのマルウェア、駆除の試み、隔離を記録する
   kind: fact
   source: NIST SP 800-92 Guide to Computer Security Log Management
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.1 Security Software(Antimalware Software)
   as_of: 2006-09
   quote: The most common form of antimalware software is antivirus software, which typically records all instances of detected malware, file and system disinfection attempts, and file quarantines.
   qualifiers:
+  - 記録する主体は、マルウェア対策ソフト全般ではなく、その最も一般的な形であるウイルス対策ソフト(antivirus software)
   - 2006年版
-  - 旧版(archived)の記述
   - 「通常は」(typically)の記述
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -201,56 +268,57 @@
   quote: Authentication servers, including directory servers and single sign-on servers, typically log each authentication attempt, including its origin, username, success or failure, and date and time.
   qualifiers:
   - 2006年版
-  - 旧版(archived)の記述
   - 「通常は」(typically)の記述
   - ディレクトリサーバとシングルサインオンサーバを含む
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F109
-  statement: ファイアウォールはポリシーに基づき通信を許可または遮断し、ルータよりも詳細なログを生成する
+  statement: ファイアウォールは、ルータと同様にポリシーに基づいて通信を許可または遮断するが、通信の検査にはるかに高度な方法を用いる。状態の追跡と内容の検査もできる。ルータよりも複雑なポリシーと詳細な活動ログを持つ傾向がある
   kind: fact
   source: NIST SP 800-92 Guide to Computer Security Log Management
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.1 Security Software(Firewalls)
   as_of: 2006-09
-  quote: Firewalls can also track the state of network traffic and perform content inspection. Firewalls tend to have more complex policies and generate more detailed logs of activity than routers.
+  quote: Like routers, firewalls permit or block activity based on a policy; however, firewalls use much more sophisticated methods to examine network traffic. Firewalls can also track the state of network traffic and perform content inspection. Firewalls tend to have more complex policies and generate more detailed logs of activity than routers.
   qualifiers:
+  - 原文は 'tend to'(傾向がある)
   - 2006年版
-  - 旧版(archived)の記述
-  - ルータとの比較としての記述。ルータは遮断した通信の基本的な特性のみを記録するのが通常
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F110
-  statement: OSの監査記録は、認証の成功と失敗、ファイルアクセス、セキュリティポリシーの変更、アカウントの変更、権限の使用を記録する
+  statement: OSの監査記録は、認証の成功と失敗、ファイルアクセス、セキュリティポリシーの変更、アカウントの変更、権限の使用などのセキュリティ事象の情報を含む
   kind: fact
   source: NIST SP 800-92 Guide to Computer Security Log Management
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.2 Operating Systems(Audit Records)
   as_of: 2006-09
   quote: Audit records contain security event information such as successful and failed authentication attempts, file accesses, security policy changes, account changes (e.g., account creation and deletion, account privilege assignment), and use of privileges.
   qualifiers:
+  - 原文は 'such as'(例示であり、全てではない)
   - 2006年版
-  - 旧版(archived)の記述
   - 記録する事象の種類は管理者が指定できる(OSによる)
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -265,57 +333,57 @@
   quote: OS logs are most beneficial for identifying or investigating suspicious activity involving a particular host. After suspicious activity is identified by security software, OS logs are often consulted to get more information on the activity.
   qualifiers:
   - 2006年版
-  - 旧版(archived)の記述
   - 「しばしば」(often)の記述
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F112
-  statement: アプリケーションログは、クライアントの要求とサーバの応答、アカウント情報、利用状況などを記録し、アプリケーション関連のインシデントの調査に特に有用である。一方、独自形式が多く、内容が文脈に依存するため、確認に多くの資源が要る
+  statement: アプリケーションでしか記録できない情報が多く、そのためアプリケーションログは、アプリケーション関連のセキュリティインシデント、監査、遵守の取り組みに特に有用である。一方、アプリケーションログは独自形式であることが多く、内容が文脈に依存することが多いため、確認に多くの資源が要る
   kind: fact
   source: NIST SP 800-92 Guide to Computer Security Log Management
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.3 Applications
   as_of: 2006-09
-  quote: However, these logs are often in proprietary formats that make them more difficult to use, and the data they contain is often highly context-dependent, necessitating more resources to review their contents.
+  quote: Much of this information, particularly for applications that are not used through unencrypted network communications, can only be logged by the applications, which makes application logs particularly valuable for application-related security incidents, auditing, and compliance efforts. However, these logs are often in proprietary formats that make them more difficult to use, and the data they contain is often highly context-dependent, necessitating more resources to review their contents.
   qualifiers:
+  - 「アプリケーション側でしか記録できない」のは、特に暗号化されていないネットワーク通信を通じて使われないアプリケーションの情報(原文 'particularly for applications that are not used through unencrypted network communications')
+  - 原文は 'often'(〜が多い)
   - 2006年版
-  - 旧版(archived)の記述
-  - 「しばしば」(often)の記述
-  - 直前の文脈は、アプリケーション側でしか記録できない情報があることを述べている
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F113
-  statement: 複数のログ源のログ時刻は、時間帯の違いや時計のずれのため、正規化が必要になることが多い
+  statement: 複数の時間帯にシステムを持つ組織は、記録された時刻を単一の時間帯に変換する必要があることが多い。システムの時計が互いにずれている場合は、ずれたログ源の記録時刻を加減する必要が生じうる
   kind: fact
   source: NIST SP 800-92 Guide to Computer Security Log Management
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 第3章 脚注24
   as_of: 2006-09
   quote: Normalizing times is often particularly challenging. Organizations with systems in multiple time zones often need to convert all logged times to a single time zone. Also, systems’ clocks might not be in sync with each other, so it might be necessary to add or subtract times from the log entries recorded by out-of-sync sources.
   qualifiers:
-  - 2006年版
-  - 旧版(archived)の記述
+  - 原文は、時間帯の変換には 'often need'(多い)、時計のずれの補正には 'might be necessary'(必要になりうる)
+  - SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)
   - 脚注の記述
-  - 複数拠点・複数時間帯の組織の場合
+  - 複数の時間帯にシステムを持つ組織の場合
+  - 脚注は続けて、NTPなどの時刻同期技術を可能な限り使うべきとしている
   origin: NIST SP 800-92
   answers:
   - Q1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -330,13 +398,12 @@
   quote: MITRE ATT&CK® is a globally-accessible knowledge base of adversary tactics and techniques based on real-world observations.
   qualifiers:
   - 取得時点の現行版 v20.1
-  - 日付は Version History ページの「October 13
-  - 2026 - current」
+  - 日付は Version History ページの「October 13, 2026 - current」
   origin: MITRE ATT&CK
   answers:
   - Q1.3
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -347,62 +414,81 @@
   kind: fact
   source: MITRE ATT&CK 公式サイト Get Started
   locator: https://attack.mitre.org/resources/ 節 "What is ATT&CK?" / Key Concepts
-  as_of: 2026-10(ATT&CK v20.1)
+  as_of: 2026-11-23取得(ATT&CK v20.1)。ページに本文の更新日の表示なし
   quote: ATT&CK is a model that attempts to systematically categorize adversary behavior.
   qualifiers:
   - 取得時点の現行版 v20.1
   origin: MITRE ATT&CK
   answers:
   - Q1.3
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F116
-  statement: ATT&CKでは、戦術は技術の「なぜ」(攻撃者の戦術上の目的)を、技術は戦術上の目的を達成する「どのように」を表す
+  statement: ATT&CKでは、戦術は ATT&CK の技術または副技術の「なぜ」を表す
   kind: fact
   source: MITRE ATT&CK FAQ
   locator: https://attack.mitre.org/resources/faq/ 見出し "What are tactics?" / "What are techniques?"
   as_of: 2026-10(取得時点。ページに日付なし)
   quote: Tactics represent the “why” of an ATT&CK technique or sub-technique.
   qualifiers:
-  - 技術の定義の原文は 'Techniques represent “how” an adversary achieves a tactical goal by performing an action.'
   - 取得時点の版
   origin: MITRE ATT&CK
   answers:
   - Q1.3
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
+  request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F125
+  statement: ATT&CKでは、技術は、攻撃者が行動を実行して戦術上の目的を達成する「どのように」を表す
+  kind: fact
+  source: MITRE ATT&CK FAQ
+  locator: https://attack.mitre.org/resources/faq/ 見出し "What are techniques?"
+  as_of: 2026-11-23取得(ページに日付なし)
+  quote: Techniques represent “how” an adversary achieves a tactical goal by performing an action.
+  qualifiers:
+  - 取得時点の版
+  origin: MITRE ATT&CK
+  answers:
+  - Q1.3
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F117
-  statement: 戦術は、技術の文脈となる分類(持続、情報収集、横展開、実行、持ち出しなど)であり、技術にタグとして付けられる
+  statement: ATT&CKの戦術は、個々の技術の文脈となる分類であり、持続、情報の探索、横展開、ファイルの実行、データの持ち出しなど、作戦中に攻撃者が行うことを表す。技術または副技術には、技術の使用で得られる結果に応じて、1つ以上の戦術がタグとして付けられる
   kind: fact
   source: 'MITRE ATT&CK: Design and Philosophy (MITRE, Revised March 2020)'
   locator: https://attack.mitre.org/docs/ATTACK_Design_and_Philosophy_March_2020.pdf Tactics の節
   as_of: 2020-03
-  quote: 'Tactics represent the “why” of an ATT&CK technique or sub-technique. It is the adversary’s tactical objective: the reason for performing an action. Tactics serve as useful contextual categories for individual techniques and cover standard notations for things adversaries do during an operation, such as persist, discover information, move laterally, execute files, and exfiltrate'
+  quote: 'Tactics represent the “why” of an ATT&CK technique or sub-technique. It is the adversary’s tactical objective: the reason for performing an action. Tactics serve as useful contextual categories for individual techniques and cover standard notations for things adversaries do during an operation, such as persist, discover information, move laterally, execute files, and exfiltrate data. Tactics are treated as “tags” within ATT&CK where a technique or sub-technique is associated or tagged with one or more tactic categories depending on the different results that can be achieved by using a technique.'
   qualifiers:
   - 2020年3月改訂版の文書
-  - quote は文の途中で終わる(原文は次行に「data」と続く)
+  - 「1つ以上の戦術」(技術ごとに戦術は複数ありうる)
+  - 戦術の例は such as による例示
   origin: MITRE ATT&CK
   answers:
   - Q1.3
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F118
-  statement: ATT&CKは、攻撃者が使うツールに依存しない、振る舞いに基づく検知分析(アナリティクス)を作り、試験するために使える
+  statement: ATT&CKは、環境内の攻撃者の振る舞いを検知する、振る舞いに基づく分析(アナリティクス)を作り、試験する道具として使える
   kind: fact
   source: 'MITRE ATT&CK: Design and Philosophy (MITRE, Revised March 2020)'
   locator: https://attack.mitre.org/docs/ATTACK_Design_and_Philosophy_March_2020.pdf Behavioral Analytics Development
@@ -411,33 +497,51 @@
   qualifiers:
   - 2020年3月改訂版の文書
   - 用途の1つとして記述(他に敵対者エミュレーション、SOC成熟度評価など)
+  - 同じ節の直前の段落は、振る舞い分析が 'may not rely on prior knowledge of adversary tools and indicators'(攻撃者のツールや指標の事前の知識に頼らない場合がある)と述べる
   origin: MITRE ATT&CK
   answers:
   - Q1.3
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F119
-  statement: ATT&CKは、防御側が攻撃者の使う技術を検知するアナリティクスを作る助けになる。脅威インテリジェンスでは、構造化・比較・分析のための共通言語になる
+  statement: ATT&CKは、防御側が攻撃者の使う技術を検知するアナリティクス(分析)を作る助けになる
   kind: fact
   source: MITRE ATT&CK 公式サイト Get Started
   locator: https://attack.mitre.org/resources/ 節 "How can I use ATT&CK?"(Detections and Analytics / Threat Intelligence)
-  as_of: 2026-10(ATT&CK v20.1)
+  as_of: 2026-11-23取得(ATT&CK v20.1)。ページに本文の更新日の表示なし
   quote: ATT&CK can help cyber defenders develop analytics that detect the techniques used by an adversary.
   qualifiers:
-  - 脅威インテリジェンスの原文は 'ATT&CK gives analysts a common language to structure
-  - compare
-  - and analyze threat intelligence.'
+  - 取得時点の現行版 v20.1
+  - 「ATT&CK can help」(助けになりうる)
+  origin: MITRE ATT&CK
+  answers:
+  - Q1.3
+  verified: true
+  collected_verified: false
+  request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F124
+  statement: ATT&CKは、脅威インテリジェンスの分析者に、脅威情報を構造化し、比較し、分析するための共通言語を与える
+  kind: fact
+  source: MITRE ATT&CK 公式サイト Get Started
+  locator: https://attack.mitre.org/resources/ 節 "How can I use ATT&CK?"(Threat Intelligence)
+  as_of: 2026-11-23取得(ATT&CK v20.1)。ページに本文の更新日の表示なし
+  quote: ATT&CK gives analysts a common language to structure, compare, and analyze threat intelligence.
+  qualifiers:
   - 取得時点の現行版 v20.1
   origin: MITRE ATT&CK
   answers:
   - Q1.3
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
@@ -452,18 +556,20 @@
   quote: High level analytic process, sensors, data, and detection strategies that can be useful to identify a (sub-)technique has been used by an adversary.
   qualifiers:
   - 2020年3月改訂版の文書の記述。現行版の技術ページの構成は未確認
+  - 同じ項目の続きに 'Detection may not always be possible for a given (sub-)technique and should be documented as such.'(技術によっては検知が可能とは限らず、その場合はそう記録するべき)とある
+  - 検知の推奨は特定の製品に依らない方法と道具の種類にとどめる、と続く(vendor agnostic)
   origin: MITRE ATT&CK
   answers:
   - Q1.3
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R1
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F200
-  statement: 実在のSOCの4年間のネットワークアラートログ(約1.16億件)では、解析者が直面するアラートは1日あたり2.4万〜13.4万件だった
+  statement: 実在のSOCの4年間のネットワークアラートログ(1.15億件)では、解析者が直面するアラートは1日あたり2.4万〜13.4万件で、真の攻撃に関連するのはそのうち0.01%だった
   value: 24000-134000
   unit: 件/日
   kind: fact
@@ -472,12 +578,14 @@
   as_of: '2024'
   metric: SOCが受けるアラート数(1日あたり)
   superseded_by: null
-  quote: we observe that SOC analysts are facing excessive alerts (24K–134K per day), but only a small percentage of the alerts (0.01%) are associated with true attacks.
+  quote: we fill the gap by working with a real-world SOC and collecting and analyzing their network alert logs over 4 years (115 million alerts, from 2018 to 2022). To further understand how alerts are associated with true attacks, we also obtain the ground truth of 227 successful attacks in the past 20 years (11 during the overlapping period). Through analysis, we observe that SOC analysts are facing excessive alerts (24K–134K per day), but only a small percentage of the alerts (0.01%) are associated with true attacks.
   qualifiers:
-  - 1つのSOC(米国の研究機関のSOC。NCSA関連)
-  - 2018〜2022年のZeekのネットワークアラート
-  - 他のホストIDS・商用ツールのアラートは含まない(下限)
-  - 期間により平均13.4万件/日(2018-04〜2020-08)と2.4万件/日(2020-12〜2022-07)
+  - 1つのSOC
+  - 2018〜2022年のネットワークアラートログ(115 million alerts)
+  - 1日あたりの件数は幅(24K–134K)で示されている
+  - ほかのホストIDS・商用ツールのアラートは含まない(本文§3、下限)
+  - 13.4万件/日は第1期(2018-04〜2020-08)の平均で、自動遮断(BHR)はまだない
+  - 2.4万件/日は第2期(2020-12〜2022-07)の平均で、自動遮断(BHR)で処理された分(第2期の44.9%)を含む
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.2
@@ -489,7 +597,7 @@
     H2: neutral
     H3: neutral
 - id: F201
-  statement: 同SOCで自動遮断(BHR)を除いた後も、解析者が処理するアラートは1日あたり約13,764件残った
+  statement: 同SOCの第2期で、自動遮断(BHR)で人手を介さず処理されたアラートは約44.9%(6,474,204件)あり、それを除いても解析者が処理するアラートは1日あたり約13,764件残った
   value: 13764
   unit: 件/日
   kind: fact
@@ -498,11 +606,11 @@
   as_of: '2024'
   metric: SOCが受けるアラート数(1日あたり)
   superseded_by: null
-  quote: Even so, after BHR filtering, there are still a large number of alerts that need to be handled and processed by analysts (about 13,764 alerts per day).
+  quote: 6,474,204 alerts are handled by BHR during the second period (44.9%) without involving human analysts. Many of these alerts are associated with attack attempts that match high-confident signatures and some may involve known benign triggers (e.g., scanning from third-party security vendors, see §6.2). Even so, after BHR filtering, there are still a large number of alerts that need to be handled and processed by analysts (about 13,764 alerts per day).
   qualifiers:
   - 1つのSOC
   - 第2期(2020-12〜2022-07)
-  - 自動遮断が全体の44.9%
+  - BHR処理分には、既知の良性のトリガー(第三者ベンダーのスキャンなど)も含まれうる
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.2
@@ -544,15 +652,15 @@
   unit: 件/日
   kind: fact
   source: Vectra AI, 2023 State of Threat Detection
-  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文 / 要約)
+  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文 / 要約) / Methodology
   as_of: '2023'
   metric: SOCが受けるアラート数(1日あたり)
   superseded_by: null
   quote: SOC teams receive 4,484 alerts each day on average . Analysts spend nearly 3 hours (2.7) each day manually triaging alerts,
   qualifiers:
   - ベンダー(脅威検知製品の会社)の調査。宣伝目的を含むため一次情報として扱わない
-  - 標本数と調査方法は本ページで未確認
   - 自己申告の平均
+  - Sapio Research(Vectra委託)の2023年3〜4月の調査。対象は従業員1,000人超の組織のIT security analysts 2,000人(米英仏独伊など。出典 Methodology)
   origin: Vectra AI の調査(2023)
   answers:
   - Q1.1.2
@@ -569,7 +677,7 @@
   unit: '%'
   kind: fact
   source: Vectra AI, 2023 State of Threat Detection
-  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文)
+  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文) / Methodology
   as_of: '2023'
   metric: 誤検知の割合
   superseded_by: null
@@ -577,8 +685,8 @@
   qualifiers:
   - ベンダーの調査。宣伝目的を含むため一次情報として扱わない
   - 解析者の自己申告(測定値ではない)
-  - 標本数は未確認
   - 「誤検知」の定義は示されていない(下のF205・F207は、この語に正当な検知を含めうることを示す)
+  - Sapio Research(Vectra委託)の2023年3〜4月の調査。対象は従業員1,000人超の組織のIT security analysts 2,000人(米英仏独伊など。出典 Methodology)
   origin: Vectra AI の調査(2023)
   answers:
   - Q1.1.3
@@ -590,7 +698,7 @@
     H2: neutral
     H3: neutral
 - id: F205
-  statement: SOC実務者へのインタビューで、ある解析者は「自分たちが出すアラームの99%は誤検知だ」と述べた。この99%は、多くが良性のトリガーで、技術の性能の測定値ではないと論文は分析している
+  statement: SOC実務者へのインタビューで、ある解析者(B3)は「自分たちが出すアラームの99%は誤検知だ」と述べた
   value: 99
   unit: '%'
   kind: fact
@@ -603,7 +711,6 @@
   qualifiers:
   - インタビュー参加者1人の体感の発言
   - 統計ではない
-  - 論文は、この99%は主に良性のトリガーで、技術の性能の測定値ではないとする(§RQ2)
   origin: 著者らのインタビュー(n=21)
   answers:
   - Q1.1.3
@@ -615,7 +722,7 @@
     H2: neutral
     H3: neutral
 - id: F206
-  statement: 同論文のアンケートの回答例では、調査したアラート100件のうち実際の脅威は1件、別の回答者では200件のうち50件だった
+  statement: 同論文のアンケートで、10人が1日に処理するアラートと、そのうち正当な検知だった割合を答えた。例として、調査したアラート100件のうち実際の脅威は1件、別の回答者では200件のうち50件だった
   value: 1/100, 50/200
   unit: 件
   kind: fact
@@ -624,11 +731,10 @@
   as_of: 2022-08
   metric: アラートのうち正当な検知の割合
   superseded_by: null
-  quote: one participant indicated that one out of every 100 alerts investigated is an actual threat, while another stated that in every 200 alerts, 50 were found to be legitimate.
+  quote: some analysts (n = 10) shared the number of alerts they processed daily and the proportion of these that they found to be legitimate. For example, one participant indicated that one out of every 100 alerts investigated is an actual threat, while another stated that in every 200 alerts, 50 were found to be legitimate.
   qualifiers:
-  - 回答した10人のうちの2例
+  - 回答した10人(アンケート全体はn=20)のうちの2例
   - 自己申告
-  - 回答者間で1%〜25%と大きく異なる
   origin: 著者らのオンライン調査(n=20、うち10人が数値を回答)
   answers:
   - Q1.1.3
@@ -640,7 +746,7 @@
     H2: neutral
     H3: neutral
 - id: F207
-  statement: 実SOCの実測では、真の攻撃に関連するアラートは0.01%。攻撃の試み(侵害に至らず)が27%、正当な業務上の理由がある「良性のトリガー」が49%を占めた
+  statement: 実SOCの実測では、アラートのうち真の攻撃に関連するのは0.01%。攻撃の試み(侵害に至らなかった攻撃)が27%、正当な業務上の理由がある「良性のトリガー」が49%を占めた
   value: 0.01
   unit: '%'
   kind: fact
@@ -649,13 +755,13 @@
   as_of: '2024'
   metric: 真の攻撃に関連するアラートの割合
   superseded_by: null
-  quote: Furthermore, we observe a significant portion of the alerts are related to “attack attempts” (attacks that did not lead to true compromises, 27%), and “benign triggers” (correctly matched security events but had business-justified explanations, 49%).
+  quote: Through analysis, we observe that SOC analysts are facing excessive alerts (24K–134K per day), but only a small percentage of the alerts (0.01%) are associated with true attacks. While the majority of true attacks can be detected within the same day, the post-attack investigation takes much longer time (53 days on average). Furthermore, we observe a significant portion of the alerts are related to “attack attempts” (attacks that did not lead to true compromises, 27%), and “benign triggers” (correctly matched security events but had business-justified explanations, 49%).
   qualifiers:
   - 1つのSOC
-  - 2020〜2022年のアラート
-  - 良性のトリガーは保守的に数えた下限(§6.4)
-  - 論文は「誤検知」を『良性の挙動への誤った発火』と定義し、良性のトリガーを誤検知とは別に扱う
-  - 真の攻撃0.01%はabstractの別の文
+  - 割合は表4の期間(2020-12〜2022-07、14,429,534件)のもの
+  - 27%と49%は下限(論文は『at least』と述べる。良性のトリガーは明確な証拠があるものだけを数えた)
+  - 分類不能(Unknown)が23.72%残る
+  - 「攻撃の試み」は侵害に至らなかった攻撃、「良性のトリガー」は正しく一致したが業務上の説明があるセキュリティ事象と定義されている
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.3
@@ -668,17 +774,17 @@
     H2: neutral
     H3: neutral
 - id: F208
-  statement: NISTの文書は、誤検知を『通常の非悪性の背景トラフィックで起きたアラート』と定義し、ネットワークIDSでの原因に、弱いシグネチャ、正当な管理ツールのトラフィックを挙げる
+  statement: NISTの文書は、誤検知を『通常の非悪性の背景トラフィックで起きたアラート』と定義し、ネットワークIDSでの原因に、弱いシグネチャ、正当なネットワーク管理ツールのトラフィックを挙げる。誤検知率はネットワーク環境ごとに異なることがある
   kind: fact
   source: NIST ITL Bulletin 'Testing Intrusion Detection Systems' (2003-07)
   locator: https://csrc.nist.gov/files/pubs/shared/itlb/itlbul2003-07.pdf p.1-2 (Probability of False Alarms。引用はp.1末尾からp.2先頭へ改ページをまたぐ)
   as_of: 2003-07
   superseded_by: null
-  quote: A false positive or false alarm is an alert caused by normal non-malicious background traffic. Some causes for Network IDS (NIDS) include weak signatures that alert on all traffic to a high-numbered port used by a backdoor; search for the occurrence of a common word such as help in the first 100 bytes of SNMP or other TCP connections; or detection of common violations of the TCP protocol. They can also be caused by normal network monitoring and maintenance traffic generated by network management tools.
+  quote: A false positive or false alarm is an alert caused by normal non-malicious background traffic. Some causes for Network IDS (NIDS) include weak signatures that alert on all traffic to a high-numbered port used by a backdoor; search for the occurrence of a common word such as help in the first 100 bytes of SNMP or other TCP connections; or detection of common violations of the TCP protocol. They can also be caused by normal network monitoring and maintenance traffic generated by network management tools. It is difficult to measure false alarms because an IDS may have a different false positive rate in each network environment, and there is no such thing as a standard network.
   qualifiers:
   - NIDS(ネットワーク型IDS)について
   - 2003年の文書
-  - 誤検知率は環境ごとに異なり、標準的なネットワークはない
+  - 「標準的なネットワークはない」ため、誤検知の測定は難しいとされている
   origin: NIST ITL Bulletin (2003-07)
   answers:
   - Q1.1.4
@@ -690,16 +796,17 @@
     H2: neutral
     H3: neutral
 - id: F209
-  statement: 'NIST SP 800-94: 良性の活動を悪性と誤認すると誤検知になる。すべての誤検知をなくすことはできず、一方を減らすと他方が増える。チューニングで調整する'
+  statement: 'NIST SP 800-94: 良性の活動を悪性と誤認すると誤検知になる。すべての誤検知をなくすことはできず、多くの場合、一方を減らすと他方が増える。多くの組織は偽陰性を減らす代わりに偽陽性が増える設定を選び、その分の分析資源が要る。設定を調整して検知精度を改善することをチューニングと呼ぶ'
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
-  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §2.2 (Common Detection Methodologies の前の共通属性の節; 本文 'Another common attribute of IDPS technologies')
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §2.2 Key Functions of IDPS Technologies
   as_of: 2007-02
   superseded_by: null
-  quote: When an IDPS incorrectly identifies benign activity as being malicious, a false positive has occurred. When an IDPS fails to identify malicious activity, a false negative has occurred. It is not possible to eliminate all false positives and negatives; in most cases, reducing the occurrences of one increases the occurrences of the other.
+  quote: When an IDPS incorrectly identifies benign activity as being malicious, a false positive has occurred. When an IDPS fails to identify malicious activity, a false negative has occurred. It is not possible to eliminate all false positives and negatives; in most cases, reducing the occurrences of one increases the occurrences of the other. Many organizations choose to decrease false negatives at the cost of increasing false positives, which means that more malicious events are detected but more analysis resources are needed to differentiate false positives from true malicious events. Altering the configuration of an IDPS to improve its detection accuracy is known as tuning.
   qualifiers:
   - IDPS全般
-  - 2007年版(Rev.1は2007-02)
+  - SP 800-94(2007年)
+  - 原文は『in most cases』(例外がある)
   origin: NIST SP 800-94
   answers:
   - Q1.1.4
@@ -711,13 +818,13 @@
     H2: neutral
     H3: neutral
 - id: F210
-  statement: 'NIST SP 800-94: 異常検知型IDPSは、プロファイルから大きく外れる良性の活動(保守作業など)のために多くの誤検知を出す。環境が多様・動的なほど多い'
+  statement: 'NIST SP 800-94: 月1回だけの保守作業などは学習期間に観測されず、プロファイルからの大きな逸脱として警告を起こしうる。異常検知型IDPSは、プロファイルから大きく外れる良性の活動のために多くの誤検知を出し、環境が多様・動的なほど多い'
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §2.3.2 Anomaly-Based Detection
   as_of: 2007-02
   superseded_by: null
-  quote: Anomaly-based IDPS products often produce many false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments.
+  quote: Another problem with building profiles is that it can be very challenging in some cases to make them accurate, because computing activity can be so complex. For example, if a particular maintenance activity that performs large file transfers occurs only once a month, it might not be observed during the training period; when the maintenance occurs, it is likely to be considered a significant deviation from the profile and trigger an alert. Anomaly-based IDPS products often produce many false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments.
   qualifiers:
   - 異常検知型の検知方式について
   origin: NIST SP 800-94
@@ -731,7 +838,7 @@
     H2: neutral
     H3: neutral
 - id: F211
-  statement: 'NIST SP 800-94: ネットワーク型IDPSは、監視対象の環境に合わせた多大なチューニングが必要で、新規導入では調整が済むまで多数の誤検知が出る'
+  statement: 'NIST SP 800-94: ネットワーク型IDPSの精度に関する一般的な問題として、監視対象の環境の特性に合わせた多大なチューニングとカスタマイズが必要である'
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §4.3.3.2 Detection Accuracy
@@ -751,16 +858,16 @@
     H2: neutral
     H3: neutral
 - id: F212
-  statement: 'NIST SP 800-94: NBA(ネットワーク挙動分析)型では、環境の良性の変化(新サービスの追加、サービスの移設)でも誤検知が起きる'
+  statement: 'NIST SP 800-94: NBA型では、環境の良性の変化(新サービスの追加)でも異常として検知されうる。ただし通常は低優先度のアラートで、誤検知と呼べるかは議論の余地がある'
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §6.2.3.2 Detection Accuracy (NBA)
   as_of: 2007-02
   superseded_by: null
-  quote: False positives can also be caused by benign changes in the environment. For example, if a new service is added to a host and a few hosts start using it, an NBA sensor is likely to detect this as anomalous.
+  quote: False positives can also be caused by benign changes in the environment. For example, if a new service is added to a host and a few hosts start using it, an NBA sensor is likely to detect this as anomalous. However, typically this would be a low-priority alert, and not reported as an attack, so it is debatable whether this can truly be considered a false positive.
   qualifiers:
-  - NBA型について
-  - 同文書は、低優先度のため誤検知と呼べるかは議論の余地があるとも述べる
+  - NBA(ネットワーク挙動分析)型について
+  - 『誤検知と呼べるか議論の余地がある』と同文書が述べている
   origin: NIST SP 800-94
   answers:
   - Q1.1.4
@@ -772,16 +879,16 @@
     H2: neutral
     H3: neutral
 - id: F213
-  statement: 'SOC実務者へのインタビュー: 誤検知の多くは「良性のトリガー」(シグネチャに正しく一致するが、組織が正当な事情で無視するもの。例: レガシーシステム)で、ツールの欠陥ではない'
+  statement: Alahmadiらは、「良性のトリガー」を、既存のシグネチャに一致する(正しい)アラームだが、レガシーシステムなどの理由で組織が無視するもの、と定義する
   kind: fact
   source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
-  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''RQ2: Definition of FPs''(および §3 の用語の定義)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Introduction''(用語の定義)'
   as_of: 2022-08
   superseded_by: null
   quote: In contrast, benign triggers are true alarms; meaning they match an existing signature (e.g., vulnerable java version) but the organization chooses to ignore it (e.g., due to legacy systems).
   qualifiers:
-  - インタビュー n=21、7つのSOC
-  - 定性研究のため割合は示さない
+  - 論文中の用語の定義
+  - インタビュー(n=21、7つのSOC)に基づく定性研究
   origin: 著者らのインタビュー(n=21)
   answers:
   - Q1.1.4
@@ -794,7 +901,7 @@
     H2: neutral
     H3: neutral
 - id: F214
-  statement: 'SOC実務者の証言: ルールが緩く(広く)書かれているために、多くの誤検知が出る'
+  statement: SOC実務者の一部は、シグネチャが『緩く(広く)書かれている』ことで多くの誤検知が出ると述べた
   kind: fact
   source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
   locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Reported by Interviewees'' 内の ''Unreliable signature'''
@@ -802,7 +909,7 @@
   superseded_by: null
   quote: Some analysts reported that signatures are “loosely written”, meaning written to be general to capture a variety of activities. This results in a high volume of FPs,
   qualifiers:
-  - インタビュー参加者の認識(定性)
+  - インタビュー参加者の一部(『Some analysts』)の認識(定性)
   origin: 著者らのインタビュー(n=21)
   answers:
   - Q1.1.4
@@ -814,7 +921,7 @@
     H2: neutral
     H3: neutral
 - id: F215
-  statement: 実SOCで、良性のトリガーが多いパターンは、内部の脆弱性スキャン、外部の委託ペネトレーションテスト、DNS設定、SSL(弱い鍵・旧版)とレガシーシステム、情報提供目的のアラートだった。これらは正当な活動が悪性の活動と似た振る舞いをするために起きる
+  statement: 同SOCで、定期的な内部スキャン(脆弱性・設定不備の確認)は、悪性のスキャンと似た振る舞いをするが、アラートは無視してよい良性のトリガーの共通の原因の1つだった
   kind: fact
   source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
   locator: https://par.nsf.gov/servlets/purl/10530815 §6.4 Understanding Benign Triggers (Table 7)
@@ -823,8 +930,7 @@
   quote: The first common cause of benign triggers is scheduled internal scanning to proactively check for vulnerabilities and misconfigurations. These scans have similar behavior patterns as malicious scans, but the alerts can be safely ignored.
   qualifiers:
   - 1つのSOC
-  - 良性のトリガーは誤検知とは別の概念として論文が扱う
-  - 他のパターンの記述はF216〜F218
+  - 本文は『最初の一般的な原因』と述べる
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
@@ -836,7 +942,7 @@
     H2: neutral
     H3: neutral
 - id: F216
-  statement: 同SOCで、外部ドメインを内部IPで運用していることがDNS関連アラートを大量に引き起こした(約140万件)。検知ルールは内部ホストの侵害を捉える設計だったが、共同研究のサイトが該当した
+  statement: 同SOCで、DNS関連の良性のトリガー(約140万件)の大半は、外部ドメインを内部IPで運用していることによるものだった。検知ルールは内部ホストの侵害を捉える設計だったが、共同研究のサイトが該当した
   value: 1.4
   unit: 百万件
   kind: fact
@@ -849,6 +955,7 @@
   qualifiers:
   - 1つのSOC
   - 2020〜2022年
+  - 『大半(the vast majority)』は原文の語で、割合は示されていない
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
@@ -903,81 +1010,154 @@
     H1: supports
     H2: neutral
     H3: neutral
+- id: F219
+  statement: Alahmadiらは、解析者の報告した99%の誤検知は、主に良性のトリガーであり、技術の性能の測定値とは限らないと分析している
+  kind: fact
+  source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''RQ2: Definition of FPs'''
+  as_of: 2022-08
+  superseded_by: null
+  quote: When the analyst reported a 99% FP rate, this is found to be mostly benign triggers and not necessarily a measurement of the performance of the technology itself.
+  qualifiers:
+  - 著者らの分析
+  - インタビュー参加者1人の99%の発言について
+  origin: 著者らのインタビュー(n=21)
+  answers:
+  - Q1.1.3
+  verified: false
+  collected_verified: false
+  request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F220
+  statement: Yangらは、良性のトリガーを『組織の環境における業務上正当で許容される挙動によって説明される、正しく発火したアラート』と定義し、一般的な『誤検知』(良性の挙動に対して誤って発火したアラート。悪い規則・エラー・誤設定による等)とは異なると述べる
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.2 Benign Triggers
+  as_of: '2024'
+  superseded_by: null
+  quote: Alerts that are neither “true attacks” nor “attack attempts” cannot be simply marked as false positives (FP). Many of them can be benign triggers. Benign triggers [4] are correctly fired alerts, explained by business-justified, acceptable behaviors in the organization’s environment. As such, analysts may choose to ignore them. An example would be an alert fired correctly because a weak SSL key is detected, but SOC can ignore the alert knowing the host is retiring and disconnected from the public network. This definition is different from the generic “false positives” which usually refer to alerts that are incorrectly fired on benign behaviors (e.g., due to bad rules, errors, or misconfigurations).
+  qualifiers:
+  - 論文中の用語の定義
+  origin: Yang ら(論文内の定義。[4]=Alahmadi らを引用)
+  answers:
+  - Q1.1.3
+  - Q1.1.4
+  verified: false
+  collected_verified: false
+  request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F221
+  statement: 同SOCで、第三者のセキュリティベンダーによる外部のペネトレーションテストと年次の監査に対応するアラートが約270万件あった。うち92%は2022年前半のLog4j関連だった
+  value: 2.7
+  unit: 百万件
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.4 External Pen Test
+  as_of: '2024'
+  metric: 外部ペンテストに起因する良性のトリガーの件数
+  superseded_by: null
+  quote: The SOC also worked with third-party (external) security vendors to perform penetration tests and the annual compliance auditing. The corresponding alerts are identified based on known vendor IPs (2.7 million alerts). While the external scanners have triggered varied types of alerts such as address scan, port scan, and vulnerability scan, the majority (92%) are related to Log4j in early 2022.
+  qualifiers:
+  - 1つのSOC
+  - 既知のベンダーIPで識別
+  - 92%はLog4j関連(2022年前半)
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.4
+  verified: false
+  collected_verified: false
+  request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F300
-  statement: インシデントの対応は到着順ではなく、機能への影響・情報への影響・復旧の難しさなどの要因で優先順位を付けて行う
+  statement: NIST は、インシデントの対応を到着順にせず、資源に限りがあるため、関連する要因に基づいて優先順位を付けるとする
   kind: fact
   source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
   as_of: 2012-08
   quote: 'Prioritizing the handling of the incident is perhaps the most critical decision point in the incident handling process. Incidents should not be handled on a first-come, first-served basis as a result of resource limitations. Instead, handling should be prioritized based on the relevant factors, such as the following:'
   qualifiers:
-  - 「インシデント」の対応の優先順位の話であり、アラートの個別の選別に限った記述ではない
-  - 要因は例示("such as")
+  - 要因は例示("such as the following")であり、網羅ではない
+  - 対象は「インシデント」の対応であり、アラートの個別の選別に限った記述ではない
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q2.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: supports
     H3: neutral
 - id: F301
-  statement: 優先順位の要因は、機能への影響(現在と、封じ込めないときの将来の影響)、情報への影響(機密性・完全性・可用性)、復旧のしやすさの3つ
+  statement: NIST は、優先順位の要因の例として機能への影響を挙げ、現在の影響だけでなく、直ちに封じ込めない場合に見込まれる将来の影響も考えるよう述べる
   kind: fact
   source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
   as_of: 2012-08
   quote: Incident handlers should consider not only the current functional impact of the incident, but also the likely future functional impact of the incident if it is not immediately contained.
   qualifiers:
-  - 機能への影響の要因の記述
-  - 情報への影響と復旧のしやすさは同じ節の別の項目で述べられる
+  - 要因は例示("such as the following")であり、機能への影響・情報への影響・復旧のしやすさの3つに限るとは書かれていない
+  - 情報への影響と復旧のしやすさは同じ節の別の項目(F319、F320)
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q2.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: supports
     H3: neutral
 - id: F302
-  statement: 機能への影響が大きく復旧の労力が小さいインシデントは、即時対応の候補とされる。復旧の道筋がないものは、より戦略的なチームに回すことがある
+  statement: NIST は、機能への影響が大きく復旧の労力が小さいインシデントは即時対応の候補だとし、復旧の道筋が円滑でないインシデントは、より戦略的な対応のために待機させることがあるとする
   kind: fact
   source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
   as_of: 2012-08
   quote: An incident with a high functional impact and low effort to recover from is an ideal candidate for immediate action from the team. However, some incidents may not have smooth recovery paths and may need to be queued for a more strategic-level response
   qualifiers:
+  - 原文は "some incidents may not have smooth recovery paths and may need to be queued"(一部の、円滑でない、あることがある)
   - 判断は事業への影響の見積りと復旧に要する労力の見積りによる
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q2.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: supports
     H3: neutral
 - id: F303
-  statement: NIST の枠組み(CSF 2.0)に対応した指針では、新しいインシデント報告の予備的な確認の後に、深刻度と対応の緊急度を見積もるとされる
+  statement: NIST SP 800-61r3 は、新しいインシデント報告に対して、インシデントが起きたかを確かめる予備的な確認を行い、その後に深刻度と対応の緊急度を見積もるとする
   kind: fact
-  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  source: 'NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile'
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, RS.MA-02 R1
   as_of: 2025-04
   quote: Perform a preliminary review of a new incident report to verify that a cybersecurity incident has occurred, then estimate the severity of the incident and the level of urgency needed to respond to it.
   qualifiers:
   - 対象は「インシデント報告」
   - 優先度の区分は High(推奨の度合い)
+  - CSF の要素 RS.MA-02 の説明は "Incident reports are triaged and validated"。R1 の本文に "validated" の語はない
+  - 表の R1 の文を写した
   origin: NIST SP 800-61r3
   answers:
   - Q2.1
   - Q2.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: supports
@@ -986,7 +1166,7 @@
 - id: F304
   statement: NIST SP 800-61r3 は、対応の速さを、範囲、見込まれる影響、時間的な緊急性、使える資源から決めるとする
   kind: fact
-  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  source: 'NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile'
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, RS.MA-03 R2
   as_of: 2025-04
   quote: Prioritize how quickly incident response should be performed for each incident based on its scope, likely impact, time-critical nature, and resource availability.
@@ -995,48 +1175,49 @@
   origin: NIST SP 800-61r3
   answers:
   - Q2.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: supports
     H3: neutral
 - id: F305
-  statement: NIST SP 800-61r3 は、トリアージ・優先順位付け・エスカレーション・復旧開始の判断を、リスク評価の要因の集合に基づけるとし、到着順での処理を戒める
+  statement: NIST SP 800-61r3 は、資源に限りがあるため、インシデントを到着順に扱わないとし、トリアージ・優先順位付け・エスカレーション・復旧開始の判断をリスク評価の要因の集合に基づけるとする。その集合は組織の必要と成熟度により単純なものから非常に複雑なものまである
   kind: fact
-  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  source: 'NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile'
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, RS.MA (Incident Management) R1, R2
   as_of: 2025-04
-  quote: 'Because of resource limitations, incidents should not be handled on a first-come, first-served basis. R2: Incident triage, prioritization, escalation, and elevation and decisions regarding when to initiate recovery processes should all be based on a set of risk evaluation factors.'
+  quote: 'Because of resource limitations, incidents should not be handled on a first-come, first-served basis. R2: Incident triage, prioritization, escalation, and elevation and decisions regarding when to initiate recovery processes should all be based on a set of risk evaluation factors. This set can range from simple to incredibly complex, depending on the needs and maturity of an organization.'
   qualifiers:
-  - R1 と R2 を連続して引用
-  - 要因の具体例の続きは本文の次の行にある
+  - R1 と R2 を連続して引用した(R1 のラベルは省いた)
+  - '要因の例は N2: "Examples of possible risk evaluation factors include asset criticality, functional impact of the incident, data impact of the incident, stage of observed activity, threat actor characterization, and recoverability."'
+  - 原文で行末の語の分割を連結して写した
   origin: NIST SP 800-61r3
   answers:
   - Q2.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: supports
     H3: neutral
 - id: F306
-  statement: 民間の SOC 向け解説は、アラートの優先順位を、資産の重要度、攻撃の段階、脅威インテリジェンスとの一致、異常スコア、業務上の文脈で付けるとし、SIEM の深刻度スコアを最終判断にしないよう述べる
+  statement: 民間の SOC 向け解説は、SIEM が自動で付ける深刻度スコアをアナリストが最終判断として扱ってはならず、リスクのスコアは人の判断への入力であって代わりではないとする
   kind: fact
   source: 'CyberDefenders, Alert Triage Process: The Complete SOC Analyst''s Guide'
   locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 3 - Prioritization
   as_of: 2026-09-15
-  quote: Most SIEM platforms assign a severity score to alerts automatically, but analysts should never treat that score as the final word.
+  quote: Most SIEM platforms assign a severity score to alerts automatically, but analysts should never treat that score as the final word. Risk scoring is an input to human judgment, not a replacement for it.
   qualifiers:
   - セキュリティ訓練事業者のブログで、公的機関・標準ではない
-  - 要因の一覧(資産の重要度、攻撃の段階、脅威インテリジェンスの一致、異常スコア、業務上の文脈)は同じ節の表による
   - 日付は "Last updated" の表示
+  - Stage 3 - Prioritization の節
   origin: CyberDefenders(独自の解説)
   answers:
   - Q2.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R3
   stance:
@@ -1044,82 +1225,88 @@
     H2: supports
     H3: neutral
 - id: F307
-  statement: NIST の標準的な取扱いの手順書は、インシデント対応の最初の段階を、「兆候の分析」「相関情報の探索」「調査」「文書化と証拠の収集」の順に並べ、その後に優先順位付けを置く
+  statement: NIST の手順書は、インシデントの取扱いの最初の段階を、兆候の分析、相関情報の探索、調査、文書化と証拠収集の順に並べ、その後に優先順位付けを置く。実際の手順はインシデントの種類で変わり、1.2 や 1.3 が不要な場合もあり、この順序を常に守るものではないとする
   kind: fact
   source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.5 Incident Handling Checklist, Table 3-5
   as_of: 2012-08
-  quote: 1. Determine whether an incident has occurred 1.1 Analyze the precursors and indicators 1.2 Look for correlating information 1.3 Perform research (e.g., search engines, knowledge base) 1.4 As soon as the handler believes an incident has occurred, begin documenting the investigation and gathering evidence 2. Prioritize handling the incident based on the relevant factors (functional impact, information impact, recoverability effort, etc.)
+  quote: The checklist in Table 3-5 provides the major steps to be performed in the handling of an incident. Note that the actual steps performed may vary based on the type of incident and the nature of individual incidents. For example, if the handler knows exactly what has happened based on analysis of indicators (Step 1.1), there may be no need to perform Steps 1.2 or 1.3 to further research the activity. The checklist provides guidelines to handlers on the major steps that should be performed; it does not dictate the exact sequence of steps that should always be followed. Table 3-5. Incident Handling Checklist Action Completed Detection and Analysis 1. Determine whether an incident has occurred 1.1 Analyze the precursors and indicators 1.2 Look for correlating information 1.3 Perform research (e.g., search engines, knowledge base) 1.4 As soon as the handler believes an incident has occurred, begin documenting the investigation and gathering evidence 2. Prioritize handling the incident
+    based on the relevant factors (functional impact, information impact, recoverability effort, etc.)
   qualifiers:
-  - 'チェックリストの見出しは「常に従うべき手順の列ではない」という趣旨の直前の文と併読する必要がある(3.5節の本文: "it does not dictate the exact sequence of steps that should always be followed")'
   - 対象はアラート1件ではなく「インシデントが起きたか」の判定
+  - 1.4 は「ハンドラーがインシデントが起きたと考えたらすぐに」という条件付き
+  - 表の箇条書きを連結して写した
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q2.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: supports
     H2: contradicts
     H3: supports
 - id: F308
-  statement: NIST は、指標(兆候)のそれぞれが正当かを評価すべきだとし、指標が正確でもインシデントとは限らないと述べる
+  statement: NIST は、侵入検知システムが誤検知(誤った指標)を出すことがあり、指標のそれぞれが正当かを評価するのが理想だとし、指標が正確でもインシデントが起きたとは限らないと述べる
   kind: fact
   source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.4 Incident Analysis
   as_of: 2012-08
-  quote: 'Intrusion detection systems may produce false positives—incorrect indicators. These examples demonstrate what makes incident detection and analysis so difficult: each indicator ideally should be evaluated to determine if it is legitimate.'
+  quote: 'Intrusion detection systems may produce false positives—incorrect indicators. These examples demonstrate what makes incident detection and analysis so difficult: each indicator ideally should be evaluated to determine if it is legitimate. Making matters worse, the total number of indicators may be thousands or millions a day. Finding the real security incidents that occurred out of all the indicators can be a daunting task. Even if an indicator is accurate, it does not necessarily mean that an incident has occurred.'
   qualifiers:
-  - 「ideally(理想的には)」という限定付き
-  - 同じ節の続きに「指標が正確でもインシデントとは限らず、判断の問題になることがある」という記述がある
+  - '"ideally"(理想的には)という限定付き'
+  - 指標が1日に数千から数百万件になりうるという前提の文脈
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q2.2
   - Q3.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: supports
     H2: neutral
     H3: neutral
 - id: F309
-  statement: NIST は、インシデントと考えたら、初期分析で影響範囲(影響を受けるネットワーク・システム・アプリケーション、発生源、発生の仕方)を確かめ、その結果を後続の作業の優先順位付けに使うとする
+  statement: NIST は、インシデントが起きたとチームが考えたときの初期分析で、影響範囲(影響を受けるネットワーク・システム・アプリケーション、発生源、発生の仕方)を確かめるとし、初期分析は後続の作業の優先順位付けに足る情報を与えるべきだとする
   kind: fact
   source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.4 Incident Analysis
   as_of: 2012-08
-  quote: When the team believes that an incident has occurred, the team should rapidly perform an initial analysis to determine the incident’s scope, such as which networks, systems, or applications are affected; who or what originated the incident; and how the incident is occurring (e.g., what tools or attack methods are being used, what vulnerabilities are being exploited).
+  quote: When the team believes that an incident has occurred, the team should rapidly perform an initial analysis to determine the incident’s scope, such as which networks, systems, or applications are affected; who or what originated the incident; and how the incident is occurring (e.g., what tools or attack methods are being used, what vulnerabilities are being exploited). The initial analysis should provide enough information for the team to prioritize subsequent activities, such as containment of the incident and deeper analysis of the effects of the incident.
   qualifiers:
-  - 「インシデントが起きたとチームが考えたとき」の手順
-  - 誤検知の判定そのものではない
+  - 「インシデントが起きたとチームが考えたとき」の手順であり、誤検知の判定そのものではない
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q2.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F310
-  statement: CISA のプレイブックは、初期の範囲の確認を、自動検知システムやセンサー、利用者・委託先・第三者からの報告、状況認識の更新などの結果の分析から始めるとする
+  statement: CISA のプレイブックは、インシデントの初期の範囲の確認に、自動検知システムやセンサー、利用者・委託先・第三者からの報告、状況認識の更新などの結果の分析が含まれうるとする
   kind: fact
   source: CISA, Cybersecurity Incident & Vulnerability Response Playbooks (FCEB)
   locator: https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Incident Response Playbook, Detection & Analysis, Determine Investigation Scope (p.10)
   as_of: 2021-11
   quote: 'Initial scoping of an incident to determine adversarial activity may include analyzing results from: An automated detection system or sensor; A report from a user, contractor, or third-party information and communication technologies (ICT) service provider; or An incident report or situational awareness update from other internal or external organizational components.'
   qualifiers:
+  - 原文は "may include"(含まれうる)で、順序や必須を述べていない
   - 連邦文民行政機関(FCEB)向け
   - 対象は「インシデント」の範囲の確認で、アラート1件の誤検知判定は扱わない
-  - 同じ頁で NIST SP 800-61r2 を参照している
+  - 同じ頁の脚注15が NIST SP 800-61 Rev. 2 を参照している
+  - 2段組みの頁で、箇条書きは行をまたいで折れている
   origin: CISA(NIST SP 800-61r2 を参照)
   answers:
   - Q2.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
@@ -1139,28 +1326,28 @@
   answers:
   - Q2.1
   - Q2.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F312
-  statement: 民間の SOC 向け解説は、1件のアラートを、取り込み、分類、優先順位付け、調査と証拠収集、真偽の判定、エスカレーション、文書化の7段階で扱うとする
+  statement: 民間の SOC 向け解説は、アラートのトリアージを一つの判断ではなく、意図的な段階の連なりとし、各段階は前の段階の上に成り立ち、どの段階を飛ばしても誤分類の危険が増すとする
   kind: fact
   source: 'CyberDefenders, Alert Triage Process: The Complete SOC Analyst''s Guide'
-  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 4 - Investigation and Evidence Gathering
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ The 7-Stage SOC Alert Triage Process
   as_of: 2026-09-15
-  quote: This stage involves pulling log data, reviewing endpoint telemetry, querying network traffic, checking threat intelligence feeds, and examining historical context for the affected assets.
+  quote: The triage workflow isn't a single decision; it's a sequence of deliberate stages. Each stage builds on the previous one, and skipping any step increases the risk of misclassification.
   qualifiers:
   - 訓練事業者のブログで公的機関・標準ではない
-  - 7段階の順序は同ページの段落見出しによる(引用は第4段階の説明)
+  - '7段階の名称と順序は各段の見出しによる: 1 Alert Ingestion and Centralization、2 Categorization、3 Prioritization、4 Investigation and Evidence Gathering、5 True/False Positive Determination、6 Escalation and Incident Response、7 Documentation and Continuous Improvement'
   - 第4段階の確認項目の順序の厳密な指定はない
   origin: CyberDefenders(独自の解説)
   answers:
   - Q2.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R3
   stance:
@@ -1170,7 +1357,7 @@
 - id: F313
   statement: NIST は、インシデント判定の際に既知の誤検知を考慮するよう述べる
   kind: fact
-  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  source: 'NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile'
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, DE.AE-08 R1
   as_of: 2025-04
   quote: Apply incident criteria to known and assumed characteristics of analyzed activity, and consider known false positives to determine whether an incident should be declared.
@@ -1180,8 +1367,8 @@
   origin: NIST SP 800-61r3
   answers:
   - Q3.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: supports
@@ -1196,33 +1383,34 @@
   quote: 'False Positive: An alert that incorrectly indicates that malicious activity is occurring.'
   qualifiers:
   - 定義のみで、閉じてよい条件や手順は述べない
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q3.1.1
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F315
-  statement: 民間の SOC 向け解説は、アラートが良性の活動で発火した場合を誤検知として閉じ、所見を記録するとする。挙動が実在しても承認済みか想定内なら閉じて、ルールの調整を検討するとする。証拠が足りない場合は閉じずに上位の分析者へ回すか追加データを待つとする
+  statement: 民間の SOC 向け解説は、真偽の判定の結果を表で示す。良性の活動でアラートが発火した場合(False Positive)は閉じて所見を記録する。挙動が実在しても承認済みか想定内の場合(Benign True Positive)は閉じてルールの調整を検討する。結論に足る証拠がない場合(Unclear)は上位のアナリストにエスカレーションするか追加データを待つ
   kind: fact
   source: 'CyberDefenders, Alert Triage Process: The Complete SOC Analyst''s Guide'
   locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 5 - True/False Positive Determination
   as_of: 2026-09-15
-  quote: False Positive | The alert fired on benign activity | Close the alert; document findings
+  quote: False Positive | The alert fired on benign activity | Close the alert; document findings ; Benign True Positive | The behavior is real, but is authorized or expected | Close; consider tuning the detection rule ; Unclear | Insufficient evidence to reach a conclusion | Escalate to a senior analyst or hold for additional data
   qualifiers:
   - 訓練事業者のブログで公的機関・標準ではない
-  - 表の行をそのまま写した(区切りは原文の表の列)
-  - '「証拠不十分」の行は Unclear: Escalate to a senior analyst or hold for additional data'
+  - 表の列の区切りを " | "、行の区切りを " ; " で写した(原文は表)
   - 閉じるための証拠の基準の一覧は同ページにない
+  - Stage 5 - True/False Positive Determination の表
   origin: CyberDefenders(独自の解説)
   answers:
   - Q3.1.1
   - Q3.1.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R3
   stance:
@@ -1230,19 +1418,21 @@
     H2: neutral
     H3: neutral
 - id: F316
-  statement: NIST は、インシデントの取扱いの各段階を、時刻を付けて文書化し、状況の記録を課題追跡システムなどで保つよう述べる(インシデントと判断した後の記録の規定)
+  statement: NIST は、インシデントが起きたと疑った時点で、インシデントに関する事実の記録を直ちに始めるべきだとする
   kind: fact
   source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.5 Incident Documentation
   as_of: 2012-08
-  quote: Every step taken from the time the incident was detected to its final resolution should be documented and timestamped.
+  quote: An incident response team that suspects that an incident has occurred should immediately start recording all facts regarding the incident.
   qualifiers:
+  - 記録を始める時点は「インシデントが起きたと疑った時点」
   - 対象は「インシデント」であり、誤検知として閉じたアラートの記録を直接規定するものではない
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
   origin: NIST SP 800-61r2
   answers:
   - Q3.1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
@@ -1251,7 +1441,7 @@
 - id: F317
   statement: NIST は、継続的な監視の技術を、誤検知と見逃しを許容できる水準まで調整するよう述べる
   kind: fact
-  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  source: 'NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile'
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, DE.CM (Continuous Monitoring) R2
   as_of: 2025-04
   quote: Tune the continuous monitoring technologies to reduce false positives and false negatives to acceptable levels.
@@ -1261,28 +1451,170 @@
   origin: NIST SP 800-61r3
   answers:
   - Q3.1.2
-  verified: false
-  collected_verified: true
+  verified: true
+  collected_verified: false
   request: R3
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F318
-  statement: 民間の SOC 向け解説は、誤検知は閉じて終わりにせず、検知ルールの調整、既知の安全な条件の抑制、基準モデルの更新に使うべきだとし、閉じた全てのアラートに記録を残すよう述べる
+  statement: 民間の SOC 向け解説は、真陽性・偽陽性を問わず、閉じた全てのアラートに文書記録を残すべきだとし、記録には発火した内容、調査したこと、見つかった証拠、下した判断を残すとする
   kind: fact
   source: 'CyberDefenders, Alert Triage Process: The Complete SOC Analyst''s Guide'
-  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 5 と Stage 7 - Documentation and Continuous Improvement
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 7 - Documentation and Continuous Improvement
   as_of: 2026-09-15
-  quote: Every closed alert, true positive or false positive, should produce a documentation record.
+  quote: Every closed alert, true positive or false positive, should produce a documentation record. This isn't administrative overhead; it's institutional memory. The record should capture what was fired, what was investigated, what evidence was found, and what decision was made.
   qualifiers:
   - 訓練事業者のブログで公的機関・標準ではない
-  - 同じ段落に「記録には、発火した内容、調査したこと、見つかった証拠、下した判断を残す」という記述がある
-  - 同ページに「ルール別の誤検知率、平均トリアージ時間、エスカレーションの正確さを週次で見直す」という記述があるが、閉じた個々の判断の監査や承認の手順は記載されていない
+  - 閉じた個々の判断の監査や承認の手順は同ページに記載されていない
   origin: CyberDefenders(独自の解説)
   answers:
   - Q3.1.2
-  verified: false
+  verified: true
+  collected_verified: false
+  request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F319
+  statement: NIST は、優先順位の要因の例として情報への影響を挙げ、インシデントが組織の情報の機密性・完全性・可用性に影響しうるとする
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
+  as_of: 2012-08
+  quote: Information Impact of the Incident. Incidents may affect the confidentiality, integrity, and availability of the organization’s information.
+  qualifiers:
+  - 要因は例示("such as the following")
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
+  origin: NIST SP 800-61r2
+  answers:
+  - Q2.1
+  verified: true
+  collected_verified: false
+  request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
+- id: F320
+  statement: NIST は、優先順位の要因の例として復旧のしやすさを挙げ、インシデントの大きさと影響を受ける資源の種類が、復旧に要する時間と資源の量を決めるとする
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
+  as_of: 2012-08
+  quote: Recoverability from the Incident. The size of the incident and the type of resources it affects will determine the amount of time and resources that must be spent on recovering from that incident.
+  qualifiers:
+  - 要因は例示("such as the following")
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
+  origin: NIST SP 800-61r2
+  answers:
+  - Q2.1
+  verified: true
+  collected_verified: false
+  request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
+- id: F321
+  statement: 民間の SOC 向け解説は、アラートの優先順位を左右する要因として、資産の重要度、攻撃の段階、脅威インテリジェンスとの一致、異常スコア、業務上の文脈を表で挙げる
+  kind: fact
+  source: 'CyberDefenders, Alert Triage Process: The Complete SOC Analyst''s Guide'
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 3 - Prioritization
+  as_of: 2026-09-15
+  quote: 'The factors that drive priority are well understood: Priority Factor | What to Assess ; Asset criticality | Is the affected system a domain controller, a financial database, or a developer laptop? ; Attack stage | Early-stage reconnaissance vs. active lateral movement vs. potential exfiltration demand very different urgency ; Threat intelligence match | Does the indicator match known adversary TTPs or active threat actor campaigns? ; Anomaly score | How far does this behavior deviate from the established baseline for this user or host? ; Business context | Is this alert firing during business hours, or at 3 AM on a Sunday?'
+  qualifiers:
+  - 訓練事業者のブログで公的機関・標準ではない
+  - 表の列の区切りを " | "、行の区切りを " ; " で写した(原文は表)
+  - Stage 3 - Prioritization の節
+  origin: CyberDefenders(独自の解説)
+  answers:
+  - Q2.1
+  verified: true
+  collected_verified: false
+  request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
+- id: F322
+  statement: NIST は、インシデントを検知してから最終的な解決までの各段階を、文書化して時刻を付けるべきだとする
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.5 Incident Documentation
+  as_of: 2012-08
+  quote: Every step taken from the time the incident was detected to its final resolution should be documented and timestamped.
+  qualifiers:
+  - 対象は「インシデント」であり、誤検知として閉じたアラートの記録を直接規定するものではない
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
+  origin: NIST SP 800-61r2
+  answers:
+  - Q3.1.2
+  verified: true
+  collected_verified: false
+  request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F323
+  statement: NIST は、アプリケーションやデータベース(課題追跡システムなど)を使うと、インシデントが適時に取り扱われ解決されるのを確かなものにしやすいとする
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.5 Incident Documentation
+  as_of: 2012-08
+  quote: Using an application or a database, such as an issue tracking system, helps ensure that incidents are handled and resolved in a timely manner.
+  qualifiers:
+  - 対象は「インシデント」であり、誤検知として閉じたアラートの記録を直接規定するものではない
+  - 同じ段落が、追跡システムに状況・要約・指標・取られた措置などを記録するよう述べる
+  - 出典の NIST SP 800-61 Rev. 2 は 2025-04-03 に撤回され、SP 800-61r3 に全面的に置き換えられた(PDF 冒頭の Withdrawn Publication の表示による)
+  origin: NIST SP 800-61r2
+  answers:
+  - Q3.1.2
+  verified: true
+  collected_verified: false
+  request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F324
+  statement: 民間の SOC 向け解説は、誤検知は閉じて忘れるべきでなく、誤検知は検知ルールの調整、既知の安全な条件の抑制、基準となる挙動モデルの更新に使えるデータだとする
+  kind: fact
+  source: 'CyberDefenders, Alert Triage Process: The Complete SOC Analyst''s Guide'
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 5 - True/False Positive Determination
+  as_of: 2026-09-15
+  quote: False positives should never simply be closed and forgotten. Every false positive is a data point that can be used to tune the detection rule, suppress the alert for known-safe conditions, or update baseline behavioral models.
+  qualifiers:
+  - 訓練事業者のブログで公的機関・標準ではない
+  - 原文は "can be used"(使える)
+  origin: CyberDefenders(独自の解説)
+  answers:
+  - Q3.1.2
+  verified: true
+  collected_verified: false
+  request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F325
+  statement: 民間の SOC 向け解説は、トリアージのデータを週次で見直し、ルール別の誤検知率、平均トリアージ時間、エスカレーションの正確さを追うチームは、時間とともに目に見えて改善するとする
+  kind: fact
+  source: 'CyberDefenders, Alert Triage Process: The Complete SOC Analyst''s Guide'
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 7 - Documentation and Continuous Improvement
+  as_of: 2026-09-15
+  quote: SOC teams that review their triage data weekly, tracking false positive rates by rule, mean time to triage (MTTT), and escalation accuracy are the ones that get measurably better over time.
+  qualifiers:
+  - 訓練事業者のブログで公的機関・標準ではない
+  - 解説者の主張であり、根拠の調査は示されていない
+  - 閉じた個々の判断の監査や承認の手順は記載されていない
+  origin: CyberDefenders(独自の解説)
+  answers:
+  - Q3.1.2
+  verified: true
   collected_verified: false
   request: R3
   stance:
@@ -1304,7 +1636,7 @@
   answers:
   - Q3.2
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
@@ -1325,27 +1657,29 @@
   - Q3.2
   - Q3.3.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F402
-  statement: CISAの連邦政府向けプレイブックは、調査範囲を、アクセスの種類、影響を受けた資産の範囲、攻撃者が得た権限の水準、業務や情報への影響で決めるとしている
+  statement: CISAの連邦政府向けプレイブックは、確認された悪性のサイバー活動に関するインシデントで、重大インシデントが宣言された、または未だ合理的に除外されていない場合の調査範囲を、アクセスの種類、影響を受けた資産の範囲、攻撃者が得た権限の水準、業務や情報への影響で決めるとしている
   kind: fact
   source: CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks (Incident Response Playbook)
-  locator: https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Determine Investigation Scope
-  as_of: 2024-08 (URL の日付。版の表記は未確認)
-  quote: Use available data to identify the type of access, the extent to which assets have been affected, the level of privilege attained by the adversary, and the operational or informational impact.
+  locator: 'https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Determine Investigation Scope;2つ目の引用は Appendix B: Incident Response Checklist の注記'
+  as_of: '2021-11 (PDF 表紙の Publication: November 2021)'
+  quote: 'Use available data to identify the type of access, the extent to which assets have been affected, the level of privilege attained by the adversary, and the operational or informational impact. / Note: the incident response playbook for incidents that involve confirmed malicious cyber activity for which a major incident has been declared or not yet been reasonably ruled out.'
   qualifiers:
-  - 対象は連邦文民行政機関(FCEB)の、重大インシデントが宣言された、または未だ合理的に除外されていない事案
+  - 対象は連邦文民行政機関(FCEB)
+  - 適用範囲は2つ目の引用(Appendix B の注記)による。1つ目は Detection & Analysis Activities の Determine Investigation Scope の本文
+  - quote は離れた2か所の連続した文を「 / 」でつないで写している
   - 時間の目安は書かれていない
   origin: CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks
   answers:
   - Q3.2
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
@@ -1360,12 +1694,11 @@
   locator: 'https://www.decryptiondigest.com/blog/soc-analyst-alert-triage-guide 節「The Alert Triage Mindset: Verdicts, Not Investigations」'
   as_of: 2026-05-14 公開、2026-07-02 更新
   metric: Tier 1のアラート1件あたりのトリアージ時間の目安
-  quote: Set a per-alert triage budget (12-20 minutes is typical for Tier 1). ... If you cannot reach a verdict within that window, escalate to Tier 2 with a documented summary
+  quote: The critical discipline is time-boxing. Set a per-alert triage budget (12-20 minutes is typical for Tier 1). If you cannot reach a verdict within that window, escalate to Tier 2 with a documented summary, do not extend the investigation in place.
   qualifiers:
   - Tier 1の場合
   - 実務者向けの解説記事で標準や公的文書ではない
   - 出版社は広告やスポンサー募集を掲載している
-  - 「...」は原文の省略を示す
   - 根拠となる調査や数値の出典は記事中で確認できていない
   origin: Decryption Digest(独自の見解)
   answers:
@@ -1379,7 +1712,7 @@
     H2: neutral
     H3: neutral
 - id: F404
-  statement: 重大度P2のアラートは30分以内にTier 2へ上げる。P1は直ちに上げる(SOCの運用手順書の例)
+  statement: SOCの運用手順書の例では、重大度P2のアラートは30分でTier 2へ上げ、P1は直ちに上げる(フロー図のラベル)
   value: 30
   unit: 分
   kind: fact
@@ -1391,9 +1724,11 @@
   qualifiers:
   - 有志のオープンソースのSOP集で、標準や公的文書ではない
   - 運営する企業のロゴとリンクがある(製品販売の記述は見当たらない)
+  - 同じページに「Replace with your actual contacts.」とあり、組織ごとに差し替える雛形
   - 重大度の定義はこのSOP集の独自のもの
-  - 2つのラベルを「 / 」でつないで写している
-  origin: SOC-SOP(cyberdefense.co.th 系の公開リポジトリ。独自の見解)
+  - 同じ文書の別の表には、P1の Tier 2 への引き上げの所要時間が数値で書かれている。この事実は、フロー図のラベルだけを写したもので、その数値は含まない(原文の表を自分では照合できていない)
+  - quote はフロー図のラベル2つを「 / 」でつないで写している
+  origin: SOC-SOP(独自の見解)
   answers:
   - Q3.2
   - Q3.3.1
@@ -1405,14 +1740,15 @@
     H2: supports
     H3: neutral
 - id: F405
-  statement: 同じSOP集は、P1を「もっと調べる」ために遅らせず、先に上げて調査は並行して進めるとしている。判断に迷うときは、上げすぎる側に倒すとしている
+  statement: 同じSOP集は、P1については、「もっと調べる」ために上げるのを遅らせず、先に上げて調査は並行して進めるとしている。また一般の規則として、判断に迷うときは、上げすぎる側に倒すとしている
   kind: fact
   source: SOC-SOP「Escalation Matrix」(IR-SOP-015)
   locator: https://nutthakorn7.github.io/SOC-SOP/05_Incident_Response/Escalation_Matrix.en 節 Escalation Rules(Do's / Don'ts)
   as_of: 2026-02-15 (Version 1.0)
   quote: '"Never delay a P1 escalation to "investigate more" — escalate first, investigate in parallel" / "Over-escalate if unsure — it''s better to escalate and be wrong than to miss a real incident"'
   qualifiers:
-  - P1(最重大)の場合の規則
+  - 1つ目の規則(P1を遅らせない)はP1(最重大)の場合の規則
+  - 2つ目の規則(迷うときは上げすぎる側に倒す)は同じ文書の Do's の一般規則で、P1に限らない
   - 有志のSOP集で標準や公的文書ではない
   - 2つの規則を「 / 」でつないで写している
   origin: SOC-SOP(独自の見解)
@@ -1432,7 +1768,7 @@
   source: 'Decryption Digest「SOC Analyst Alert Triage: A Field Guide to Working the Queue」(Eric Bang)'
   locator: 'https://www.decryptiondigest.com/blog/soc-analyst-alert-triage-guide 節「Escalation Criteria: When Tier 1 Hands Off」'
   as_of: 2026-05-14 公開、2026-07-02 更新
-  quote: '"Tier 1 analysts resolve false positives and benign true positives. Everything else escalates." / "Any confirmed or likely TP on a Tier 1 asset" / "Evidence of lateral movement (multiple hosts involved)" / "Any alert where the analyst cannot reach a verdict within the time budget"'
+  quote: '"Tier 1 analysts resolve false positives and benign true positives. Everything else escalates. Hard escalation triggers:" / "Any confirmed or likely TP on a Tier 1 asset" / "Evidence of lateral movement (multiple hosts involved)" / "Any alert where the analyst cannot reach a verdict within the time budget"'
   qualifiers:
   - 実務者向けの解説記事で標準や公的文書ではない
   - 出版社は広告やスポンサー募集を掲載している
@@ -1450,16 +1786,17 @@
     H2: neutral
     H3: neutral
 - id: F407
-  statement: 上げる条件は、担当者の技術的な守備範囲を超えたときとされる。標準の手順を超える調査(詳細なパケット検査、複雑なログの突き合わせ)が要るときは引き継ぐ
+  statement: 上げる条件は、事前に定めた担当者の技術的な守備範囲を超えたとき、または単純な監視で足りる範囲を超えた調査が要るときとされる。調査の権限の限界に達したら、直ちに上げる
   kind: fact
   source: Security Scientist「12 Questions and Answers About escalation to tier 2」(Vincent van Dijk)
   locator: https://www.securityscientist.net/blog/12-questions-and-answers-about-escalation-to-tier-2/ 節「4. When should an incident be escalated?」
   as_of: 不明(ページに日付の表示なし)
-  quote: '"You should trigger an escalation when you encounter an incident that exceeds your predefined technical scope" / "Escalate as soon as you hit the limit of your investigative authority."'
+  quote: '"You should trigger an escalation when you encounter an incident that exceeds your predefined technical scope or requires deeper investigation than simple monitoring allows" / "Escalate as soon as you hit the limit of your investigative authority."'
   qualifiers:
   - 個人が運営する企業ブログで標準や公的文書ではない
   - 同ページは自社の書籍を宣伝している
   - 時間の目安は書かれていない
+  - 1つ目の引用は原文の文の後半の終端記号を省いている
   - 2つの引用を「 / 」でつないで写している
   origin: Security Scientist(独自の見解)
   answers:
@@ -1473,31 +1810,29 @@
     H2: neutral
     H3: neutral
 - id: F408
-  statement: CISAのプレイブックは、インシデントの宣言を、CISAへの報告と機関のIT幹部への通知で行うとしている。連邦文民行政機関(FCEB)は、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告する
+  statement: CISAのプレイブックは、インシデントの宣言を、CISAへの報告と機関のIT幹部への通知で行うとしている。連邦文民行政機関(FCEB)は、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告するとしている
   kind: fact
   source: CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks (Incident Response Playbook)
-  locator: https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Declare Incident
-  as_of: 2024-08 (URL の日付。版の表記は未確認)
-  quote: Declare an incident by reporting it to CISA at https://www.cisa.gov/report and alerting agency IT leadership to the need for investigation and response.
+  locator: https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Declare Incident(2つ目の引用は同じ節の注記)
+  as_of: '2021-11 (PDF 表紙の Publication: November 2021)'
+  quote: 'Declare an incident by reporting it to CISA at https://www.cisa.gov/report and alerting agency IT leadership to the need for investigation and response. / Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA'
   qualifiers:
   - 対象は連邦文民行政機関(FCEB)
-  - 同じ節に「FCEB agencies must promptly report all cybersecurity incidents
-  - regardless of severity
-  - to CISA」とある(別の段で引用を省略)
+  - '適用範囲は、確認された悪性のサイバー活動に関するインシデントで、重大インシデントが宣言された、または未だ合理的に除外されていない場合(原文 Appendix B の注記: Note: the incident response playbook for incidents that involve confirmed malicious cyber activity for which a major incident has been declared or not yet been reasonably ruled out.)'
   - これはSOC内の階層間の引き上げではなく、機関から外部機関への報告
-  - 抽出元PDFは2段組で、引用は左の段の連続した文
+  - quote は同じ節の離れた2か所を「 / 」でつないで写している(間に Report major incidents to CISA and to OMB at CyberIncidentReport@omb.eop.gov. などが入る)。抽出元PDFは2段組で、どちらも左の段の連続した文
   origin: CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks
   answers:
   - Q3.3.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F409
-  statement: NISTは、分析と優先づけの後、誰に何をいつ報告するかを方針で定めるべきとし、通知先の例にCIO、情報セキュリティ責任者、組織内外の他のインシデント対応チームを挙げている
+  statement: NISTは、インシデントを分析し優先づけた後、関係する個人に通知するとし、誰に何をいつ報告するかを少なくとも方針で定めるべきとしている。具体的な報告の要件は組織によって異なる
   kind: fact
   source: NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.7 Incident Notification
@@ -1506,19 +1841,19 @@
   qualifiers:
   - 撤回済みの版
   - 具体的な引き上げの閾値は書かれておらず、組織ごとの方針に委ねている
-  - 通知先の一覧(CIO、Head of information security、Local information security officer、Other incident response teams within the organization、External incident response teams (if appropriate))は引用の直後の箇条書き
+  - quote は「parties that are typically notified include:」で終わる。通知先の一覧は原文の箇条書きで続くが、この事実には含めない
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.3.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F410
-  statement: NISTは、インシデントの優先づけを、機能への影響、情報への影響、復旧の可能性などの要因に基づいて行うべきで、先着順にしないとしている
+  statement: NISTは、インシデントの取り扱いの優先づけを、おそらく最も重要な判断点としている。資源に限りがあるため、先着順ではなく、関連する要因に基づいて優先づけるべきとしている
   kind: fact
   source: NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
@@ -1526,15 +1861,13 @@
   quote: 'Prioritizing the handling of the incident is perhaps the most critical decision point in the incident handling process. Incidents should not be handled on a first-come, first-served basis as a result of resource limitations. Instead, handling should be prioritized based on the relevant factors, such as the following:'
   qualifiers:
   - 撤回済みの版
-  - 要因は引用の直後に Functional Impact
-  - Information Impact
-  - Recoverability の3つが続く
+  - 要因は quote の直後に Functional Impact、Information Impact、Recoverability の3つが続く
   - 引き上げの閾値そのものではない
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.3.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
@@ -1549,16 +1882,15 @@
   locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization の末尾
   as_of: 2012-08 (2025-04-03 に撤回)
   metric: 応答がないときに次の上位者へ引き上げるまでの待ち時間
-  quote: Organizations should also establish an escalation process for those instances when the team does not respond to an incident within the designated time. ... Generally, the first step is to duplicate the initial contact. After waiting for a brief time—perhaps 15 minutes—the caller should escalate the incident to a higher level, such as the incident response team manager.
+  quote: 'Organizations should also establish an escalation process for those instances when the team does not respond to an incident within the designated time. This can happen for many reasons: for example, cell phones may fail or people may have personal emergencies. The escalation process should state how long a person should wait for a response and what to do if no response occurs. Generally, the first step is to duplicate the initial contact. After waiting for a brief time—perhaps 15 minutes—the caller should escalate the incident to a higher level, such as the incident response team manager. If that person does not respond within a certain time, then the incident should be escalated again to a higher level of management. This process should be repeated until someone responds.'
   qualifiers:
   - アラートの調査を上位に上げる条件ではなく、連絡に応答がない場合の引き上げの規定
   - 撤回済みの版
-  - 「...」は原文の省略を示す
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.3.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
@@ -1579,7 +1911,7 @@
   answers:
   - Q3.3.3
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R4
   stance:
     H1: neutral
@@ -1591,12 +1923,11 @@
   source: 'Decryption Digest「SOC Analyst Alert Triage: A Field Guide to Working the Queue」(Eric Bang)'
   locator: 'https://www.decryptiondigest.com/blog/soc-analyst-alert-triage-guide 節「Escalation Criteria: When Tier 1 Hands Off」'
   as_of: 2026-05-14 公開、2026-07-02 更新
-  quote: 'Escalation should always include: alert source and ID, triage timeline, evidence collected, current verdict hypothesis ... and recommended next step. Handoffs without context force Tier 2 to start over.'
+  quote: 'Escalation should always include: alert source and ID, triage timeline, evidence collected, current verdict hypothesis, and recommended next step. Handoffs without context force Tier 2 to start over.'
   qualifiers:
   - 実務者向けの解説記事で標準や公的文書ではない
   - 出版社は広告やスポンサー募集を掲載している
-  - 「...」は原文の省略(補助エージェントの報告では箇条書きの続きに「and recommended next step」)
-  - 引用の語順は報告の2文を連結したもので、原文の改行位置は未確認
+  - 原文は箇条書きではなく1つの段落
   origin: Decryption Digest(独自の見解)
   answers:
   - Q3.3.3
@@ -1645,7 +1976,7 @@
   - Q4.1
   - Q4.2
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: neutral
@@ -1666,7 +1997,7 @@
   answers:
   - Q4.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: contradicts
@@ -1686,14 +2017,14 @@
   answers:
   - Q4.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: contradicts
     H2: neutral
     H3: neutral
 - id: F503
-  statement: SOC実務者21人の質的調査では、誤検知とされるアラームの多くは、組織の正当な振る舞いで説明できる「本物のアラーム」であり、分析者が無視を選ぶことがあるとされた
+  statement: SOC実務者21人の質的調査では、誤検知とされるアラームの大半は、組織の正当な振る舞いで説明できる「本物のアラーム」であり、分析者が無視を選ぶことがあるとされた
   kind: fact
   source: Alahmadi, Axon, Martinovic「99% False Positives」USENIX Security 2022
   locator: https://www.usenix.org/system/files/sec22-alahmadi.pdf 、Abstract
@@ -1706,7 +2037,7 @@
   answers:
   - Q4.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: contradicts
@@ -1718,12 +2049,13 @@
   unit: '%'
   kind: fact
   source: Moosmann, Pekaric, Apruzzese「Can SOC Operators Explain their Decisions while Triaging Alarms? A Real-World Study」DIMVA 2026 採択(arXiv:2604.22001)
-  locator: https://arxiv.org/abs/2604.22001 Abstract、Introduction の Contributions
+  locator: https://arxiv.org/abs/2604.22001 Abstract
   as_of: 2026-04-23
   metric: アラーム判定の正答率
-  quote: The decision was correct in 83% of the answers, but 61% of the explanations were incorrect or imprecise
+  quote: We found that while most analysts were able to separate “true from false” alarms (the decision was correct in 83% of the cases), a correct justification was hardly provided (only 39% of the provided explanations reflected the actual root cause).
   qualifiers:
   - SOC分析者12人
+  - 欧州の1つのSOC(提携先)
   - 6件のアラーム事例
   - 一般化を主張しない研究
   - 2025年4月に実施
@@ -1732,7 +2064,7 @@
   answers:
   - Q4.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: neutral
@@ -1753,14 +2085,14 @@
   answers:
   - Q4.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F506
-  statement: 分析者が使うSOCの運用で、過去の誤検知の経験からアラートを無視したことがあると答えた割合は56%(RSA Conference 2018での179人の調査。ベンダーの調査)
+  statement: Impervaの調査で、IT専門職(IT professionals)の56%が、過去の誤検知の経験を理由にアラートを無視したことがあると答えた
   value: 56
   unit: '%'
   kind: fact
@@ -1768,28 +2100,28 @@
   locator: https://www.imperva.com/blog/2018/05/27-percent-of-it-professionals-receive-more-than-1-million-security-alerts-daily/
   as_of: 2018-05-28
   metric: 過去の誤検知を理由にアラートを無視したことがある回答者の割合
-  quote: In our survey, 56 percent of IT professionals admitted to having ignored an alert based on past false-positive experiences.
+  quote: Because of this, it can be tempting to disregard future alerts. In our survey, 56 percent of IT professionals admitted to having ignored an alert based on past false-positive experiences.
   qualifiers:
-  - ITの専門職179人(RSA Conference 2018の場での調査)
   - 自己申告
-  - 調査会社がセキュリティ製品のベンダーであり製品の宣伝を含む資料(一次情報として扱わない)
+  - 調査会社がセキュリティ製品のベンダーであり、製品の宣伝を含む資料(一次情報として扱わない)
+  - 'quoteの外(同じページの前の文): RSA Conference 2018で、IT専門職179人を対象に実施。SOC分析者に限らない'
   origin: Imperva自社調査
   answers:
   - Q4.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: contradicts
     H2: neutral
     H3: neutral
 - id: F507
-  statement: IDCとFireEyeの調査記事は、キューが一杯のときにアラートを無視するセキュリティ管理者・分析者が3分の1を超えると報じている
+  statement: IDCとFireEyeの共同調査(米国企業のSOC勤務300人とMSSP50社が対象)によると、IT担当の管理者と分析者の3分の1超が、キューが一杯のときにアラートを無視するとCybersecurity Diveが報じている
   kind: fact
   source: Cybersecurity Dive「One-third of analysts ignore security alerts, survey finds」(IDC調査、FireEye共同)
   locator: https://www.cybersecuritydive.com/news/security-alert-analyst-SOC-idc-fireeye/595111/
   as_of: 2021-02-16
-  quote: More than one-third of IT security managers and security analysts ignore threat alerts when the queue is full
+  quote: More than one-third of IT security managers and security analysts ignore threat alerts when the queue is full, according to a survey from IDC, in partnership with FireEye. The survey had 300 respondents in U.S.-based companies working in security operations centers (SOCs), and 50 managed security service providers (MSSPs).
   qualifiers:
   - 米国企業のSOC勤務300人とMSSP50社の調査
   - FireEyeが共同のベンダー調査(一次情報として扱わない)
@@ -1798,14 +2130,14 @@
   answers:
   - Q4.1
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: neutral
     H2: neutral
     H3: neutral
 - id: F508
-  statement: Tier-1分析者の現地実験で、エスカレーションすべきアラートは、そうでないアラートより調査の操作数が平均で多く、分析者は時間と認知の負担をかけて調べる
+  statement: Tier-1分析者の現地実験で、エスカレーションすべきアラート(Att)は、そうでないアラート(NAtt)より調査の操作数が平均で多く、したがって分析者はエスカレーションすべきアラートの分析に時間と認知の負担をかける可能性が高いとされる
   kind: fact
   source: Kersten, Beelen, Zambon, Snijders, Allodi「A Field Study to Uncover and a Tool to Support the Alert Investigation Process of Tier-1 Analysts」USEC 2025
   locator: https://ndss-symposium.org/wp-content/uploads/usec25-34.pdf 、結論前の議論の節
@@ -1814,12 +2146,13 @@
   qualifiers:
   - 商用SOCと協力したthink-aloud実験
   - 分析者は5人(400件の調査)
+  - 「可能性が高い(more likely)」という推論の記述
   - 上げるのが遅れる誤りを直接測った結果ではない
   origin: Kersten et al. の実験(一次)
   answers:
   - Q4.2
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: neutral
@@ -1831,7 +2164,7 @@
   unit: '%'
   kind: fact
   source: Moosmann, Pekaric, Apruzzese(arXiv:2604.22001)
-  locator: https://arxiv.org/pdf/2604.22001 、付録 0.A.3 の事前調査の結果(Dealing with uncertainties)
+  locator: https://arxiv.org/pdf/2604.22001 、Appendix A.3 の事前調査の結果(Dealing with uncertainties)
   as_of: 2026-04-23
   metric: 不確かなときにチケットを作って引き継ぐと答えた分析者の割合
   quote: Dealing with uncertainties 92% stated that they consulted colleagues in case of uncertainties; however 71% participants also relied on their own research, analysing additional logs and comparing with existing playbooks. Only 33% stated that they would create a ticket and pass the case on if they were unsure.
@@ -1844,7 +2177,7 @@
   answers:
   - Q4.2
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
   stance:
     H1: neutral
@@ -1858,18 +2191,466 @@
   as_of: 2022-08
   quote: 'However, monitoring for such a customer introduces pressure on the analysts to raise every possible suspicious alarm to avoid appearing incompetent or receiving possible fines (A1, A2, D6, E7). As D6 remarks: “Being analysts, most of them are afraid not to raise them to the customer. They do tend to raise quite a lot of alarms to the customers, obviously to be on the safe side.”'
   qualifiers:
-  - MSSP(外部委託のSOC)の分析者の証言(参加者A1
-  - A2
-  - D6
-  - E7)
+  - MSSP(外部委託のSOC)の分析者の証言(参加者A1, A2, D6, E7)
   - 実務者21人の質的調査
   - 上げ過ぎの割合は未測定
   origin: Alahmadi et al. の聞き取り調査(一次)
   answers:
   - Q4.3
   verified: false
-  collected_verified: true
+  collected_verified: false
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F600
+  statement: NIST SP 800-61 Rev.3 は、インシデントを宣言するかを決めるときに、分析した活動の既知の特徴と推定される特徴にインシデントの基準を当てはめ、既知の誤検知を考慮するよう推奨している
+  kind: fact
+  source: 'NIST SP 800-61 Rev. 3, Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile'
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, DE.AE-08 (p.26)
+  as_of: 2025-04
+  quote: 'DE.AE-08 Incidents are declared when adverse events meet the defined incident criteria — R1: Apply incident criteria to known and assumed characteristics of analyzed activity, and consider known false positives to determine whether an incident should be declared.'
+  qualifiers:
+  - CSF 2.0 Community Profile の推奨事項
+  - インシデントの宣言の判断
+  - 組織が定めた基準(defined incident criteria)が前提
+  - 誤検知として閉じる条件そのものは定めていない
+  - 表の列(CSF Element、CSF Element Description、R1)を収集セッションが「 — 」で区切って連結した
+  origin: NIST
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
+- id: F601
+  statement: NIST SP 800-61 Rev.3 は、事象の確からしさは多くの要因で変わり、異常には無害なものと悪意によるものがあると述べている
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, DE.AE (Adverse Event Analysis) N2 (p.25)
+  as_of: 2025-04
+  quote: 'N2: The fidelity of events varies based on many factors. Anomalies may have benign or malicious foundations. Some incidents are relatively easy to find amid the noise, while others require deep, specialized technical knowledge and experience.'
+  qualifiers:
+  - CSF 2.0 Community Profile の注記(N)
+  origin: NIST
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F602
+  statement: NIST SP 800-61 Rev.3 は、継続的な監視の技術を調整して、誤検知と検知漏れを許容できる水準まで減らすよう推奨している
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, DE.CM (Continuous Monitoring) R2 (p.24)
+  as_of: 2025-04
+  quote: 'R2: Tune the continuous monitoring technologies to reduce false positives and false negatives to acceptable levels.'
+  qualifiers:
+  - CSF 2.0 Community Profile の推奨事項
+  - 許容水準の値は示していない
+  origin: NIST
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F603
+  statement: NIST SP 800-61 Rev.2 は、誤検知(False Positive)を「悪意のある活動が起きていると誤って示すアラート」と定義していた
+  kind: fact
+  source: NIST SP 800-61 Rev. 2, Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf  Appendix C Glossary (p.60)
+  as_of: 2012-08
+  quote: 'False Positive: An alert that incorrectly indicates that malicious activity is occurring.'
+  qualifiers:
+  - Rev.2 は Rev.3(2025年4月)で置き換えられた旧版
+  origin: NIST
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F604
+  statement: NIST SP 800-61 Rev.2 は、侵入検知システムが誤検知を出すことがあり、指標は理想的には個々に正当かを評価すべきであり、指標が正確でもインシデントが起きたとは限らず、ある事象が実際にインシデントかどうかの判断は判断の問題である場合があり、他の担当者と協力して決める必要がある場合があると述べていた
+  kind: fact
+  source: NIST SP 800-61 Rev. 2
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf  3.2.4 Incident Analysis (p.28)
+  as_of: 2012-08
+  quote: 'Intrusion detection systems may produce false positives— incorrect indicators. These examples demonstrate what makes incident detection and analysis so difficult: each indicator ideally should be evaluated to determine if it is legitimate. [...] Even if an indicator is accurate, it does not necessarily mean that an incident has occurred. Some indicators, such as a server crash or modification of critical files, could happen for several reasons other than a security incident, including human error. Given the occurrence of indicators, however, it is reasonable to suspect that an incident might be occurring and to act accordingly. Determining whether a particular event is actually an incident is sometimes a matter of judgment. It may be necessary to collaborate with other technical and information security personnel to make a decision.'
+  qualifiers:
+  - Rev.2 は Rev.3(2025年4月)で置き換えられた旧版
+  - '[...] は収集セッションによる省略'
+  - 評価は「ideally」(理想としては)すべきもの
+  - インシデントかの判断は「sometimes」(場合によって)判断の問題
+  - 協力は「may be necessary」(必要な場合がある)
+  origin: NIST
+  answers:
+  - Q3.1.1
+  - Q3.3.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F605
+  statement: Microsoft Sentinel では、インシデントを閉じるときに分類の選択が必須で、選択肢は「True Positive(疑わしい活動)」「Benign Positive(疑わしいが想定内)」「False Positive(アラートの論理が誤り)」「False Positive(データが誤り)」「Undetermined」である
+  kind: fact
+  source: Microsoft Learn, Navigate, triage, and manage Microsoft Sentinel incidents in the Azure portal
+  locator: https://learn.microsoft.com/en-us/azure/sentinel/incident-navigate-triage  節 "Close an incident"
+  as_of: 2026-07-02
+  quote: 'Once you resolve a particular incident (for example, when your investigation reaches its conclusion), set the incident’s status to Closed. When you do so, you''re asked to classify the incident by specifying the reason you''re closing it. Selecting a classification is mandatory. Select Select classification and choose one of the following from the drop-down list: True Positive – suspicious activity / Benign Positive – suspicious but expected / False Positive – incorrect alert logic / False Positive – incorrect data / Undetermined'
+  qualifiers:
+  - 製品の定義(Microsoft Sentinel)
+  - Azure portal での操作
+  - 一覧の区切りの " / " は収集セッションが付けた(原文は箇条)
+  origin: Microsoft(製品の公式文書)
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F606
+  statement: Microsoft Sentinel の文書は、正しく作った分析ルールでも、除外すべき利用者やIPアドレスなど特定の実体から誤検知が生じることが多いとし、例として、サービス主体の正常な活動、既知のIPアドレスからの意図的なスキャンを挙げている。自動化ルールの例外は、作成されたインシデントを閉じた理由とコメントを記録して自動で閉じる
+  kind: fact
+  source: Microsoft Learn, Handle false positives in Microsoft Sentinel
+  locator: https://learn.microsoft.com/en-us/azure/sentinel/false-positives  節 "False positive causes and prevention"
+  as_of: 2026-07-02
+  quote: 'Even in a correctly built analytics rule, false positives often stem from specific entities like users or IP addresses that should be excluded from the rule. Common scenarios include: Normal activities by certain users, usually service principals (automated identities used by applications and services), show a pattern that seems suspicious. Intentional security scanning activity coming from known IP addresses is detected as malicious. [...] Automation rules [...] Keep an audit trail. Exceptions immediately and automatically close created incidents, recording the reason for the closure and comments. [...] Allow applying exceptions for a limited time. For example, maintenance work might trigger false positives that outside the maintenance timeframe would be true incidents.'
+  qualifiers:
+  - 製品の定義(Microsoft Sentinel)
+  - '[...] は収集セッションによる省略'
+  - この文書は既知の例外を「false positive」と呼んでおり、F605 の分類の語(Benign Positive)と用語が一致しない
+  origin: Microsoft(製品の公式文書)
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
+- id: F607
+  statement: Microsoft Defender XDR は、アラートの分類として、脅威の種別を付ける True positive(実在の脅威を正確に示す)、活動の種別を付ける Informational, expected activity(技術的には正確だが正常な振る舞いや模擬の脅威活動。通常は無視してよいが、実際の攻撃者や悪意のあるソフトによる同様の活動では今後も検知されることを期待するもの。セキュリティテスト、レッドチームの活動、信頼するアプリや利用者の想定内の異常な振る舞いに使う)、False positive(悪意のある活動がないのに作られたアラート、誤報)を定めている
+  kind: fact
+  source: Microsoft Learn, Investigate alerts in Microsoft Defender XDR
+  locator: https://learn.microsoft.com/en-us/defender-xdr/investigate-alerts  節 "Manage alert status and classification"
+  as_of: 2026-11-09
+  quote: True positive with a type of threat. Use this classification for alerts that accurately indicate a real threat. [...] Informational, expected activity with a type of activity. Use this option for alerts that are technically accurate, but represent normal behavior or simulated threat activity. You generally want to ignore these alerts but expect them for similar activities in the future where the activities are triggered by actual attackers or malware. Use the options in this category to classify alerts for security tests, red team activity, and expected unusual behavior from trusted apps and users. False positive for types of alerts that were created even when there's no malicious activity or for a false alarm. Use the options in this category to classify alerts that are mistakenly identified as normal events or activities as malicious or suspicious. Unlike alerts for 'Informational, expected activity', which can also be useful for catching real threats, you generally don't want
+    to see these alerts again.
+  qualifiers:
+  - 製品の定義(Microsoft Defender XDR)
+  - '[...] は収集セッションによる省略'
+  - True positive は「with a type of threat」、Informational, expected activity は「with a type of activity」を選ぶ
+  - False positive も「the options in this category」から選ぶ
+  origin: Microsoft(製品の公式文書)
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F608
+  statement: Microsoft Defender XDR は、アラートの分析を終えて解決できる場合に、状態を Resolved にし、True positive、Informational, expected activity、False positive のいずれかに分類する手順を示している
+  kind: fact
+  source: Microsoft Learn, Investigate alerts in Microsoft Defender XDR
+  locator: https://learn.microsoft.com/en-us/defender-xdr/investigate-alerts  節 "Resolve an alert"
+  as_of: 2026-11-09
+  quote: Once you're done analyzing an alert and it can be resolved, go to the Manage alert pane for the alert or similar alerts and mark the status as Resolved and then classify it as a True positive with a type of threat, an Informational, expected activity with a type of activity, or a False positive.
+  qualifiers:
+  - 製品の定義(Microsoft Defender XDR)
+  origin: Microsoft(製品の公式文書)
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F609
+  statement: Microsoft Defender for Endpoint の文書は、分類や抑制の前に、アラートが正確か、誤検知か、無害かを判断するよう求め、誤検知なら False positive に分類して抑制し、正確だが無害(重要でない)なら True positive に分類して抑制するとしている
+  kind: fact
+  source: Microsoft Learn, Address false positives/negatives in Microsoft Defender for Endpoint
+  locator: 'https://learn.microsoft.com/en-us/defender-endpoint/defender-endpoint-false-positives-negatives  節 "Part 1: Review and classify alerts"'
+  as_of: 2026-09-02
+  quote: Before you classify or suppress an alert, determine whether the alert is accurate, a false positive, or benign. [...] The alert is accurate — Assign the alert, and then investigate it further. The alert is a false positive — 1. Classify the alert as a false positive. 2. Suppress the alert. 3. Create an indicator for Microsoft Defender for Endpoint. 4. Submit a file to Microsoft for analysis. The alert is accurate, but benign (unimportant) — Classify the alert as a true positive, and then suppress the alert.
+  qualifiers:
+  - 製品の定義(Microsoft Defender for Endpoint)
+  - '[...] は収集セッションによる省略、表の列の区切りの「—」は収集セッションが付けた'
+  - 正確だが無害なアラートの分類が F607 の Informational, expected activity と一致しない(同じ会社の製品の文書の間で扱いが異なる)
+  origin: Microsoft(製品の公式文書)
+  answers:
+  - Q3.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F610
+  statement: NIST SP 800-61 Rev.3 は、インシデントのトリアージ、優先度付け、エスカレーション、上位への引き上げ、復旧を始める判断を、一連のリスク評価の要因に基づかせるよう推奨し、要因の例として、資産の重要度、機能への影響、データへの影響、観測された活動の段階、脅威主体の特徴、回復可能性を挙げている
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, RS.MA (Incident Management) R2, N2 (p.26-27)
+  as_of: 2025-04
+  quote: 'R2: Incident triage, prioritization, escalation, and elevation and decisions regarding when to initiate recovery processes should all be based on a set of risk evaluation factors. This set can range from simple to incredibly complex, depending on the needs and maturity of an organization. N2: Examples of possible risk evaluation factors include asset criticality, functional impact of the incident, data impact of the incident, stage of observed activity, threat actor characterization, and recoverability.'
+  qualifiers:
+  - CSF 2.0 Community Profile の推奨事項と注記
+  - 要因は例示
+  - 要因の組み合わせは組織の必要と成熟度による
+  origin: NIST
+  answers:
+  - Q3.3.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
+- id: F611
+  statement: NIST SP 800-61 Rev.3 は、エスカレーションは一般に資源や時間枠を増やすことを指し、エレベーションは、通常、上位の管理者を対応に関与させることを示すと説明し、対応の資源の追加や戦略の変更が必要なインシデントを見つけるために、進行中の全インシデントの状況を追跡し検証するよう推奨している
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, RS.MA-04 (p.28)
+  as_of: 2025-04
+  quote: 'RS.MA-04 Incidents are escalated or elevated as needed — N1: Escalation generally refers to increasing resources or time frames, while elevation usually indicates involving a higher level of management in the response efforts. R1: Track and validate the status of all ongoing incidents so that incidents in need of more response resources or a change in response strategy can be identified and the necessary changes initiated rapidly.'
+  qualifiers:
+  - CSF 2.0 Community Profile の推奨事項と注記
+  - 定義は「generally」「usually」付きで確定した定義ではない
+  - 対象は進行中のインシデント(ongoing incidents)
+  - 表の列(CSF Element、CSF Element Description、N1)を収集セッションが「 — 」で区切って連結した
+  origin: NIST
+  answers:
+  - Q3.3.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F612
+  statement: NIST SP 800-61 Rev.3 は、サイバーセキュリティのリスクを算出する標準化した方法が、対応のエスカレーションや上位への引き上げの時期を判断する基準づくりにも使えるとしている
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.1節 Table 2, GV.RM-06 N2 (p.12-13)
+  as_of: 2025-04
+  quote: 'N2: Such a method can also be used to establish criteria and inform decision making on when to escalate or elevate incident response activities.'
+  qualifiers:
+  - CSF 2.0 Community Profile の注記
+  - Such a method は GV.RM-06 の標準化したリスクの算出方法を指す
+  origin: NIST
+  answers:
+  - Q3.3.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F613
+  statement: NIST SP 800-61 Rev.3 は、新しいインシデントの報告に予備的な確認を行い、インシデントが起きたことを確かめた後に、深刻度と対応の緊急度を見積もるよう推奨し、さらに範囲、想定される影響、時間的な切迫性、資源の利用可能性に基づいて対応の速さの優先度を付けるよう推奨している
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, RS.MA-02 R1 (p.27), RS.MA-03 R2 (p.28)
+  as_of: 2025-04
+  quote: 'RS.MA-02 Incident reports are triaged and validated — R1: Perform a preliminary review of a new incident report to verify that a cybersecurity incident has occurred, then estimate the severity of the incident and the level of urgency needed to respond to it. [...] RS.MA-03 [...] R2: Prioritize how quickly incident response should be performed for each incident based on its scope, likely impact, time-critical nature, and resource availability.'
+  qualifiers:
+  - CSF 2.0 Community Profile の推奨事項
+  - '[...] は収集セッションによる省略'
+  - 表の列(CSF Element、CSF Element Description、R1)を収集セッションが「 — 」で区切って連結した
+  - RS.MA-02 と RS.MA-03 の2つの行を連結した
+  origin: NIST
+  answers:
+  - Q3.3.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: supports
+    H2: contradicts
+    H3: neutral
+- id: F614
+  statement: NIST SP 800-61 Rev.2 は、指定時間内にチームが応答しない場合のエスカレーションの手順を定めるよう推奨し、例として、最初の連絡を繰り返し、15分ほど待って応答がなければインシデント対応チームの管理者など上位へ上げ、応答があるまで繰り返すとしていた
+  kind: fact
+  value: 15
+  unit: 分
+  metric: エスカレーションまでの待ち時間(例示)
+  source: NIST SP 800-61 Rev. 2
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf  3.2.6 Incident Prioritization (p.33)
+  as_of: 2012-08
+  quote: 'Organizations should also establish an escalation process for those instances when the team does not respond to an incident within the designated time. This can happen for many reasons: for example, cell phones may fail or people may have personal emergencies. The escalation process should state how long a person should wait for a response and what to do if no response occurs. Generally, the first step is to duplicate the initial contact. After waiting for a brief time—perhaps 15 minutes—the caller should escalate the incident to a higher level, such as the incident response team manager. If that person does not respond within a certain time, then the incident should be escalated again to a higher level of management. This process should be repeated until someone responds.'
+  qualifiers:
+  - Rev.2 は Rev.3(2025年4月)で置き換えられた旧版
+  - 15分は「perhaps」付きの例示
+  - 対象は応答がない場合のエスカレーション(分析の結果による上げではない)
+  origin: NIST
+  answers:
+  - Q3.3.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F615
+  statement: 米国 OMB の覚書 M-22-01 は、EDRを、端末のデータのリアルタイムで継続的な監視と収集に、ルールに基づく自動の対応と分析の機能を組み合わせたものと説明している
+  kind: fact
+  source: OMB Memorandum M-22-01, Improving Detection of Cybersecurity Vulnerabilities and Incidents on Federal Government Systems through Endpoint Detection and Response
+  locator: https://bidenwhitehouse.archives.gov/wp-content/uploads/2021/10/M-22-01.pdf  p.1 "Endpoint Detection and Response"
+  as_of: 2021-10-08
+  quote: EDR combines real-time continuous monitoring and collection of endpoint data (for example, networked computing devices such as workstations, mobile phones, servers) with rules-based automated response and analysis capabilities.
+  qualifiers:
+  - 米国連邦政府機関向けの覚書
+  - 国防総省と情報機関は対象外(覚書の脚注2)
+  - 原文 PDF では rules- と based が行末で分かれている。ハイフンは語の一部として残した
+  origin: 米国 行政管理予算局(OMB)
+  answers:
+  - Q1.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F616
+  statement: サウジアラビア国家サイバーセキュリティ庁(NCA)のEDR標準のひな形は、EDRのエージェントが、プロセス、接続、活動量、データの転送などの端末のデータを中央のデータベースに集め、収集するデータにプロセス、接続、ファイル、ドライバ、自動起動、システム、マシン、利用者の領域を含めることを求めている
+  kind: fact
+  source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
+  locator: https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  2 Data Collection and Monitoring, Objective と 2-6, 2-7 (下端の番号 p.6-7、PDF の7-8ページ目)
+  as_of: 2023-11
+  quote: 'Objective: EDR software agents must properly monitor and collect endpoint data, such as processes, connections, volume of activity and data transfers into a central database. [...] 2-6 EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity. 2-7 Relevant data for EDR solution must include information covering the following areas: Processes, Connections, Files, Drivers, Autorun, System, Machine, Users. Additional data sources may be used, including but not limited to: logs, performance monitoring, file details, running processes, and configuration data.'
+  qualifiers:
+  - 組織が自組織に合わせて直して使う例示のひな形(文書の Disclaimer)
+  - 版 1.0
+  - as_of は PDF の作成日
+  - '[...] は収集セッションによる省略'
+  - 「Objective:」と項番(2-6、2-7)は表の左列の見出しと番号で、収集セッションが右列の本文の先頭に置いて連結した。行 2-7 は Relevant data ... から configuration data. までの1つの行
+  - 2-7 の箇条(原文は「•」付き)をコンマで連結した
+  origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
+  answers:
+  - Q1.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F617
+  statement: NCAのEDR標準のひな形は、EDRが全端末から集めたデータに基づいて脅威のパターンを識別し、新しいデータのパターンを過去のものと比べて未知と既知の悪意のある活動を識別し、振る舞いによる脅威の検知の機能を持ち、MITRE ATT&CK などの知識ベースを使い、検知に重大度と確信度でリスクの点数を付けることを求めている
+  kind: fact
+  source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
+  locator: https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  3 Data Analysis and Threat Pattern Identification, 3-3〜3-7 (下端の番号 p.8、PDF の9ページ目)
+  as_of: 2023-11
+  quote: 3-3 EDR solution must identify threat patterns based on aggregated data from all endpoints, rather than a single one. 3-4 EDR solution must compare new dataset patterns to the previous ones, in order to identify previously unknown or known malicious activities. 3-5 EDR solution must provide behavioral threat detection capabilities. 3-6 EDR solution must use globally accessible knowledge databases concerning cybersecurity threat categorization (e.g., MITRE ATT&CK globally accessible knowledge base of adversary tactics and techniques based on real-world observations). 3-7 EDR solution must assign risk scorings and categorize cyber-threats based on criticality and confidence. Criticality estimates the impact on the cyber environment of a potentially ineffective detection. Confidence means how likely it is that the detection is valid and not a false-positive.
+  qualifiers:
+  - 組織が自組織に合わせて直して使う例示のひな形
+  - 版 1.0
+  - as_of は PDF の作成日
+  - 要件(must)であり製品の実際の動作の記述ではない
+  - 項番(3-3〜3-7)は表の左列の番号で、収集セッションが右列の本文の先頭に置いて連結した
+  origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
+  answers:
+  - Q1.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F618
+  statement: Microsoft Defender for Endpoint は、プロセスの情報、ネットワークの活動、カーネルとメモリ管理の深い観測、利用者のログオンの活動、レジストリとファイルシステムの変更などの振る舞いのテレメトリを継続的に集め、6か月保存する
+  kind: fact
+  value: 6
+  unit: か月
+  metric: EDRのテレメトリの保存期間
+  source: Microsoft Learn, Overview of endpoint detection and response capabilities - Microsoft Defender for Endpoint
+  locator: https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response  本文
+  as_of: 2026-06-02
+  quote: Inspired by the "assume breach" mindset, Defender for Endpoint continuously collects behavioral cyber telemetry. This includes process information, network activities, deep optics into the kernel and memory manager, user login activities, registry and file system changes, and others. The information is stored for six months, enabling an analyst to travel back in time to the start of an attack.
+  qualifiers:
+  - 製品の定義(Microsoft Defender for Endpoint)
+  - 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2 と Microsoft Defender XDR(Applies to)
+  origin: Microsoft(製品の公式文書)
+  answers:
+  - Q1.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F619
+  statement: Microsoft Defender for Endpoint では、脅威を検知するとアラートが作られ、同じ攻撃の手法や同じ攻撃者によるアラートはインシデントにまとめられる。検知の機能は端末の全ての操作を記録する監査やログの仕組みではなく、センサーには同じ事象の大量の繰り返しを間引く仕組みがある
+  kind: fact
+  source: Microsoft Learn, Overview of endpoint detection and response capabilities - Microsoft Defender for Endpoint
+  locator: https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response  本文と Note
+  as_of: 2026-06-02
+  quote: When a threat is detected, alerts are created in the system for an analyst to investigate. Alerts with the same attack techniques or attributed to the same attacker are aggregated into an entity called an incident. [...] Defender for Endpoint detection is not intended to be an auditing or logging solution that records every operation or activity that happens on a given endpoint. Our sensor has an internal throttling mechanism, so the high rate of repeat identical events don't flood the logs.
+  qualifiers:
+  - 製品の定義(Microsoft Defender for Endpoint)
+  - 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2 と Microsoft Defender XDR(Applies to)
+  - '[...] は収集セッションによる省略'
+  origin: Microsoft(製品の公式文書)
+  answers:
+  - Q1.1.1
+  verified: false
+  collected_verified: false
+  request: R6
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F620
+  statement: NIST SP 1800-24C は、構築例に使った Symantec EDR を、Symantec Endpoint Protection からの端末の事象に振る舞いの分析を行って悪意のある可能性のある振る舞いを識別するものと説明している
+  kind: fact
+  source: 'NIST SP 1800-24C, Securing Picture Archiving and Communication System (PACS): How-To Guides'
+  locator: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1800-24.pdf  2.7.6 Symantec Endpoint Detection and Response (EDR) (1800-24C p.180、PDF の311ページ目)
+  as_of: 2020-12
+  quote: Symantec Endpoint Detection and Response performs behavioral analytics on endpoint events from Symantec Endpoint Protection to identify potentially malicious behavior. It can sandbox impacted endpoints, prioritize risks, and provide tailored remediation guides.
+  qualifiers:
+  - 特定の製品(Symantec EDR)についての記述
+  - NIST NCCoE の医療分野(PACS)の構築例の手順書
+  origin: NIST NCCoE
+  answers:
+  - Q1.1.1
+  verified: false
+  collected_verified: false
+  request: R6
   stance:
     H1: neutral
     H2: neutral
