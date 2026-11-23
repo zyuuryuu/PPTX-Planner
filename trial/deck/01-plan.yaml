@@ -16,42 +16,42 @@
   evidence_type: 公的機関や標準の文書、製品に依らない技術解説
   priority: low
   perspective: null
-  result: null
+  result: answered
 - id: Q1.1.2
   question: SOCの解析者が受けるアラートの量は、どの程度か
   parent: Q1.1
   evidence_type: 業界の調査の統計、学術の調査
   priority: low
   perspective: null
-  result: null
+  result: partial
 - id: Q1.1.3
   question: SOCに届くアラートのうち、誤検知はどの程度の割合を占めるか
   parent: Q1.1
   evidence_type: 業界の調査の統計、学術の調査
   priority: high
   perspective: null
-  result: null
+  result: disputed
 - id: Q1.1.4
   question: よくある誤検知には、どんなパターンがあり、それぞれ何が原因で起きるか
   parent: Q1.1
   evidence_type: 公的機関や標準の文書、製品に依らない技術解説、業界の調査
   priority: low
   perspective: null
-  result: null
+  result: answered
 - id: Q1.2
   question: 一次解析で確かめる記録には、どんな種類があり、それぞれから何が分かるか(端末の記録、通信の記録、認証の記録など)
   parent: Q1
   evidence_type: 公的機関や標準の文書(ログの管理と分析の指針)
   priority: low
   perspective: null
-  result: null
+  result: answered
 - id: Q1.3
   question: 攻撃の手口の分類(MITRE ATT&CKなど)は何を分類しており、アラートの解析でどのように使われるか
   parent: Q1
   evidence_type: 分類の公式の文書
   priority: low
   perspective: null
-  result: null
+  result: answered
 - id: Q2
   question: 一次解析は、何をどの順で確かめるとされているか
   parent: Q0
@@ -62,14 +62,14 @@
   evidence_type: 公的機関や標準の文書、SOCの運用の指針
   priority: high
   perspective: null
-  result: null
+  result: answered
 - id: Q2.2
   question: 1件のアラートについて、何をどの順で確かめるとされているか
   parent: Q2
   evidence_type: 公的機関や標準の文書、SOCの運用の指針
   priority: high
   perspective: null
-  result: null
+  result: answered
 - id: Q3
   question: 「閉じる/調査を続ける/上に上げる」のそれぞれを選ぶ基準は何か
   parent: Q0
@@ -84,21 +84,21 @@
   evidence_type: 公的機関や標準の文書、SOCの運用の指針
   priority: high
   perspective: null
-  result: null
+  result: partial
 - id: Q3.1.2
   question: 誤検知として閉じた判断は、どう記録され、後からどう見直されるとされているか
   parent: Q3.1
   evidence_type: SOCの運用の指針
   priority: low
   perspective: null
-  result: null
+  result: answered
 - id: Q3.2
   question: 判断を保留して調査を続ける場合、何をどこまで確かめるとされているか(調べる範囲や時間の目安を含む)
   parent: Q3
   evidence_type: SOCの運用の指針、業界の調査
   priority: low
   perspective: null
-  result: null
+  result: answered
 - id: Q3.3
   question: 上に上げる判断は、どう行うとされているか
   parent: Q3
@@ -109,14 +109,14 @@
   evidence_type: 公的機関や標準の文書、SOCの運用の指針
   priority: high
   perspective: null
-  result: null
+  result: partial
 - id: Q3.3.3
   question: 上に上げるときに、何を添えて渡すとされているか
   parent: Q3.3
   evidence_type: SOCの運用の指針
   priority: low
   perspective: null
-  result: null
+  result: answered
 - id: Q4
   question: 一次解析で、新人はどこで誤りやすいか
   parent: Q0
@@ -127,18 +127,18 @@
   evidence_type: 事案の調査報告、業界の調査、学術の調査
   priority: high
   perspective: 受講者が陥りやすい誤り
-  result: null
+  result: answered
 - id: Q4.2
   question: 調査を続けたまま上に上げるのが遅れる誤りは、どんな状況や要因で起きるとされているか
   parent: Q4
   evidence_type: 事案の調査報告、業界の調査、学術の調査
   priority: low
   perspective: 受講者が陥りやすい誤り
-  result: null
+  result: partial
 - id: Q4.3
   question: 上に上げなくてよいアラートまで上げてしまう誤りは、どんな状況や要因で起きるとされているか
   parent: Q4
   evidence_type: 業界の調査、学術の調査
   priority: low
   perspective: 受講者が陥りやすい誤り
-  result: null
+  result: partial
