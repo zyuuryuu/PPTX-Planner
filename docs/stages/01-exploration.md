@@ -56,6 +56,7 @@
   source: 〇〇白書 2025年版
   locator: p.34 図表2-1  # ページ、URL、節など
   quote: "国内市場は1兆2,000億円に達した"
+  qualifiers: [2025年, 国内]   # この事実に付いている限定(条件、範囲、数量の幅、不確かさなど)
   origin: 〇〇省の統計    # 元をたどった情報源。別の資料が同じ情報源を引いている場合に、同じ値になる
   answers: [Q1.1]        # 探索の計画のどの問いに答えるか
   stance: {H1: supports, H2: contradicts}   # 仮説ごとに、supports(支持) / contradicts(否定) / neutral(どちらでもない)
