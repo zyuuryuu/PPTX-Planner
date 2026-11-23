@@ -1,0 +1,17 @@
+# 素材台帳。収集セッションの結果(incoming/)を設計セッションがここに集める。
+# F001 は依頼者の証言で、会話で聞き取ったため設計セッションが登録した。
+- id: F001
+  statement: 依頼者の実感では、届くアラートの8割は誤検知である
+  value: 80
+  unit: '%'
+  kind: testimony
+  source: 依頼者(SOCのリーダー)の、日々のアラートの対応からの実感。件数を数えたものではない
+  locator: 2026-11-23 の聞き取り
+  as_of: 2026-11-23
+  metric: 誤検知の割合
+  superseded_by: null
+  quote: "数えたことはない。日々の対応からの実感。"
+  qualifiers: [依頼者のSOC, 実感(数えていない)]
+  origin: 依頼者
+  answers: [Q1.1.3]
+  verified: true
