@@ -1,9 +1,33 @@
 # 語彙表(草案)。工程1では、素材台帳の metric の語だけを登録する。対象を指す語の登録と、ユーザーの確認は工程6で行う。
 terms:
+- id: T-false-positive
+  term: 誤検知
+  kind: noun
+  definition: 検知の条件そのものが誤っていて、無害な活動に反応したアラート(緩すぎるルール、誤ったデータなど)
+  note: 依頼者が決めた(2026-11-23)。想定内の検知を含めない
+  defined_in: null
+  no_definition: null
+  not:
+  - T-expected-detection
+- id: T-expected-detection
+  term: 想定内の検知
+  kind: noun
+  definition: 検知の条件どおりに正しく反応したが、業務上は問題のない活動によるアラート(社内の脆弱性スキャン、委託したペネトレーションテストなど)。出典では benign trigger、Benign Positive、Informational, expected activity などと呼ばれる
+  note: 依頼者が名前を決めた(2026-11-23)
+  defined_in: null
+  no_definition: null
+  not:
+  - T-false-positive
+- id: T-fp-plus-expected-share
+  term: 誤検知と想定内の検知を合わせた割合
+  kind: noun
+  definition: 届いたアラートのうち、誤検知と想定内の検知を合わせたものの割合
+  defined_in: null
+  no_definition: null
 - id: T-fp-share
   term: 誤検知の割合
   kind: noun
-  definition: 届いたアラートのうち、誤検知と判断されたものの割合。出典ごとに「誤検知」の定義が違う(良性のトリガーを含むかどうか)
+  definition: 届いたアラートのうち、誤検知と判断されたものの割合。出典ごとに数え方が違い、想定内の検知を含む出典がある
   defined_in: null
   no_definition: null
 - id: T-alerts-per-day
@@ -96,5 +120,9 @@ terms:
   definition: EDRが集めた端末の記録を保存する期間
   defined_in: null
   no_definition: null
-banned: []
+banned:
+- term: 良性のトリガー
+  reason: 想定内の検知と同じ対象を指す。出典の訳語
+  use:
+  - T-expected-detection
 allowed: []
