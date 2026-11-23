@@ -94,7 +94,7 @@
   - Q4.1
   verified: false
 - id: F506
-  statement: RSA Conference 2018でImpervaが調べたIT担当者(IT professionals)179人のうち、56%が、過去の誤検知の経験を理由にアラートを無視したことがあると答えた
+  statement: Impervaの調査で、IT専門職(IT professionals)の56%が、過去の誤検知の経験を理由にアラートを無視したことがあると答えた
   value: 56
   unit: '%'
   kind: fact
@@ -104,9 +104,9 @@
   metric: 過去の誤検知を理由にアラートを無視したことがある回答者の割合
   quote: Because of this, it can be tempting to disregard future alerts. In our survey, 56 percent of IT professionals admitted to having ignored an alert based on past false-positive experiences.
   qualifiers:
-  - IT担当者179人(RSA Conference 2018での調査。SOC分析者に限らない)
   - 自己申告
   - 調査会社がセキュリティ製品のベンダーであり、製品の宣伝を含む資料(一次情報として扱わない)
+  - 'quoteの外(同じページの前の文): RSA Conference 2018で、IT専門職179人を対象に実施。SOC分析者に限らない'
   origin: Imperva自社調査
   answers:
   - Q4.1
