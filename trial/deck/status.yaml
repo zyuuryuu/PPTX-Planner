@@ -14,5 +14,17 @@ artifacts:
     approved_on: 2026-11-23
     approved_commit: afd7ac3   # 依頼者の指示で Q1.1.4 を足したコミット。足すことを条件にOKを得た
     rounds: 2
+  01-hypotheses.yaml:
+    state: 作成中   # 工程2で使う。ユーザーの承認の対象ではない
+  01-sources.yaml:
+    state: 検査済み   # 重大な検査2回(初回)と再検査。138件中 verified 136件(F200、F209 は往復の上限で verified: false)
+  01-model.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-23
+    approved_commit: fc10d64   # 図(preview/model.html)と、語彙表の4語(イベント、ログ、アラート、インシデント)を見て同意
+    rounds: 2
+  terms.yaml:
+    state: 作成中   # 依頼者が決めた語(誤検知、想定内の検知、イベント、ログ、アラート、インシデント)を含む。工程6で承認
   style.yaml:
     state: 作成中
