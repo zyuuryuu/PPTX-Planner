@@ -1,0 +1,196 @@
+検査の名前: "1-model-3"
+対象: >-
+  trial/deck/01-model.yaml と trial/deck/incoming/R7.yaml のうち、検査 1-model-1、1-model-2 で不合格だった項目と、その直しで足された・差し替えられた項目。
+  コミット b9324d3e4434abd894cf5c45fa3a1bfe66295526 の版(git show で読んだ)
+種類: 重大な検査の再検査(docs/rework.md「不合格のときの手順」の5)。1回だけ
+判定者: "claude-opus-5-5(検査セッション session_01LpWHd44p63uZTHm4fo8Hv2)"
+日付: 2026-11-23
+判定の基準: docs/model.md の合格条件、docs/stages/01-exploration.md の素材台帳(fact を verified にする条件)
+方法: |
+  出典を 2026-11-23 に取得して開いた(全て HTTP 200)。
+    - NIST SP 800-92(nvlpubs PDF)。pdftotext -layout で抽出し、第3章の冒頭(p.3-1)、3.2 Functions(p.3-3〜3-5)、3.4(p.3-9)、脚注37(p.3-10)、3.6 Summary(p.3-11)を読んだ。
+    - Microsoft Learn「Threat detection in Microsoft Sentinel」(Last updated on 2026-05-14。Applies to: Microsoft Sentinel in the Microsoft Defender portal, Microsoft Sentinel in the Azure portal)。タグを除いて空白を詰めて読んだ。
+    - NCA EDR Standard Template(cdn.nca.gov.sa PDF)。2 Data Collection and Monitoring の Objective を読んだ(R-endpoint-agent の根拠 F616)。
+  quote は '[...]' で区切った断片ごとに原文と照合した。差は、脚注番号(20、34、35、36)の除去と、リンクの前後の空白だけだった。
+  前回の指摘は 1-model-1.yaml、1-model-2.yaml を読んだ。01-hypotheses.yaml、journal.md、decisions.md は読んでいない
+  (外したIDの参照の確認で、リポジトリ全体を grep した際に journal.md の行が一致したことは下に書く。中身は読んでいない)。
+  依頼の範囲外の項目には指摘を出していない。
+集計:
+  事実: "3件中 合格3(F701、F711、F715)"
+  要素: "3件中 合格3(E-siem-infra、D-infra-alert、E-siem-server)"
+  つながり: "6件中 合格5、不合格1(R-infra-siem)。外したつながりの参照: 合格"
+  場面: "3件中 合格3(S-siem-agent、S-siem-agentless-push、S-siem-agentless-pull)"
+  basis: "対象の全項目で、出典の種類と合う"
+  判定できない: "0件"
+  不合格のID: "R-infra-siem"
+
+# ============================================================
+# 1. 事実
+# ============================================================
+事実:
+  - id: F701
+    判定: 合格
+    前回の指摘: "1-model-2: statement の括弧内「エージェントなし、エージェント型」が quote にない"
+    確かめたこと: >-
+      statement は「多くのSIEM製品は、ログ生成元からログを集める2つの方法に対応する」となり、括弧内が除かれた。quote は 3.4(p.3-9)に実在する
+      (原文の 'software34'、'syslog. 35'、'logs.36' の脚注番号を除いたことは qualifiers にある)。'Most SIEM products' は qualifiers にあり、
+      2つの方法の中身を F702、F703 に分けたことも qualifiers に書かれている。解消。新しい問題はない。
+  - id: F711
+    判定: 合格
+    前回の指摘: "1-model-1: quote の直後の、Microsoft セキュリティのルールが使えない条件が qualifiers に書かれていない"
+    確かめたこと: >-
+      quote が注記まで伸ばされた。原文: "Important Microsoft security rules are not available if you have: Enabled Microsoft Defender XDR incident integration ,
+      or Onboarded Microsoft Sentinel to the Defender portal . In these scenarios, Microsoft Defender XDR creates the incidents instead."(リンクの前の空白だけが差)。
+      statement に「ただし…Microsoft Defender XDR がインシデントを作る」、qualifiers に条件の中身と、Applies to に Defender のポータルの Sentinel が含まれること、
+      注記の続き 'Any such rules you had defined beforehand are automatically disabled.' が書かれている。as_of 2026-05-14 は Last updated と一致。解消。
+  - id: F715
+    判定: 合格
+    新規: 第3章の冒頭と 3.6 をつなぐ事実
+    確かめたこと: >-
+      3つの断片が実在する。(1) 第3章の冒頭(p.3-1): "A log management infrastructure consists of the hardware, software, networks, and media used to generate,
+      transmit, store, analyze, and dispose of log data.20"(脚注20の除去は qualifiers にある)。(2) 同じ段落: "It then describes the basic functions performed within
+      a log management infrastructure. Next, it examines the two major categories of log management software: syslog-based centralized logging software and
+      security information and event management software."(3) 3.6 Summary(p.3-11): "Log management infrastructures, which are typically based on either
+      syslog-based centralized logging software or security information and event management software, usually use a three-tiered design."
+      statement の3つの文は quote に合う。'typically' は qualifiers にある。「'basic functions' は 3.2 Functions の節を指す」は、冒頭の段落が
+      構成(3.1 Architecture、3.2 Functions、3.3・3.4 の2種類、3.5 追加のソフトウェア)を順に述べていることから読み取れる。locator のページも合う。
+    備考:
+      - "'usually use a three-tiered design' の 'usually' は statement に入っていないが、statement は3層の設計を述べていないので、限定の漏れではない。"
+
+# ============================================================
+# 2. 要素
+# ============================================================
+要素:
+  - id: E-siem-infra
+    判定: 合格
+    新規: R-siem-* の主体の置き換え先
+    確かめたこと: >-
+      出典の 'log management infrastructure' と、3.6 の 'typically based on ... security information and event management software'(F715)から、
+      「SIEM を基にしたログ管理基盤」は出典の記述の範囲で名付けられる(3.3 も 'a logging infrastructure based on the syslog protocol' と同じ形で呼ぶ)。
+      種類 component は、基盤が機器、ソフトウェア、ネットワーク、媒体からなる(F715)ことと合う。note の「SIEM を基にするのは typically」も出典に合う。basis: description は合う。
+  - id: D-infra-alert
+    判定: 合格
+    前回: D-siem-alert(要素としては合格。SIEM の要素と言えるかは、つながりの判定に回されていた)
+    確かめたこと: >-
+      名前「アラート(alert)」と種類 data は F705 'the infrastructure might also generate an alert' に合う。改名で SIEM の要素と読まれなくなり、
+      note に「出典はログ管理基盤の記述」とある。basis: description は合う。
+  - id: E-siem-server
+    判定: 合格
+    前回の指摘: "1-model-2 の備考: functions の「優先順位付け」に、脚注37の限定(some SIEM products)がない"
+    確かめたこと: >-
+      functions に「重要なイベントの優先順位付け(prioritizes。F100。脚注37によると一部のSIEM製品(some SIEM products)の機能)」とある。
+      原文 p.3-10 の脚注37: "Some SIEM products can prioritize events based on correlating events with other sources of information"。
+      本文(p.3-10)の 'prioritizes significant events,37' と合う。ほかの functions(エージェントなしの場合の絞り込みと正規化は F702、分析、相関、重要なイベントの特定は F100)も出典に合う。解消。
+
+# ============================================================
+# 3. つながり
+# ============================================================
+つながり:
+  - id: R-sentinel-external-incident
+    判定: 合格
+    前回の指摘: "1-model-1(不合格)、1-model-2(備考): condition に、Microsoft セキュリティのルールが使えない条件がない"
+    確かめたこと: >-
+      condition に「Microsoft Defender XDR のインシデントの統合を有効にしておらず、かつ Microsoft Sentinel を Defender のポータルに載せていない場合に限る
+      (その場合は Microsoft Defender XDR がインシデントを作る)」が足された。原文の 'if you have: Enabled ... , or Onboarded ...' の2条件の否定(どちらもしていない)と合う。
+      mode「リアルタイムで自動」は 'automatically create ... in real time' と合う。basis: product は合う。解消。
+
+  - id: R-infra-siem
+    判定: 不合格
+    新規: 直しで足された項目
+    引用:
+      対象: "from: E-siem-infra(名前: SIEM を基にしたログ管理基盤) / to: E-siem / kind: based_on / condition: 通常(typically)。syslog 型の集中ログソフトウェアを基にする場合もある"
+      出典: "F715(3.6): Log management infrastructures, which are typically based on either syslog-based centralized logging software or security information and event management software"
+    理由: >-
+      向き(基盤が SIEM を基にする)は出典に合う。しかし condition が from の要素と合わない。出典の 'typically' と「syslog 型を基にする場合もある」は、
+      ログ管理基盤一般が何を基にするかの限定である。from の E-siem-infra は「SIEM を基にした」基盤と定義されており、そのつながりに
+      「通常 SIEM を基にする。syslog 型を基にする場合もある」を付けると、SIEM を基にした基盤が syslog 型を基にすることもある、と読める。
+      これは出典の記述ではなく、要素の名前とも食い違う。図にこのつながりを描くと、条件の文がそのまま誤りとして表に出る。
+      直しで足された項目に生じた新しい問題である。
+    直し方の案: >-
+      condition を「常に(E-siem-infra の定義による)」などにし、'typically' と syslog 型の記述は、E-siem-infra の note(すでに書かれている)に寄せる。
+      または、from を「ログ管理基盤(一般)」の要素にして、condition を今のままにする(その場合、R-infra-correlated-entry と R-infra-alert の from との関係を合わせて決める)。
+
+  - id: R-infra-correlated-entry
+    判定: 合格
+    前回: R-siem-correlated-entry(両検査で不合格。主体が SIEM ではなく基盤)
+    確かめたこと: >-
+      from が E-siem-infra になり、SIEM 製品(E-siem)を主体にしなくなった。condition「相関を自動の方法で行い、成功した場合。一般に(generally)」は
+      原文 p.3-5 'If correlation is performed through automated methods, generally the result of successful correlation is a new log entry' と合う。
+      note は、主体が基盤であり SIEM の節に書かれていないことを示している。当てはめの可否は下の「判断を求められた点」に書いた(出典の範囲に収まる)。解消。
+  - id: R-infra-alert
+    判定: 合格
+    前回: R-siem-alert(両検査で不合格)
+    確かめたこと: >-
+      from が E-siem-infra、to が D-infra-alert になった。condition「相関を自動の方法で行い、その情報の性質による(might)」は
+      原文 'Depending on the nature of that information, the infrastructure might also generate an alert to indicate that the identified event needs further investigation.' と、
+      その直前の自動の相関の文に合う。note に「アラートの送り先は書かれていない」とあり、送り先のつながりを足していない。解消。
+  - id: R-server-db
+    判定: 合格
+    前回の指摘: "1-model-1: 役割の記述から、ログサーバからデータベースサーバへの経路を補った(不合格)。1-model-2: 合格。kind を保存先に近いものにすることを勧める"
+    確かめたこと: >-
+      kind が send から store_in(from のログの保存先が to である。経路や転送は表さない)に変わり、label が「ログの保存先」になった。
+      F701 'SIEM products have one or more log servers that perform log analysis, and one or more database servers that store the logs' は、SIEM のログの保存先が
+      データベースサーバであることを書いており、store_in はそれ以上を述べない。転送の経路は冒頭の「つながりを登録しなかった箇所」に移された。
+      mode、condition は unknown。note の F700 の 'may' も原文(p.3-1)に合う。両検査の指摘とも解消。
+  - id: R-endpoint-agent
+    判定: 合格
+    前回の指摘: "1-model-1: mode「リアルタイムで継続的」が OMB(別の系統)から移されている。1-model-2 の備考: kind は retrieve のほうが出典に近い"
+    確かめたこと: >-
+      mode が unknown、kind が retrieve(from: E-edr-agent、to: E-endpoint)、evidence が F616 だけになり、basis: requirement が付いた。
+      NCA PDF の Objective: "EDR software agents must properly monitor and collect endpoint data, such as processes, connections, volume of activity and data transfers
+      into a central database." エージェントが端末のデータを監視して集める向きと、要件(must)であることに合う。両検査の指摘とも解消。
+  - 対象: 外された R-endpoint-mde と R-edr-siem(と旧ID R-siem-alert、R-siem-correlated-entry、D-siem-alert)の参照
+    判定: 合格
+    確かめたこと: >-
+      コミット b9324d3 の全体を git grep した。01-model.yaml と incoming/R7.yaml と、その他の成果物(01-sources.yaml、01-hypotheses.yaml を含む)に、これらのIDの参照はない。
+      一致したのは checks/ の検査の記録と、journal.md の作業の記録(181、182行。過去の検査の結果を記した行)だけで、どちらも成果物の参照ではない。
+      外した経路は、01-model.yaml の冒頭の「つながりを登録しなかった箇所」に、EDR(NCA)から SIEM への経路と、Defender for Endpoint のテレメトリの経路として書かれている。
+      要素 D-mde-telemetry は残っているが、F618 を evidence に持つ要素として成り立つ(1-model-2 の直し方の案に合う)。
+
+# ============================================================
+# 4. 場面
+# ============================================================
+場面:
+  - id: S-siem-agent
+    判定: 合格
+    前回の指摘: "両検査: 最後の段 R-siem-alert が不合格"
+    確かめたこと: >-
+      steps が [R-agent-server, R-server-significant] になり、R-siem-alert が外された。順序は F703(エージェントが SIEM サーバへ送る)の後に
+      F100 'Regardless of how it receives log data (through agents or an agentless method), an SIEM server analyzes ...'(p.3-10)で、原文に合う。
+      2段とも from/to が E-siem-server でつながり、1-model-2 の指摘(段の間の部品のずれ)も解消した。name と note も「重要なイベントの特定で終える」と合っている。
+  - id: S-siem-agentless-push
+    判定: 合格
+    確かめたこと: "steps: [R-source-server-push, R-server-significant]。F702(push)の後に F100。順序が原文に合う。解消。"
+  - id: S-siem-agentless-pull
+    判定: 合格
+    確かめたこと: "steps: [R-server-source-pull, R-server-significant]。F702(pull)の後に F100。順序が原文に合う。解消。"
+
+# ============================================================
+# 5. basis
+# ============================================================
+basis:
+  判定: 合格
+  確かめたこと: >-
+    NIST SP 800-92 に基づく項目(F701、F715 を根拠にするもの、E-siem-infra、D-infra-alert、E-siem-server、R-infra-*、R-server-db、SIEM の3場面)は description、
+    Microsoft Sentinel の R-sentinel-external-incident は product、NCA の要件の R-endpoint-agent は requirement で、出典の種類と合う。
+
+# ============================================================
+# 6. 収集セッションが判断を求めた点
+# ============================================================
+判断を求められた点:
+  点: "R-infra-*: SP 800-92 第3章の冒頭(基盤の基本の機能)と 3.6(基盤は通常 SIEM を基にする)をつないで、「SIEM を基にしたログ管理基盤」に当てはめてよいか"
+  答え: 出典の記述の範囲に収まる。補完にはあたらない
+  理由: >-
+    (1) F705 の主体は 'the infrastructure'(ログ管理基盤一般)で、その記述を、基盤の一部である「SIEM を基にした基盤」に当てはめるのは、一般の記述を部分に適用したもので、
+    新しい主体やつながりを足していない。(2) SIEM を基にした基盤が存在すること(typically)と、3.2 の機能が基盤の中で行われる基本の機能であることは、F715 で台帳にある。
+    (3) 主体を基盤のままにし、SIEM 製品(E-siem)や SIEM サーバ(E-siem-server)に置き換えていない。前回の両検査が補完とした点(主体の置き換え)は、ここで解消している。
+    (4) generally、might、自動の相関の場合という限定が condition に残っている。
+    補足(原文の確認で見つけたこと): 3.2 の末尾(p.3-5)に、さらに直接の橋渡しがある。
+    "A log management infrastructure usually encompasses most or all of the functions described in this section. ... The placement of some of the log functions among
+    the three tiers of the log management infrastructure depends primarily on the type of log management software used. Log management infrastructures are typically
+    based on one of the two major categories of log management software"。
+    ここから2つの限界が読める。(a) 基盤は 3.2 の機能の「大半か全て」を「通常」持つのであって、全ての基盤が相関を行うとは限らない。R-infra-* の condition
+    「相関を自動の方法で行う場合」がこの限定を含むので、不合格にはしない。(b) 機能を3層のどこに置くかは、使うソフトウェアの種類による。よって、相関やアラートの生成を
+    SIEM の特定の部品(SIEM サーバなど)に置くことは、出典の範囲を超える(補完になる)。今の定義は主体を基盤のままにしており、この線を越えていない。
+    図でも、R-infra-* を SIEM サーバから出るように描かないことを勧める。
+  勧め: "3.2 末尾の上の文を F715 に足すか、R-infra-* の note に書くと、当てはめの根拠と限界がはっきりする(判定には影響しない)。"
