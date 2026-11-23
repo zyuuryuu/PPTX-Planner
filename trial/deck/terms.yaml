@@ -1,5 +1,43 @@
 # 語彙表(草案)。工程1では、素材台帳の metric の語だけを登録する。対象を指す語の登録と、ユーザーの確認は工程6で行う。
 terms:
+- id: T-event
+  term: イベント
+  kind: noun
+  definition: システムやネットワークで起きた出来事そのもの。良い悪いは問わない。新人はログを見てイベントを知る
+  note: 依頼者が決めた(2026-11-23)
+  defined_in: null
+  no_definition: null
+  not:
+  - T-log
+  - T-alert
+- id: T-log
+  term: ログ
+  kind: noun
+  definition: イベントを書き残したもの
+  note: 依頼者が決めた(2026-11-23)
+  defined_in: null
+  no_definition: null
+  not:
+  - T-event
+- id: T-alert
+  term: アラート
+  kind: noun
+  definition: 検知の仕組みが、決められた条件に合うイベントを見つけて出す知らせ。この時点では本物の攻撃かどうかは分からない
+  note: 依頼者が決めた(2026-11-23)
+  defined_in: null
+  no_definition: null
+  not:
+  - T-incident
+  - T-event
+- id: T-incident
+  term: インシデント
+  kind: noun
+  definition: 調べた結果、実際に侵害や被害がある、と判断したもの。新人は自分でインシデントと決めず、その疑いがあれば上に上げる
+  note: 依頼者が決めた(2026-11-23)。製品(Microsoft Sentinel、Defender)の「インシデント」はアラートのまとまりで、この語とは違う
+  defined_in: null
+  no_definition: null
+  not:
+  - T-alert
 - id: T-false-positive
   term: 誤検知
   kind: noun
@@ -126,3 +164,7 @@ banned:
   use:
   - T-expected-detection
 allowed: []
+model_labels:
+  D-sentinel-incident: 'アラートのまとまり(製品の呼び名: インシデント。資料で言うインシデントではない)'
+  D-mde-incident: 'アラートのまとまり(製品の呼び名: インシデント。資料で言うインシデントではない)'
+  D-significant-event: 重要と判断されたイベント(まだアラートではない)
