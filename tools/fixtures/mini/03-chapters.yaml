@@ -1,0 +1,31 @@
+order:
+  conclusion: first
+  basis: importance
+chapters:
+  - id: ch1
+    kind: intro
+    title: お願いしたいこと
+    message: 定型の問い合わせをチャットボットに任せる導入を、来期に始めたい
+    slides: 4
+    slides_reason: 結論と、今決める理由だけを述べるため、少なくする
+  - id: ch2
+    kind: body
+    title: 導入を勧める理由
+    message: 問い合わせの62%を占める定型の問い合わせを、試行では41%減らせた。回答の6%に誤りがある
+    claims: [C1, C2]
+    slides: 7
+    slides_reason: 読み手が疑う効果と誤りに、多く充てる
+  - id: ch3
+    kind: closing
+    title: 承認いただきたいこと
+    message: 管理部の部長に、2026年12月の会議で、来期の導入の開始を承認いただきたい
+    slides: 3
+    slides_reason: 求める判断を1枚で述べる
+omitted: []
+contradictions:
+  - fact: F008
+    chapter: ch2
+objections:
+  - claim: C2
+    index: 0
+    to: appendix

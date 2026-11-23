@@ -1,0 +1,149 @@
+- id: F001
+  statement: 2026年4月から9月の問い合わせは、月平均1,200件
+  value: 1200
+  unit: 件/月
+  kind: fact
+  source: 問い合わせ管理システムの集計
+  locator: 月次の集計表 2026年4月から9月
+  as_of: 2026-09
+  metric: T-inquiry-count
+  superseded_by: null
+  quote: "4月から9月の月平均は1,200件"
+  qualifiers: [2026年4月から9月, 月平均]
+  origin: 問い合わせ管理システムの記録
+  answers: [Q1.1]
+  stance: {H1: supports, H2: contradicts}
+  verified: true
+- id: F002
+  statement: 問い合わせの62%は、手順書の通りに答えられる定型の問い合わせである
+  value: 62
+  unit: "%"
+  kind: fact
+  source: 情報システム部の分類の報告
+  locator: p.3 表1
+  as_of: 2026-09
+  metric: T-routine-share
+  superseded_by: null
+  quote: "定型の問い合わせは全体の62%を占めた"
+  qualifiers: [2026年4月から9月]
+  origin: 情報システム部による分類の作業
+  answers: [Q1.2]
+  stance: {H1: supports, H2: contradicts}
+  verified: true
+- id: F003
+  statement: 問い合わせ1件の対応時間は、平均12分
+  value: 12
+  unit: 分/件
+  kind: fact
+  source: 問い合わせ管理システムの集計
+  locator: 月次の集計表 2026年4月から9月
+  as_of: 2026-09
+  metric: T-handle-time
+  superseded_by: null
+  quote: "1件あたりの対応時間は平均12分"
+  qualifiers: [2026年4月から9月, 平均]
+  origin: 問い合わせ管理システムの記録
+  answers: [Q1.1]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F004
+  statement: 問い合わせの対応に、月あたり240時間かかっている
+  value: 240
+  unit: 時間/月
+  kind: derived
+  formula: F001 * F003 / 60
+  metric: T-handle-hours
+  superseded_by: null
+  qualifiers: [2026年4月から9月, 月平均]
+  origin: 問い合わせ管理システムの記録
+  answers: [Q1.1]
+  stance: {H1: supports, H2: contradicts}
+  verified: true
+- id: F005
+  statement: 2部署での8週間の試行で、人が答える定型の問い合わせが41%減った
+  value: 41
+  unit: "%"
+  kind: fact
+  source: 試行の報告書
+  locator: p.5 図2
+  as_of: 2026-10
+  metric: T-trial-reduction
+  superseded_by: null
+  quote: "2部署、8週間の試行で、担当者が答えた定型の問い合わせは41%減少した"
+  qualifiers: [2部署, 8週間]
+  origin: 試行の記録
+  answers: [Q2.1]
+  stance: {H1: supports, H2: contradicts}
+  verified: true
+- id: F006
+  statement: 導入の初期費用の見積もりは180万円
+  value: 180
+  unit: 万円
+  kind: fact
+  source: 業者の見積書
+  locator: 1ページ目 合計の欄
+  as_of: 2026-10
+  metric: T-initial-cost
+  superseded_by: null
+  quote: "初期費用 合計 1,800,000円"
+  qualifiers: [見積もり]
+  origin: 業者の見積書
+  answers: [Q2.2]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F007
+  statement: 運用費用の見積もりは月5万円
+  value: 5
+  unit: 万円/月
+  kind: fact
+  source: 業者の見積書
+  locator: 2ページ目 月額の欄
+  as_of: 2026-10
+  metric: T-running-cost
+  superseded_by: null
+  quote: "月額利用料 50,000円"
+  qualifiers: [見積もり]
+  origin: 業者の見積書
+  answers: [Q2.2]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F008
+  statement: 試行では、チャットボットの回答の6%に誤りがあった
+  value: 6
+  unit: "%"
+  kind: fact
+  source: 試行の報告書
+  locator: p.7 表3
+  as_of: 2026-10
+  metric: T-error-rate
+  superseded_by: null
+  quote: "回答のうち6%に内容の誤りが確認された"
+  qualifiers: [2部署, 8週間]
+  origin: 試行の記録
+  answers: [Q2.3]
+  stance: {H1: contradicts, H2: supports}
+  verified: true
+- id: F009
+  statement: 繁忙期には、回答まで2日待たせることがある
+  kind: testimony
+  source: 情報システム部の窓口の担当者。本人の経験に基づく
+  qualifiers: [繁忙期]
+  answers: [Q1.1]
+  stance: {H1: supports, H2: contradicts}
+  verified: true
+- id: F010
+  statement: 試行の後のアンケートで、利用者の72%が続けて使いたいと答えた
+  value: 72
+  unit: "%"
+  kind: fact
+  source: 試行の後のアンケートの集計
+  locator: 設問4
+  as_of: 2026-10
+  metric: T-continue-share
+  superseded_by: null
+  quote: "「続けて使いたい」と答えた利用者は72%"
+  qualifiers: [試行に参加した2部署の利用者]
+  origin: 試行の後のアンケート
+  answers: [Q2.1]
+  stance: {H1: supports, H2: contradicts}
+  verified: true

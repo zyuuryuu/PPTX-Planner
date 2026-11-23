@@ -1,0 +1,6 @@
+- id: H1
+  statement: 社内の問い合わせ対応に、チャットボットを導入すべきである
+  proposed_by: user
+- id: H2
+  statement: 現状のまま、人だけで対応を続けるべきである
+  proposed_by: session

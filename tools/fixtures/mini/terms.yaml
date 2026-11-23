@@ -1,0 +1,54 @@
+terms:
+  - id: T-inquiry-count
+    term: 問い合わせ件数
+    kind: noun
+    definition: 社員から情報システム部に届いた問い合わせの、月あたりの件数
+    defined_in: ch2-s1
+  - id: T-routine-share
+    term: 定型の問い合わせの割合
+    kind: noun
+    definition: 問い合わせのうち、手順書の通りに答えられるものの割合
+    defined_in: ch2-s2
+  - id: T-handle-time
+    term: 対応時間
+    kind: noun
+    definition: 問い合わせ1件に答えるまでにかかる作業の時間
+    defined_in: null
+    no_definition: 読み手が日常的に使う語である
+  - id: T-handle-hours
+    term: 月あたりの対応時間
+    kind: noun
+    definition: 問い合わせ件数に対応時間を掛けたもの
+    defined_in: ch2-s1
+  - id: T-trial-reduction
+    term: 試行での削減率
+    kind: noun
+    definition: 試行の期間に、人が答えた定型の問い合わせが減った割合
+    defined_in: ch2-s3
+  - id: T-error-rate
+    term: 回答の誤りの割合
+    kind: noun
+    definition: チャットボットの回答のうち、内容が誤っていたものの割合
+    defined_in: ch2-s4
+  - id: T-initial-cost
+    term: 初期費用
+    kind: noun
+    definition: 導入のときに1度だけ払う費用
+    defined_in: null
+    no_definition: 読み手が日常的に使う語である
+  - id: T-running-cost
+    term: 運用費用
+    kind: noun
+    definition: 導入の後に毎月払う費用
+    defined_in: null
+    no_definition: 読み手が日常的に使う語である
+  - id: T-continue-share
+    term: 継続を望む利用者の割合
+    kind: noun
+    definition: 試行の後のアンケートで、続けて使いたいと答えた利用者の割合
+    defined_in: ap-s1
+banned:
+  - term: ユーザー
+    reason: 問い合わせる社員と、対応する担当者の両方を指しうる
+allowed:
+  - 費用

@@ -1,0 +1,76 @@
+- id: ch1-s1
+  relation: statement
+  relation_reason: 求める判断を1文で述べるスライドであり、項目の間に関係がない
+  show: 求める判断の1文
+  focus: 来期に始めるという時期
+  facts: []
+  axis: null
+  base: none
+  holds: []
+- id: ch1-s2
+  relation: statement
+  relation_reason: 証言を1つ示すスライドであり、比べる対象も推移もない
+  show: 窓口の担当者の証言
+  focus: 2日という待ち時間
+  facts: [F009]
+  axis: null
+  base: none
+  holds: []
+- id: ch2-s1
+  relation: causality
+  show: 月あたりの件数に、1件あたりの対応時間を掛けると、月あたりの対応時間になること
+  focus: 月240時間という結果
+  facts: [F001, F003, F004]
+  axis: null
+  base: none
+  holds: [causal, ordered]
+- id: ch2-s2
+  relation: composition
+  show: 問い合わせの全体を、定型と定型以外に分けた割合
+  focus: 定型の62%
+  facts: [F002]
+  axis: 手順書の通りに答えられるかどうか
+  base: none
+  holds: [partition, proportional]
+- id: ch2-s3
+  relation: contrast-before-after
+  show: 試行の前と後の、人が答える定型の問い合わせの件数
+  focus: 41%の減少
+  facts: [F005]
+  axis: null
+  base: none
+  holds: [opposed, ordered]
+- id: ch2-s4
+  relation: composition
+  show: チャットボットの回答の全体を、正しい回答と誤った回答に分けた割合
+  focus: 誤りの6%
+  facts: [F008]
+  axis: 回答の内容が正しいかどうか
+  base: none
+  holds: [partition, proportional]
+- id: ch2-s5
+  relation: list
+  relation_reason: 1度だけ払う費用と毎月払う費用は単位が違い、同じ観点で比べられない
+  show: 初期費用と運用費用の見積もりの金額
+  focus: 初期費用の180万円
+  facts: [F006, F007]
+  axis: null
+  base: none
+  holds: []
+- id: ch3-s1
+  relation: statement
+  relation_reason: 求める判断を1文で述べるスライドであり、項目の間に関係がない
+  show: 誰が、何を、いつまでに決めるかの1文
+  focus: 2026年12月の会議という期限
+  facts: []
+  axis: null
+  base: none
+  holds: []
+- id: ap-s1
+  relation: composition
+  show: アンケートの回答の全体を、続けて使いたいと答えた利用者とそれ以外に分けた割合
+  focus: 続けて使いたいと答えた72%
+  facts: [F010]
+  axis: 続けて使いたいと答えたかどうか
+  base: none
+  holds: [partition, proportional]

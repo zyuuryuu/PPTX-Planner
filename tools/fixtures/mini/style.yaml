@@ -1,0 +1,6 @@
+# 資料の表現規約(見本)。limits の項目名は、tools/check.py が決めたものである
+deck_type: proposal
+limits:
+  max_claims: 3
+rules: []
+terms: terms.yaml

@@ -1,0 +1,22 @@
+answer: 社内の問い合わせ対応に、チャットボットを導入すべきである
+summary: 月240時間かかる問い合わせ対応の62%は定型であり、試行で定型の問い合わせを41%減らしたチャットボットを、誤りを人が確かめる手順とあわせて導入すべきである
+hypothesis: H1
+axis: 負荷、解決の手段
+claims:
+  - id: C1
+    statement: 問い合わせ対応には月240時間かかっており、問い合わせの62%は定型である
+    question: Q1
+    evidence: [F001, F002, F004]
+  - id: C2
+    statement: 2部署での試行では、チャットボットが定型の問い合わせを41%減らした。ただし回答の6%に誤りがある
+    question: Q2
+    evidence: [F005, F006, F007, F008]
+    assumes: [全社でも、試行の2部署と同じ程度に使われる]
+    objections:
+      - objection: 試行に参加した部署だけの結果ではないか
+        response: 試行の後、利用者の72%が続けて使いたいと答えている
+        evidence: [F010]
+contradictions:
+  - fact: F008
+    handling: qualify
+    note: 回答の6%に誤りがある。誤りを人が確かめる手順を置くことを、結論の条件に加えた

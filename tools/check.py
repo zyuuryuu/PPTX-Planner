@@ -343,7 +343,9 @@ class Checker:
         self.rule(0, "主な読み手、目的、答えるべき問いが確定である", [B], must_fixed)
         self.rule(0, "未定の項目に、誰がいつ決めるかが添えてある", [B], undecided_owner)
         self.rule(0, "「外に出せない情報」が確定である。画像を使う資料では、未定を認めない", [B], secrets)
-        self.rule(0, "資料の表現規約 style.yaml がある", ["style.yaml"], lambda: [])
+        if "style.yaml" not in self.broken:
+            self.add(0, "資料の表現規約 style.yaml がある", PASS if "style.yaml" in self.data else FAIL,
+                     [] if "style.yaml" in self.data else ["style.yaml がない"])
 
     # ---- 工程1 ----
     def stage1(self):
@@ -1191,7 +1193,7 @@ class Checker:
                 self.add(stage, "成果物がある", ABSENT, note="、".join(n for n in names if n not in OPTIONAL))
                 continue
             for n in names:
-                if n not in present and n not in OPTIONAL:
+                if n not in present and n not in OPTIONAL and n != "style.yaml":
                     self.add(stage, f"{n} がある", ABSENT, note="この成果物を使う条件は検査していない")
             getattr(self, f"stage{stage}")()
             for s, cond, why in NOT_IMPLEMENTED:
