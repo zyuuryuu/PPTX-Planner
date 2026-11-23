@@ -7,9 +7,9 @@
   parent: Q0
   axis: 一次解析で扱う情報の種類(アラート、確かめる記録、攻撃の手口の分類)
 - id: Q1.1
-  question: SOCに届くアラートは、どのように生成され、どんな中身か
+  question: SOCに届くアラートは、どんな性質を持つか
   parent: Q1
-  axis: アラートの出どころと、届くアラートの実態
+  axis: アラートの性質(生成の根拠、届く件数、誤検知の割合)
 - id: Q1.1.1
   question: SIEMとEDRは、それぞれ何を根拠にアラートを生成するか
   parent: Q1.1
@@ -86,16 +86,16 @@
   perspective: null
   result: null
 - id: Q3.2
-  question: 判断を保留して調査を続ける場合、何を追加で確かめるとされているか
+  question: 判断を保留して調査を続ける場合、何をどこまで確かめるとされているか(調べる範囲や時間の目安を含む)
   parent: Q3
-  evidence_type: SOCの運用の指針
+  evidence_type: SOCの運用の指針、業界の調査
   priority: low
   perspective: null
   result: null
 - id: Q3.3
   question: 上に上げる判断は、どう行うとされているか
   parent: Q3
-  axis: 判断の前と後(上げる条件と調べる深さ、上げるときに渡すもの)
+  axis: 判断の前と後(上げる条件、上げるときに渡すもの)
 - id: Q3.3.1
   question: アラートを上に上げる条件は、何とされているか
   parent: Q3.3
@@ -104,13 +104,6 @@
   perspective: null
   result: null
 - id: Q3.3.2
-  question: 上に上げる前に、1件のアラートをどこまで調べるとされているか(調べる範囲や時間の目安)
-  parent: Q3.3
-  evidence_type: SOCの運用の指針、業界の調査
-  priority: low
-  perspective: null
-  result: null
-- id: Q3.3.3
   question: 上に上げるときに、何を添えて渡すとされているか
   parent: Q3.3
   evidence_type: SOCの運用の指針
