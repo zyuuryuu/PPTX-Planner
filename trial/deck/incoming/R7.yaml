@@ -6,7 +6,7 @@
 # 全件 verified: false。照合と検査は設計セッションと検査セッションが行う。
 # 開けたが該当する記述がなかった出典:
 #   - Microsoft Learn「Microsoft Defender for Endpoint overview」(https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-endpoint, Last updated 2026-07-28)
-#     センサーが端末の信号をどこへ送るか(クラウドなど)の記述はなかった。F715 の記述だけを使った。
+#     センサーが端末の信号をどこへ送るか(クラウドなど)の記述はなかった。このページからは F713、F714 の記述だけを使った。
 
 # ---------- SIEM(NIST SP 800-92) ----------
 
@@ -23,13 +23,13 @@
   verified: false
 
 - id: F701
-  statement: SIEM製品は、ログ分析を行う1台以上のログサーバと、ログを保存する1台以上のデータベースサーバを持つ。多くのSIEM製品は、ログ生成元からログを集める2つの方法(エージェントなし、エージェント型)に対応する
+  statement: SIEM製品は、ログ分析を行う1台以上のログサーバと、ログを保存する1台以上のデータベースサーバを持つ。多くのSIEM製品は、ログ生成元からログを集める2つの方法に対応する
   kind: fact
   source: NIST SP 800-92 Guide to Computer Security Log Management
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  3.4 Security Information and Event Management Software (p.3-9)
   as_of: 2006-09
   quote: "Security information and event management (SIEM) software is a relatively new type of centralized logging software compared to syslog. SIEM products have one or more log servers that perform log analysis, and one or more database servers that store the logs. Most SIEM products support two ways of collecting logs from log generators:"
-  qualifiers: [2006年版, "原文の脚注番号(34、35、36)は除いた", "'Most SIEM products'(多くのSIEM製品)"]
+  qualifiers: [2006年版, "原文の脚注番号(34、35、36)は除いた", "'Most SIEM products'(多くのSIEM製品)", 2つの方法の中身は quote の直後の箇条にあり、F702 と F703 に分けて写した]
   origin: NIST SP 800-92
   answers: []
   verified: false
@@ -78,6 +78,18 @@
   as_of: 2006-09
   quote: "If correlation is performed through automated methods, generally the result of successful correlation is a new log entry that brings together the pieces of information into a single place. Depending on the nature of that information, the infrastructure might also generate an alert to indicate that the identified event needs further investigation."
   qualifiers: [2006年版, ログ管理基盤(log management infrastructure)一般の機能として記述。SIEMに限らない, 相関を自動の方法で行う場合, "新しいログ項目は 'generally'(一般に)", "アラートは 'might'(することがある)。情報の性質による"]
+  origin: NIST SP 800-92
+  answers: []
+  verified: false
+
+- id: F715
+  statement: ログ管理基盤は、ログデータを生成、転送、保存、分析、廃棄するための機器、ソフトウェア、ネットワーク、媒体からなる。第3章は、ログ管理基盤の中で行われる基本の機能を述べた後、ログ管理ソフトウェアの2つの主な種類として syslog 型の集中ログソフトウェアと SIEM ソフトウェアを扱う。ログ管理基盤は、通常、syslog 型の集中ログソフトウェアか SIEM ソフトウェアのどちらかを基にする
+  kind: fact
+  source: NIST SP 800-92 Guide to Computer Security Log Management
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  第3章 Log Management Infrastructure の冒頭(p.3-1)と 3.6 Summary(p.3-11)
+  as_of: 2006-09
+  quote: "A log management infrastructure consists of the hardware, software, networks, and media used to generate, transmit, store, analyze, and dispose of log data. [...] It then describes the basic functions performed within a log management infrastructure. Next, it examines the two major categories of log management software: syslog-based centralized logging software and security information and event management software. [...] Log management infrastructures, which are typically based on either syslog-based centralized logging software or security information and event management software, usually use a three-tiered design."
+  qualifiers: [2006年版, "原文の脚注番号(20)は除いた", "'[...]' は収集セッションによる省略。前半は第3章の冒頭、後半は 3.6 Summary", "SIEM を基にするのは 'typically'(通常)で、syslog 型を基にする場合もある", "'basic functions'(基本の機能)は 3.2 Functions の節(F705 の出典)を指す"]
   origin: NIST SP 800-92
   answers: []
   verified: false
@@ -147,13 +159,13 @@
   verified: false
 
 - id: F711
-  statement: Microsoft Sentinel では、スケジュールされたルールと NRT のルールは、生成したアラートからインシデントを自動で作る。外部のサービスで生成されて取り込まれたアラートは、それだけではインシデントを作らず、Microsoft セキュリティのルールが、ほかの Microsoft のセキュリティ製品で生成されたアラートから、リアルタイムでインシデントを自動で作る
+  statement: Microsoft Sentinel では、スケジュールされたルールと NRT のルールは、生成したアラートからインシデントを自動で作る。外部のサービスで生成されて取り込まれたアラートは、それだけではインシデントを作らず、Microsoft セキュリティのルールが、ほかの Microsoft のセキュリティ製品で生成されたアラートから、リアルタイムでインシデントを自動で作る。ただし、Microsoft Defender XDR のインシデントの統合を有効にした場合と、Sentinel を Defender のポータルに載せた場合は、Microsoft セキュリティのルールは使えず、Microsoft Defender XDR がインシデントを作る
   kind: fact
   source: Microsoft Learn, Threat detection in Microsoft Sentinel
   locator: https://learn.microsoft.com/en-us/azure/sentinel/threat-detection  Types of analytics rules > Microsoft security rules
   as_of: 2026-05-14
-  quote: "While scheduled and NRT rules automatically create incidents for the alerts they generate, alerts generated in external services and ingested to Microsoft Sentinel don't create their own incidents. Microsoft security rules automatically create Microsoft Sentinel incidents from the alerts generated in other Microsoft security solutions, in real time."
-  qualifiers: [製品の定義(Microsoft Sentinel), 同じ節の続きに、Microsoft セキュリティのルールが使えない条件の注記がある]
+  quote: "While scheduled and NRT rules automatically create incidents for the alerts they generate, alerts generated in external services and ingested to Microsoft Sentinel don't create their own incidents. Microsoft security rules automatically create Microsoft Sentinel incidents from the alerts generated in other Microsoft security solutions, in real time. You can use Microsoft security templates to create new rules with similar logic. Important Microsoft security rules are not available if you have: Enabled Microsoft Defender XDR incident integration, or Onboarded Microsoft Sentinel to the Defender portal. In these scenarios, Microsoft Defender XDR creates the incidents instead."
+  qualifiers: [製品の定義(Microsoft Sentinel), "Microsoft セキュリティのルールは、Microsoft Defender XDR のインシデントの統合を有効にした場合と、Microsoft Sentinel を Defender のポータルに載せた場合は使えない。その場合は Microsoft Defender XDR がインシデントを作る", "文書の適用範囲に Microsoft Sentinel in the Microsoft Defender portal が含まれる(Applies to)", "'Important' は注記の見出しで、箇条(2つの条件)を1行に連結した", 同じ注記の続きに、それ以前に定めたルールは自動で無効になるとある]
   origin: Microsoft(製品の公式文書)
   answers: []
   verified: false
