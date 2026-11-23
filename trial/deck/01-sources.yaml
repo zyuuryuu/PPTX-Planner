@@ -1,6 +1,7 @@
 # 素材台帳。収集セッションの結果(incoming/)を設計セッションがここに集める。
 # F001 は依頼者の証言で、会話で聞き取ったため設計セッションが登録した。
 # 収集の結果は、重大な検査(2回、別のモデル)を通るまで verified: false とする。
+# unverified_reason は、重大な検査で指摘が残り、往復の上限(2回)で直さなかった理由。
 # collected_verified は、収集セッションが自分で照合したかどうか(参考)。request は調査依頼のID。
 - id: F001
   statement: 依頼者の実感では、届くアラートの8割は、誤検知と想定内の検知を合わせたものである
@@ -597,6 +598,7 @@
     H1: neutral
     H2: neutral
     H3: neutral
+  unverified_reason: 'checks/1-sources-B-5.yaml: 0.01% が表4の期間の割合であることが qualifiers にない(往復の上限で直さない)'
 - id: F201
   statement: 同SOCの第2期で、自動遮断(BHR)で人手を介さず処理されたアラートは約44.9%(6,474,204件)あり、それを除いても解析者が処理するアラートは1日あたり約13,764件残った
   value: 13764
@@ -615,7 +617,7 @@
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -640,7 +642,7 @@
   origin: 著者らのオンライン調査(n=20)
   answers:
   - Q1.1.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -665,7 +667,7 @@
   origin: Vectra AI の調査(2023)
   answers:
   - Q1.1.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -691,7 +693,7 @@
   origin: Vectra AI の調査(2023)
   answers:
   - Q1.1.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -715,7 +717,7 @@
   origin: 著者らのインタビュー(n=21)
   answers:
   - Q1.1.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -739,7 +741,7 @@
   origin: 著者らのオンライン調査(n=20、うち10人が数値を回答)
   answers:
   - Q1.1.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -767,7 +769,7 @@
   answers:
   - Q1.1.3
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -789,7 +791,7 @@
   origin: NIST ITL Bulletin (2003-07)
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -818,6 +820,7 @@
     H1: neutral
     H2: neutral
     H3: neutral
+  unverified_reason: 'checks/1-sources-B-5.yaml: statement の「すべての誤検知をなくすことはできず」は原文では誤検知と見逃しの両方(往復の上限で直さない)'
 - id: F210
   statement: 'NIST SP 800-94: 月1回だけの保守作業などは学習期間に観測されず、プロファイルからの大きな逸脱として警告を起こしうる。異常検知型IDPSは、プロファイルから大きく外れる良性の活動のために多くの誤検知を出し、環境が多様・動的なほど多い'
   kind: fact
@@ -831,7 +834,7 @@
   origin: NIST SP 800-94
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -851,7 +854,7 @@
   origin: NIST SP 800-94
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -872,7 +875,7 @@
   origin: NIST SP 800-94
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -894,7 +897,7 @@
   answers:
   - Q1.1.4
   - Q1.1.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -914,7 +917,7 @@
   origin: 著者らのインタビュー(n=21)
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -935,7 +938,7 @@
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -960,7 +963,7 @@
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -980,7 +983,7 @@
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -1004,7 +1007,7 @@
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -1025,7 +1028,7 @@
   origin: 著者らのインタビュー(n=21)
   answers:
   - Q1.1.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -1046,7 +1049,7 @@
   answers:
   - Q1.1.3
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -1071,7 +1074,7 @@
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
-  verified: false
+  verified: true
   collected_verified: false
   request: R2
   stance:
@@ -1636,7 +1639,7 @@
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1657,7 +1660,7 @@
   answers:
   - Q3.2
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1679,7 +1682,7 @@
   origin: CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks
   answers:
   - Q3.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1705,7 +1708,7 @@
   answers:
   - Q3.2
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1733,7 +1736,7 @@
   answers:
   - Q3.2
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1756,7 +1759,7 @@
   answers:
   - Q3.2
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1779,7 +1782,7 @@
   answers:
   - Q3.2
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1803,7 +1806,7 @@
   answers:
   - Q3.2
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1825,7 +1828,7 @@
   origin: CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks
   answers:
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1846,7 +1849,7 @@
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1867,7 +1870,7 @@
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1890,7 +1893,7 @@
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.3.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1911,7 +1914,7 @@
   origin: NIST SP 800-61 Rev.2
   answers:
   - Q3.3.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1932,7 +1935,7 @@
   origin: Decryption Digest(独自の見解)
   answers:
   - Q3.3.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1954,7 +1957,7 @@
   origin: Security Scientist(独自の見解)
   answers:
   - Q3.3.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R4
   stance:
@@ -1976,7 +1979,7 @@
   answers:
   - Q4.1
   - Q4.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -1997,7 +2000,7 @@
   origin: Bloomberg Businessweekの報道(上院報告が引用)
   answers:
   - Q4.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2017,7 +2020,7 @@
   origin: 同論文の文献[13][40](Sundaramurthyらの先行研究ほか)
   answers:
   - Q4.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2037,7 +2040,7 @@
   origin: Alahmadi et al. の聞き取り調査(一次)
   answers:
   - Q4.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2064,7 +2067,7 @@
   origin: Moosmann et al. の現地調査(一次)
   answers:
   - Q4.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2085,7 +2088,7 @@
   origin: Moosmann et al. の現地調査(一次)
   answers:
   - Q4.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2109,7 +2112,7 @@
   origin: Imperva自社調査
   answers:
   - Q4.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2130,7 +2133,7 @@
   origin: IDCとFireEyeの共同調査(元の報告書は未確認)
   answers:
   - Q4.1
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2152,7 +2155,7 @@
   origin: Kersten et al. の実験(一次)
   answers:
   - Q4.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2177,7 +2180,7 @@
   origin: Moosmann et al. の事前調査(一次)
   answers:
   - Q4.2
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
@@ -2198,7 +2201,7 @@
   origin: Alahmadi et al. の聞き取り調査(一次)
   answers:
   - Q4.3
-  verified: false
+  verified: true
   collected_verified: false
   request: R5
   stance:
