@@ -1,4 +1,4 @@
-# 収集セッション R2 の結果(検査の指摘を受けて修正)。stance は書かない。verified は再検査まで false。
+# 収集セッション R2 の結果(再検査の指摘を受けて修正)。stance は書かない。verified は再検査まで false。
 - id: F200
   statement: 実在のSOCの4年間のネットワークアラートログ(1.15億件)では、解析者が直面するアラートは1日あたり2.4万〜13.4万件で、真の攻撃に関連するのはそのうち0.01%だった
   value: 24000-134000
@@ -14,14 +14,15 @@
   - 1つのSOC
   - 2018〜2022年のネットワークアラートログ(115 million alerts)
   - 1日あたりの件数は幅(24K–134K)で示されている
-  - 本文§6.1では、期間により平均13.4万件/日(2018-04〜2020-08)と2.4万件/日(2020-12〜2022-07)
   - ほかのホストIDS・商用ツールのアラートは含まない(本文§3、下限)
+  - 13.4万件/日は第1期(2018-04〜2020-08)の平均で、自動遮断(BHR)はまだない
+  - 2.4万件/日は第2期(2020-12〜2022-07)の平均で、自動遮断(BHR)で処理された分(第2期の44.9%)を含む
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.2
   verified: false
 - id: F201
-  statement: 同SOCの第2期で、自動遮断(BHR)・ファイアウォールで人手を介さず処理されたアラートは約44.9%(6,474,204件)あり、それを除いても解析者が処理するアラートは1日あたり約13,764件残った
+  statement: 同SOCの第2期で、自動遮断(BHR)で人手を介さず処理されたアラートは約44.9%(6,474,204件)あり、それを除いても解析者が処理するアラートは1日あたり約13,764件残った
   value: 13764
   unit: 件/日
   kind: fact
@@ -64,15 +65,15 @@
   unit: 件/日
   kind: fact
   source: Vectra AI, 2023 State of Threat Detection
-  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文 / 要約)
+  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文 / 要約) / Methodology
   as_of: '2023'
   metric: SOCが受けるアラート数(1日あたり)
   superseded_by: null
   quote: SOC teams receive 4,484 alerts each day on average . Analysts spend nearly 3 hours (2.7) each day manually triaging alerts,
   qualifiers:
   - ベンダー(脅威検知製品の会社)の調査。宣伝目的を含むため一次情報として扱わない
-  - 標本数と調査方法は本ページで未確認
   - 自己申告の平均
+  - Sapio Research(Vectra委託)の2023年3〜4月の調査。対象は従業員1,000人超の組織のIT security analysts 2,000人(米英仏独伊など。出典 Methodology)
   origin: Vectra AI の調査(2023)
   answers:
   - Q1.1.2
@@ -83,7 +84,7 @@
   unit: '%'
   kind: fact
   source: Vectra AI, 2023 State of Threat Detection
-  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文)
+  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文) / Methodology
   as_of: '2023'
   metric: 誤検知の割合
   superseded_by: null
@@ -91,8 +92,8 @@
   qualifiers:
   - ベンダーの調査。宣伝目的を含むため一次情報として扱わない
   - 解析者の自己申告(測定値ではない)
-  - 標本数は未確認
   - 「誤検知」の定義は示されていない(下のF205・F207は、この語に正当な検知を含めうることを示す)
+  - Sapio Research(Vectra委託)の2023年3〜4月の調査。対象は従業員1,000人超の組織のIT security analysts 2,000人(米英仏独伊など。出典 Methodology)
   origin: Vectra AI の調査(2023)
   answers:
   - Q1.1.3
@@ -146,7 +147,9 @@
   quote: Through analysis, we observe that SOC analysts are facing excessive alerts (24K–134K per day), but only a small percentage of the alerts (0.01%) are associated with true attacks. While the majority of true attacks can be detected within the same day, the post-attack investigation takes much longer time (53 days on average). Furthermore, we observe a significant portion of the alerts are related to “attack attempts” (attacks that did not lead to true compromises, 27%), and “benign triggers” (correctly matched security events but had business-justified explanations, 49%).
   qualifiers:
   - 1つのSOC
-  - 1日あたり24K〜134Kのアラートに対する割合
+  - 割合は表4の期間(2020-12〜2022-07、14,429,534件)のもの
+  - 27%と49%は下限(論文は『at least』と述べる。良性のトリガーは明確な証拠があるものだけを数えた)
+  - 分類不能(Unknown)が23.72%残る
   - 「攻撃の試み」は侵害に至らなかった攻撃、「良性のトリガー」は正しく一致したが業務上の説明があるセキュリティ事象と定義されている
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
@@ -154,7 +157,7 @@
   - Q1.1.4
   verified: false
 - id: F208
-  statement: NISTの文書は、誤検知を『通常の非悪性の背景トラフィックで起きたアラート』と定義し、ネットワークIDSでの原因に、弱いシグネチャ、正当なネットワーク管理ツールのトラフィックを挙げる。誤検知率は環境ごとに異なる
+  statement: NISTの文書は、誤検知を『通常の非悪性の背景トラフィックで起きたアラート』と定義し、ネットワークIDSでの原因に、弱いシグネチャ、正当なネットワーク管理ツールのトラフィックを挙げる。誤検知率はネットワーク環境ごとに異なることがある
   kind: fact
   source: NIST ITL Bulletin 'Testing Intrusion Detection Systems' (2003-07)
   locator: https://csrc.nist.gov/files/pubs/shared/itlb/itlbul2003-07.pdf p.1-2 (Probability of False Alarms。引用はp.1末尾からp.2先頭へ改ページをまたぐ)
@@ -170,7 +173,7 @@
   - Q1.1.4
   verified: false
 - id: F209
-  statement: 'NIST SP 800-94: 良性の活動を悪性と誤認すると誤検知になる。すべての誤検知をなくすことはできず、一方を減らすと他方が増える。多くの組織は偽陰性を減らす代わりに偽陽性が増える設定を選び、その分の分析資源が要る。設定を調整して検知精度を改善することをチューニングと呼ぶ'
+  statement: 'NIST SP 800-94: 良性の活動を悪性と誤認すると誤検知になる。すべての誤検知をなくすことはできず、多くの場合、一方を減らすと他方が増える。多くの組織は偽陰性を減らす代わりに偽陽性が増える設定を選び、その分の分析資源が要る。設定を調整して検知精度を改善することをチューニングと呼ぶ'
   kind: fact
   source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §2.2 Key Functions of IDPS Technologies
@@ -180,6 +183,7 @@
   qualifiers:
   - IDPS全般
   - SP 800-94(2007年)
+  - 原文は『in most cases』(例外がある)
   origin: NIST SP 800-94
   answers:
   - Q1.1.4
@@ -191,12 +195,7 @@
   locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §2.3.2 Anomaly-Based Detection
   as_of: 2007-02
   superseded_by: null
-  quote: For example, if an attacker modified the malware in the previous example to use a filename of “freepics2.exe”, a signature looking for “freepics.exe” would not match it. Signature-based detection is the simplest detection method because it just compares the current unit of activity, such as a packet or a log entry, to a list of signatures using string comparison operations. Signature-based detection technologies have little understanding of many network or application protocols and cannot track and understand the state of complex communications. For example, they cannot pair a request with the corresponding response, such as knowing that a request to a Web server for a particular page generated a response status code of 403, meaning that the server refused to fill the request. They also lack the ability to remember previous requests when processing the current request. This limitation prevents signature-based detection methods from detecting attacks that comprise multiple events
-    if none of the events contains a clear indication of an attack. 2.3.2 Anomaly-Based Detection Anomaly-based detection is the process of comparing definitions of what activity is considered normal against observed events to identify significant deviations. An IDPS using anomaly-based detection has profiles that represent the normal behavior of such things as users, hosts, network connections, or applications. The profiles are developed by monitoring the characteristics of typical activity over a period of time. For example, a profile for a network might show that Web activity comprises an average of 13% of network bandwidth at the Internet border during typical workday hours. The IDPS then uses statistical methods to compare the characteristics of current activity to thresholds related to the profile, such as detecting when Web activity comprises significantly more bandwidth than expected and alerting an administrator of the anomaly. Profiles can be developed for many behavioral attributes,
-    such as the number of e-mails sent by a user, the number of failed login attempts for a host, and the level of processor usage for a host in a given period of time. The major benefit of anomaly-based detection methods is that they can be very effective at detecting previously unknown threats. For example, suppose that a computer becomes infected with a new type of malware. The malware could consume the computer’s processing resources, send large numbers of e- 5 Signature-based detection is sometimes referred to as misuse detection, but this publication does not use that term because it implies that misuse is only detected using signatures, which is not true. Also, signature-based detection is considered by some parties to include stateful protocol analysis, as described in Section 2.3.3. For the purposes of this publication, signature-based detection is defined so as not to include stateful protocol analysis, but other publications may have different definitions. 2-4 GUIDE TO INTRUSION
-    DETECTION AND PREVENTION SYSTEMS (IDPS) mails, initiate large numbers of network connections, and perform other behavior that would be significantly different from the established profiles for the computer. An initial profile is generated over a period of time (typically days, sometimes weeks) sometimes called a training period. Profiles for anomaly-based detection can either be static or dynamic. Once generated, a static profile is unchanged unless the IDPS is specifically directed to generate a new profile. A dynamic profile is adjusted constantly as additional events are observed. Because systems and networks change over time, the corresponding measures of normal behavior also change; a static profile will eventually become inaccurate, so it needs to be regenerated periodically. Dynamic profiles do not have this problem, but they are susceptible to evasion attempts from attackers. For example, an attacker can perform small amounts of malicious activity occasionally, then slowly increase
-    the frequency and quantity of activity. If the rate of change is sufficiently slow, the IDPS might think the malicious activity is normal behavior and include it in its profile. Malicious activity might also be observed by an IDPS while it builds its initial profiles. Inadvertently including malicious activity as part of a profile is a common problem with anomaly-based IDPS products. (In some cases, administrators can modify the profile to exclude activity in the profile that is known to be malicious.) Another problem with building profiles is that it can be very challenging in some cases to make them accurate, because computing activity can be so complex. For example, if a particular maintenance activity that performs large file transfers occurs only once a month, it might not be observed during the training period; when the maintenance occurs, it is likely to be considered a significant deviation from the profile and trigger an alert. Anomaly-based IDPS products often produce many
-    false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments.
+  quote: Another problem with building profiles is that it can be very challenging in some cases to make them accurate, because computing activity can be so complex. For example, if a particular maintenance activity that performs large file transfers occurs only once a month, it might not be observed during the training period; when the maintenance occurs, it is likely to be considered a significant deviation from the profile and trigger an alert. Anomaly-based IDPS products often produce many false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments.
   qualifiers:
   - 異常検知型の検知方式について
   origin: NIST SP 800-94
@@ -236,7 +235,7 @@
   statement: Alahmadiらは、「良性のトリガー」を、既存のシグネチャに一致する(正しい)アラームだが、レガシーシステムなどの理由で組織が無視するもの、と定義する
   kind: fact
   source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
-  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''RQ2: Definition of FPs''(および §3 の用語の定義)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Introduction''(用語の定義)'
   as_of: 2022-08
   superseded_by: null
   quote: In contrast, benign triggers are true alarms; meaning they match an existing signature (e.g., vulnerable java version) but the organization chooses to ignore it (e.g., due to legacy systems).
@@ -249,7 +248,7 @@
   - Q1.1.3
   verified: false
 - id: F214
-  statement: 'SOC実務者の証言: ルールが緩く(広く)書かれているために、多くの誤検知が出る'
+  statement: SOC実務者の一部は、シグネチャが『緩く(広く)書かれている』ことで多くの誤検知が出ると述べた
   kind: fact
   source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
   locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Reported by Interviewees'' 内の ''Unreliable signature'''
@@ -257,7 +256,7 @@
   superseded_by: null
   quote: Some analysts reported that signatures are “loosely written”, meaning written to be general to capture a variety of activities. This results in a high volume of FPs,
   qualifiers:
-  - インタビュー参加者の認識(定性)
+  - インタビュー参加者の一部(『Some analysts』)の認識(定性)
   origin: 著者らのインタビュー(n=21)
   answers:
   - Q1.1.4
@@ -278,7 +277,7 @@
   - Q1.1.4
   verified: false
 - id: F216
-  statement: 同SOCで、外部ドメインを内部IPで運用していることがDNS関連アラートを大量に引き起こした(約140万件)。検知ルールは内部ホストの侵害を捉える設計だったが、共同研究のサイトが該当した
+  statement: 同SOCで、DNS関連の良性のトリガー(約140万件)の大半は、外部ドメインを内部IPで運用していることによるものだった。検知ルールは内部ホストの侵害を捉える設計だったが、共同研究のサイトが該当した
   value: 1.4
   unit: 百万件
   kind: fact
@@ -291,6 +290,7 @@
   qualifiers:
   - 1つのSOC
   - 2020〜2022年
+  - 『大半(the vast majority)』は原文の語で、割合は示されていない
   origin: 同SOCのZeekアラートログ(著者らが実測)
   answers:
   - Q1.1.4
@@ -343,7 +343,7 @@
   - Q1.1.3
   verified: false
 - id: F220
-  statement: Yangらは、良性のトリガーを『正しく発火したが、業務上の正当な理由で説明される挙動』と定義し、一般的な『誤検知』(悪い規則・エラー・誤設定による、良性の挙動への誤った発火)とは別の概念として扱う
+  statement: Yangらは、良性のトリガーを『組織の環境における業務上正当で許容される挙動によって説明される、正しく発火したアラート』と定義し、一般的な『誤検知』(良性の挙動に対して誤って発火したアラート。悪い規則・エラー・誤設定による等)とは異なると述べる
   kind: fact
   source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
   locator: https://par.nsf.gov/servlets/purl/10530815 §6.2 Benign Triggers
