@@ -29,13 +29,17 @@
   verified: false
 
 - id: F402
-  statement: "CISAの連邦政府向けプレイブックは、調査範囲を、アクセスの種類、影響を受けた資産の範囲、攻撃者が得た権限の水準、業務や情報への影響で決めるとしている"
+  statement: "CISAの連邦政府向けプレイブックは、確認された悪性のサイバー活動に関するインシデントで、重大インシデントが宣言された、または未だ合理的に除外されていない場合の調査範囲を、アクセスの種類、影響を受けた資産の範囲、攻撃者が得た権限の水準、業務や情報への影響で決めるとしている"
   kind: fact
   source: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks (Incident Response Playbook)"
   locator: "https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Determine Investigation Scope"
   as_of: "2021-11 (PDF 表紙の Publication: November 2021)"
-  quote: 'Use available data to identify the type of access, the extent to which assets have been affected, the level of privilege attained by the adversary, and the operational or informational impact.'
-  qualifiers: [対象は連邦文民行政機関(FCEB)の、重大インシデントが宣言された、または未だ合理的に除外されていない事案, 時間の目安は書かれていない]
+  quote: 'Use available data to identify the type of access, the extent to which assets have been affected, the level of privilege attained by the adversary, and the operational or informational impact. / Note: the incident response playbook for incidents that involve confirmed malicious cyber activity for which a major incident has been declared or not yet been reasonably ruled out.'
+  qualifiers:
+    - 対象は連邦文民行政機関(FCEB)
+    - 適用範囲は2つ目の引用(Appendix B の注記)による。1つ目は Detection & Analysis Activities の Determine Investigation Scope の本文
+    - quote は離れた2か所の連続した文を「 / 」でつないで写している
+    - 時間の目安は書かれていない
   origin: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks"
   answers: [Q3.2]
   verified: false
@@ -56,7 +60,7 @@
   verified: false
 
 - id: F404
-  statement: "SOCの運用手順書の例では、重大度P2のアラートは30分でTier 2へ上げ、P1は直ちに上げる(フロー図のラベル)。同じ手順書の表では、P1はTier 2へ5分以内、P2はTier 2へ30分以内とされている"
+  statement: "SOCの運用手順書の例では、重大度P2のアラートは30分でTier 2へ上げ、P1は直ちに上げる(フロー図のラベル)"
   value: 30
   unit: 分
   kind: fact
@@ -69,11 +73,9 @@
     - 有志のオープンソースのSOP集で、標準や公的文書ではない
     - 運営する企業のロゴとリンクがある(製品販売の記述は見当たらない)
     - 同じページに「Replace with your actual contacts.」とあり、組織ごとに差し替える雛形
-    - 重大度の定義はこのSOP集の独自のもの(P1は重大、P2は高。対応のSLAはP1が15分、P2が30分)
-    - quote はフロー図のラベル2つを「 / 」でつないで写している。5分と30分の数値は同じ文書の「P1 Critical」「P2 High」の段階表(Step 2 の Escalate to Tier 2 の Within 列)の値で、表の文面の写しは quote に含めていない(補助エージェントが2回の取得で同じ値を報告)
-  origin: "SOC-SOP(cyberdefense.co.th 系の公開リポジトリ。独自の見解)"
-  answers: [Q3.2, Q3.3.1]
-  verified: false
+    - 重大度の定義はこのSOP集の独自のもの
+    - 同じ文書の別の表には、P1の Tier 2 への引き上げの所要時間が数値で書かれている。この事実は、フロー図のラベルだけを写したもので、その数値は含まない(原文の表を自分では照合できていない)
+    - quote はフロー図のラベル2つを「 / 」でつないで写している
 
 - id: F405
   statement: "同じSOP集は、P1については、「もっと調べる」ために上げるのを遅らせず、先に上げて調査は並行して進めるとしている。また一般の規則として、判断に迷うときは、上げすぎる側に倒すとしている"
@@ -116,20 +118,17 @@
   verified: false
 
 - id: F408
-  statement: "CISAのプレイブックは、インシデントの宣言を、CISAへの報告と機関のIT幹部への通知で行うとしている。連邦文民行政機関(FCEB)は、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告する"
+  statement: "CISAのプレイブックは、インシデントの宣言を、CISAへの報告と機関のIT幹部への通知で行うとしている。連邦文民行政機関(FCEB)は、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告するとしている"
   kind: fact
   source: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks (Incident Response Playbook)"
   locator: "https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Declare Incident"
   as_of: "2021-11 (PDF 表紙の Publication: November 2021)"
-  quote: 'Declare an incident by reporting it to CISA at https://www.cisa.gov/report and alerting agency IT leadership to the need for investigation and response.'
+  quote: 'Declare an incident by reporting it to CISA at https://www.cisa.gov/report and alerting agency IT leadership to the need for investigation and response. / Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA'
   qualifiers:
     - 対象は連邦文民行政機関(FCEB)
-    - 同じ節に「FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA」とある(quote には含めていない)
+    - 適用範囲は、確認された悪性のサイバー活動に関するインシデントで、重大インシデントが宣言された、または未だ合理的に除外されていない場合(原文 Appendix B の注記: Note: the incident response playbook for incidents that involve confirmed malicious cyber activity for which a major incident has been declared or not yet been reasonably ruled out.)
     - これはSOC内の階層間の引き上げではなく、機関から外部機関への報告
-    - 抽出元PDFは2段組で、quote は左の段の連続した文
-  origin: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks"
-  answers: [Q3.3.1]
-  verified: false
+    - quote は同じ節の離れた2か所を「 / 」でつないで写している(間に Report major incidents to CISA and to OMB at CyberIncidentReport@omb.eop.gov. などが入る)。抽出元PDFは2段組で、どちらも左の段の連続した文
 
 - id: F409
   statement: "NISTは、インシデントを分析し優先づけた後、関係する個人に通知するとし、誰に何をいつ報告するかを少なくとも方針で定めるべきとしている。具体的な報告の要件は組織によって異なる"
@@ -141,13 +140,10 @@
   qualifiers:
     - 撤回済みの版
     - 具体的な引き上げの閾値は書かれておらず、組織ごとの方針に委ねている
-    - quote は「parties that are typically notified include:」で終わり、通知先の一覧は quote に含めていない。一覧は原文の箇条書きで、CIO、Head of information security、Local information security officer、Other incident response teams within the organization、External incident response teams (if appropriate)、System owner、Human resources (for cases involving employees, such as harassment through email)、Public affairs、Legal department、US-CERT (required for Federal agencies and systems operated on behalf of the Federal government)、Law enforcement (if appropriate) が続く
-  origin: "NIST SP 800-61 Rev.2"
-  answers: [Q3.3.1]
-  verified: false
+    - quote は「parties that are typically notified include:」で終わる。通知先の一覧は原文の箇条書きで続くが、この事実には含めない
 
 - id: F410
-  statement: "NISTは、インシデントの優先づけを、取り扱いの判断で最も重要なものの1つとしている。資源に限りがあるため、先着順ではなく、関連する要因に基づいて優先づけるべきとしている"
+  statement: "NISTは、インシデントの取り扱いの優先づけを、おそらく最も重要な判断点としている。資源に限りがあるため、先着順ではなく、関連する要因に基づいて優先づけるべきとしている"
   kind: fact
   source: "NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide"
   locator: "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization"
