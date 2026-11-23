@@ -1,0 +1,399 @@
+check: 素材台帳の重大な検査(引用の実在と切り取り、記述と限定の照合)。1回目
+stage: 1
+target: trial/deck/01-sources.yaml の request が R2、R4、R5 の事実(F200〜F218、F400〜F414、F500〜F510、45件)
+judge: claude-opus-5-5(検査セッション)
+date: '2026-11-23'
+method: 各出典をこのセッションで取得し(PDF は pdftotext、HTML はタグを除去)、quote を空白と引用符を正規化して全文検索し、前後の文を読んで判定した。CISA の PDF は直接の取得が 403 だったため、WebFetch が保存した同じ URL の PDF から抽出した。記憶による判定はしていない。
+criteria:
+  1_quote_exists: quote が出典に実在する
+  2_cut: 切り取りが前後の条件、範囲、主体を落としていない
+  3_statement: statement が quote と合う(言い過ぎ、quote にない内容の追加がない)
+  4_qualifiers: qualifiers が quote の限定を漏れなく挙げ、value と unit が quote と一致する
+  5_as_of(参考): as_of と撤回・旧版の扱い
+summary:
+  total: 45
+  pass: 29
+  fail: 16
+  undeterminable: 0
+  fail_ids:
+  - F200
+  - F205
+  - F207
+  - F209
+  - F211
+  - F212
+  - F213
+  - F215
+  - F402
+  - F407
+  - F408
+  - F409
+  - F410
+  - F504
+  - F506
+  - F508
+  quote_not_found: 0
+  main_findings:
+  - 45件全ての quote が出典に実在した(F400 の pre-defined/predefined など表記の小差のみ)
+  - '最も多い不合格は、statement が quote の外(前後の文や箇条書き)の内容を含むもの: F200、F205、F207、F209、F211、F212、F213、F215、F407、F408、F409、F410、F504'
+  - '限定の脱落: F209 の "in most cases"、F212 の「誤検知と呼べるかは議論の余地」、F410 の「資源の制約」、F508 の "more likely"、F207 の「27%は下限」'
+  - '出典にない内容: F211「新規導入では調整が済むまで多数の誤検知」、F215「外部の委託ペネトレーションテスト」は quote にも同じ出典の他の事実にもない。F205 の「この99%は多くが良性のトリガー」は論文が B3 の数値について述べていない'
+  - 'as_of の誤り: CISA(F402、F408)の版は表紙に November 2021。SP 800-94(F209)は初版で Rev.1 ではない'
+  - '書式: F408、F410、F510 の qualifiers がカンマで分割され別の項目になっている(機械の検査で拾えるはず)'
+results:
+  F200:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: quote は出典の Abstract に一字一句実在(ダッシュは en dash)。statement の「4年間」「約1.16億件」は quote の前の文("over 4 years (115 million alerts, from 2018 to 2022)")にあり、quote にない。本文 §6.1 は 115,617,526 件で「約1.16億」は丸めとして妥当。qualifiers の期間別平均(134,000件/日 2018-04〜2020-08、24,000件/日 2020-12〜2022-07)と下限("the dataset represents a lower bound of alerts from this SOC")は本文で確認。
+    cited: through analysis, we observe ... (Abstract の直前の文) "collecting and analyzing their network alert logs over 4 years (115 million alerts, from 2018 to 2022)"
+    fix: quote を前の文まで広げるか、statement から件数と期間を外す(軽微)
+  F201:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §6.1 に実在。BHR が第2期に 44.9% を処理したことは直前の文 "6,474,204 alerts are handled by BHR during the second period (44.9%)" で確認。
+  F202:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: Survey Results に実在。quote は文の途中("working in the SOC,")で切れ、続く "40% of which served government customers" を落としているが、事実の条件は変えない。
+  F203:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 出典ページに実在("average ." の空白も原文どおり)。
+    note: qualifiers の「標本数と調査方法は本ページで未確認」は不正確。同ページに "The report, based on a global study of 2,000 SOC analysts" とある。qualifiers に n=2,000 を書くことを勧める。
+  F204:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 出典ページに実在。quote の直前に F203 の文が続く連続した段落。67% の原文は "over two-thirds (67%)"。
+    note: F203 と同じく、標本数 2,000 はページに記載がある。
+  F205:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: quote は §6 RQ2 冒頭に実在。statement の後半「この99%は、多くが良性のトリガーで、技術の性能の測定値ではないと論文は分析している」は quote にない。§6 は、参加者が誤検知と良性のトリガーを区別したと要約する("Participants showed a distinction between what they consider an FP and what they consider to be noise or a benign trigger. The former is a metric to describe false alarms due to the tool’s low performance")が、B3 の「99%」そのものを良性のトリガーと分析した記述は見当たらない。statement は論文の分析を B3 の数値に結び付けて言い過ぎている。
+    fix: statement を発言の紹介に留め、論文の一般的な結論は別の事実(F503 など)として扱う
+  F206:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: Survey Results に実在。数値を答えたのは "some analysts (n = 10)"。
+    note: 2例目の原文は "50 were found to be legitimate"。statement は2例とも「実際の脅威」と訳しており、legitimate(正当なアラート)を脅威と言い換えている。意味はほぼ同じだが、訳語に注意。
+  F207:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 不合格
+    5_as_of(参考): 合格
+    reason: quote は Abstract に実在。value の 0.01 と statement の「真の攻撃に関連するアラートは0.01%」は quote にない(Abstract の別の文)。value が quote の数値と一致しない。また 27% は序論で "(at least 27%)" と下限として書かれ、§6.2 の内訳は 27.37%(2020-2022)。qualifiers は良性のトリガーのみ下限とし、攻撃の試みが下限であることを落としている。
+    cited: '"A significant portion of the alerts is related to “attack attempts“ (at least 27%) that failed to cause damages."(§1)'
+    fix: 0.01% を含む文を quote に加えるか value を 27/49 側に合わせる。qualifiers に「攻撃の試み27%は下限」を加える
+  F208:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: p.1〜p.2 に実在(改ページをまたぐ。PDF 抽出では "nor­ mal" "traf­ fic" など行末の分綴があるが文面は一致)。qualifiers の「標準的なネットワークはない」は直後の文 "there is no such thing as a standard network" で確認。
+  F209:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 不合格
+    5_as_of(参考): 不合格
+    reason: quote は §2.2 末尾近くに実在。statement の「チューニングで調整する」は quote にない(2文後の "Altering the configuration ... is known as tuning")。また quote の "in most cases" (多くの場合)が statement と qualifiers から落ちており、「一方を減らすと他方が増える」と断定している。
+    cited: '"in most cases, reducing the occurrences of one increases the occurrences of the other."'
+    as_of_note: PDF は SP 800-94 初版(表紙 "February 2007")で Rev.1 ではない。qualifiers の「Rev.1は2007-02」は誤り。
+    fix: statement に「多くの場合」を入れ、チューニングの文を外すか quote を広げる。qualifiers を「2007年2月の初版」に直す
+  F210:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §2.3.2 に実在。
+    note: statement の「保守作業など」は前の文の例(月1回の保守作業)から補ったもの。quote にはない(軽微)。
+  F211:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §4.3.3.2 に実在。statement の後半「新規導入では調整が済むまで多数の誤検知が出る」は quote にも同節の前後にも見当たらない。同節の直前は "generally the rates of false positives and false negatives have declined"(新しい技術では誤検知率が下がった)と述べる。
+    fix: statement を「多大なチューニングと調整が必要」までに留める
+  F212:
+    1_quote_exists: 合格
+    2_cut: 不合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §6.2.3.2 に実在。quote は直後の限定を落としている。statement の「サービスの移設」は quote の後の文にあり quote にない。また移設の例について原文は "might inadvertently trigger an alert" と述べるだけで、誤検知とは言っていない。qualifiers は議論の余地に触れているが、quote 自体を広げる必要がある(合格条件「落としている場合は quote を広げる」)。
+    cited: '"However, typically this would be a low-priority alert, and not reported as an attack, so it is debatable whether this can truly be considered a false positive. If a major service is moved from one host to another and a thousand hosts start using it one day, that might inadvertently trigger an alert."'
+    fix: quote を "debatable ..." の文まで広げ、statement から「誤検知が起きる」の断定を弱める
+  F213:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: quote は実在するが、場所は §RQ2 ではなく序論(Introduction)の段落("Our findings also bring insights on the importance of establishing an understanding of the definition of FPs" の後)。quote は良性のトリガーの定義だけを述べる。statement の「誤検知の多くは」「ツールの欠陥ではない」は quote にない。
+    fix: locator を Introduction に直す。「多く」は Abstract の "most are attributed to benign triggers"(F503)を根拠にするか、quote を広げる
+  F214:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §7.1 Unreliable alarms に実在。quote の主体は "Some analysts"。statement は「SOC実務者の証言」で一般化していないため合格とするが、qualifiers に「一部の分析者」を明記することを勧める。
+    note: 直後に A2 の発言の引用が続く。
+  F215:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: quote は §6.4 Internal Scan に実在。quote は内部の脆弱性スキャンだけを述べる。statement に並ぶ「外部の委託ペネトレーションテスト」は quote にも F216〜F218 にもない。「これらは正当な活動が悪性の活動と似た振る舞いをするために起きる」は、内部スキャンについての "These scans have similar behavior patterns as malicious scans" を全パターンに広げており言い過ぎ。
+    fix: statement を内部スキャンに限るか、Table 7 と各段落を quote に加える
+  F216:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §6.4 DNS Configurations に実在。2020-2022 の範囲は §6.4 "48.91% of the total alerts during 2020-2022" で確認。
+  F217:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §6.4 SSL and Legacy Systems に実在。
+  F218:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §6.4 Alerts for Information Purposes に実在。unit「百万件超」は "More than 2.5 million" と合う。
+  F400:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: '§3.2.4 に実在。表記の差: quote は "pre-defined"、原文は "predefined"。'
+  F401:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §3.2.4 に実在。
+  F402:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 不合格
+    5_as_of(参考): 不合格
+    reason: 引用は Detection & Analysis Activities の Determine Investigation Scope に実在(WebFetch で保存した PDF を pdftotext で確認。直接の取得は 403)。qualifiers の適用範囲は、序文の条件のうち「確認された悪性のサイバー活動を含む」を落としている。
+    cited: '"The Incident Response Playbook applies to incidents that involve confirmed malicious cyber activity and for which a major incident ... has been declared or not yet been reasonably ruled out."'
+    as_of_note: 'PDF の表紙に "Publication: November 2021" とある(PDF 作成日は 2024-08-23)。as_of の「2024-08(版の表記は未確認)」は誤り。'
+    fix: qualifiers に「確認された悪性の活動を含むインシデント」を加え、as_of を 2021-11 に直す(ファイルは 2024-08 掲載)
+  F403:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §The Alert Triage Mindset に実在。
+    note: quote の「...」の位置では原文に省略がない(2文は連続している)。「...」は不要。as_of(2026-05-14 公開、2026-07-02 更新)はページの記載と一致。
+  F404:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 'フロー図のラベル(T1 -->|"P2: Escalate 30 min"| T2、|"P1: Escalate IMMEDIATELY"|)に実在。Document ID IR-SOP-015、Version 1.0、Last Updated 2026-02-15 も一致。'
+    note: 「30分以内に」はラベル "Escalate 30 min" の解釈。原文は「以内」を明示していない。
+  F405:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: Escalation Rules の Don’ts と Do’s に実在(ダッシュは原文 em dash)。
+    note: 2つ目の規則 "Over-escalate if unsure" は Do’s にあり P1 に限らない。qualifiers の「P1(最重大)の場合の規則」は1つ目だけに当てはまる。
+  F406:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: Escalation Criteria 節に実在。hard escalation triggers は7つあり、quote はうち2つと最後の1つを抜いた。statement は「例として」と書いており合格。
+  F407:
+    1_quote_exists: 合格
+    2_cut: 不合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 2つの引用は節4に実在。1つ目は文の途中で切れており、続く "or requires deeper investigation than simple monitoring allows" を落としている。statement の後半「標準の手順を超える調査(詳細なパケット検査、複雑なログの突き合わせ)が要るときは引き継ぐ」は quote にない(同節の別の文)。
+    cited: '"If an alert requires deep packet inspection or complex log correlation that goes beyond your standard operating procedures, it is time to hand it off."'
+    as_of_note: ページの表示に日付はないが、HTML のメタデータに datePublished 2026-08-15 がある。
+    note: 同節は "According to extnoc.com" と他サイトを引いており、origin が独自の見解とは限らない。
+    fix: quote に上の文を加え、1つ目の引用を文末まで広げる
+  F408:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 不合格
+    5_as_of(参考): 不合格
+    reason: quote は Declare Incident に実在(CISA PDF を WebFetch の保存ファイルで確認)。statement の後半「FCEBは、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告する」は quote になく、qualifiers に置かれている。qualifiers はカンマで分割されて YAML の別の項目になっており、引用の文が3つの項目に割れている(書式の誤り)。直後の "Report major incidents to CISA and to OMB" も statement の範囲に関わる。
+    cited: '"Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA"'
+    as_of_note: 'F402 と同じ。表紙は "Publication: November 2021"。'
+    fix: Note の文を quote に加える。qualifiers を引用符で囲んで1項目にする
+  F409:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §3.2.7 に実在(PDF ではページ見出し "33 COMPUTER SECURITY INCIDENT HANDLING GUIDE" が文中に挟まる)。statement の通知先の例(CIO など)は quote になく、直後の箇条書きにある。
+    fix: 箇条書きの冒頭を quote に加える(軽微)
+  F410:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 不合格
+    5_as_of(参考): 合格
+    reason: §3.2.6 に実在。statement の3つの要因は quote になく直後の箇条書きにある。quote の "as a result of resource limitations"(資源の制約のため先着順にしない)が statement と qualifiers から落ちている。qualifiers はカンマで3項目に割れている(書式の誤り)。
+    fix: 要因の見出しを quote に加え、「資源の制約のもとで」を qualifiers に入れる
+  F411:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §3.2.6 末尾に実在。「...」は2文の省略。ダッシュは原文 em dash。
+  F412:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §3.2.5 に実在。原文の箇条書き記号を除いて連結している。
+  F413:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: Escalation Criteria 節に実在。
+    note: 原文は "current verdict hypothesis, and recommended next step" で、「...」の位置に省略はない(カンマのみ)。qualifiers の「補助エージェントの報告では…」「原文の改行位置は未確認」は、原文で確認できたので更新できる。
+  F414:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 節7に実在(2つ目は Quick tip)。
+    as_of_note: HTML のメタデータに datePublished 2026-08-15 がある(F407 と同じ)。
+  F500:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 上院報告に実在(脚注19)。as_of の 2014-03-26 は表紙 "MARCH 26, 2014" と一致。
+  F501:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §D. Exploitation に実在(脚注44)。
+  F502:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §1 Introduction に実在。
+  F503:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: Abstract に実在。21人・7つのSOCは本文 "21 SOC practitioners from seven SOCs" で確認。
+    note: 原文の "most" は「大半」。statement の「多く」は弱めの訳。
+  F504:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 不合格
+    5_as_of(参考): 合格
+    reason: quote は Introduction の Contributions に実在。statement と value の主な数値のうち「39%が根本原因を反映」は quote になく、arXiv の Abstract の文にある。quote の "61% ... incorrect or imprecise" とは表現が違う。「2025年4月に実施」は本文 "In April 2025, we recruited 12 full-time security" で確認。qualifiers に「欧州の1つのSOC」("a SOC in Europe")がない。
+    cited: 'Abstract: "only 39% of the provided explanations reflected the actual root cause"'
+    fix: Abstract の文を quote に加えるか、statement を「61%が誤りか不正確」に直す。qualifiers に欧州の1つのSOCを加える
+  F505:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: Introduction の Contributions に実在。
+  F506:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 出典ページに実在。statement の「分析者が使うSOCの運用で」は quote にない。quote の主体は "IT professionals" で、SOC の分析者に限らない。
+    fix: statement の主体を「ITの専門職179人」にする
+  F507:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 記事の Dive Brief に実在(quote は文の途中で切り、"according to a survey from IDC, in partnership with FireEye" を statement で補っている)。as_of 2021-02-16 は "Published Feb. 16, 2021" と一致。
+  F508:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 不合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §VI(議論)の RQ2 に実在。statement の「分析者は時間と認知の負担をかけて調べる」は、原文の "more likely to spend"(負担をかける可能性が高い)を断定にしている。分析者5人・400件は本文で確認。
+    fix: statement を「時間と認知の負担をかける可能性が高い」にする
+  F509:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: 付録 A.3 に実在。
+  F510:
+    1_quote_exists: 合格
+    2_cut: 合格
+    3_statement: 合格
+    4_qualifiers: 合格
+    5_as_of(参考): 合格
+    reason: §Type of SOC に実在。
+    note: qualifiers がカンマで割れて "A1" "A2" "D6" "E7)" が別の項目になっている(書式の誤り)。
