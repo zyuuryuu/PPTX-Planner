@@ -29,7 +29,7 @@
 ## 検査
 
 - 機械的な検査は `python tools/check.py trial/deck --stage N` で行う。使い方と、実装されていない条件は `tools/README.md` にある。
-- 確認用の資料は `python tools/build.py trial/deck --level toc|skeleton|placeholder` で作る。
+- 確認用の資料は `python tools/build.py trial/deck --level toc|skeleton|placeholder` で作る。 出力先の `build/` はGitの管理の対象外である。依頼者に見せるものは、`trial/deck/preview/` に写してコミットし、その場所を伝える。
 - 実装されていない機械の条件は、自分の目で確かめたうえで「手で確かめた」と記録する。確かめられないものは、確かめられなかったと記録する。黙って合格にしない。
 - 検査セッションによる検査と、事実の収集は、別のセッションを起こして行う。`mcp__claude-code-remote__create_session` を使う。
   - `source_url` は `https://github.com/zyuuryuu/PPTX-Planner`、`source_revision` と `outcome_branch` は `claude/trial-soc` とする。
