@@ -1,0 +1,29 @@
+検査の名前: "1-model-4"
+対象: "trial/deck/01-model.yaml の R-infra-siem、E-siem-infra と、trial/deck/incoming/R7.yaml の F715。コミット 3d10f63377a5bba3b9ddf610ec9192e5af969177 の版"
+種類: 重大な検査の最終の再検査(1回だけ)
+判定者: "claude-sonnet-5-5(検査セッション)"
+日付: 2026-11-23
+方法: "NIST SP 800-92 の PDF を取得し pdftotext で抽出、空白を詰めて quote の4つの断片を原文と照合した。差は脚注番号20の除去だけ。01-hypotheses.yaml、journal.md、decisions.md は読んでいない。"
+集計: "3件中 合格3、不合格0、判定できない0"
+判定:
+  - id: R-infra-siem
+    判定: 合格
+    前回の指摘: "condition が基盤一般の限定を書き、SIEM を基にした基盤が syslog 型を基にすることもあると読める"
+    確かめたこと: >-
+      condition は「定義による(SIEM を基にした基盤を指す要素であるため)」になり、'typically' と syslog 型の記述は除かれた。from の定義と矛盾せず、
+      F715 の向き(基盤が SIEM を基にする)に合う。解消。新しい問題はない。
+  - id: F715
+    判定: 合格
+    確かめたこと: >-
+      quote の4断片(第3章冒頭 p.3-1、'It then describes ...' の段、3.2 末尾 'A log management infrastructure usually encompasses ... depends primarily on the type of log management software used'、
+      3.6 'Log management infrastructures, which are typically based on either ...')は原文に実在する(差は脚注番号20の除去のみで qualifiers に書かれている)。
+      3.2 末尾の2文の間に原文は 'Section 3.1 describes the components ...' を挟み、quote は含めているので切り取りで条件は落ちない。
+      'usually'(大半または全て)、'primarily'(一部の機能の置き場所)、'typically'(基にする)は statement に「大半または全て」「一部の機能」「主に」「通常」として残り、qualifiers にも書かれている。
+      3.2 の末尾の次の文 'Log management infrastructures are typically based on one of the two major categories ...' は quote にないが、同じ内容を 3.6 の断片が担うので statement を超えない。
+      locator の p.3-1、p.3-5、p.3-11 は原文の位置と合う。'this section' が 3.2 を指す説明も合う。
+  - id: E-siem-infra
+    判定: 合格
+    確かめたこと: >-
+      note の「通常 syslog 型か SIEM のどちらかを基にする」「SIEM を基にしない基盤(syslog 型)もある」「一部の機能を3層のどこに置くかは主に使うソフトウェアの種類で決まる(3.2 の末尾)」は F715 の範囲に収まる。
+      「出典は相関やアラートを作る機能を3層のどこに置くかを書いていない」は、出典がそれらの配置を述べていないことの記述で、出典に反しない(3.2 末尾は配置がソフトウェアの種類による、とだけ書く)。
+      note に前回の指摘のような限定の混同はない。
