@@ -160,6 +160,8 @@
 - スライドの `holds` のうち主な関係が、型の `expresses` に含まれる(機械)。含まれなければ、含意の欠落である。
 - `holds` の申告が正しい(検査セッション)。語彙ごとに、はいかいいえで答えられる問いで確かめる。
 
+  問いのない含意(`grouped`、`connected`、`proportional`、`opposed`、`contained`、`shared`、`ascending`、`main-and-sub`、`distinct-kinds`)は、含意の語彙の表の意味に照らして、成り立つかどうかを確かめる。
+
   | 含意 | 問い |
   |---|---|
   | `partition` | 分けた基準を一言で言えるか。どの項目にも入らないものはないか。2つの項目に入るものはないか |
