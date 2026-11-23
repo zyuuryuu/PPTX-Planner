@@ -7,6 +7,6 @@ artifacts:
     approved_by: 依頼者
     approved_on: 2026-11-23
     approved_commit: fcf0992   # このコミットの 00-brief.md を承認した
-    rounds: 0
+    rounds: 1   # 問いの言い足しによる再検査1回
   style.yaml:
     state: 作成中
