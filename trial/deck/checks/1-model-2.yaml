@@ -1,0 +1,165 @@
+検査の名前: "1-model-2"
+対象: "trial/deck/01-model.yaml(要素39、つながり33、場面8)と trial/deck/incoming/R7.yaml(F700〜F714)。コミット c651e445c16e2b9140191d3ca0a9d2290e00738c の版"
+種類: 重大な検査(docs/checks.md)。同じ対象を別のセッションも検査しているが、その結果は読んでいない
+判定者: "claude-sonnet-5-5(検査セッション)"
+日付: 2026-11-23
+方法: |
+  出典を 2026-11-23 に取得して開いた(全て HTTP 200)。NIST SP 800-92 PDF、NCA EDR ひな形 PDF、OMB M-22-01 PDF、NIST SP 1800-24 PDF、
+  Microsoft Learn 4ページ(threat-detection、sentinel/overview、microsoft-defender-endpoint、overview-endpoint-detection-response)。
+  PDF は pdftotext -layout、HTML はタグを除いて、空白・引用符・脚注番号を正規化し、quote を断片ごとに機械で照合した。
+  機械が合わなかった断片(F701、F709、F713 ほか)は、脚注番号の貼り付き、リンクの空白、行末のハイフンによる差だった。原文を目で読んで確かめた。
+  Microsoft Learn の "Last updated on" と "Applies to" も読んだ(as_of と一致)。
+  台帳の F100、F101、F105、F615〜F620 は、出典で quote の実在を確かめた(全て実在。stance は読んでいない)。
+  01-hypotheses.yaml、journal.md、decisions.md、ほかの checks/ は読んでいない。
+  限界: NCA PDF の項番と本文の対応は、pdftotext -layout の行の並びで確かめた(画像では確かめていない)。F616、F617 の項番は、行の並びで合っている。
+集計:
+  事実: "15件中 合格14、不合格1(F701)"
+  要素: "39件中 合格39、不合格0"
+  つながり: "33件中 合格29、不合格4(R-siem-correlated-entry、R-siem-alert、R-edr-siem、R-endpoint-mde)"
+  場面: "8件中 合格5、不合格3(S-siem-agent、S-siem-agentless-push、S-siem-agentless-pull)"
+  summarizes: "該当なし(01-model.yaml に summarizes を持つつながりがない)"
+  判定できない: "0件"
+  不合格のID: "F701、R-siem-correlated-entry、R-siem-alert、R-edr-siem、R-endpoint-mde、S-siem-agent、S-siem-agentless-push、S-siem-agentless-pull"
+
+# ============================================================
+# 1. 事実 F700〜F714(quote の実在、切り取り、statement、qualifiers)
+# ============================================================
+事実:
+  - id: F700
+    判定: 合格
+    理由: "3.1 p.3-1 に quote が実在(第1層、第2層の連続した記述)。statement の「通常3層」「リアルタイムかほぼリアルタイム、または定期的な一括」「ログサーバ自身か別のデータベースサーバ」は quote に合う。第3層を含めないことと、ログ管理基盤一般であることを qualifiers に書いている。"
+  - id: F701
+    判定: 不合格
+    引用: "statement: 「多くのSIEM製品は、ログ生成元からログを集める2つの方法(エージェントなし、エージェント型)に対応する」 / quote の末尾: \"Most SIEM products support two ways of collecting logs from log generators:\""
+    理由: "quote はコロンで終わり、2つの方法の名前(Agentless、Agent-Based)を含まない。statement の括弧内の「エージェントなし、エージェント型」は quote にない。原文の直後に Agentless. と Agent-Based. が実在するので内容は誤りでないが、台帳の条件(statement が quote と合う)を満たさない。ログサーバとデータベースサーバの記述と、qualifiers の 'Most SIEM products' は quote に合う。"
+    直し方の案: "statement から括弧内を除く、または quote を Agentless. と Agent-Based. の見出しまで伸ばす。"
+  - id: F702
+    判定: 合格
+    理由: "3.4 p.3-9 に quote が実在。pull と push、'usually'、どちらでも絞り込み・集約・正規化・分析を行うこと、全て statement と qualifiers に合う。"
+  - id: F703
+    判定: 合格
+    理由: "3.4 p.3-9 に quote が実在。'usually' を qualifiers に書き、複数のエージェントの記述も含む。"
+  - id: F704
+    判定: 合格
+    理由: "3.4 p.3-9 に quote が実在。'several dozen' を「数十種類」、'such as' を例示として qualifiers に書いている。"
+  - id: F705
+    判定: 合格
+    理由: "3.2 Functions の Event correlation に quote が実在(2文は連続)。主体が 'the infrastructure'(ログ管理基盤)であること、'generally'、'might' を qualifiers に書いている。ただし、この事実を SIEM の記述として使うことの可否は、つながりの検査(R-siem-alert)で別に判定した。"
+  - id: F706
+    判定: 合格
+    理由: "NCA PDF の 1-2 と 2-3 に実在([...] による省略は、間に別の項が入る)。要件(must)であること、ひな形であることを qualifiers に書いている。"
+  - id: F707
+    判定: 合格
+    理由: "4-1 と 4-7 に実在。statement の3つの通知の条件は 4-7 と合う。4-1 の 'covering up-to-date attack scenarios' は statement にないが、通知の条件ではないので許容。"
+  - id: F708
+    判定: 合格
+    理由: "4-2 に実在。'integrating and sharing security insights with ... tools' で、共有の向きと内容が書かれていないことを qualifiers に書いている。この点は R-edr-siem の判定に関わる。"
+  - id: F709
+    判定: 合格
+    理由: "Threat detection in Microsoft Sentinel の冒頭に quote が実在(HTML ではリンク部分の空白だけが差)。Applies to と、冒頭の custom detections の注記も実在し、qualifiers に書いている。as_of 2026-05-14 は Last updated と一致。"
+  - id: F710
+    判定: 合格
+    理由: "Scheduled rules の節に実在。statement は quote に合う。"
+  - id: F711
+    判定: 合格
+    理由: "Microsoft security rules の節に実在。続きの 'Microsoft security rules are not available if you have enabled Microsoft Defender XDR incident integration, or onboarded Microsoft Sentinel to the Defender portal' の注記も実在し、qualifiers に書いている。つながりの条件に落ちている点は R-sentinel-external-incident の備考に書いた。"
+  - id: F712
+    判定: 合格
+    理由: "overview ページに quote が実在([...] の前後は別の箇所)。statement は 'Many' と 'real-time' を述べないが、述べていない限定を足してはいないので誤りではない。つながり側は 'Many connectors ... real-time' を正しく写している。"
+  - id: F713
+    判定: 合格
+    理由: "Defender for Endpoint overview の冒頭に実在。Applies to(Plan 1、Plan 2、for servers、Business servers)も一致。as_of 2026-07-28 は Last updated と一致。"
+  - id: F714
+    判定: 合格
+    理由: "同じページに実在。statement は quote に合う。"
+
+# ============================================================
+# 2. 要素(出典にあり、名前と種類が合うか)
+# ============================================================
+要素:
+  合格: "E-log-source、E-src-os、E-src-secsw、E-src-app、E-src-physical、E-siem、E-siem-agent、E-siem-server、E-siem-db、D-log-data、D-normalized-log、D-significant-event、D-correlated-entry、D-siem-alert、E-sentinel、E-sentinel-source、D-sentinel-data、E-sentinel-rule、D-sentinel-alert、D-sentinel-incident、D-ms-external-alert、E-endpoint、D-endpoint-data、E-edr、E-edr-agent、E-edr-central-db、D-edr-detection、E-it-staff、E-mde、E-mde-sensor、D-mde-telemetry、D-mde-alert、D-mde-incident、E-analyst、E-defender-portal、E-sep、D-sep-events、E-sym-edr、D-sym-malicious(39件)"
+  不合格: "なし"
+  備考:
+    - "E-siem-server の functions「重要なイベントの特定と優先順位付け(F100)」: F100 の本文は SIEM サーバがすると書くが、脚注37は優先順位付けを 'Some SIEM products' の機能とする。要素の functions に限定がない(R-server-significant の note にはある)。要素の存在と名前は合うので合格。functions にも限定を足すことを勧める。"
+    - "D-siem-alert、D-correlated-entry: 要素としては F705 に実在し、名前と種類が合う。SIEM の要素と言えるかは、つながり(R-siem-alert、R-siem-correlated-entry)の判定に回した。"
+    - "E-endpoint: OMB の例(F615)と Defender for Endpoint の対象(F714)を1つの要素にまとめている。note に製品名があり、種類は合うので合格。"
+    - "E-siem-db: 根拠が F701 だけ。F701 の statement に上の不合格があるが、要素の根拠となる quote(one or more database servers that store the logs)は実在する。"
+
+# ============================================================
+# 3. つながり(向きと条件。出典にないつながりが足されていないか。unknown の扱い)
+# ============================================================
+つながり:
+  合格: "R-os-source、R-secsw-source、R-app-source、R-physical-source、R-siem-server、R-siem-db、R-source-agent、R-agent-server、R-source-server-push、R-server-source-pull、R-server-db、R-server-significant、R-sentinel-rule-contain、R-sentinel-source-data、R-sentinel-rule-data、R-sentinel-rule-alert、R-sentinel-alert-incident、R-sentinel-external-incident、R-endpoint-agent、R-agent-central-db、R-edr-detection、R-edr-notify、R-mde-sensor、R-mde-alert、R-mde-alert-incident、R-analyst-alert、R-mde-portal、R-sep-symedr、R-symedr-malicious(29件)"
+  不合格:
+    - id: R-siem-alert
+      引用: "from: E-siem / label: さらに調査が必要であることを示すアラートを生成する / evidence: [F705] / note: 「出典はログ管理基盤一般の記述で、作る主体は『基盤』。SIEM の記述ではない」。出典(3.2): \"the infrastructure might also generate an alert to indicate that the identified event needs further investigation.\""
+      理由: "出典の主体は 'the infrastructure'(ログ管理基盤)で、アラートを生成するのは基盤である。SIEM の記述(3.4 とその脚注、F100、F101)には、アラートの生成も、相関の結果として新しいログ項目を作ることも書かれていない(3.4 のアラートに近い記述は、ログ監視職員を助ける機能の一覧(GUI、知識ベース、インシデントの追跡、資産情報)だけで、アラートの生成は含まれない)。3.4 は SIEM を 'a relatively new type of centralized logging software' と呼び、log servers と database servers の語を 3.1 と共有するが、3.2 の機能を SIEM の機能と書いているわけではない。収集セッションが note に書いた通り、主体を E-siem に置き換えたのは、SIEM がログ管理基盤の一種だという一般化に基づく補完で、docs/model.md の「出典に書かれていないことは unknown」に当たる。"
+      収集セッションの質問への答え: "ログ管理基盤一般の記述を SIEM に当てはめることは、現状の根拠では認められない。"
+      直し方の案: "(a) 主体を、出典の語のままの要素「ログ管理基盤(log management infrastructure)」に置き、SIEM とは別に登録する。SIEM との関係は、ユーザーに聞いて証言として登録するか、unknown のまま図に未確定と示す。(b) SIEM の出典を探して、SIEM がアラートを生成すると書いた記述を足す(Microsoft Sentinel の側には、分析ルールがアラートを生成する記述がある)。"
+    - id: R-siem-correlated-entry
+      引用: "from: E-siem / label: 相関の結果として新しいログ項目を作る / evidence: [F705] / note: 「作る主体は『基盤』。SIEM の記述ではない」。出典: \"generally the result of successful correlation is a new log entry\""
+      理由: "R-siem-alert と同じ。主体が 'the result of successful correlation'(結果)で、作る主体の記述は 'the infrastructure' の側にしかない。SIEM の記述にはない。"
+      直し方の案: "R-siem-alert と同じ。"
+    - id: R-edr-siem
+      引用: "from: E-edr, to: E-siem, kind: send / label: セキュリティの知見を統合し共有する / evidence: [F708]。出典(4-2): \"EDR solution must accelerate response time by integrating and sharing security insights with Network Detection and Response (NDR), Security Information and Event Management (SIEM) and Security Orchestration, Automation and Response (SOAR) tools.\""
+      理由: "(1) 向きが出典にない。'integrating and sharing ... with' は双方向でも一方向でもありえ、EDR から SIEM へ送るとは書かれていない。kind: send は「データが from から to へ渡る」と定義しているので、向きを主張している。(2) 渡す内容(security insights)が書かれていない。(3) to の E-siem は NIST SP 800-92(2006年)の SIEM の要素で、NCA の 'SIEM tools' と同じものか、出典からは言えない(出典の系統をまたぐ)。(4) 4-2 は要件(must)で、製品の動作の記述ではない。"
+      収集セッションの質問への答え: "NCA の要件を、向きのあるつながり(send)として登録することは認めない。要件の文は、向きを書いていない以上、unknown の向きでしか登録できない。"
+      直し方の案: "削除して図では途切れとして示す。または、向きを持たない種類(例: link)と、basis: requirement のような印を新しく定め、to は NCA の文の 'SIEM tools' を指す別の要素にする。"
+    - id: R-endpoint-mde
+      引用: "from: E-endpoint, to: E-mde, kind: send / label: 振る舞いのテレメトリ(D-mde-telemetry)を継続的に集める / note: 「出典は『Defender for Endpoint が集める』と書き、どこからどこへ送るかは書いていない」。出典(F618): \"Defender for Endpoint continuously collects behavioral cyber telemetry.\""
+      理由: "収集セッション自身が note で、出典は集める元も送る向きも書いていないと認めているのに、kind: send で「端末から Defender for Endpoint へ渡る」向きを登録している。F618 は集める主体(Defender for Endpoint)と集めるものだけを書く。端末が元だと読むのは自然だが、それは出典にない補完で、send は端末が送る側だと主張する。モデルの冒頭のコメントは、同じ理由(センサーの置き場所、テレメトリの経路)でほかの経路を登録していない。それと基準が合わない。"
+      直し方の案: "削除する。テレメトリが Defender for Endpoint のものであることは、要素 D-mde-telemetry の evidence(F618)で足りる。または、from を E-mde にした「集める」関係に変え、集める元は unknown とする。"
+  合格のうち備考:
+    - id: R-server-db
+      備考: "収集セッションの質問への答え: 認める。F701(SIEM)は、データベースサーバがログを保存すると書く。F700 は、第2層のサーバが受け取ったログデータが、サーバ自身か別のデータベースサーバに保存されると書き、向き(サーバからデータベースサーバ)は読み取れる。向きは F700(ログ管理基盤一般)に頼るが、SIEM の側にも保存先の記述があり、R-siem-alert のように SIEM の側に記述がないものとは違う。mode と condition は unknown で正しい(F700 は、別のデータベースサーバがない構成もありうると書く)。ただし、判断が分かれうる点で、kind が send(データが渡る)であることと、label が「保存する」であることが少しずれる。「保存先」を示す種類にすると、出典に近い。"
+    - id: R-sentinel-source-data
+      備考: "to が D-sentinel-data(データの要素)で、send の宛先が部品でない。出典は、集めたデータの行き先の部品(ワークスペースなど)を書いていないので、このままで出典に反しない。データソースが送るのか Sentinel が取りに行くのかも出典にないが、kind: send は向き(データがソースからデータへ)だけを示し、mode に push と pull を決めていないので許容。"
+    - id: R-sentinel-external-incident
+      備考: "kind: produce の from が D-ms-external-alert(データ)で、出典は Microsoft security rules(ルール)がインシデントを作ると書く。向きと条件は出典に合うので合格。ただし、F711 の続きの注記(Defender の XDR インシデント連携を有効にした場合、または Sentinel を Defender のポータルに onboard した場合は、Microsoft security rules が使えない)が condition に入っていない。condition が「Microsoft セキュリティのルールを使う場合」だけだと、広く読まれる。condition に足すことを勧める。"
+    - id: R-endpoint-agent
+      備考: "出典(F616)は、エージェントが端末のデータを監視して集めると書く。端末からエージェントへデータが渡る向きは合うが、取りに行く側はエージェントなので、kind は retrieve(from がエージェント、to が端末)のほうが出典に近い。mode の「リアルタイムで継続的」は F615(OMB、EDR 全体の記述)に由来し、同じ系統の EDR 一般の記述なので許容。エージェントが端末の上で動くかは書かれていないので、unknown にしてある点は正しい。"
+    - id: NCA の要件に基づくつながり全般(R-endpoint-agent、R-agent-central-db、R-edr-detection、R-edr-notify)
+      備考: "収集セッションの質問(NCA の要件を仕組みのつながりとしてよいか)への答えの続き: R-edr-siem は向きが出典にないので不合格にしたが、上の4件は、要件の文が主体、相手、向き、条件を書いているので、つながりとして認める。ただし、要件(must)であって製品の実際の動作の記述ではないことが、note(自由記述)にしかない。図で動作として読まれないよう、要件に基づくことを機械で区別できる印(例: basis: requirement)を足すことを勧める。"
+    - id: R-edr-detection
+      備考: "要件(3-3、3-5、3-7)に合う。分析の入力が中央のデータベースかは書かれていないとして、つながりを足していない点は正しい。"
+    - id: R-mde-alert
+      備考: "出典は 'alerts are created in the system' と、作る主体を 'the system' と書く。ページは Defender for Endpoint の EDR の記述なので、from を E-mde とすることを許容。"
+
+# ============================================================
+# 4. 場面(順序が出典の記述と合うか)
+# ============================================================
+場面:
+  合格: "S-sentinel、S-edr-collect、S-edr-detect、S-mde、S-symantec(5件)"
+  不合格:
+    - id: S-siem-agent
+      引用: "steps: [R-agent-server, R-server-significant, R-siem-alert]"
+      理由: "最後の段 R-siem-alert が上のとおり不合格。順序そのもの(エージェントから送る → 相関と特定 → アラート)は、F703、F100、F705 の並びに矛盾しない。ただし、R-siem-alert の from が E-siem で、前の段 R-server-significant の from が E-siem-server のため、段の間のつながりが部品としてつながらない(R-siem-alert を直すとき、合わせて直す)。"
+    - id: S-siem-agentless-push
+      引用: "steps: [R-source-server-push, R-server-significant, R-siem-alert]"
+      理由: "S-siem-agent と同じ(R-siem-alert が不合格)。最初の2段の順序は F702、F100 に合う。"
+    - id: S-siem-agentless-pull
+      引用: "steps: [R-server-source-pull, R-server-significant, R-siem-alert]"
+      理由: "同じ。"
+  合格のうち備考:
+    - id: S-sentinel
+      備考: "F709 の「データを集めた後」「ルールが定期的にデータに問い合わせる」「見つけたらアラートを生成」「集約してインシデントにまとめる」の順に合う。"
+    - id: S-edr-detect
+      備考: "順序の根拠は F707 の 4-7(潜在的な脅威を識別したとき通知する)。要件の文の順序であることを note に書いている。"
+    - id: S-mde
+      備考: "F619(検知されるとアラートが作られ、まとめられてインシデントになる)に合う。テレメトリの収集を含めていない判断は、R-endpoint-mde の不合格と整合する。"
+
+# ============================================================
+# 5. 収集セッションが判断を求めた3点(まとめ)
+# ============================================================
+判断を求められた3点:
+  - 点: "R-siem-alert、R-siem-correlated-entry(ログ管理基盤一般の記述を SIEM に当てはめてよいか)"
+    答え: "不合格。主体が 'the infrastructure' の記述で、SIEM の記述にはない。当てはめるには、SIEM がその基盤の機能を持つと書いた出典か、ユーザーの証言が要る。"
+  - 点: "R-server-db(保存先の記述からつながりを作ってよいか)"
+    答え: "合格(認める)。SIEM の記述(F701)に保存先が書かれ、向きは F700 から読める。mode と condition は unknown のまま。kind を「保存先」に近いものにすることは勧める。"
+  - 点: "R-edr-siem(NCA の要件を仕組みのつながりとしてよいか)"
+    答え: "不合格。要件の文が向きと内容を書いていない。ほかの NCA 要件のつながりは認めるが、要件に基づくことを機械で区別できる印を勧める。"
+
+# ============================================================
+# 6. summarizes
+# ============================================================
+summarizes: "01-model.yaml に summarizes を持つつながりはない。該当なし。"
