@@ -1,0 +1,156 @@
+検査の名前: 素材台帳の重大な検査の再検査(引用の実在と切り取り、statement と qualifiers の照合)。B-1 と B-2 の不合格の解消確認
+対象: trial/deck/incoming/R2.yaml、R4.yaml、R5.yaml(F200〜F221、F400〜F414、F500〜F510。48件)
+判定者: Claude Sonnet 5.5(claude-sonnet-5-5)
+回: B-4(別セッションの再検査とは独立。B-3 は読んでいない)
+方法: 出典を取得して全文を照合した(PDF は pdftotext、HTML はタグを除去。空白、引用符、行末のハイフン、脚注番号を正規化)。CISA の PDF は直接取得が 403 だったため、WebFetch が保存した同じ URL の PDF を pdftotext で読んだ。arXiv は abs ページで採択を確認した。記憶による判定はしていない。
+再検査の範囲: B-1 か B-2 のどちらかで不合格だった事実と、直されて quote、statement、qualifiers、locator が変わった事実、新しい事実(F219〜F221)。前回どちらでも合格で直されていない13件(F202、F217、F218、F400、F401、F412、F414、F500、F501、F502、F505、F507、F510)は再検査せず、新しい指摘を出していない。
+件数:
+  再検査した件数: 35
+  合格: 21
+  不合格: 14
+  判定できない: 0
+  再検査しなかった件数: 13
+不合格の事実: [F200, F203, F204, F207, F209, F214, F216, F402, F404, F405, F407, F408, F409, F410]
+主な指摘:
+  - 前回の指摘がそのまま残っている(直されていない)もの: F203、F204(標本数「未確認」)、F214、F216、F405、F407、F408、F409、F410、F402(qualifiers)、F209(in most cases)
+  - 直したことで statement が quote の外の内容を含むままになったもの: F404(表の5分と30分は quote にない)、F408、F409、F410
+  - 新しく見つかったもの: F207 の qualifiers「1日あたり24K〜134Kに対する割合」は誤り。0.01%、27.37%、48.91% は表4の2020-12〜2022-07(14,429,534件)の割合。F200 も同じ期間の限定を落としている
+  - 解消したもの(21件)は、F201、F205、F206、F208、F210、F211、F212、F213、F215、F219、F220、F221、F403、F406、F411、F413、F503、F504、F506、F508、F509
+結果:
+  F200:
+    判定: 不合格
+    条件:
+      1_quote_exists: 合格(Abstract に実在。前の文を含めて広げた)
+      2_cut: 不合格
+      3_statement: 不合格
+      4_qualifiers: 不合格
+    理由: 前回の B-2 の指摘(1日2.4万件に自動遮断 BHR の処理分が含まれる)が未解消。§6.1 は「134,000 … 24,000 alerts per day」を総数とし、第2期の 44.9% は BHR が人手なしで処理し、除くと約13,764件/日と述べる。statement は「解析者が直面するアラートは2.4万〜13.4万件」と書き、qualifiers に BHR 処理分を含む総数であることがない。F201 と並べると食い違って見える。また、0.01% は表4の2020-12〜2022-07の期間の割合で、4年間全体ではない。statement は「4年間のログでは…そのうち0.01%」と読める。
+    引用: '§6.1: "6,474,204 alerts are handled by BHR during the second period (44.9%) without involving human analysts."、表4: 14,429,534 alerts, True Attacks 0.01%(12/2020–07/2022)'
+    直し方: qualifiers に「24Kは第2期の総数で BHR 処理分を含む」「0.01%、27%、49% は2020-12〜2022-07の割合」を加える。
+  F201:
+    判定: 合格
+    理由: 引用は §6.1 に実在し、前後の条件を落としていない。statement の「自動遮断(BHR)・ファイアウォール」は、quote の BHR に、直前の文のファイアウォールを足している(軽微。BHR のみに直すのが望ましい)。
+  F203:
+    判定: 不合格
+    理由: 前回の B-2 の指摘が未解消。qualifiers の「標本数と調査方法は本ページで未確認」は誤り。同ページに "based on a global study of 2,000 SOC analysts" と "This report is based on a March-April 2023 study commissioned by Vectra and carried out by Sapio Research. Sapio surveyed 2,000 IT security analysts working at organizations with more than 1,000 employees across the US (200), UK (200), France (200) ..." がある。
+    直し方: n=2,000、従業員1,000人超の組織、2023年3〜4月、委託調査と書き、「未確認」を削る。
+  F204:
+    判定: 不合格
+    理由: F203 と同じ。qualifiers の「標本数は未確認」は、同ページの "Sapio surveyed 2,000 IT security analysts" と食い違う。
+  F205:
+    判定: 合格
+    理由: statement は B3 の発言の紹介に縮み、quote に合う。論文の分析は F219 に分けた。
+  F206:
+    判定: 合格
+    理由: 引用は Survey Results に実在("some analysts (n = 10)")。qualifiers を「回答した10人のうちの2例」に直したため、前回の B-2 の指摘は解消。
+  F207:
+    判定: 不合格
+    条件:
+      1_quote_exists: 合格(Abstract に実在)
+      2_cut: 合格
+      3_statement: 合格(0.01% が quote に入った)
+      4_qualifiers: 不合格
+    理由: qualifiers の「1日あたり24K〜134Kのアラートに対する割合」は誤り。0.01%、27.37%、48.91% は表4(2020-12〜2022-07、14,429,534件)の割合。また前回の B-1 の指摘(27% は §1 で "at least 27%" の下限。良性のトリガーも §6.2 で "conservative … a lower bound")が qualifiers に入っていない。
+    引用: '§1: "attack attempts (at least 27%)"、§6.2: "The rules are intentionally conservative as we only flag those with clear evidence of benign triggers (i.e., a lower bound)."'
+    直し方: qualifiers に期間(2020-12〜2022-07)と、27% と 49% は下限であることを加え、24K〜134K に対する割合という記述を直す。
+  F208:
+    判定: 合格
+    理由: quote を拡張して「標準的なネットワークはない」まで含めた。統計の文は "may have a different false positive rate" で、statement の「環境ごとに異なる」は may を落とす(軽微)。
+  F209:
+    判定: 不合格
+    条件:
+      1_quote_exists: 合格
+      2_cut: 合格(チューニングの文まで広げた)
+      3_statement: 不合格
+      4_qualifiers: 不合格
+    理由: 前回の B-1 と B-2 の指摘のうち "in most cases" の脱落が未解消。statement は「一方を減らすと他方が増える」と断定する。原文は "in most cases, reducing the occurrences of one increases the occurrences of the other"。qualifiers にもない。as_of 2007-02(初版)は、表紙 "February 2007" と合い、解消。
+    直し方: statement に「多くの場合」を入れる。
+  F210:
+    判定: 合格
+    理由: quote を節の全体まで広げ、「月1回の保守作業」の例と "especially in more diverse or dynamic environments" を含む。前回の B-2 の指摘は解消。
+  F211:
+    判定: 合格
+    理由: statement を「多大なチューニングとカスタマイズが必要」に縮めた。§4.3.3.2 に実在し、locator も合う。
+  F212:
+    判定: 合格
+    理由: quote を "debatable whether this can truly be considered a false positive" まで広げ、statement も議論の余地を述べる。§6.2.3.2 に実在。
+  F213:
+    判定: 合格
+    理由: statement は定義の紹介に縮み、quote に合う。注: quote は Introduction に1箇所だけ実在し、locator の「RQ2 … および §3」は前回の B-1 の指摘のまま(直されていない。軽微)。
+  F214:
+    判定: 不合格(軽微)
+    理由: 前回の B-2 の指摘が未解消。quote の主体は "Some analysts"(一部の分析者)で、qualifiers に「一部の」がなく、statement も「SOC実務者の証言」と主体を広げる。
+    直し方: qualifiers に「一部の分析者」を書く。
+  F215:
+    判定: 合格
+    理由: statement を内部スキャンだけに絞った。quote は §6.4 に実在。
+  F216:
+    判定: 不合格(軽微)
+    理由: 前回の B-2 の指摘が未解消。quote は、DNS 関連の良性のトリガー(140万件)の "the vast majority" が外部ドメインの内部IP運用に起因すると述べる。statement は140万件の全体をこの原因に結び付け、「大半」を落とす。
+    直し方: 「140万件のうち大半が」と書く。
+  F219:
+    判定: 合格
+    理由: 新規。quote は §6 RQ2 の Summary に実在("When the analyst reported a 99% FP rate, this is found to be mostly benign triggers and not necessarily a measurement of the performance of the technology itself.")。qualifiers に1人の発言であることがある。
+  F220:
+    判定: 合格
+    理由: 新規。quote は Yang らの §6.2 に実在。参照 [4] は Alahmadi らの論文で、qualifiers の記述と合う。
+  F221:
+    判定: 合格
+    理由: 新規。quote は §6.4 External Pen Test に実在。value 2.7、unit 百万件、92%(Log4j、2022年前半)が合う。
+  F402:
+    判定: 不合格
+    条件:
+      1_quote_exists: 合格(PDF の Determine Investigation Scope に実在)
+      4_qualifiers: 不合格
+    理由: 前回の B-1 の指摘が未解消。qualifiers の適用範囲が「確認された悪性のサイバー活動を含む」を落とす。原文は "applies to incidents that involve confirmed malicious cyber activity and for which a major incident … has been declared or not yet been reasonably ruled out"。as_of の 2021-11(表紙 "Publication: November 2021")は解消。
+    直し方: qualifiers に「確認された悪性のサイバー活動を含むインシデント」を加える。
+  F403:
+    判定: 合格
+    理由: quote は1つの連続した段落に実在(「...」を除いた)。
+  F404:
+    判定: 不合格
+    理由: statement の後半「同じ手順書の表では、P1はTier 2へ5分以内、P2は30分以内」は quote(フロー図のラベル2つ)にない。値は表に実在する("P1 … Escalate to Tier 2 … 5 min"、"P2 … Escalate to Tier 2 … 30 min")が、qualifiers も「表の文面の写しは quote に含めていない」と認める。前回の B-2 の指摘(P1 は表では5分)を、quote を広げずに statement に入れた。
+    直し方: 表の2行を quote に加えるか、statement からその一文を外して qualifiers だけに置く。
+  F405:
+    判定: 不合格(軽微)
+    理由: 前回の B-2 の指摘が未解消。qualifiers の「P1(最重大)の場合の規則」は、2つ目の引用 "Over-escalate if unsure" には当たらない。これは Do's の一般規則で、P1 に限らない。
+  F406:
+    判定: 合格
+    理由: quote に "Hard escalation triggers:" を加えた。原文は triggers を7つ挙げ、statement は「例として」と書く。
+  F407:
+    判定: 不合格
+    理由: 前回の B-1 の指摘(quote を広げる)が未解消。1つ目の quote は文の途中で切れる。原文は "exceeds your predefined technical scope or requires deeper investigation than simple monitoring allows" と、条件を2つ挙げる。statement は「上げる条件は、事前に定めた担当者の技術的な守備範囲を超えたとき」と条件を1つに絞る。qualifiers に続きの文があることを書いても、quote を広げる条件を満たさない。
+    直し方: quote を文末まで広げ、statement に2つ目の条件を入れる。
+  F408:
+    判定: 不合格
+    理由: 前回の B-1 の指摘が未解消。statement の「FCEB は、重大度によらず全てのサイバーセキュリティインシデントを CISA に速やかに報告する」は quote にない。原文は "Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA" と、次の文に置く。qualifiers の書式は直った。as_of の 2021-11 は解消。
+    直し方: Note の文を quote に加える。
+  F409:
+    判定: 不合格
+    理由: 前回の B-1 の指摘が未解消。statement の通知先の例(CIO、情報セキュリティ責任者、組織内外の他のインシデント対応チーム)は quote にない(quote は "parties that are typically notified include:" で終わり、qualifiers も「quote の直後の箇条書き」と認める)。原文は "External incident response teams (if appropriate)" で、statement の「組織内外」は "(if appropriate)" を落とす。
+    直し方: 箇条書きを quote に加える。
+  F410:
+    判定: 不合格
+    理由: 前回の B-1 と B-2 の指摘が未解消。statement の要因(機能への影響、情報への影響、復旧の可能性)は quote にない。quote の "as a result of resource limitations"(資源の制約のため先着順にしない)が statement にも qualifiers にもない。
+    直し方: 要因の箇条書きを quote に加え、「資源の制約のもとで」を statement に入れる。
+  F411:
+    判定: 合格
+    理由: quote を拡張した(原文の連続した文)。statement の「15分程度」は "perhaps 15 minutes" と合う。
+  F413:
+    判定: 合格
+    理由: quote を原文の連続した文に直した(「...」を削った)。
+  F503:
+    判定: 合格
+    理由: statement を "most are attributed to benign triggers" に合わせた。21人、7つの SOC は本文で確認。
+  F504:
+    判定: 合格
+    理由: quote を Abstract の文に直した。83% と 39% が quote にあり、「欧州の1つのSOC」(本文 "a SOC in Europe")、12人、6事例、2025年4月も本文と合う。arXiv の abs ページに "Accepted to DIMVA'26" がある。
+  F506:
+    判定: 合格
+    理由: statement の主体は「IT担当者179人」で、出典の "Imperva surveyed 179 IT professionals" と合う。
+  F508:
+    判定: 合格
+    理由: statement は "more likely"(可能性が高い)に合う。5人、400件の調査は本文で確認。
+  F509:
+    判定: 合格
+    理由: quote は付録の Dealing with uncertainties に実在(結果は Appendix A.3 に集約されると本文にある)。
