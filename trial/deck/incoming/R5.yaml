@@ -44,7 +44,7 @@
   - Q4.1
   verified: false
 - id: F503
-  statement: SOC実務者21人の質的調査では、誤検知とされるアラームの多くは、組織の正当な振る舞いで説明できる「本物のアラーム」であり、分析者が無視を選ぶことがあるとされた
+  statement: SOC実務者21人の質的調査では、誤検知とされるアラームの大半は、組織の正当な振る舞いで説明できる「本物のアラーム」であり、分析者が無視を選ぶことがあるとされた
   kind: fact
   source: Alahmadi, Axon, Martinovic「99% False Positives」USENIX Security 2022
   locator: https://www.usenix.org/system/files/sec22-alahmadi.pdf 、Abstract
@@ -69,6 +69,7 @@
   quote: We found that while most analysts were able to separate “true from false” alarms (the decision was correct in 83% of the cases), a correct justification was hardly provided (only 39% of the provided explanations reflected the actual root cause).
   qualifiers:
   - SOC分析者12人
+  - 欧州の1つのSOC(提携先)
   - 6件のアラーム事例
   - 一般化を主張しない研究
   - 2025年4月に実施
@@ -147,7 +148,7 @@
   unit: '%'
   kind: fact
   source: Moosmann, Pekaric, Apruzzese(arXiv:2604.22001)
-  locator: https://arxiv.org/pdf/2604.22001 、付録 0.A.3 の事前調査の結果(Dealing with uncertainties)
+  locator: https://arxiv.org/pdf/2604.22001 、Appendix A.3 の事前調査の結果(Dealing with uncertainties)
   as_of: 2026-04-23
   metric: 不確かなときにチケットを作って引き継ぐと答えた分析者の割合
   quote: Dealing with uncertainties 92% stated that they consulted colleagues in case of uncertainties; however 71% participants also relied on their own research, analysing additional logs and comparing with existing playbooks. Only 33% stated that they would create a ticket and pass the case on if they were unsure.
