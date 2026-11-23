@@ -1,0 +1,12 @@
+# 状態の記録。docs/rework.md では検査のコマンドが書くとされるが、未実装のため設計セッションが手で書く。
+# ユーザーの承認は Git のタグで残すとされるが、タグの名前の付け方が docs にない。
+# この試行では作業のブランチ以外に書かないため、タグを作らず、ここに承認したコミットを記録する。
+artifacts:
+  00-brief.md:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-23
+    approved_commit: null   # 承認を記録するコミットの直前のコミット。コミット後に書き足す
+    rounds: 0
+  style.yaml:
+    state: 作成中
