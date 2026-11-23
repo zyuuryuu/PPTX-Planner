@@ -18,7 +18,7 @@
   rule: 対比の図では、現状を左、提案を右に置く
   reason: 読み手は左から右へ時間が進むと受け取る   # なぜその規則があるか
   check: inspection        # 守らせる方法。structure(構造上、破れない) / mechanical(機械の検査) / inspection(検査セッション)
-  origin: "#12"            # 元になった指摘のIssue
+  issue: "#12"             # 元になった指摘のIssue
   exceptions: []           # 意図して外すスライドと、その理由
 ```
 
