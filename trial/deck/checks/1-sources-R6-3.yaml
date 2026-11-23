@@ -1,0 +1,82 @@
+検査の名前: "1-sources-R6-3"
+対象: "trial/deck/incoming/R6.yaml(コミット e9cc546 以降)の、前回(R6-1、R6-2)の指摘があった F600、F604、F607、F609、F611、F613、F615、F616、F618、F619、F620"
+種類: 重大な検査の再検査(前回の指摘が解消したか。直したことで新しい問題が生じていないか。直されていない事実は見ていない)
+判定者: "Claude Sonnet 5.5(claude-sonnet-5-5)"
+日付: 2026-11-23
+方法: "出典8件を 2026-11-23 に取得して開いた(全て HTTP 200)。NIST SP 800-61r3、800-61r2、OMB M-22-01、NCA EDR ひな形、NIST SP 1800-24 は pdftotext(通常と -layout)、Microsoft Learn 3ページ(investigate-alerts、defender-endpoint-false-positives-negatives、overview-endpoint-detection-response)はタグを除いて本文にし、空白と引用符を正規化して quote と照合した。行末のハイフンは -layout で原文を確かめた。"
+集計:
+  不合格: "0件"
+  判定できない: "0件"
+  前回の指摘11件: "10件が解消。1件(F607)は、前回の軽微な指摘の一部が未解消"
+  新しい問題: "1件(F611。軽微な要修正。判定は合格)"
+主な指摘:
+  - "F611(新規・軽微): 直した statement の「エレベーションは通常より上位の管理者を…」は、「通常より上位」と読めて、原文の「usually indicates involving a higher level of management」(通常は、上位の管理者を関与させることを示す)と意味がずれうる。「エレベーションは、通常、より上位の管理者を…」のように読点を打つか、「通常は」と書くとよい"
+  - "F607(未解消・軽微): 種別の選択(with a type of …)は直った。もう1つの指摘、Informational, expected activity が「通常は無視してよいが、実際の攻撃者や悪意のあるソフトによる同様の活動では検知を期待する」という但し書きを持つ点は、statement にも qualifiers にもまだない"
+  - "F618、F619(参考): qualifiers の「適用範囲は Plans 1 and 2」は、ページの Applies to のうち Defender for Endpoint の部分だけで、同じ行にある Microsoft Defender XDR を書いていない。誤りではない"
+判定:
+  - id: F600
+    前回の指摘: "source の題名が表紙と違う"
+    解消: 解消
+    根拠: "source は 'Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile' に直った。表紙の題名と一致する(PDF の表紙で確認)。追加した qualifiers(表の列を「 — 」で連結)は、-layout で DE.AE-08 の行が項目名、説明文、優先度、R1 の別の列であることと合う。quote は p.26 の表に実在"
+    新しい問題: なし
+    判定: 合格
+  - id: F604
+    前回の指摘: "statement が ideally と sometimes を落とし、qualifiers にもない(不合格)"
+    解消: 解消
+    根拠: "statement は「指標は理想的には個々に正当かを評価すべき」「ある事象が実際にインシデントかどうかの判断は判断の問題である場合があり」「協力して決める必要がある場合がある」となり、原文の ideally、sometimes、may be necessary と合う。qualifiers にも3つの語が挙がった。quote は 3.2.4 に実在(2つの断片とも一致)"
+    新しい問題: "なし。追加した「侵入検知システムが誤検知を出すことがあり」は原文の 'Intrusion detection systems may produce false positives' と合う"
+    判定: 合格
+  - id: F607
+    前回の指摘: "(a)種別の選択(with a type of threat/activity)が statement と qualifiers にない (b)Informational の「通常は無視してよいが、実際の攻撃者の同様の活動では検知を期待する」が落ちている"
+    解消: "(a)は解消 (b)は未解消"
+    根拠: "(a) statement に「脅威の種別を付ける」「活動の種別を付ける」が入り、qualifiers に「with a type of threat」「with a type of activity」「the options in this category」が入った。追加した用途(セキュリティテスト、レッドチーム、信頼するアプリや利用者の想定内の異常な振る舞い)は原文と合う。(b) 'You generally want to ignore these alerts but expect them for similar activities in the future where the activities are triggered by actual attackers or malware.' に当たる記述は、statement にも qualifiers にもない。quote には残っている"
+    新しい問題: なし
+    判定: "合格(前回も、(b)は軽微として不合格にしていない。(b)を直すなら qualifiers に「通常は無視してよいが、実際の攻撃者や悪意のあるソフトによる同様の活動では検知を期待するアラート」を足す)"
+  - id: F609
+    前回の指摘: "as_of(ms.date 2026-09-01)とページ表示の最終更新日の違い"
+    解消: 解消
+    根拠: "as_of は 2026-09-02 で、ページの 'Last updated on 2026-09-02' と一致する。ファイル冒頭の注記に、Last updated on を書く決まりが書かれた。statement、quote は変わっておらず、quote は実在(Part 1 の表)"
+    新しい問題: なし
+    判定: 合格
+  - id: F611
+    前回の指摘: "statement が generally と usually を落とし、qualifiers にもない(不合格)。F611 の qualifiers が quote を越える点(宣言済みのインシデント)"
+    解消: 解消
+    根拠: "statement は「エスカレーションは一般に…」「エレベーションは通常…」となり、qualifiers に「generally」「usually」付きで確定した定義ではないことが入った。「宣言済みのインシデント(アラートの段階ではない)」は「進行中のインシデント(ongoing incidents)」に直り、quote の 'all ongoing incidents' と合う。表の列の連結も qualifiers にある。quote は p.28 の RS.MA-04 に実在"
+    新しい問題: "あり(軽微)。statement の「エレベーションは通常より上位の管理者を対応に関与させることを示す」は、「通常より上位」と読むと「通常よりも上のレベルの管理者」の意味になり、原文の usually(副詞。通常は)と higher level of management(上位の管理者)の関係とずれうる。直すなら「エレベーションは通常、上位の管理者を…」"
+    判定: "合格(要修正。上の1点)"
+  - id: F613
+    前回の指摘: "qualifiers に表の列の連結(「 — 」)がない"
+    解消: 解消
+    根拠: "qualifiers に「表の列(CSF Element、CSF Element Description、R1)を収集セッションが「 — 」で区切って連結した」「RS.MA-02 と RS.MA-03 の2つの行を連結した」が入った。quote の 'time-critical' は原文で行末(time-/critical)で、-layout でハイフンを確かめた。RS.MA-02 R1 と RS.MA-03 R2 の文は出典に実在"
+    新しい問題: なし
+    判定: 合格
+  - id: F615
+    前回の指摘: "quote が rulesbased(原文は rules-based)"
+    解消: 解消
+    根拠: "quote は 'rules-based' に直った。M-22-01 p.1 の原文は行末で 'rules-' と 'based' に分かれており(-layout で確認)、ハイフンは語の一部。qualifiers の説明と、ファイル冒頭の注記も合う。全文が原文と一致"
+    新しい問題: なし
+    判定: 合格
+  - id: F616
+    前回の指摘: "「Objective:」と項番、箇条(•)の連結が qualifiers にない"
+    解消: 解消
+    根拠: "qualifiers に「「Objective:」と項番(2-6、2-7)は表の列の見出しと番号で、収集セッションが本文と連結した」「2-7 の箇条(原文は「•」付き)をコンマで連結した」が入った。出典では 2-7 の番号が 'including but not limited to: 2-7 • logs, • performance monitoring, …' の位置にあり、箇条の記号があることと合う。quote の本文は出典と一致"
+    新しい問題: なし
+    判定: 合格
+  - id: F618
+    前回の指摘: "as_of(ms.date 2025-03-26)とページ表示の最終更新日(2026-06-02)の違い。Applies to が Plans 1 and 2"
+    解消: 解消
+    根拠: "as_of は 2026-06-02 で、ページの 'Last updated on 2026-06-02' と一致する。qualifiers に「適用範囲は Microsoft Defender for Endpoint Plans 1 and 2」が入った。quote は実在"
+    新しい問題: "なし(参考: ページの Applies to は同じ行に Microsoft Defender XDR も挙げている。qualifiers はそれを書いていないが、誤りではない)"
+    判定: 合格
+  - id: F619
+    前回の指摘: "as_of の違い(F618 と同じ)"
+    解消: 解消
+    根拠: "as_of は 2026-06-02 に直り、qualifiers に Applies to が入った。quote は導入部と Note に実在('an entity called an incident' の後の 'Aggregating alerts…' を [...] で省略)"
+    新しい問題: "なし(参考は F618 と同じ)"
+    判定: 合格
+  - id: F620
+    前回の指摘: "locator のページ(p.179 は p.180 の誤り)"
+    解消: 解消
+    根拠: "locator は '1800-24C p.180、PDF の311ページ目' に直った。PDF の311ページ目に節 2.7.6 と quote があり、そのページの下端の表記は 'NIST SP 1800-24C … 180'(310ページ目は 179、312ページ目は 181)。quote は実在"
+    新しい問題: なし
+    判定: 合格
