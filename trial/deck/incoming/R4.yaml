@@ -1,0 +1,194 @@
+# 調査依頼 R4 の結果。stance は書かない。
+# verified: NIST・CISA は収集セッションが保存した PDF から抽出して照合した(true)。
+# それ以外の Web 資料は、取得を担当した補助エージェントの報告に基づく。収集セッション自身は原文を未照合(false)。
+# 開けなかった出典: MITRE「11 Strategies of a World-Class Cybersecurity Operations Center」(403)、Expel のアラートライフサイクルのページ(本文が取得できず)。
+# SOC-SOP の Tier 1 Runbook は、要約を介した部分しか得られなかったため、事実として返さない。
+
+- id: F400
+  statement: "インシデント対応チームは、事象がインシデントだと判断したとき、初動の分析で、影響を受ける範囲(ネットワーク、システム、アプリケーション)、発生源、手口を速やかに判定する。この初動の分析は、後続の作業(封じ込め、より深い分析)の優先づけに足りる情報を出すものとされる"
+  kind: fact
+  source: "NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide"
+  locator: "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.4 Incident Analysis"
+  as_of: "2012-08 (2025-04-03 に撤回、後継は SP 800-61r3)"
+  quote: 'The incident response team should work quickly to analyze and validate each incident, following a pre-defined process and documenting each step taken. When the team believes that an incident has occurred, the team should rapidly perform an initial analysis to determine the incident’s scope, such as which networks, systems, or applications are affected; who or what originated the incident; and how the incident is occurring (e.g., what tools or attack methods are being used, what vulnerabilities are being exploited). The initial analysis should provide enough information for the team to prioritize subsequent activities, such as containment of the incident and deeper analysis of the effects of the incident.'
+  qualifiers: [インシデントが起きたとチームが判断した後の初動, 撤回済みの版, 時間の目安は書かれていない]
+  origin: "NIST SP 800-61 Rev.2"
+  answers: [Q3.2]
+  verified: true
+
+- id: F401
+  statement: "インシデントかどうかの判定が判断の問題になることがあり、他の技術者や情報セキュリティの担当者と協力して決める必要が生じうる"
+  kind: fact
+  source: "NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide"
+  locator: "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.4 Incident Analysis"
+  as_of: "2012-08 (2025-04-03 に撤回)"
+  quote: 'Determining whether a particular event is actually an incident is sometimes a matter of judgment. It may be necessary to collaborate with other technical and information security personnel to make a decision.'
+  qualifiers: [撤回済みの版, 時間や範囲の数値は書かれていない]
+  origin: "NIST SP 800-61 Rev.2"
+  answers: [Q3.2, Q3.3.1]
+  verified: true
+
+- id: F402
+  statement: "CISAの連邦政府向けプレイブックは、調査範囲を、アクセスの種類、影響を受けた資産の範囲、攻撃者が得た権限の水準、業務や情報への影響で決めるとしている"
+  kind: fact
+  source: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks (Incident Response Playbook)"
+  locator: "https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Determine Investigation Scope"
+  as_of: "2024-08 (URL の日付。版の表記は未確認)"
+  quote: 'Use available data to identify the type of access, the extent to which assets have been affected, the level of privilege attained by the adversary, and the operational or informational impact.'
+  qualifiers: [対象は連邦文民行政機関(FCEB)の、重大インシデントが宣言された、または未だ合理的に除外されていない事案, 時間の目安は書かれていない]
+  origin: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks"
+  answers: [Q3.2]
+  verified: true
+
+- id: F403
+  statement: "アラート1件あたりのトリアージの持ち時間は、Tier 1では12〜20分が一般的とされる。その時間内に判定に達しなければ、記録した要約を付けてTier 2へ上げる"
+  value: 12-20
+  unit: 分
+  kind: fact
+  source: "Decryption Digest「SOC Analyst Alert Triage: A Field Guide to Working the Queue」(Eric Bang)"
+  locator: "https://www.decryptiondigest.com/blog/soc-analyst-alert-triage-guide 節「The Alert Triage Mindset: Verdicts, Not Investigations」"
+  as_of: "2026-05-14 公開、2026-07-02 更新"
+  metric: "Tier 1のアラート1件あたりのトリアージ時間の目安"
+  quote: 'Set a per-alert triage budget (12-20 minutes is typical for Tier 1). ... If you cannot reach a verdict within that window, escalate to Tier 2 with a documented summary'
+  qualifiers: [Tier 1の場合, 実務者向けの解説記事で標準や公的文書ではない, 出版社は広告やスポンサー募集を掲載している, 「...」は原文の省略を示す, 根拠となる調査や数値の出典は記事中で確認できていない]
+  origin: "Decryption Digest(独自の見解)"
+  answers: [Q3.2, Q3.3.1]
+  verified: false
+
+- id: F404
+  statement: "重大度P2のアラートは30分以内にTier 2へ上げる。P1は直ちに上げる(SOCの運用手順書の例)"
+  value: 30
+  unit: 分
+  kind: fact
+  source: "SOC-SOP「Escalation Matrix」(IR-SOP-015)"
+  locator: "https://nutthakorn7.github.io/SOC-SOP/05_Incident_Response/Escalation_Matrix.en フロー図のラベル"
+  as_of: "2026-02-15 (Version 1.0)"
+  metric: "重大度P2のアラートをTier 2へ上げるまでの時間の目安"
+  quote: '"P2: Escalate 30 min" / "P1: Escalate IMMEDIATELY"'
+  qualifiers: [有志のオープンソースのSOP集で、標準や公的文書ではない, 運営する企業のロゴとリンクがある(製品販売の記述は見当たらない), 重大度の定義はこのSOP集の独自のもの, 2つのラベルを「 / 」でつないで写している]
+  origin: "SOC-SOP(cyberdefense.co.th 系の公開リポジトリ。独自の見解)"
+  answers: [Q3.2, Q3.3.1]
+  verified: false
+
+- id: F405
+  statement: "同じSOP集は、P1を「もっと調べる」ために遅らせず、先に上げて調査は並行して進めるとしている。判断に迷うときは、上げすぎる側に倒すとしている"
+  kind: fact
+  source: "SOC-SOP「Escalation Matrix」(IR-SOP-015)"
+  locator: "https://nutthakorn7.github.io/SOC-SOP/05_Incident_Response/Escalation_Matrix.en 節 Escalation Rules(Do's / Don'ts)"
+  as_of: "2026-02-15 (Version 1.0)"
+  quote: '"Never delay a P1 escalation to "investigate more" — escalate first, investigate in parallel" / "Over-escalate if unsure — it''s better to escalate and be wrong than to miss a real incident"'
+  qualifiers: [P1(最重大)の場合の規則, 有志のSOP集で標準や公的文書ではない, 2つの規則を「 / 」でつないで写している]
+  origin: "SOC-SOP(独自の見解)"
+  answers: [Q3.2, Q3.3.1]
+  verified: false
+
+- id: F406
+  statement: "Tier 1が偽陽性と無害な真陽性を処理し、それ以外は全て上げる。上げる条件の例として、重要資産での真陽性またはその疑い、複数ホストにまたがる横展開の証拠、持ち時間内に判定できないアラートが挙がっている"
+  kind: fact
+  source: "Decryption Digest「SOC Analyst Alert Triage: A Field Guide to Working the Queue」(Eric Bang)"
+  locator: "https://www.decryptiondigest.com/blog/soc-analyst-alert-triage-guide 節「Escalation Criteria: When Tier 1 Hands Off」"
+  as_of: "2026-05-14 公開、2026-07-02 更新"
+  quote: '"Tier 1 analysts resolve false positives and benign true positives. Everything else escalates." / "Any confirmed or likely TP on a Tier 1 asset" / "Evidence of lateral movement (multiple hosts involved)" / "Any alert where the analyst cannot reach a verdict within the time budget"'
+  qualifiers: [実務者向けの解説記事で標準や公的文書ではない, 出版社は広告やスポンサー募集を掲載している, 「Tier 1 asset」は資産の重要度の階層を指す, 4つの引用を「 / 」でつないで写している]
+  origin: "Decryption Digest(独自の見解)"
+  answers: [Q3.2, Q3.3.1]
+  verified: false
+
+- id: F407
+  statement: "上げる条件は、担当者の技術的な守備範囲を超えたときとされる。標準の手順を超える調査(詳細なパケット検査、複雑なログの突き合わせ)が要るときは引き継ぐ"
+  kind: fact
+  source: "Security Scientist「12 Questions and Answers About escalation to tier 2」(Vincent van Dijk)"
+  locator: "https://www.securityscientist.net/blog/12-questions-and-answers-about-escalation-to-tier-2/ 節「4. When should an incident be escalated?」"
+  as_of: "不明(ページに日付の表示なし)"
+  quote: '"You should trigger an escalation when you encounter an incident that exceeds your predefined technical scope" / "Escalate as soon as you hit the limit of your investigative authority."'
+  qualifiers: [個人が運営する企業ブログで標準や公的文書ではない, 同ページは自社の書籍を宣伝している, 時間の目安は書かれていない, 2つの引用を「 / 」でつないで写している]
+  origin: "Security Scientist(独自の見解)"
+  answers: [Q3.2, Q3.3.1]
+  verified: false
+
+- id: F408
+  statement: "CISAのプレイブックは、インシデントの宣言を、CISAへの報告と機関のIT幹部への通知で行うとしている。連邦文民行政機関(FCEB)は、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告する"
+  kind: fact
+  source: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks (Incident Response Playbook)"
+  locator: "https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Detection & Analysis Activities, Declare Incident"
+  as_of: "2024-08 (URL の日付。版の表記は未確認)"
+  quote: 'Declare an incident by reporting it to CISA at https://www.cisa.gov/report and alerting agency IT leadership to the need for investigation and response.'
+  qualifiers: [対象は連邦文民行政機関(FCEB), 同じ節に「FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA」とある(別の段で引用を省略), これはSOC内の階層間の引き上げではなく、機関から外部機関への報告, 抽出元PDFは2段組で、引用は左の段の連続した文]
+  origin: "CISA Federal Government Cybersecurity Incident and Vulnerability Response Playbooks"
+  answers: [Q3.3.1]
+  verified: true
+
+- id: F409
+  statement: "NISTは、分析と優先づけの後、誰に何をいつ報告するかを方針で定めるべきとし、通知先の例にCIO、情報セキュリティ責任者、組織内外の他のインシデント対応チームを挙げている"
+  kind: fact
+  source: "NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide"
+  locator: "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.7 Incident Notification"
+  as_of: "2012-08 (2025-04-03 に撤回)"
+  quote: 'When an incident is analyzed and prioritized, the incident response team needs to notify the appropriate individuals so that all who need to be involved will play their roles. Incident response policies should include provisions concerning incident reporting—at a minimum, what must be reported to whom and at what times (e.g., initial notification, regular status updates). The exact reporting requirements vary among organizations, but parties that are typically notified include:'
+  qualifiers: [撤回済みの版, 具体的な引き上げの閾値は書かれておらず、組織ごとの方針に委ねている, 通知先の一覧(CIO、Head of information security、Local information security officer、Other incident response teams within the organization、External incident response teams (if appropriate))は引用の直後の箇条書き]
+  origin: "NIST SP 800-61 Rev.2"
+  answers: [Q3.3.1]
+  verified: true
+
+- id: F410
+  statement: "NISTは、インシデントの優先づけを、機能への影響、情報への影響、復旧の可能性などの要因に基づいて行うべきで、先着順にしないとしている"
+  kind: fact
+  source: "NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide"
+  locator: "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization"
+  as_of: "2012-08 (2025-04-03 に撤回)"
+  quote: 'Prioritizing the handling of the incident is perhaps the most critical decision point in the incident handling process. Incidents should not be handled on a first-come, first-served basis as a result of resource limitations. Instead, handling should be prioritized based on the relevant factors, such as the following:'
+  qualifiers: [撤回済みの版, 要因は引用の直後に Functional Impact, Information Impact, Recoverability の3つが続く, 引き上げの閾値そのものではない]
+  origin: "NIST SP 800-61 Rev.2"
+  answers: [Q3.3.1]
+  verified: true
+
+- id: F411
+  statement: "NISTは、担当チームが指定時間内に応答しない場合の引き上げ手順を定めるべきとし、待ち時間は15分程度を例に挙げている"
+  value: 15
+  unit: 分
+  kind: fact
+  source: "NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide"
+  locator: "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization の末尾"
+  as_of: "2012-08 (2025-04-03 に撤回)"
+  metric: "応答がないときに次の上位者へ引き上げるまでの待ち時間"
+  quote: 'Organizations should also establish an escalation process for those instances when the team does not respond to an incident within the designated time. ... Generally, the first step is to duplicate the initial contact. After waiting for a brief time—perhaps 15 minutes—the caller should escalate the incident to a higher level, such as the incident response team manager.'
+  qualifiers: [アラートの調査を上位に上げる条件ではなく、連絡に応答がない場合の引き上げの規定, 撤回済みの版, 「...」は原文の省略を示す]
+  origin: "NIST SP 800-61 Rev.2"
+  answers: [Q3.3.1]
+  verified: true
+
+- id: F412
+  statement: "NISTは、インシデント管理の記録(課題管理システム)に、状況、概要、関連する指標、関連するインシデント、各担当者の対応、影響の評価、集めた証拠、次の手順などを含めるべきとしている"
+  kind: fact
+  source: "NIST SP 800-61 Rev.2 Computer Security Incident Handling Guide"
+  locator: "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.5 Incident Documentation"
+  as_of: "2012-08 (2025-04-03 に撤回)"
+  quote: 'The issue tracking system should contain information on the following: The current status of the incident (new, in progress, forwarded for investigation, resolved, etc.) A summary of the incident Indicators related to the incident Other incidents related to this incident Actions taken by all incident handlers on this incident Chain of custody, if applicable Impact assessments related to the incident Contact information for other involved parties (e.g., system owners, system administrators) A list of evidence gathered during the incident investigation Comments from incident handlers Next steps to be taken (e.g., rebuild the host, upgrade an application).'
+  qualifiers: [引き上げの引き継ぎに限った規定ではなく、インシデント記録全般の項目, 撤回済みの版, 原文は箇条書きで、改行を取り除いて写している]
+  origin: "NIST SP 800-61 Rev.2"
+  answers: [Q3.3.3]
+  verified: true
+
+- id: F413
+  statement: "Tier 2へ上げるときは、アラートの出どころとID、トリアージの経過、集めた証拠、現時点の判定の仮説、次の推奨手順を必ず含める。文脈のない引き継ぎでは、Tier 2がやり直しになる"
+  kind: fact
+  source: "Decryption Digest「SOC Analyst Alert Triage: A Field Guide to Working the Queue」(Eric Bang)"
+  locator: "https://www.decryptiondigest.com/blog/soc-analyst-alert-triage-guide 節「Escalation Criteria: When Tier 1 Hands Off」"
+  as_of: "2026-05-14 公開、2026-07-02 更新"
+  quote: 'Escalation should always include: alert source and ID, triage timeline, evidence collected, current verdict hypothesis ... and recommended next step. Handoffs without context force Tier 2 to start over.'
+  qualifiers: [実務者向けの解説記事で標準や公的文書ではない, 出版社は広告やスポンサー募集を掲載している, 「...」は原文の省略(補助エージェントの報告では箇条書きの続きに「and recommended next step」), 引用の語順は報告の2文を連結したもので、原文の改行位置は未確認]
+  origin: "Decryption Digest(独自の見解)"
+  answers: [Q3.3.3]
+  verified: false
+
+- id: F414
+  statement: "引き継ぎには、関連するメタデータと初期の所見を全て含める。見落としを防ぐために、標準の書式のテンプレートを使う"
+  kind: fact
+  source: "Security Scientist「12 Questions and Answers About escalation to tier 2」(Vincent van Dijk)"
+  locator: "https://www.securityscientist.net/blog/12-questions-and-answers-about-escalation-to-tier-2/ 節「7. Can improper handoffs delay threat response?」"
+  as_of: "不明(ページに日付の表示なし)"
+  quote: '"To prevent this, always ensure your handoff includes all relevant metadata and initial findings." / "Use standardized templates for all escalation notes to ensure no critical data is missed during the transition."'
+  qualifiers: [個人が運営する企業ブログで標準や公的文書ではない, 同ページは自社の書籍を宣伝している, 同節の例では送信元IPの記載漏れで、Tier 2が元のイベントデータを探すのに30分を費やしたとある, 2つの引用を「 / 」でつないで写している]
+  origin: "Security Scientist(独自の見解)"
+  answers: [Q3.3.3]
+  verified: false
