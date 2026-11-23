@@ -6,7 +6,7 @@ artifacts:
     state: 承認済み
     approved_by: 依頼者
     approved_on: 2026-11-23
-    approved_commit: null   # 承認を記録するコミットの直前のコミット。コミット後に書き足す
+    approved_commit: fcf0992   # このコミットの 00-brief.md を承認した
     rounds: 0
   style.yaml:
     state: 作成中
