@@ -1,0 +1,97 @@
+name: 素材台帳の出典照合(重大な検査。再検査・2回目の検査者)
+target:
+  - trial/deck/incoming/R1.yaml(F100〜F125、26件)
+  - trial/deck/incoming/R3.yaml(F300〜F325、26件)
+judge: 検査セッション(Claude Sonnet 5.5)
+round: 4
+checked_at: 2026-11-23
+definitions: [docs/stages/01-exploration.md(素材台帳と合格条件), docs/checks.md(重大な検査), docs/rework.md(不合格のときの手順 5)]
+note: >
+  出典を実際に取得して照合した。NIST SP 800-92 / 800-94 / 800-61r2 / 800-61r3 と MITRE ATT&CK Design and Philosophy は PDF を文字に起こし、
+  attack.mitre.org の4頁、CyberDefenders の記事、CSRC の SP 800-92 / 800-94 の頁は HTML を取得した。quote は空白、引用符、行末のハイフン、
+  脚注番号を正規化して機械で照合し、前後の文脈を読んだ。cisa.gov は curl では 403 だったが、WebFetch が保存した PDF を pdftotext で読んで照合できた
+  (表紙に "Publication: November 2021"、F310 は p.10、F311 は pp.10-11)。前回の検査(A-1、A-2)は指摘の確認のために読んだ。A-3 は読んでいない。
+  前回どちらも合格で直されていない事実(F101、F106、F108、F111、F304、F313、F317)には、新しい指摘を出していない(quote の実在だけ再確認した)。
+  成果物は変えていない。
+conditions:
+  c1: quote が出典に実在する
+  c2: quote の切り取りが、前後の条件、範囲、主体を落としていない
+  c3: statement が quote と合う(言い過ぎ、quote にない内容がない)
+  c4: qualifiers が quote の条件、範囲、幅、不確かさを漏れなく挙げている。value/unit(対象に value はない)
+summary:
+  事実の判定: {合格: 52, 不合格: 0, 判定できない: 0}
+  前回の指摘(A-1 または A-2 で不合格・判定できない)の解消: 解消 = 全件。未解消 = なし
+  新しい事実(F121〜F125、F319〜F325、12件): 全て合格
+  異議の裁定: F303 = 収集セッションが正しい。F115、F119 = 収集セッションが正しい
+
+adjudication:
+  F303:
+    judgment: 収集セッションが正しい(A-2 の c1 不合格の指摘は誤り)
+    evidence: >
+      SP 800-61r3 の RS.MA-02 R1 の本文(nist.sp.800-61r3.pdf Table 3): "R1: Perform a preliminary review of a new incident report to verify that a
+      cybersecurity incident has occurred, then estimate the severity of the incident and the level of urgency needed to respond to it."
+      PDF 全体を検索すると "validated" は CSF の要素の説明 "RS.MA-02 Incident reports are triaged and validated"、ID.RA-01、RS.AN-08 の
+      3か所だけで、R1 の本文にはない。A-2 が引いた "new validated incident report" は原文にない。台帳の quote は原文と一致し、qualifiers は事実を述べている。
+  F115_F119:
+    judgment: 収集セッションが正しい(A-1 の c5(3) の指摘は誤り。F115、F119 の as_of は現在の記載で正しい)
+    evidence: >
+      attack.mitre.org/resources/ の HTML では、"Last updated April 2024" は <div class="text-label-small"> として2回あり、1つは
+      "MITRE ATT&CK Roadmap" のボタン、もう1つは "MITRE ATT&CK Matrix Poster" のボタンの直後にある(How can I use ATT&CK? の直前の資料の欄)。
+      Key Concepts(F115)と Detections and Analytics(F119、F124)の本文の更新日ではない。as_of の「ページに本文の更新日の表示なし」は事実と合う。
+
+previous_findings_resolution:
+  F100: {解消: true, 確認: "脚注37(原文 'Some SIEM products can prioritize events based on correlating events with other sources of information, such as the result of vulnerability scans.')が qualifiers に入った。quote の脚注番号 37 の省略は実質の差ではない"}
+  F102: {解消: true, 確認: "quote は定義の2文。statement を定義だけに縮め、「有効/効果が乏しい」は F121 に分けた"}
+  F103: {解消: true, 確認: "statement を定義に縮め、利点は F122(can be very effective)、誤検知の多さは F123 に分けた。限定は quote に入っている"}
+  F104: {解消: true, 確認: "statement に「監視しうる特性の例」、qualifiers に might と Examples が入った"}
+  F105: {解消: true, 確認: "qualifiers に「特に関心のある3つで全てではない」。2.1 の原文('categories of logs of particular interest'、続きにスイッチ、無線アクセスポイント、ネットワーク監視ソフト)と合う"}
+  F107: {解消: true, 確認: "statement の主体を antivirus software にし、'all instances' を「全て」と書いた"}
+  F109: {解消: true, 確認: "quote を3文に広げ(直前の文を含む)、statement と tend to が合う。脚注6は参照先の案内で、条件ではない"}
+  F110: {解消: true, 確認: "statement に「など」、qualifiers に such as"}
+  F112: {解消: true, 確認: "quote を前の文('Much of this information ... can only be logged by the applications')から始め、However 以下まで広げた。qualifiers に 'particularly for applications that are not used through unencrypted network communications' がある。'this information' の指す内容(直前の項目の列挙)は quote の外だが、statement は特定の内容を主張していない"}
+  F113: {解消: true, 確認: "statement を2文に分け、時間帯は often need、時計のずれは might be necessary と書き分けた"}
+  F114: {解消: true, 確認: "qualifiers の割れが直った。現行 v20.1、October 13, 2026 - current を Version History で確認"}
+  F115: {解消: true, 確認: "as_of が取得日と、本文の更新日の表示がないことに変わった(上の裁定)"}
+  F116: {解消: true, 確認: "statement を戦術の定義1文に縮め、技術の定義は F125 に分けた。FAQ の2つの見出し下の文と一致"}
+  F117: {解消: true, 確認: "quote を exfiltrate data. の先と、次の文('Tactics are treated as “tags” ...')まで広げた。'one or more' と 'depending on the different results' が statement に入っている"}
+  F118: {解消: true, 確認: "statement から「ツールに依存しない」が消えた。qualifiers に直前の段落の 'may not rely on prior knowledge' がある"}
+  F119: {解消: true, 確認: "statement を1文目に縮め、脅威インテリジェンスは F124 に分けた。qualifiers の割れも直った"}
+  F120: {解消: true, 確認: "qualifiers に 'Detection may not always be possible ...' と vendor agnostic がある。Table 2 の * は '*Only applies to techniques and not sub-techniques' の脚注で、statement の「各技術」と矛盾しない"}
+  F300: {解消: true, 確認: "statement から要因の列挙が消え、qualifiers に例示と、資源に限りがある理由が入った。撤回(2025-04-03)の記載あり"}
+  F301: {解消: true, 確認: "statement は機能への影響の1要因に縮み、「3つ」は消えた。情報への影響と復旧のしやすさは F319、F320"}
+  F302: {解消: true, 確認: "statement が 'smooth' と 'may need to be queued' に合った。'—for example' の手前で quote が終わる。事業への影響と労力の見積りの記述は次の文にあり qualifiers に入っている"}
+  F303: {解消: true, 確認: "A-2 の指摘が誤り(上の裁定)。A-1 は合格"}
+  F305: {解消: true, 確認: "quote に R2 の続き('This set can range from simple to incredibly complex ...')が入った。表の頁またぎを連結して写している。N2 の例は qualifiers にある"}
+  F306: {解消: true, 確認: "statement が quote の1文(SIEM のスコアは最終判断にしない)に縮み、要因は F321 の表に分けた"}
+  F307: {解消: true, 確認: "quote が表の前の本文('Note that the actual steps ... may vary ...'、'it does not dictate the exact sequence')から始まり、statement に変わる旨がある"}
+  F308: {解消: true, 確認: "quote に 'Even if an indicator is accurate ...' まで入った。ideally が qualifiers にある"}
+  F309: {解消: true, 確認: "quote に 'The initial analysis should provide enough information ...' が入った"}
+  F310: {解消: true, 確認: "出典を開けた。quote は p.10 の Determine Investigation Scope に実在(箇条書き3つ、'thirdparty' は行末のハイフンの連結)。statement は may include のとおり「含まれうる」。判定できない→合格"}
+  F311: {解消: true, 確認: "出典を開けた。quote は pp.10-11 の Perform Technical Analysis に実在(頁またぎ)。判定できない→合格"}
+  F312: {解消: true, 確認: "quote を 'The triage workflow isn't a single decision; it's a sequence of deliberate stages ...' に取り替え、7段階の名称は qualifiers に出典の見出しとして挙げた"}
+  F315: {解消: true, 確認: "quote が表の3行になった。原文の列の区切りを ' | '、行の区切りを ' ; ' で写したと qualifiers にある。statement と3行の内容が合う。'Unclear' は閉じずにエスカレーションか追加データを待つで、原文と合う"}
+  F316: {解消: true, 確認: "statement が「疑った時点」を述べ、quote(3.2.5 の冒頭の文)と合う"}
+  F318: {解消: true, 確認: "statement を quote の記録の記述に縮め、「使うべき」の言い過ぎは F324(can be used)に分けた"}
+  F314: {解消: 該当なし, 確認: "A-1、A-2 とも事実は合格。撤回の記載が足された。新しい問題なし"}
+
+new_and_changed_facts:
+  F121: {判定: 合格, 理由: "quote は 2.3.1 の1文('very effective ... largely ineffective ... many variants of known threats')で、statement と一致。注: qualifiers の「後続の文で『未知の脅威には largely ineffective』と述べる」は F102 から写したもので、F121 では quote 自体が述べている。誤りではなく、限定の漏れもない(合否に数えない)"}
+  F122: {判定: 合格, 理由: "quote は 2.3.2 に実在。'can be very effective' を statement が「ありうる」とし、qualifiers にも挙げた"}
+  F123: {判定: 合格, 理由: "quote は 2.3.2 に実在。often と 'especially in more diverse or dynamic environments' が statement と qualifiers にある"}
+  F124: {判定: 合格, 理由: "quote は resources の Threat Intelligence の項に実在。statement と一致"}
+  F125: {判定: 合格, 理由: "quote は FAQ の What are techniques? の文。statement と一致"}
+  F319: {判定: 合格, 理由: "3.2.6 の Information Impact の項に実在。statement と一致(may affect を「影響しうる」)"}
+  F320: {判定: 合格, 理由: "3.2.6 の Recoverability の項に実在。statement と一致"}
+  F321: {判定: 合格, 理由: "Stage 3 の表に実在(表の区切りを写した旨が qualifiers にある)。5要因は statement と一致"}
+  F322: {判定: 合格, 理由: "3.2.5 に実在。statement と一致"}
+  F323: {判定: 合格, 理由: "3.2.5 に実在。'helps ensure' を「しやすい」とした。同じ段落の記録項目の一覧は qualifiers にある"}
+  F324: {判定: 合格, 理由: "Stage 5 に実在。can be used を「使える」とした。qualifiers にも挙げた"}
+  F325: {判定: 合格, 理由: "Stage 7 に実在。statement と一致。主張が調査に基づかないことを qualifiers に挙げた"}
+
+other_facts_checked_for_quote_existence_only:
+  - F101、F106、F108、F111、F304、F313、F317: quote が実在することを再確認した。指摘なし
+  - F100〜F125、F300〜F325 の c1: 全件、quote が出典に実在(PDF の脚注番号、行末のハイフン、頁またぎの差だけ)
+
+warnings:
+  - "F121 の qualifiers は F102 の文言の写しで、F121 には当てはまらない項目がある(上記)。合否に数えない"
+  - "F100 の quote は原文の 'events,37' の脚注番号を省いている。実質の差なし"
