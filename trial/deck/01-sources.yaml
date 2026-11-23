@@ -2799,10 +2799,9 @@
   - '''basic functions''(基本の機能)は 3.2 Functions の節(F705 の出典)を指す'
   origin: NIST SP 800-92
   answers: []
-  verified: false
+  verified: true
   collected_verified: false
   request: R7
-  unverified_reason: 最終の再検査の結果待ち(checks/1-model-4.yaml)
   stance:
     H1: neutral
     H2: neutral
