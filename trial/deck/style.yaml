@@ -1,0 +1,60 @@
+# 資料の表現規約(SOC試行)
+# 資料の型の定義(docs/deck-types.md の training)の limits は null であるため、値を写せない。
+# 主張の数の上限などは、使う工程(工程2)に入る前に、ユーザーと決めて書き足す。決めるまでは null とする。
+deck_type: training
+delivery: oral
+limits:
+  max_claims: null
+# 個人の表現規約は、資料のディレクトリの外に置くとされるが、実体がない。
+# docs/style-rules.md が定める個人の表現規約の初期値を、ここに写す。
+# 機械で検出する辞書(docs/writing.md)がまだないため、全て inspection とする。
+rules:
+  - id: P001
+    rule: 情報を足さない飾りの形容を書かない
+    reason: 読み手の注意を、情報のない語に使わせない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P002
+    rule: 読み手が知っている前提を説明しない
+    reason: ブリーフの「読み手が既に知っていること」は資料で説明しない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P003
+    rule: 本題の前に前置きを書かない
+    reason: 情報のない文で読み手の時間を使わない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P004
+    rule: 資料自身の狙いや構成を語る文を書かない
+    reason: 構成は目次と章扉で示す。本文で繰り返さない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P005
+    rule: 依頼や検討の経緯を写した文を書かない
+    reason: 読み手に要るのは結論と根拠で、作る過程ではない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P006
+    rule: 専門用語と略語は、補足なしに使わない
+    reason: 読み手はセキュリティ製品の経験がない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P007
+    rule: 接続詞の代わりに矢印や記号を使わない
+    reason: 記号は、因果、順序、変換のどれを指すかが曖昧になる
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P008
+    rule: 意味を持たないアイコン、見た目のために揃えた項目の数、意味のない囲みを使わない
+    reason: 形は読み手に意味を伝える(docs/visual-grammar.md)
+    check: inspection
+    issue: null
+    exceptions: []
+terms: terms.yaml
