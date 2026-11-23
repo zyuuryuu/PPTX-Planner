@@ -1,0 +1,94 @@
+検査の名前: "1-sources-R6-5"
+対象: "trial/deck/incoming/R6.yaml(コミット a3ac3d4)のうち、前回の指摘の後に直された F607、F609、F611、F616、F617、F618、F619"
+種類: 重大な検査の最終の再検査(前回の指摘の解消と、直したことで生じた新しい問題だけを見た。ほかの事実は見ていない)
+前回の指摘: "trial/deck/checks/1-sources-R6-3.yaml、trial/deck/checks/1-sources-R6-4.yaml"
+判定者: "claude-sonnet-5-5(検査セッション)"
+日付: 2026-11-23
+方法: |
+  出典を 2026-11-23 に取得して開いた(全て HTTP 200)。NCA EDR ひな形 PDF(13ページ)、NIST SP 800-61r3 PDF、
+  Microsoft Learn 3ページ(investigate-alerts、defender-endpoint-false-positives-negatives、overview-endpoint-detection-response)。
+  NCA の PDF は 8ページ目(下端の番号 7)と 9ページ目(下端 8)を画像にして、表の行と項番の対応を目で確かめた。
+  7ページ目(下端 6)の Objective は pdftotext -layout で確かめた。HTML はタグを除いて空白と引用符を正規化し、quote を断片ごとに照合した。
+  ページ表示の "Last updated on" と "Applies to" も読んだ。YAML は PyYAML で読み込めた(21件のリスト)。
+集計:
+  不合格: "0件"
+  判定できない: 0件
+  前回の指摘: "全て解消(F616 の項番の位置、F607 の YAML、F618/F619 の適用範囲、F611 の語順)"
+  新しい問題: "なし"
+  不合格の事実のID: "なし"
+判定:
+  - id: F616
+    前回の指摘: "quote の項番 2-7 の位置が原文と違う(R6-4 不合格)"
+    解消: 解消
+    c1: 合格
+    c1_note: "8ページ目の画像で、行 2-6 は \"EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity.\" だけ。行 2-7 は \"Relevant data for EDR solution must include ... Users.\" から始まり、\"Additional data sources ...\" と5つの箇条が同じ行に続く。quote は \"2-7 Relevant data ... Users. Additional data sources ...\" となり、原文と合う。Objective の文は7ページ目(下端 6)に実在する(\"EDR software agents must properly monitor and collect endpoint data, such as processes, connections, volume of activity and data transfers into a central database.\")"
+    c2: 合格
+    c3: 合格
+    c3_note: "statement は Objective(中央のデータベースに集める)と 2-7(含める領域)に合う"
+    c4: 合格
+    c4_note: "qualifiers の「行 2-7 は Relevant data ... から configuration data. までの1つの行」は画像と合う。箇条の連結(原文は「•」付き。quote は \"running processes, and\" を \"running processes, and\" の形に連ねた)も書かれている"
+    c5: 合格
+    新しい問題: なし
+  - id: F617
+    前回の指摘: "(R6-4 では判定していない。依頼により、表の行の対応を確かめた)"
+    c1: 合格
+    c1_note: "9ページ目(下端 8)の画像で、3-3 から 3-7 が1行ずつで、quote の文と一致する。\"cyber-threats\" は行末でハイフンで分かれた語で、ハイフンは語の一部。\"false-positive\" も原文どおり。3-7 の Criticality と Confidence の2文は同じ行に含まれる"
+    c2: 合格
+    c3: 合格
+    c3_note: "statement の「全端末から集めたデータに基づいて」「新しいデータのパターンを過去のものと比べて」「振る舞いによる脅威の検知」「ATT&CK などの知識ベース」「重大度と確信度でリスクの点数」は 3-3〜3-7 と合う。locator の下端 p.8、PDF の9ページ目も合う"
+    c4: 合格
+    c4_note: "qualifiers の「要件(must)であり製品の実際の動作の記述ではない」「項番は左列の番号を右列の本文の先頭に置いた」は、画像と合う"
+    c5: 合格
+  - id: F607
+    前回の指摘: "qualifiers の項目が引用符なしの流れ形式で、コンマで2項目に分かれて読み込まれる(R6-4 要修正)。Informational の含みが statement にない(R6-3、R6-4)"
+    解消: 解消
+    c1: "合格(2つの断片とも、\"Manage alert status and classification\" の節に実在。as_of 2026-11-09 はページの Last updated on 2026-11-09 と合う)"
+    c2: 合格
+    c3: 合格
+    c3_note: "statement に「通常は無視してよいが、実際の攻撃者や悪意のあるソフトによる同様の活動では今後も検知されることを期待するもの」が入り、\"You generally want to ignore these alerts but expect them for similar activities in the future where the activities are triggered by actual attackers or malware\" と合う"
+    c4: 合格
+    c4_note: "YAML として読み込め、qualifiers は4項目(製品の定義、[...] の説明、種別の選択、False positive の選択)に正しく分かれる。種別の選択の項目は引用符で囲まれている"
+    c5: 合格
+    新しい問題: なし
+  - id: F609
+    前回の指摘: "(R6-4 で解消済み。対象に含まれたため再確認)"
+    解消: 解消
+    c1: "合格(2つの断片とも実在。as_of 2026-09-02 は表示の Last updated on 2026-09-02 と合う。参考: 取得したページのメタデータ updated_at は 2026-09-11 だが、表示は 2026-09-02 のまま。台帳の as_of の決まり(表示の日付)に従っており問題ない)"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c4_note: "原文の表の列は区切りが「—」で連結されて出る。qualifiers にその旨がある。[...] の省略は、分類手順の手前の画面操作の説明"
+    c5: 合格
+    新しい問題: なし
+  - id: F611
+    前回の指摘: "statement の語順「通常より上位の管理者」が原文の usually の位置とずれる(R6-3 軽微)"
+    解消: 解消
+    c1: "合格(800-61r3 の PDF 36ページ目、下端の番号 28。RS.MA-04 の N1 と R1 が quote と一致)"
+    c2: 合格
+    c3: 合格
+    c3_note: "statement は「エレベーションは、通常、上位の管理者を対応に関与させることを示す」となり、原文の \"elevation usually indicates involving a higher level of management\" と合う。「一般に」(generally)も保たれている"
+    c4: 合格
+    c4_note: "qualifiers に generally、usually、進行中のインシデント(ongoing incidents)、表の列の連結がある。参考: 表の優先度の列(High)は quote に含まれず、statement も触れていない"
+    c5: 合格
+    新しい問題: なし
+  - id: F618
+    前回の指摘: "qualifiers の Applies to が Plans 1 and 2 だけ(R6-4 要修正)"
+    解消: 解消
+    c1: "合格(quote 実在。as_of 2026-06-02 は表示の Last updated on 2026-06-02 と合う)"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c4_note: "ページの Applies to は \"Microsoft Defender for Endpoint Plans 1 and 2\" と \"Microsoft Defender XDR\"。qualifiers は両方を書いた。value 6、unit か月は \"stored for six months\" と一致"
+    c5: 合格
+    新しい問題: なし
+  - id: F619
+    前回の指摘: "F618 と同じ(Applies to)"
+    解消: 解消
+    c1: "合格(導入部の2文と Note の2文が実在。[...] は \"Aggregating alerts in this manner makes it easy for analysts to collectively investigate and respond to threats.\" と \"Note\" の見出しの省略)"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c4_note: "Applies to の2つが qualifiers に書かれた。省略の説明もある"
+    c5: 合格
+    新しい問題: なし
+結論: "合格。対象7件に不合格も判定できないもない。この検査で残る指摘はない。"
