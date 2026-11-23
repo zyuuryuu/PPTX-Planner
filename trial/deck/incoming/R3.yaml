@@ -1,0 +1,234 @@
+# 調査依頼 R3 の結果。stance は書かない。
+# 問いごとの結果: Q2.1=answered / Q2.2=answered / Q3.1.1=partial / Q3.1.2=partial
+# 開けなかった出典: SC Media(scworld.com)の closure codes 記事(403)、MITRE「11 Strategies of a World-Class SOC」(403)、
+#   Expel の SOC alert lifecycle(本文が取れず)。Elastic / Corelight は検索結果の要約のみで、ページ本体は未取得のため返さない。
+# 備考: NIST SP 800-61r2 と r3、CISA プレイブック(r2 を引用)は、origin が NIST 系で独立ではない。独立した出典は CISA と NIST を別に数える場合のみ。
+# 備考: 「誤検知として閉じてよい条件」を明示した公的・標準の文書は見つからなかった(Q3.1.1)。
+
+- id: F300
+  statement: インシデントの対応は到着順ではなく、機能への影響・情報への影響・復旧の難しさなどの要因で優先順位を付けて行う
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
+  as_of: 2012-08
+  quote: "Prioritizing the handling of the incident is perhaps the most critical decision point in the incident handling process. Incidents should not be handled on a first-come, first-served basis as a result of resource limitations. Instead, handling should be prioritized based on the relevant factors, such as the following:"
+  qualifiers: ["「インシデント」の対応の優先順位の話であり、アラートの個別の選別に限った記述ではない", "要因は例示(\"such as\")"]
+  origin: NIST SP 800-61r2
+  answers: [Q2.1]
+  verified: true
+
+- id: F301
+  statement: 優先順位の要因は、機能への影響(現在と、封じ込めないときの将来の影響)、情報への影響(機密性・完全性・可用性)、復旧のしやすさの3つ
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
+  as_of: 2012-08
+  quote: "Incident handlers should consider not only the current functional impact of the incident, but also the likely future functional impact of the incident if it is not immediately contained."
+  qualifiers: ["機能への影響の要因の記述", "情報への影響と復旧のしやすさは同じ節の別の項目で述べられる"]
+  origin: NIST SP 800-61r2
+  answers: [Q2.1]
+  verified: true
+
+- id: F302
+  statement: 機能への影響が大きく復旧の労力が小さいインシデントは、即時対応の候補とされる。復旧の道筋がないものは、より戦略的なチームに回すことがある
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.6 Incident Prioritization
+  as_of: 2012-08
+  quote: "An incident with a high functional impact and low effort to recover from is an ideal candidate for immediate action from the team. However, some incidents may not have smooth recovery paths and may need to be queued for a more strategic-level response"
+  qualifiers: ["判断は事業への影響の見積りと復旧に要する労力の見積りによる"]
+  origin: NIST SP 800-61r2
+  answers: [Q2.1]
+  verified: true
+
+- id: F303
+  statement: NIST の枠組み(CSF 2.0)に対応した指針では、新しいインシデント報告の予備的な確認の後に、深刻度と対応の緊急度を見積もるとされる
+  kind: fact
+  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, RS.MA-02 R1
+  as_of: 2025-04
+  quote: "Perform a preliminary review of a new incident report to verify that a cybersecurity incident has occurred, then estimate the severity of the incident and the level of urgency needed to respond to it."
+  qualifiers: ["対象は「インシデント報告」", "優先度の区分は High(推奨の度合い)"]
+  origin: NIST SP 800-61r3
+  answers: [Q2.1, Q2.2]
+  verified: true
+
+- id: F304
+  statement: NIST SP 800-61r3 は、対応の速さを、範囲、見込まれる影響、時間的な緊急性、使える資源から決めるとする
+  kind: fact
+  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, RS.MA-03 R2
+  as_of: 2025-04
+  quote: "Prioritize how quickly incident response should be performed for each incident based on its scope, likely impact, time-critical nature, and resource availability."
+  qualifiers: ["原文は行末で折れている語を連結して写した"]
+  origin: NIST SP 800-61r3
+  answers: [Q2.1]
+  verified: true
+
+- id: F305
+  statement: NIST SP 800-61r3 は、トリアージ・優先順位付け・エスカレーション・復旧開始の判断を、リスク評価の要因の集合に基づけるとし、到着順での処理を戒める
+  kind: fact
+  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, RS.MA (Incident Management) R1, R2
+  as_of: 2025-04
+  quote: "Because of resource limitations, incidents should not be handled on a first-come, first-served basis. R2: Incident triage, prioritization, escalation, and elevation and decisions regarding when to initiate recovery processes should all be based on a set of risk evaluation factors."
+  qualifiers: ["R1 と R2 を連続して引用", "要因の具体例の続きは本文の次の行にある"]
+  origin: NIST SP 800-61r3
+  answers: [Q2.1]
+  verified: true
+
+- id: F306
+  statement: 民間の SOC 向け解説は、アラートの優先順位を、資産の重要度、攻撃の段階、脅威インテリジェンスとの一致、異常スコア、業務上の文脈で付けるとし、SIEM の深刻度スコアを最終判断にしないよう述べる
+  kind: fact
+  source: "CyberDefenders, Alert Triage Process: The Complete SOC Analyst's Guide"
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 3 - Prioritization
+  as_of: 2026-09-15
+  quote: "Most SIEM platforms assign a severity score to alerts automatically, but analysts should never treat that score as the final word."
+  qualifiers: ["セキュリティ訓練事業者のブログで、公的機関・標準ではない", "要因の一覧(資産の重要度、攻撃の段階、脅威インテリジェンスの一致、異常スコア、業務上の文脈)は同じ節の表による", "日付は \"Last updated\" の表示"]
+  origin: CyberDefenders(独自の解説)
+  answers: [Q2.1]
+  verified: false   # 本文は子エージェント経由で確認。収集セッション自身では未確認
+
+- id: F307
+  statement: NIST の標準的な取扱いの手順書は、インシデント対応の最初の段階を、「兆候の分析」「相関情報の探索」「調査」「文書化と証拠の収集」の順に並べ、その後に優先順位付けを置く
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.5 Incident Handling Checklist, Table 3-5
+  as_of: 2012-08
+  quote: "1. Determine whether an incident has occurred 1.1 Analyze the precursors and indicators 1.2 Look for correlating information 1.3 Perform research (e.g., search engines, knowledge base) 1.4 As soon as the handler believes an incident has occurred, begin documenting the investigation and gathering evidence 2. Prioritize handling the incident based on the relevant factors (functional impact, information impact, recoverability effort, etc.)"
+  qualifiers: ["チェックリストの見出しは「常に従うべき手順の列ではない」という趣旨の直前の文と併読する必要がある(3.5節の本文: \"it does not dictate the exact sequence of steps that should always be followed\")", "対象はアラート1件ではなく「インシデントが起きたか」の判定"]
+  origin: NIST SP 800-61r2
+  answers: [Q2.2]
+  verified: true
+
+- id: F308
+  statement: NIST は、指標(兆候)のそれぞれが正当かを評価すべきだとし、指標が正確でもインシデントとは限らないと述べる
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.4 Incident Analysis
+  as_of: 2012-08
+  quote: "Intrusion detection systems may produce false positives—incorrect indicators. These examples demonstrate what makes incident detection and analysis so difficult: each indicator ideally should be evaluated to determine if it is legitimate."
+  qualifiers: ["「ideally(理想的には)」という限定付き", "同じ節の続きに「指標が正確でもインシデントとは限らず、判断の問題になることがある」という記述がある"]
+  origin: NIST SP 800-61r2
+  answers: [Q2.2, Q3.1.1]
+  verified: true
+
+- id: F309
+  statement: NIST は、インシデントと考えたら、初期分析で影響範囲(影響を受けるネットワーク・システム・アプリケーション、発生源、発生の仕方)を確かめ、その結果を後続の作業の優先順位付けに使うとする
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.4 Incident Analysis
+  as_of: 2012-08
+  quote: "When the team believes that an incident has occurred, the team should rapidly perform an initial analysis to determine the incident’s scope, such as which networks, systems, or applications are affected; who or what originated the incident; and how the incident is occurring (e.g., what tools or attack methods are being used, what vulnerabilities are being exploited)."
+  qualifiers: ["「インシデントが起きたとチームが考えたとき」の手順", "誤検知の判定そのものではない"]
+  origin: NIST SP 800-61r2
+  answers: [Q2.2]
+  verified: true
+
+- id: F310
+  statement: CISA のプレイブックは、初期の範囲の確認を、自動検知システムやセンサー、利用者・委託先・第三者からの報告、状況認識の更新などの結果の分析から始めるとする
+  kind: fact
+  source: CISA, Cybersecurity Incident & Vulnerability Response Playbooks (FCEB)
+  locator: https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Incident Response Playbook, Detection & Analysis, Determine Investigation Scope (p.10)
+  as_of: 2021-11
+  quote: "Initial scoping of an incident to determine adversarial activity may include analyzing results from: An automated detection system or sensor; A report from a user, contractor, or third-party information and communication technologies (ICT) service provider; or An incident report or situational awareness update from other internal or external organizational components."
+  qualifiers: ["連邦文民行政機関(FCEB)向け", "対象は「インシデント」の範囲の確認で、アラート1件の誤検知判定は扱わない", "同じ頁で NIST SP 800-61r2 を参照している"]
+  origin: CISA(NIST SP 800-61r2 を参照)
+  answers: [Q2.2]
+  verified: true
+
+- id: F311
+  statement: CISA のプレイブックは、技術分析で、情報の相関と平常時の基準との比較から根本原因と攻撃者の手口を記録し、その後の対応の優先順位付けに使うとする
+  kind: fact
+  source: CISA, Cybersecurity Incident & Vulnerability Response Playbooks (FCEB)
+  locator: https://www.cisa.gov/sites/default/files/2024-08/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf Incident Response Playbook, Detection & Analysis, Perform Technical Analysis (pp.10-11)
+  as_of: 2021-11
+  quote: "Correlate information, assess anomalous activity against a known baseline to determine root cause, and document adversary TTPs to enable prioritization of the subsequent response activities."
+  qualifiers: ["FCEB向け", "2段組みの頁のため、原文は行をまたいで折れている"]
+  origin: CISA
+  answers: [Q2.1, Q2.2]
+  verified: true
+
+- id: F312
+  statement: 民間の SOC 向け解説は、1件のアラートを、取り込み、分類、優先順位付け、調査と証拠収集、真偽の判定、エスカレーション、文書化の7段階で扱うとする
+  kind: fact
+  source: "CyberDefenders, Alert Triage Process: The Complete SOC Analyst's Guide"
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 4 - Investigation and Evidence Gathering
+  as_of: 2026-09-15
+  quote: "This stage involves pulling log data, reviewing endpoint telemetry, querying network traffic, checking threat intelligence feeds, and examining historical context for the affected assets."
+  qualifiers: ["訓練事業者のブログで公的機関・標準ではない", "7段階の順序は同ページの段落見出しによる(引用は第4段階の説明)", "第4段階の確認項目の順序の厳密な指定はない"]
+  origin: CyberDefenders(独自の解説)
+  answers: [Q2.2]
+  verified: false   # 子エージェント経由
+
+- id: F313
+  statement: NIST は、インシデント判定の際に既知の誤検知を考慮するよう述べる
+  kind: fact
+  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, DE.AE-08 R1
+  as_of: 2025-04
+  quote: "Apply incident criteria to known and assumed characteristics of analyzed activity, and consider known false positives to determine whether an incident should be declared."
+  qualifiers: ["誤検知として閉じる条件そのものではなく、インシデントを宣言するかの判断で既知の誤検知を考慮するという記述", "「インシデントの基準」は組織が定める"]
+  origin: NIST SP 800-61r3
+  answers: [Q3.1.1]
+  verified: true
+
+- id: F314
+  statement: NIST は、誤検知を「悪意ある活動が起きていると誤って示すアラート」と定義する
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf Appendix C Glossary
+  as_of: 2012-08
+  quote: "False Positive: An alert that incorrectly indicates that malicious activity is occurring."
+  qualifiers: ["定義のみで、閉じてよい条件や手順は述べない"]
+  origin: NIST SP 800-61r2
+  answers: [Q3.1.1]
+  verified: true
+
+- id: F315
+  statement: 民間の SOC 向け解説は、アラートが良性の活動で発火した場合を誤検知として閉じ、所見を記録するとする。挙動が実在しても承認済みか想定内なら閉じて、ルールの調整を検討するとする。証拠が足りない場合は閉じずに上位の分析者へ回すか追加データを待つとする
+  kind: fact
+  source: "CyberDefenders, Alert Triage Process: The Complete SOC Analyst's Guide"
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 5 - True/False Positive Determination
+  as_of: 2026-09-15
+  quote: "False Positive | The alert fired on benign activity | Close the alert; document findings"
+  qualifiers: ["訓練事業者のブログで公的機関・標準ではない", "表の行をそのまま写した(区切りは原文の表の列)", "「証拠不十分」の行は Unclear: Escalate to a senior analyst or hold for additional data", "閉じるための証拠の基準の一覧は同ページにない"]
+  origin: CyberDefenders(独自の解説)
+  answers: [Q3.1.1, Q3.1.2]
+  verified: false   # 子エージェント経由
+
+- id: F316
+  statement: NIST は、インシデントの取扱いの各段階を、時刻を付けて文書化し、状況の記録を課題追跡システムなどで保つよう述べる(インシデントと判断した後の記録の規定)
+  kind: fact
+  source: NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r2.pdf 3.2.5 Incident Documentation
+  as_of: 2012-08
+  quote: "Every step taken from the time the incident was detected to its final resolution should be documented and timestamped."
+  qualifiers: ["対象は「インシデント」であり、誤検知として閉じたアラートの記録を直接規定するものではない"]
+  origin: NIST SP 800-61r2
+  answers: [Q3.1.2]
+  verified: true
+
+- id: F317
+  statement: NIST は、継続的な監視の技術を、誤検知と見逃しを許容できる水準まで調整するよう述べる
+  kind: fact
+  source: NIST SP 800-61 Rev. 3 Incident Response Recommendations and Considerations for Cyber Risk Management
+  locator: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-61r3.pdf Table 3, DE.CM (Continuous Monitoring) R2
+  as_of: 2025-04
+  quote: "Tune the continuous monitoring technologies to reduce false positives and false negatives to acceptable levels."
+  qualifiers: ["「許容できる水準」の値は示されない", "誤検知として閉じた個々の判断の見直しの手順ではなく、監視技術の調整の推奨"]
+  origin: NIST SP 800-61r3
+  answers: [Q3.1.2]
+  verified: true
+
+- id: F318
+  statement: 民間の SOC 向け解説は、誤検知は閉じて終わりにせず、検知ルールの調整、既知の安全な条件の抑制、基準モデルの更新に使うべきだとし、閉じた全てのアラートに記録を残すよう述べる
+  kind: fact
+  source: "CyberDefenders, Alert Triage Process: The Complete SOC Analyst's Guide"
+  locator: https://cyberdefenders.org/blog/alert-triage-process/ Stage 5 と Stage 7 - Documentation and Continuous Improvement
+  as_of: 2026-09-15
+  quote: "Every closed alert, true positive or false positive, should produce a documentation record."
+  qualifiers: ["訓練事業者のブログで公的機関・標準ではない", "同じ段落に「記録には、発火した内容、調査したこと、見つかった証拠、下した判断を残す」という記述がある", "同ページに「ルール別の誤検知率、平均トリアージ時間、エスカレーションの正確さを週次で見直す」という記述があるが、閉じた個々の判断の監査や承認の手順は記載されていない"]
+  origin: CyberDefenders(独自の解説)
+  answers: [Q3.1.2]
+  verified: false   # 子エージェント経由
