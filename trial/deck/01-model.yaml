@@ -1,0 +1,580 @@
+# 仕組みの定義(調査依頼 R7。収集セッションが作成)
+# 範囲: (1) SIEM がログの発生源からアラートを出すまで、(2) EDR が端末の記録を集め、検知し、アラートとインシデントにするまで。
+# 出典は4系統。混ぜずに、要素とつながりを出典の系統ごとに分けて登録した。
+#   - SIEM の一般の記述: NIST SP 800-92(2006年版)
+#   - SIEM の製品の例: Microsoft Sentinel(note に製品名)
+#   - EDR の一般の記述: OMB M-22-01、NCA の EDR 標準のひな形(要件の文書で、製品の動作の記述ではない)
+#   - EDR の製品の例: Microsoft Defender for Endpoint、Symantec EDR(note に製品名)
+# evidence の F7xx は trial/deck/incoming/R7.yaml の事実(verified: false)。それ以外は 01-sources.yaml の verified: true の事実。
+#
+# 種類の語:
+#   要素 kind: component(部品・製品) / actor(人) / data(データ)
+#   つながり kind:
+#     send(データが from から to へ渡る) / retrieve(from が to からデータを取りに行く)
+#     contain(from が to を含む、または to が from の上に置かれる) / example_of(from は to の種類の例)
+#     produce(from が to を作る) / query(from が to に問い合わせて分析する) / aggregate(from が to にまとめられる)
+#     notify(from が to に知らせる) / investigate(from が to を調べる)
+#   mode: 送り方(push / pull / リアルタイムなど)。condition: つながりが成り立つ条件。書かれていないものは unknown。
+#
+# 出典で裏付けられず、つながりを登録しなかった箇所(図では途切れとして示す必要がある):
+#   - SIEM(NIST SP 800-92): エージェント型で、ログの発生源の中のログがエージェントに渡る経路と方式。
+#   - SIEM(NIST SP 800-92): アラートを受け取る人や画面。3.1 の第3層(コンソール)はログ管理基盤一般の記述で、アラートを受け取るとは書かれていない。
+#   - EDR(NCA): 中央のデータベースから、脅威のパターンを識別する分析への経路。
+#   - EDR(NCA): EDR のエージェントが端末の上で動くこと(「エージェント型で導入する」とだけある)。
+#   - EDR(NCA): インシデント。NCA のひな形には、検知や通知をインシデントにまとめる記述がない。
+#   - EDR(Microsoft Defender for Endpoint): 集めたテレメトリが検知に使われる経路、テレメトリの保存場所、センサーの置き場所。
+#   - EDR(Microsoft Defender for Endpoint)から Microsoft Sentinel への経路。F711 の「ほかの Microsoft のセキュリティ製品」に Defender for Endpoint が含まれるとは、読んだ出典に書かれていない。
+
+elements:
+  # ---------- SIEM(一般。NIST SP 800-92) ----------
+  - id: E-log-source
+    kind: component
+    name: ログの発生源(log generators、log generating hosts、log sources)
+    evidence: [F700, F701, F702, F703, F704]
+  - id: E-src-os
+    kind: component
+    name: OS(OSs)
+    evidence: [F704, F105]
+  - id: E-src-secsw
+    kind: component
+    name: セキュリティソフト(security software)
+    evidence: [F704, F105]
+  - id: E-src-app
+    kind: component
+    name: アプリケーションサーバ(application servers)
+    evidence: [F704]
+    note: 例として Web サーバ、電子メールサーバ(F704)。F105 はアプリケーションのログ(application logs)を挙げる
+  - id: E-src-physical
+    kind: component
+    name: 物理セキュリティの制御機器(physical security control devices)
+    evidence: [F704]
+    note: 例として入館証の読み取り機(badge readers)
+  - id: E-siem
+    kind: component
+    name: SIEM(security information and event management)
+    evidence: [F701, F100]
+  - id: E-siem-agent
+    kind: component
+    name: SIEMのエージェント(agent program)
+    evidence: [F703]
+    functions: [事象の絞り込みと集約(event filtering and aggregation), ログの正規化(log normalization)]
+    note: 特定の種類のログごとに入れる。1台に複数の種類のログがあれば複数のエージェントが要りうる(F703)
+  - id: E-siem-server
+    kind: component
+    name: SIEMサーバ(SIEM server、log servers)
+    evidence: [F701, F702, F100]
+    functions:
+      - 事象の絞り込みと集約、ログの正規化(エージェントなしの場合。F702)
+      - 分析(analysis。F701、F702、F100)
+      - 事象の相関(correlates events。F100、F101)
+      - 重要なイベントの特定と優先順位付け(identifies and prioritizes significant events。F100)
+  - id: E-siem-db
+    kind: component
+    name: データベースサーバ(database servers)
+    evidence: [F701]
+  - id: D-log-data
+    kind: data
+    name: ログデータ(log data、logs)
+    evidence: [F700, F702]
+  - id: D-normalized-log
+    kind: data
+    name: 正規化したログデータ(normalized log data)
+    evidence: [F703]
+  - id: D-significant-event
+    kind: data
+    name: 重要なイベント(significant events)
+    evidence: [F100]
+  - id: D-correlated-entry
+    kind: data
+    name: 相関の結果の新しいログ項目(new log entry)
+    evidence: [F705]
+    note: 出典はログ管理基盤一般の記述で、SIEMに限らない
+  - id: D-siem-alert
+    kind: data
+    name: アラート(alert)
+    evidence: [F705]
+    note: 出典はログ管理基盤一般の記述で、SIEMに限らない。さらに調査が必要であることを示すもの
+
+  # ---------- SIEM(製品の例。Microsoft Sentinel) ----------
+  - id: E-sentinel
+    kind: component
+    name: Microsoft Sentinel
+    evidence: [F712, F709]
+    note: Microsoft Sentinel
+  - id: E-sentinel-source
+    kind: component
+    name: データソース(data sources)
+    evidence: [F712]
+    note: Microsoft Sentinel。例として Microsoft Entra ID、Azure Activity、Azure Storage
+  - id: D-sentinel-data
+    kind: data
+    name: 集めたデータ(collected data)
+    evidence: [F709]
+    note: Microsoft Sentinel
+  - id: E-sentinel-rule
+    kind: component
+    name: 分析ルール(analytics rules)
+    evidence: [F709, F710]
+    note: Microsoft Sentinel。最も一般的な種類はスケジュールされたルール(Scheduled rules)
+  - id: D-sentinel-alert
+    kind: data
+    name: アラート(alerts)
+    evidence: [F709, F710]
+    note: Microsoft Sentinel。関わる実体(利用者、端末、アドレスなど)を含む
+  - id: D-sentinel-incident
+    kind: data
+    name: インシデント(incidents)
+    evidence: [F709, F711]
+    note: Microsoft Sentinel
+  - id: D-ms-external-alert
+    kind: data
+    name: ほかの Microsoft のセキュリティ製品で生成されたアラート(alerts generated in other Microsoft security solutions)
+    evidence: [F711]
+    note: Microsoft Sentinel
+
+  # ---------- EDR(一般。OMB M-22-01、NCA) ----------
+  - id: E-endpoint
+    kind: component
+    name: 端末(endpoints)
+    evidence: [F615, F616, F714]
+    note: 例として OMB はワークステーション、携帯電話、サーバ(F615)。Microsoft Defender for Endpoint の文書はノートPC、電話、タブレット、PC、アクセスポイント、ルータ、ファイアウォール(F714)
+  - id: D-endpoint-data
+    kind: data
+    name: 端末のデータ(endpoint data)
+    evidence: [F615, F616]
+    note: NCA の領域はプロセス、接続、ファイル、ドライバ、自動起動、システム、マシン、利用者(F616)
+  - id: E-edr
+    kind: component
+    name: EDR(endpoint detection and response)
+    evidence: [F615, F617, F706, F707]
+  - id: E-edr-agent
+    kind: component
+    name: EDRのエージェント(EDR software agents)
+    evidence: [F616, F706]
+  - id: E-edr-central-db
+    kind: component
+    name: 中央のデータベース(central database)
+    evidence: [F616]
+  - id: D-edr-detection
+    kind: data
+    name: 検知(detection)
+    evidence: [F617]
+    attributes:
+      risk_score: 重大度(criticality)と確信度(confidence)によるリスクの点数(F617)
+    note: NCA の要件。脅威のパターンの識別、振る舞いによる検知の結果
+  - id: E-it-staff
+    kind: actor
+    name: IT部門の職員(IT staff members)
+    evidence: [F707]
+
+  # ---------- EDR(製品の例。Microsoft Defender for Endpoint) ----------
+  - id: E-mde
+    kind: component
+    name: Microsoft Defender for Endpoint
+    evidence: [F714, F618, F619]
+    note: Microsoft Defender for Endpoint
+  - id: E-mde-sensor
+    kind: component
+    name: センサー(sensor)
+    evidence: [F619]
+    attributes:
+      throttling: 同じ事象の大量の繰り返しを間引く仕組みを持つ(F619)
+      location: unknown
+    note: Microsoft Defender for Endpoint
+  - id: D-mde-telemetry
+    kind: data
+    name: 振る舞いのテレメトリ(behavioral cyber telemetry)
+    evidence: [F618]
+    attributes:
+      retention: 6か月(F618)
+      storage_location: unknown
+    note: Microsoft Defender for Endpoint。プロセスの情報、ネットワークの活動、カーネルとメモリ管理の観測、利用者のログオンの活動、レジストリとファイルシステムの変更など
+  - id: D-mde-alert
+    kind: data
+    name: アラート(alerts)
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint
+  - id: D-mde-incident
+    kind: data
+    name: インシデント(incident)
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint
+  - id: E-analyst
+    kind: actor
+    name: アナリスト(analyst)
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint
+  - id: E-defender-portal
+    kind: component
+    name: 統合された Defender のポータル(unified Defender portal)
+    evidence: [F713]
+    note: Microsoft Defender for Endpoint
+
+  # ---------- EDR(製品の例。Symantec EDR) ----------
+  - id: E-sep
+    kind: component
+    name: Symantec Endpoint Protection
+    evidence: [F620]
+    note: Symantec EDR(NIST SP 1800-24C の構築例)
+  - id: D-sep-events
+    kind: data
+    name: 端末の事象(endpoint events)
+    evidence: [F620]
+    note: Symantec EDR
+  - id: E-sym-edr
+    kind: component
+    name: Symantec EDR(Symantec Endpoint Detection and Response)
+    evidence: [F620]
+    note: Symantec EDR
+  - id: D-sym-malicious
+    kind: data
+    name: 悪意のある可能性のある振る舞い(potentially malicious behavior)
+    evidence: [F620]
+    note: Symantec EDR
+
+relations:
+  # ---------- SIEM(一般。NIST SP 800-92) ----------
+  - id: R-os-source
+    kind: example_of
+    from: E-src-os
+    to: E-log-source
+    label: ログの発生源の種類の例
+    mode: unknown
+    condition: unknown
+    evidence: [F704]
+  - id: R-secsw-source
+    kind: example_of
+    from: E-src-secsw
+    to: E-log-source
+    label: ログの発生源の種類の例
+    mode: unknown
+    condition: unknown
+    evidence: [F704]
+  - id: R-app-source
+    kind: example_of
+    from: E-src-app
+    to: E-log-source
+    label: ログの発生源の種類の例
+    mode: unknown
+    condition: unknown
+    evidence: [F704]
+  - id: R-physical-source
+    kind: example_of
+    from: E-src-physical
+    to: E-log-source
+    label: ログの発生源の種類の例
+    mode: unknown
+    condition: unknown
+    evidence: [F704]
+  - id: R-siem-server
+    kind: contain
+    from: E-siem
+    to: E-siem-server
+    label: 1台以上のログサーバを持つ
+    mode: unknown
+    condition: unknown
+    evidence: [F701]
+  - id: R-siem-db
+    kind: contain
+    from: E-siem
+    to: E-siem-db
+    label: 1台以上のデータベースサーバを持つ
+    mode: unknown
+    condition: unknown
+    evidence: [F701]
+  - id: R-source-agent
+    kind: contain
+    from: E-log-source
+    to: E-siem-agent
+    label: エージェントを入れる
+    mode: unknown
+    condition: エージェント型の場合
+    evidence: [F703]
+  - id: R-agent-server
+    kind: send
+    from: E-siem-agent
+    to: E-siem-server
+    label: 正規化したログデータ(D-normalized-log)を分析と保存のために送る
+    data: D-normalized-log
+    mode: 通常はリアルタイムまたはほぼリアルタイム(usually)
+    condition: エージェント型の場合
+    evidence: [F703]
+  - id: R-source-server-push
+    kind: send
+    from: E-log-source
+    to: E-siem-server
+    label: ホストがログ(D-log-data)を送る(push)
+    data: D-log-data
+    mode: push。通常はホストがサーバに認証して定期的に送る(usually)
+    condition: エージェントなしの場合
+    evidence: [F702]
+  - id: R-server-source-pull
+    kind: retrieve
+    from: E-siem-server
+    to: E-log-source
+    label: サーバがログ(D-log-data)を取りに行く(pull)
+    data: D-log-data
+    mode: pull。通常はサーバがホストに認証して定期的に取得する(usually)
+    condition: エージェントなしの場合
+    evidence: [F702]
+  - id: R-server-db
+    kind: send
+    from: E-siem-server
+    to: E-siem-db
+    label: ログを保存する
+    mode: unknown
+    condition: unknown
+    evidence: [F701, F700]
+    note: F701 はログサーバが分析し、データベースサーバがログを保存すると書く。F700(ログ管理基盤一般)は、ログデータをログサーバ自身か別のデータベースサーバに保存すると書く。サーバからデータベースサーバへの転送の方式は書かれていない
+  - id: R-server-significant
+    kind: produce
+    from: E-siem-server
+    to: D-significant-event
+    label: 全てのログ源のデータを分析し、事象を相関させ、重要なイベントを特定して優先順位を付ける
+    mode: unknown
+    condition: エージェント型、エージェントなしのどちらで受け取った場合も(regardless of how it receives log data)
+    evidence: [F100, F101]
+    note: F100 の脚注によると、優先順位付けは一部の SIEM 製品の機能。相関で最も一般的なのはルールに基づく相関(F101。ログ管理ソフトウェア一般の記述)
+  - id: R-siem-correlated-entry
+    kind: produce
+    from: E-siem
+    to: D-correlated-entry
+    label: 相関の結果として新しいログ項目を作る
+    mode: unknown
+    condition: 相関を自動の方法で行い、成功した場合。一般に(generally)
+    evidence: [F705]
+    note: 出典はログ管理基盤一般の記述で、作る主体は「基盤」。SIEM の記述ではない
+  - id: R-siem-alert
+    kind: produce
+    from: E-siem
+    to: D-siem-alert
+    label: さらに調査が必要であることを示すアラートを生成する
+    mode: unknown
+    condition: 相関を自動の方法で行い、その情報の性質による(might)
+    evidence: [F705]
+    note: 出典はログ管理基盤一般の記述で、作る主体は「基盤」。SIEM の記述ではない。アラートの送り先は書かれていない
+
+  # ---------- SIEM(製品の例。Microsoft Sentinel) ----------
+  - id: R-sentinel-rule-contain
+    kind: contain
+    from: E-sentinel
+    to: E-sentinel-rule
+    label: 脅威検知のルール(分析ルール)を提供する
+    mode: unknown
+    condition: unknown
+    evidence: [F709]
+    note: Microsoft Sentinel
+  - id: R-sentinel-source-data
+    kind: send
+    from: E-sentinel-source
+    to: D-sentinel-data
+    label: データを集める(データコネクタ、CEF、Syslog、REST API)
+    mode: 多くのデータコネクタはリアルタイムの連携(F712)。そのほかは unknown
+    condition: unknown
+    evidence: [F712, F709]
+    note: Microsoft Sentinel
+  - id: R-sentinel-rule-data
+    kind: query
+    from: E-sentinel-rule
+    to: D-sentinel-data
+    label: 集めたデータに問い合わせて分析する
+    mode: 定期的に実行(run regularly)。スケジュールされたルールは一定の間隔で、定めた遡りの期間の生データを調べる
+    condition: unknown
+    evidence: [F709, F710]
+    note: Microsoft Sentinel
+  - id: R-sentinel-rule-alert
+    kind: produce
+    from: E-sentinel-rule
+    to: D-sentinel-alert
+    label: アラートを生成する
+    mode: unknown
+    condition: 探しているものを見つけたとき。スケジュールされたルールでは、問い合わせの結果の件数が閾値を超えたとき
+    evidence: [F709, F710]
+    note: Microsoft Sentinel
+  - id: R-sentinel-alert-incident
+    kind: aggregate
+    from: D-sentinel-alert
+    to: D-sentinel-incident
+    label: 集約と相関によってインシデントにまとめる
+    mode: スケジュールされたルールと NRT のルールのアラートは、自動でインシデントを作る(F711)
+    condition: unknown
+    evidence: [F709, F711]
+    note: Microsoft Sentinel
+  - id: R-sentinel-external-incident
+    kind: produce
+    from: D-ms-external-alert
+    to: D-sentinel-incident
+    label: Microsoft セキュリティのルールがアラートからインシデントを作る
+    mode: リアルタイムで自動(F711)
+    condition: Microsoft セキュリティのルールを使う場合。外部のサービスのアラートは、それだけではインシデントを作らない
+    evidence: [F711]
+    note: Microsoft Sentinel
+
+  # ---------- EDR(一般。OMB M-22-01、NCA) ----------
+  - id: R-endpoint-agent
+    kind: send
+    from: E-endpoint
+    to: E-edr-agent
+    label: エージェントが端末のデータ(D-endpoint-data)を監視して集める
+    data: D-endpoint-data
+    mode: リアルタイムで継続的(OMB。F615)
+    condition: unknown
+    evidence: [F616, F615]
+    note: NCA は要件(must)。エージェントが端末の上で動くかは書かれていない
+  - id: R-agent-central-db
+    kind: send
+    from: E-edr-agent
+    to: E-edr-central-db
+    label: 端末のデータを中央のデータベースに集める
+    data: D-endpoint-data
+    mode: unknown
+    condition: unknown
+    evidence: [F616]
+    note: NCA の要件(must)
+  - id: R-edr-detection
+    kind: produce
+    from: E-edr
+    to: D-edr-detection
+    label: 全端末から集めたデータで脅威のパターンを識別し、振る舞いによる検知を行い、リスクの点数を付ける
+    mode: unknown
+    condition: unknown
+    evidence: [F617, F706]
+    note: NCA の要件(must)。データの相互の相関は F706(2-3)。分析の入力が中央のデータベースかは書かれていない
+  - id: R-edr-notify
+    kind: notify
+    from: E-edr
+    to: E-it-staff
+    label: 自動で記録し、通知する
+    mode: 自動(automatically)
+    condition: 潜在的な脅威を識別したとき、自動の対応を起動したとき、識別した脅威に定めた自動の対応がないとき
+    evidence: [F707]
+    note: NCA の要件(must)。4-1 は、自動の対応と警報の仕組み(automatic response and alerting system)を持つことを求める
+  - id: R-edr-siem
+    kind: send
+    from: E-edr
+    to: E-siem
+    label: セキュリティの知見を統合し共有する(integrating and sharing security insights)
+    mode: unknown
+    condition: unknown
+    evidence: [F708]
+    note: NCA の要件(must)。共有する内容と方式は書かれていない。NDR、SOAR とも共有するとある
+
+  # ---------- EDR(製品の例。Microsoft Defender for Endpoint) ----------
+  - id: R-mde-sensor
+    kind: contain
+    from: E-mde
+    to: E-mde-sensor
+    label: Defender for Endpoint のセンサー(our sensor)
+    mode: unknown
+    condition: unknown
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint
+  - id: R-endpoint-mde
+    kind: send
+    from: E-endpoint
+    to: E-mde
+    label: 振る舞いのテレメトリ(D-mde-telemetry)を継続的に集める
+    data: D-mde-telemetry
+    mode: 継続的(continuously)。送信の方式は unknown
+    condition: unknown
+    evidence: [F618, F714]
+    note: Microsoft Defender for Endpoint。出典は「Defender for Endpoint が集める」と書き、どこからどこへ送るかは書いていない
+  - id: R-mde-alert
+    kind: produce
+    from: E-mde
+    to: D-mde-alert
+    label: アラートを作る
+    mode: unknown
+    condition: 脅威を検知したとき
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint
+  - id: R-mde-alert-incident
+    kind: aggregate
+    from: D-mde-alert
+    to: D-mde-incident
+    label: インシデントにまとめる
+    mode: unknown
+    condition: 同じ攻撃の手法を持つ、または同じ攻撃者に帰属するアラート
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint
+  - id: R-analyst-alert
+    kind: investigate
+    from: E-analyst
+    to: D-mde-alert
+    label: アラートを調査する
+    mode: unknown
+    condition: unknown
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint
+  - id: R-mde-portal
+    kind: send
+    from: E-mde
+    to: E-defender-portal
+    label: 端末の信号を送る(feeds endpoint signals)
+    mode: unknown
+    condition: unknown
+    evidence: [F713]
+    note: Microsoft Defender for Endpoint。ポータルは、その信号を ID、電子メール、クラウドの作業負荷からのアラートと相関させてインシデントの全体像を作る(F713)
+
+  # ---------- EDR(製品の例。Symantec EDR) ----------
+  - id: R-sep-symedr
+    kind: send
+    from: E-sep
+    to: E-sym-edr
+    label: 端末の事象(D-sep-events)
+    data: D-sep-events
+    mode: unknown
+    condition: unknown
+    evidence: [F620]
+    note: Symantec EDR(NIST SP 1800-24C の構築例)
+  - id: R-symedr-malicious
+    kind: produce
+    from: E-sym-edr
+    to: D-sym-malicious
+    label: 振る舞いの分析で悪意のある可能性のある振る舞いを識別する
+    mode: unknown
+    condition: unknown
+    evidence: [F620]
+    note: Symantec EDR(NIST SP 1800-24C の構築例)
+
+scenarios:
+  - id: S-siem-agent
+    name: SIEM でエージェント型でログを集め、アラートを出すまで(NIST SP 800-92)
+    steps: [R-agent-server, R-server-significant, R-siem-alert]
+    evidence: [F703, F100, F705]
+    note: 最後の段(R-siem-alert)はログ管理基盤一般の記述(F705)で、主体は SIEMサーバではなく SIEM(基盤)とした。発生源からエージェントへの段は出典にない
+  - id: S-siem-agentless-push
+    name: SIEM でエージェントなし(push)でログを集め、アラートを出すまで(NIST SP 800-92)
+    steps: [R-source-server-push, R-server-significant, R-siem-alert]
+    evidence: [F702, F100, F705]
+    note: 最後の段(R-siem-alert)はログ管理基盤一般の記述(F705)
+  - id: S-siem-agentless-pull
+    name: SIEM でエージェントなし(pull)でログを集め、アラートを出すまで(NIST SP 800-92)
+    steps: [R-server-source-pull, R-server-significant, R-siem-alert]
+    evidence: [F702, F100, F705]
+    note: 最後の段(R-siem-alert)はログ管理基盤一般の記述(F705)
+  - id: S-sentinel
+    name: Microsoft Sentinel でデータを集め、アラートとインシデントにするまで
+    steps: [R-sentinel-source-data, R-sentinel-rule-data, R-sentinel-rule-alert, R-sentinel-alert-incident]
+    evidence: [F709]
+    note: Microsoft Sentinel
+  - id: S-edr-collect
+    name: EDR が端末のデータを集めるまで(NCA)
+    steps: [R-endpoint-agent, R-agent-central-db]
+    evidence: [F616]
+    note: NCA の要件。この後の分析への経路は出典にないため、S-edr-detect と分けた
+  - id: S-edr-detect
+    name: EDR が脅威を識別し、職員に通知するまで(NCA)
+    steps: [R-edr-detection, R-edr-notify]
+    evidence: [F617, F707]
+    note: NCA の要件。順序の根拠は 4-7 の「潜在的な脅威を識別したときに通知する」(F707)
+  - id: S-mde
+    name: Microsoft Defender for Endpoint が脅威を検知し、アラートとインシデントにするまで
+    steps: [R-mde-alert, R-mde-alert-incident]
+    evidence: [F619]
+    note: Microsoft Defender for Endpoint。テレメトリの収集(R-endpoint-mde)が検知の前に来ることは出典に書かれていないため、含めない
+  - id: S-symantec
+    name: Symantec EDR が端末の事象から悪意のある可能性のある振る舞いを識別するまで
+    steps: [R-sep-symedr, R-symedr-malicious]
+    evidence: [F620]
+    note: Symantec EDR(NIST SP 1800-24C の構築例)

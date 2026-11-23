@@ -1,0 +1,197 @@
+# 調査依頼 R7 への回答(収集セッション)。仕組みの定義 01-model.yaml のために足した事実。
+# quote は全て、収集セッションが 2026-11-23 に取得した出典の原文(PDF は pdftotext -layout で抽出、HTML はタグを除去)と機械的に照合した。
+# PDF の改行と改ページ、脚注の割り込みは、1行に連結して写した。箇条の記号(「」など)は除いた。
+# as_of: Microsoft Learn の文書は、ページに表示される "Last updated on" の日付を書いた。
+# answers: R7 は探索の計画の問いではなく仕組みの定義のための依頼で、依頼に対応する問いの指定がないため空にした。
+# 全件 verified: false。照合と検査は設計セッションと検査セッションが行う。
+# 開けたが該当する記述がなかった出典:
+#   - Microsoft Learn「Microsoft Defender for Endpoint overview」(https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-endpoint, Last updated 2026-07-28)
+#     センサーが端末の信号をどこへ送るか(クラウドなど)の記述はなかった。F715 の記述だけを使った。
+
+# ---------- SIEM(NIST SP 800-92) ----------
+
+- id: F700
+  statement: ログ管理基盤は通常3層からなる。第1層はログデータを生成するホストで、ネットワーク経由で第2層のログサーバにログを渡すもの、サーバが認証してログを取得できるようにするものがある。第2層は第1層からログデータを受け取るログサーバで、転送はリアルタイムかほぼリアルタイム、または定期的な一括で行われる。ログデータはログサーバ自身か、別のデータベースサーバに保存される
+  kind: fact
+  source: NIST SP 800-92 Guide to Computer Security Log Management
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  3.1 Architecture (p.3-1)
+  as_of: 2006-09
+  quote: "A log management infrastructure typically comprises the following three tiers: Log Generation. The first tier contains the hosts that generate the log data. Some hosts run logging client applications or services that make their log data available through networks to log servers in the second tier. Other hosts make their logs available through other means, such as allowing the servers to authenticate to them and retrieve copies of the log files. Log Analysis and Storage. The second tier is composed of one or more log servers that receive log data or copies of log data from the hosts in the first tier. The data is transferred to the servers either in a real-time or near-real-time manner, or in occasional batches based on a schedule or the amount of log data waiting to be transferred. Servers that receive log data from multiple log generators are sometimes called collectors or aggregators. Log data may be stored on the log servers themselves or on separate database servers."
+  qualifiers: [2006年版, ログ管理基盤(log management infrastructure)一般の記述で、SIEMに限らない, "原文は 'typically'(通常)", 第3層(ログの監視のコンソール)の記述は quote に含めていない, "箇条の記号を除いて連結した"]
+  origin: NIST SP 800-92
+  answers: []
+  verified: false
+
+- id: F701
+  statement: SIEM製品は、ログ分析を行う1台以上のログサーバと、ログを保存する1台以上のデータベースサーバを持つ。多くのSIEM製品は、ログ生成元からログを集める2つの方法(エージェントなし、エージェント型)に対応する
+  kind: fact
+  source: NIST SP 800-92 Guide to Computer Security Log Management
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  3.4 Security Information and Event Management Software (p.3-9)
+  as_of: 2006-09
+  quote: "Security information and event management (SIEM) software is a relatively new type of centralized logging software compared to syslog. SIEM products have one or more log servers that perform log analysis, and one or more database servers that store the logs. Most SIEM products support two ways of collecting logs from log generators:"
+  qualifiers: [2006年版, "原文の脚注番号(34、35、36)は除いた", "'Most SIEM products'(多くのSIEM製品)"]
+  origin: NIST SP 800-92
+  answers: []
+  verified: false
+
+- id: F702
+  statement: エージェントなしの方式では、SIEMサーバは、ホストに専用のソフトを入れずにログを受け取る。サーバがホストに認証して定期的にログを取得する(pull)場合と、ホストがサーバに認証して定期的にログを送る(push)場合がある。どちらでも、サーバが集めたログに事象の絞り込みと集約、ログの正規化と分析を行う
+  kind: fact
+  source: NIST SP 800-92 Guide to Computer Security Log Management
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  3.4 Security Information and Event Management Software, Agentless (p.3-9)
+  as_of: 2006-09
+  quote: "Agentless. The SIEM server receives data from the individual log generating hosts without needing to have any special software installed on those hosts. Some servers pull logs from the hosts, which is usually done by having the server authenticate to each host and retrieve its logs regularly. In other cases, the hosts push their logs to the server, which usually involves each host authenticating to the server and transferring its logs regularly. Regardless of whether the logs are pushed or pulled, the server then performs event filtering and aggregation and log normalization and analysis on the collected logs."
+  qualifiers: [2006年版, "認証と定期的な取得・転送は 'usually'(通常)"]
+  origin: NIST SP 800-92
+  answers: []
+  verified: false
+
+- id: F703
+  statement: エージェント型の方式では、ログを生成するホストにエージェントを入れ、特定の種類のログについて事象の絞り込みと集約、ログの正規化を行い、正規化したログデータを、通常はリアルタイムかほぼリアルタイムで、分析と保存のためにSIEMサーバへ送る
+  kind: fact
+  source: NIST SP 800-92 Guide to Computer Security Log Management
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  3.4 Security Information and Event Management Software, Agent-Based (p.3-9)
+  as_of: 2006-09
+  quote: "Agent-Based. An agent program is installed on the log generating host to perform event filtering and aggregation and log normalization for a particular type of log, then transmit the normalized log data to an SIEM server, usually on a real-time or near-real-time basis for analysis and storage. If a host has multiple types of logs of interest, then it might be necessary to install multiple agents."
+  qualifiers: [2006年版, "リアルタイムかほぼリアルタイムは 'usually'(通常)", 1台のホストに複数の種類のログがあれば、複数のエージェントが必要になりうる]
+  origin: NIST SP 800-92
+  answers: []
+  verified: false
+
+- id: F704
+  statement: SIEM製品は通常、数十種類のログ源に対応する。例として、OS、セキュリティソフト、アプリケーションサーバ(Webサーバ、電子メールサーバなど)、入館証の読み取り機などの物理セキュリティの制御機器が挙げられている
+  kind: fact
+  source: NIST SP 800-92 Guide to Computer Security Log Management
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  3.4 Security Information and Event Management Software (p.3-9)
+  as_of: 2006-09
+  quote: "SIEM products usually include support for several dozen types of log sources, such as OSs, security software, application servers (e.g., Web servers, e-mail servers), and even physical security control devices such as badge readers."
+  qualifiers: [2006年版, "原文は 'such as'(例示であり、全てではない)", "'usually'(通常)"]
+  origin: NIST SP 800-92
+  answers: []
+  verified: false
+
+- id: F705
+  statement: 相関を自動の方法で行う場合、相関が成功した結果は一般に、情報を1か所にまとめた新しいログ項目である。その情報の性質によっては、基盤が、特定した事象にさらに調査が必要であることを示すアラートも生成することがある
+  kind: fact
+  source: NIST SP 800-92 Guide to Computer Security Log Management
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf  3.2 Functions(Analysis, Event correlation)(p.3-4〜3-5)
+  as_of: 2006-09
+  quote: "If correlation is performed through automated methods, generally the result of successful correlation is a new log entry that brings together the pieces of information into a single place. Depending on the nature of that information, the infrastructure might also generate an alert to indicate that the identified event needs further investigation."
+  qualifiers: [2006年版, ログ管理基盤(log management infrastructure)一般の機能として記述。SIEMに限らない, 相関を自動の方法で行う場合, "新しいログ項目は 'generally'(一般に)", "アラートは 'might'(することがある)。情報の性質による"]
+  origin: NIST SP 800-92
+  answers: []
+  verified: false
+
+# ---------- EDR(NCA の EDR 標準のひな形) ----------
+
+- id: F706
+  statement: NCAのEDR標準のひな形は、EDRをエージェント型で導入すること、EDRが監視範囲の環境全体でデータを相互に相関させることを求めている
+  kind: fact
+  source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
+  locator: https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  1-2(下端の番号 p.5)と 2-3(下端の番号 p.7)
+  as_of: 2023-11
+  quote: "1-2 EDR solution must be deployed as an agent mode solution. [...] 2-3 EDR solution must cross-correlate data across the whole environment of its monitoring range."
+  qualifiers: [組織が自組織に合わせて直して使う例示のひな形, 版 1.0, as_of は PDF の作成日(F616 と同じ文書), 要件(must)であり製品の実際の動作の記述ではない, "'[...]' は収集セッションによる省略", 項番は表の左列の番号で、収集セッションが右列の本文の先頭に置いて連結した]
+  origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
+  answers: []
+  verified: false
+
+- id: F707
+  statement: NCAのEDR標準のひな形は、EDRが自動の対応と警報の仕組みを持つこと、潜在的な脅威を識別したとき、自動の対応を起動したとき、識別した脅威に定めた自動の対応がないときに、自動で記録してIT部門の職員に通知することを求めている
+  kind: fact
+  source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
+  locator: https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  4 Automatic Response and Notification, 4-1 と 4-7(下端の番号 p.9)
+  as_of: 2023-11
+  quote: "4-1 EDR solution must provide an automatic response and alerting system, covering up-to-date attack scenarios. [...] 4-7 EDR solution must automatically log and notify <organization name>’s IT staff members when the solution identifies a potential threat, triggers an automatic response or when there isn’t a defined automatic response to an identified threat."
+  qualifiers: [組織が自組織に合わせて直して使う例示のひな形, 版 1.0, as_of は PDF の作成日, 要件(must)であり製品の実際の動作の記述ではない, "'[...]' は収集セッションによる省略", "'<organization name>' はひな形の差し込み欄", 項番は表の左列の番号で、収集セッションが右列の本文の先頭に置いて連結した]
+  origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
+  answers: []
+  verified: false
+
+- id: F708
+  statement: NCAのEDR標準のひな形は、EDRが、NDR、SIEM、SOAR の道具とセキュリティの知見を統合し共有して、対応の時間を速めることを求めている
+  kind: fact
+  source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
+  locator: https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  4 Automatic Response and Notification, 4-2(下端の番号 p.9)
+  as_of: 2023-11
+  quote: "4-2 EDR solution must accelerate response time by integrating and sharing security insights with Network Detection and Response (NDR), Security Information and Event Management (SIEM) and Security Orchestration, Automation and Response (SOAR) tools."
+  qualifiers: [組織が自組織に合わせて直して使う例示のひな形, 版 1.0, as_of は PDF の作成日, 要件(must)であり製品の実際の動作の記述ではない, 共有する内容(security insights)の中身と方式は書かれていない, 項番は表の左列の番号で、収集セッションが右列の本文の先頭に置いて連結した]
+  origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
+  answers: []
+  verified: false
+
+# ---------- SIEM の製品の例(Microsoft Sentinel) ----------
+
+- id: F709
+  statement: Microsoft Sentinel は、組織の全体からデータを集めた後、定期的に実行される脅威検知のルール(分析ルール)で、集めたデータに問い合わせて分析する。ルールは探しているものを見つけるとアラートを生成する。アラートは関わる実体(利用者、端末、アドレスなど)を含み、集約と相関によってインシデントにまとめられる
+  kind: fact
+  source: Microsoft Learn, Threat detection in Microsoft Sentinel
+  locator: https://learn.microsoft.com/en-us/azure/sentinel/threat-detection  冒頭の本文
+  as_of: 2026-05-14
+  quote: "After setting up Microsoft Sentinel to collect data from all over your organization, you need to constantly dig through all that data to detect security threats to your environment. To accomplish this task, Microsoft Sentinel provides threat detection rules that run regularly, querying the collected data and analyzing it to discover threats. These rules come in a few different flavors and are collectively known as analytics rules. These rules generate alerts when they find what they’re looking for. Alerts contain information about the events detected, such as the entities (users, devices, addresses, and other items) involved. Alerts are aggregated and correlated into incidents—case files—that you can assign and investigate to learn the full extent of the detected threat and respond accordingly."
+  qualifiers: [製品の定義(Microsoft Sentinel), "文書の適用範囲は Microsoft Sentinel in the Microsoft Defender portal と Microsoft Sentinel in the Azure portal(Applies to)", 同じページの冒頭に、新しいルールの作成には custom detections が最良の方法になったとの注記がある]
+  origin: Microsoft(製品の公式文書)
+  answers: []
+  verified: false
+
+- id: F710
+  statement: Microsoft Sentinel の分析ルールで最も一般的な種類であるスケジュールされたルールは、一定の間隔で実行される Kusto の問い合わせで、定めた遡りの期間の生データを調べ、問い合わせの結果の件数がルールに設定した閾値を超えるとアラートを出す
+  kind: fact
+  source: Microsoft Learn, Threat detection in Microsoft Sentinel
+  locator: https://learn.microsoft.com/en-us/azure/sentinel/threat-detection  Types of analytics rules > Scheduled rules
+  as_of: 2026-05-14
+  quote: "By far the most common type of analytics rule, Scheduled rules are based on Kusto queries that are configured to run at regular intervals and examine raw data from a defined \"lookback\" period. If the number of results captured by the query passes the threshold configured in the rule, the rule produces an alert."
+  qualifiers: [製品の定義(Microsoft Sentinel), スケジュールされたルールの記述。ほかの種類(NRT、異常、Microsoft セキュリティのルールなど)は別に記述がある]
+  origin: Microsoft(製品の公式文書)
+  answers: []
+  verified: false
+
+- id: F711
+  statement: Microsoft Sentinel では、スケジュールされたルールと NRT のルールは、生成したアラートからインシデントを自動で作る。外部のサービスで生成されて取り込まれたアラートは、それだけではインシデントを作らず、Microsoft セキュリティのルールが、ほかの Microsoft のセキュリティ製品で生成されたアラートから、リアルタイムでインシデントを自動で作る
+  kind: fact
+  source: Microsoft Learn, Threat detection in Microsoft Sentinel
+  locator: https://learn.microsoft.com/en-us/azure/sentinel/threat-detection  Types of analytics rules > Microsoft security rules
+  as_of: 2026-05-14
+  quote: "While scheduled and NRT rules automatically create incidents for the alerts they generate, alerts generated in external services and ingested to Microsoft Sentinel don't create their own incidents. Microsoft security rules automatically create Microsoft Sentinel incidents from the alerts generated in other Microsoft security solutions, in real time."
+  qualifiers: [製品の定義(Microsoft Sentinel), 同じ節の続きに、Microsoft セキュリティのルールが使えない条件の注記がある]
+  origin: Microsoft(製品の公式文書)
+  answers: []
+  verified: false
+
+- id: F712
+  statement: Microsoft Sentinel は、SIEM のソリューションとしてデータの取り込み、監視、アラートなどの内容を提供する。データコネクタが Microsoft と Azure のデータソースなどとの連携を提供し、共通イベント形式(CEF)、Syslog、REST API でもデータソースを接続できる
+  kind: fact
+  source: Microsoft Learn, What is Microsoft Sentinel?
+  locator: https://learn.microsoft.com/en-us/azure/sentinel/overview  冒頭の本文と Collect data at scale > Out of the box data connectors
+  as_of: 2026-05-14
+  quote: "Microsoft Sentinel provides security content packaged in SIEM solutions that enable you to ingest data, monitor, alert, hunt, investigate, respond, and connect with different products, platforms, and services. [...] Many connectors are packaged with SIEM solutions for Microsoft Sentinel and provide real-time integration. These connectors include Microsoft sources and Azure sources like Microsoft Entra ID, Azure Activity, Azure Storage, and more. Out of the box connectors are also available for the broader security and applications ecosystems for non-Microsoft solutions. You can also use common event format, Syslog, or REST-API to connect your data sources with Microsoft Sentinel."
+  qualifiers: [製品の定義(Microsoft Sentinel), "'[...]' は収集セッションによる省略"]
+  origin: Microsoft(製品の公式文書)
+  answers: []
+  verified: false
+
+# ---------- EDR の製品の例(Microsoft Defender for Endpoint) ----------
+
+- id: F713
+  statement: Microsoft Defender for Endpoint は、端末の信号を統合された Defender のポータルに送る。ポータルは、その信号を、ID、電子メール、クラウドの作業負荷からのアラートと相関させて、インシデントの全体像を作る
+  kind: fact
+  source: Microsoft Learn, Microsoft Defender for Endpoint overview
+  locator: https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-endpoint  冒頭の本文
+  as_of: 2026-07-28
+  quote: "As the endpoint security pillar of Microsoft Defender, Defender for Endpoint feeds endpoint signals into the unified Defender portal. The portal correlates these signals with alerts from identity, email, and cloud workloads to form complete incident views."
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), "文書の適用範囲は Microsoft Defender for Endpoint Plan 1, Plan 2, for servers と Microsoft Defender for Business servers(Applies to)"]
+  origin: Microsoft(製品の公式文書)
+  answers: []
+  verified: false
+
+- id: F714
+  statement: Microsoft Defender for Endpoint は、端末の高度な脅威の防止、検知、調査、対応を助ける企業向けの端末セキュリティの基盤である。対象の端末には、ノートPC、電話、タブレット、PC、アクセスポイント、ルータ、ファイアウォールが含まれる
+  kind: fact
+  source: Microsoft Learn, Microsoft Defender for Endpoint overview
+  locator: https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-endpoint  冒頭の本文
+  as_of: 2026-07-28
+  quote: "Microsoft Defender for Endpoint is an enterprise endpoint security platform designed to help organizations prevent, detect, investigate, and respond to advanced threats on their endpoints. These endpoints include laptops, phones, tablets, PCs, access points, routers, and firewalls."
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), "文書の適用範囲は Microsoft Defender for Endpoint Plan 1, Plan 2, for servers と Microsoft Defender for Business servers(Applies to)"]
+  origin: Microsoft(製品の公式文書)
+  answers: []
+  verified: false
