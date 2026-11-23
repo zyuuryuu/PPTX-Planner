@@ -1,6 +1,7 @@
 検査の名前: 素材台帳の重大な検査(引用の実在と切り取り、statement と qualifiers の一致)。再検査
 回: B-3(B-1、B-2 の指摘に対する再検査)
-対象: trial/deck/incoming/R2.yaml、R4.yaml、R5.yaml(コミット 27ccbf6 時点。F200〜F221、F400〜F414、F500〜F510)
+対象: trial/deck/incoming/R2.yaml、R4.yaml、R5.yaml(F200〜F221、F400〜F414、F500〜F510)
+判定に使ったコミット: R2.yaml と R5.yaml は 27ccbf6(c0bb875 以降も変更なし)。R4.yaml は c0bb875(R4 の最新。依頼元の連絡を受けて、F404、F405、F407、F409、F410 を判定し直した)
 判定者: claude-opus-5-5(検査セッション)
 日付: '2026-11-23'
 基準: docs/stages/01-exploration.md「素材台帳」の合格条件(quote の実在、切り取りが条件・範囲・主体を落としていない(落としている場合は quote を広げる)、statement が quote と合う、qualifiers が漏れなく value/unit が quote と一致)
@@ -15,18 +16,18 @@
   - verified 以外に変化のない F202、F217、F218、F400、F401、F412、F500、F501、F502、F505 は判定の対象外(前回どちらも合格、変更なし)
 件数:
   判定した事実: 37
-  合格: 19
-  不合格: 18
+  合格: 23
+  不合格: 14
   判定できない: 0
   内訳:
-    前回の不合格24件: {解消: 8, 未解消: 13, 解消したが新しい問題: 3}
+    前回の不合格24件: {解消: 12, 未解消: 9, 解消したが新しい問題: 3}
     前回合格で直された10件: {合格: 8, 新しい問題: 2}
     新しい事実3件: {合格: 3}
-不合格の一覧: [F200, F201, F203, F204, F207, F208, F209, F210, F214, F216, F402, F404, F405, F407, F408, F409, F410, F506]
+不合格の一覧: [F200, F201, F203, F204, F207, F208, F209, F210, F214, F216, F402, F404, F408, F506]
 主な指摘:
-  - '未対応のまま(内容に変更がない): F203、F204(標本数2,000がページにあるのに「未確認」)、F214(「一部の分析者」がない)、F216(「the vast majority」を落としている)、F405(2つ目の規則は P1 に限らない)'
+  - '未対応のまま(内容に変更がない): F203、F204(標本数2,000がページにあるのに「未確認」)、F214(「一部の分析者」がない)、F216(「the vast majority」を落としている)'
   - '直したが指摘が残る: F200(2.4万件/日に自動遮断分を含むことが qualifiers にない)、F207(攻撃の試み27%が下限であることがない)、F209(「in most cases」がまだ落ちている)、F402(適用範囲の「確認された悪性のサイバー活動」がない)'
-  - 'quote の外の内容を qualifiers に「quote には含めていない」と書いて statement に残す直し方は、合格条件を満たさない: F404、F407、F408、F409、F410。条件は「落としている場合は quote を広げる」と「statement が quote と合う」で、qualifiers に書いても、statement の内容が quote にないことは変わらない'
+  - 'quote の外の内容を qualifiers に「quote には含めていない」と書いて statement に残す直し方は、合格条件を満たさない: F404、F408(c0bb875 で F407、F409、F410 は quote を広げるか statement を quote に合わせて解消した)。条件は「落としている場合は quote を広げる」と「statement が quote と合う」で、qualifiers に書いても、statement の内容が quote にないことは変わらない'
   - 'F210 は quote を広げすぎて、PDF 抽出の脚注5と柱(「2-4 GUIDE TO INTRUSION DETECTION AND PREVENTION SYSTEMS (IDPS)」)が文の途中("e- ... mails")に入っている。出典に連続した文としては存在しない'
   - '直したことで生じた軽い問題: F201(「ファイアウォール」は quote の外)、F208(「may have」を「異なる」と断定)、F506(179人・RSA Conference は quote の外)'
 結果:
@@ -116,6 +117,7 @@
     理由: 「確認された悪性のサイバー活動を含む」の条件が qualifiers にない。
   F404:
     前回: B-2 切り取り 不合格(表の P1 5分以内が落ちている)
+    判定したコミット: c0bb875(qualifiers に雛形であることが加わった。ページの "⚠️ Replace with your actual contacts." と一致。statement と quote は変わらない)
     判定: {1_quote: 合格, 2_切り取り: 不合格, 3_statement: 不合格, 4_qualifiers: 合格}
     解消: 表の値は出典で確認した(P1 は Step 2 Escalate to Tier 2 が 5 min、P2 は 30 min。SLA Respond は P1 15 min、P2 30 min)。ただし直し方が合格条件を満たさない
     引用: '台帳 statement "同じ手順書の表では、P1はTier 2へ5分以内、P2はTier 2へ30分以内とされている" / 台帳 qualifiers "表の文面の写しは quote に含めていない" / 出典 "🔴 P1 Critical Incident ... 2 Escalate to Tier 2 Tier 2 Analyst (on-call) 5 min Phone + Ticket"'
@@ -123,17 +125,15 @@
     直し方の案: 表の Step 2 の行を quote に加える(例 "2 Escalate to Tier 2 Tier 2 Analyst (on-call) 5 min" / "2 Escalate to Tier 2 Tier 2 Analyst 30 min")。qualifiers の「補助エージェントが2回の取得で同じ値を報告」は、照合した後なら不要
   F405:
     前回: B-2 qualifiers 不合格(軽)
-    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 不合格}
-    解消: 未解消(変更なし)
-    引用: '台帳 qualifiers "P1(最重大)の場合の規則" / 出典 Do''s "Over-escalate if unsure — it''s better to escalate and be wrong than to miss a real incident"'
-    理由: 2つ目の規則は Do's の一般規則で、P1 に限らない。
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。qualifiers で1つ目を P1 の規則、2つ目を Do's の一般規則と分け、statement も「P1については」「一般の規則として」と分けた
   F407:
     前回: B-1 切り取り・statement 不合格、B-2 切り取り・statement 不合格
-    判定: {1_quote: 合格, 2_切り取り: 不合格, 3_statement: 合格, 4_qualifiers: 合格}
-    解消: statement の「標準の手順を超える調査」は外したので statement は解消。切り取りは未解消
-    引用: '出典 "You should trigger an escalation when you encounter an incident that exceeds your predefined technical scope or requires deeper investigation than simple monitoring allows." / 台帳 statement "上げる条件は、事前に定めた担当者の技術的な守備範囲を超えたときとされる"'
-    理由: quote は文の途中で切れて、並ぶもう1つの条件を落としている。qualifiers に続きの文言を書いたが、条件は quote を広げることで、statement も「上げる条件は〜とき」と1つだけの条件に読める。
-    直し方の案: 1つ目の引用を文末まで広げ、statement に「または単純な監視で可能な範囲を超える調査が要るとき」を加える
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。1つ目の引用を文末("... than simple monitoring allows")まで広げ、statement に2つ目の条件を加えた
+    備考: qualifiers の「1つ目の引用は原文の文の後半の終端記号を省いている」は、文末のピリオドを省いたという意味なら「文末のピリオドを省いている」とする方が分かりやすい
   F408:
     前回: B-1 statement・qualifiers・as_of 不合格、B-2 判定できない(403)
     判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 合格}
@@ -143,18 +143,19 @@
     直し方の案: quote を Declare Incident の項の Note の文まで広げる(4文が連続している)
   F409:
     前回: B-1、B-2 statement 不合格
-    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 合格}
-    解消: 未解消。通知先の一覧を qualifiers に移したが、statement に残っている
-    引用: '台帳 statement "通知先の例にCIO、情報セキュリティ責任者、組織内外の他のインシデント対応チームを挙げている" / quote の末尾 "parties that are typically notified include:" / 出典の箇条書き "External incident response teams (if appropriate)"'
-    理由: 通知先は quote にない。「組織内外」は "(if appropriate)" を落としたまま。
-    直し方の案: 箇条書きを quote に加え、statement の外部チームに「必要に応じて」を付ける
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。statement から通知先を外し、quote の範囲(通知する、少なくとも誰に何をいつ報告するかを方針に含める、要件は組織で異なる)に留めた
+    備考: |
+      quote は §3.2.7 に実在(PDF ではページ番号 33 と柱が文中に入るが、本文は連続している)。
+      statement の「誰に何をいつ報告するかを少なくとも方針で定める」は、原文 "policies should include provisions concerning incident reporting—at a minimum, what must be reported to whom and at what times" の「少なくとも」の掛かり先と少しずれる(原文は「方針に、少なくとも誰に何をいつを含める」)。意味は大きく変わらないため合格とする。
+      qualifiers の通知先の一覧は、原文の括弧書き("Public affairs (for incidents that may generate publicity)"、"Legal department (for incidents with potential legal ramifications)")を省いている。statement の根拠ではないため判定に影響しない。
   F410:
     前回: B-1 statement・qualifiers 不合格、B-2 statement 不合格
-    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 不合格}
-    解消: qualifiers の書式は解消。statement と「資源の制約」は未解消
-    引用: '"Incidents should not be handled on a first-come, first-served basis as a result of resource limitations." / 台帳 statement "機能への影響、情報への影響、復旧の可能性などの要因に基づいて行うべきで、先着順にしないとしている"'
-    理由: 3つの要因は quote にない(qualifiers に「quote の直後に続く」とある)。「資源の制約のため」が statement にも qualifiers にもない。
-    直し方の案: 要因の見出し3つを quote に加え、statement を「資源の制約があるため、先着順にせず」にする
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。statement から3つの要因を外し、「資源に限りがあるため、先着順ではなく」を入れた
+    備考: 原文は "perhaps the most critical decision point"(おそらく最も重要な判断の点)。statement の「最も重要なものの1つ」は言い換えで、断定を強めてはいないので合格とする。「おそらく最も重要な判断の点」とする方が原文に近い
   F504:
     前回: B-1 statement・qualifiers 不合格、B-2 statement 不合格
     判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
