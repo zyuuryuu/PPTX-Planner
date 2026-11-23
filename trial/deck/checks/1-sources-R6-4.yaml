@@ -1,0 +1,145 @@
+# 検査: 素材台帳の出典照合(重大な検査の再検査)
+検査の名前: "1-sources-R6-4"
+対象: "trial/deck/incoming/R6.yaml(コミット e9cc546 で直した F600、F604、F607、F609、F611、F613、F615、F616、F618、F619、F620)"
+前回の指摘: "trial/deck/checks/1-sources-R6-1.yaml、trial/deck/checks/1-sources-R6-2.yaml"
+判定者: "claude-opus-5-5(検査セッション)"
+日付: 2026-11-23
+基準: "docs/stages/01-exploration.md「素材台帳」と合格条件。docs/checks.md「重大な検査」"
+条件: "c1=quote が出典に実在する / c2=切り取りが前後の条件・範囲・主体を落としていない / c3=statement が quote と合う / c4=qualifiers と value・unit が quote と漏れなく合う / c5=as_of と旧版の扱い(参考)"
+方法: |
+  出典8件を 2026-11-23 に取得して開いた(全て HTTP 200)。
+    NIST SP 800-61r3 PDF、NIST SP 800-61r2 PDF、OMB M-22-01 PDF、NCA EDR Standard Template PDF、
+    NIST SP 1800-24 PDF(386ページの合本)、Microsoft Learn 3ページ(investigate-alerts、
+    defender-endpoint-false-positives-negatives、overview-endpoint-detection-response)
+  PDF は pdftotext(通常、-layout、-raw、-bbox-layout)で抽出し、表の行の区切りは NCA の PDF の
+  8ページ目を画像にして目で確かめた。HTML はタグを除いた本文と、表示の "Last updated on" とメタデータ ms.date を見た。
+  直されていない事実(F601〜F603、F605、F606、F608、F610、F612、F614、F617)は判定していない。
+
+集計:
+  対象: 11件
+  前回の指摘が解消: "11件中10件が解消。F607 は一部が未解消(軽微な指摘のため、判定は合格)"
+  不合格: "1件(F616 の c1。直したことで明らかになった問題)"
+  判定できない: 0件
+  要修正(軽微、不合格にしない): "2件(F607 の qualifiers の YAML の分割、F618・F619 の Applies to の書き漏れ)"
+
+主な指摘:
+  - "F616(不合格): quote の項番「2-7」の位置が原文と違う。原文の表では \"Relevant data for EDR solution must include ... Users.\" は 2-7 の行にあるが、quote では 2-6 の後に続き、「2-7」は \"Additional data sources ...\" の前に置かれている。今回足した qualifiers「項番(2-6、2-7)は表の列の見出しと番号で、収集セッションが本文と連結した」は、この誤った対応をそのまま説明している"
+  - "F607(要修正): qualifiers の項目 True positive は「with a type of threat」、Informational, expected activity は… が引用符なしの YAML の流れ形式に書かれ、\"Informational, expected activity\" のコンマで2項目に分かれて読み込まれる"
+  - "F618、F619(要修正): ページの Applies to は \"Microsoft Defender for Endpoint Plans 1 and 2\" と \"Microsoft Defender XDR\" の2つ。qualifiers は前者だけを書いている"
+  - "F604、F611、F615、F620、F600、F609、F613、F618/F619 の as_of: 前回の指摘は解消した"
+
+判定:
+  - id: F604
+    前回の指摘: "statement が \"ideally\" と \"sometimes\" を落とし、qualifiers にもない(R6-1、R6-2 とも不合格)"
+    解消: 解消
+    c1: 合格
+    c1_note: "800-61r2 の 3.2.4(p.28)で quote の全文を確かめた。「[...]」は \"Making matters worse, the total number of indicators may be thousands or millions a day. Finding the real security incidents that occurred out of all the indicators can be a daunting task.\" の2文の省略"
+    c2: 合格
+    c3: 合格
+    c3_note: "statement は「理想的には個々に正当かを評価すべき」「判断の問題である場合があり」と、ideally と sometimes を保っている。新たに足した「侵入検知システムが誤検知を出すことがあり」は quote の \"Intrusion detection systems may produce false positives\" と合う"
+    c4: 合格
+    c4_note: "qualifiers に ideally、sometimes、may be necessary が加わった。参考: quote の \"may produce false positives\" の may は qualifiers にないが、statement が「ことがあり」で保っているため不合格にしない。揃えるなら qualifiers に足す"
+    c5: "合格(PDF 冒頭の撤回の通知と qualifiers の「旧版」が合う)"
+  - id: F611
+    前回の指摘: "statement が \"generally\" と \"usually\" を落とした(R6-1 不合格)。qualifiers の「宣言済みのインシデント」が quote を越える(R6-2 軽微)"
+    解消: 解消
+    c1: "合格(800-61r3 の PDF 36ページ目、ページ下端の番号 28。RS.MA-04 の N1 と R1)"
+    c2: 合格
+    c3: 合格
+    c3_note: "statement は「一般に」「通常」を保っている"
+    c4: 合格
+    c4_note: "qualifiers に「generally」「usually」と「進行中のインシデント(ongoing incidents)」があり、quote の語と合う。表の列の連結も書かれた"
+    c5: 合格
+  - id: F615
+    前回の指摘: "quote の \"rulesbased\" が原文の \"rules-based\" と違う(R6-1、R6-2)"
+    解消: 解消
+    c1: 合格
+    c1_note: "M-22-01 の p.1。PDF の語の座標(pdftotext -bbox-layout)では、行末の語は \"rules-\"、次の行の先頭は \"based\"。quote は \"rules-based\" に直された。参考: pdftotext の通常の抽出はハイフンを消して \"rulesbased\" を出すため、前回の誤りはこれによると考えられる(推測)"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c4_note: "qualifiers の説明(ハイフンは語の一部として残した)は、冒頭の注記の新しい文面と合う"
+    c5: 合格
+  - id: F620
+    前回の指摘: "locator のページが p.179 で、正しくは p.180"
+    解消: 解消
+    c1: 合格
+    c1_note: "2.7.6 は PDF の311ページ目にあり、下端の表記は「NIST SP 1800-24C ... 180」。310ページ目の下端は 179。locator の「1800-24C p.180、PDF の311ページ目」と合う。quote の本文も一致"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c5: 合格
+  - id: F600
+    前回の指摘: "source の題名が柱の略記。区切りの「 — 」が qualifiers にない"
+    解消: 解消
+    c1: 合格
+    c1_note: "source の題名は表紙の \"Incident Response Recommendations and Considerations for Cybersecurity Risk Management / A CSF 2.0 Community Profile\" と合う。参考: 表の列は CSF Element、CSF Element Description、Priority、Recommendations, Considerations, Notes の4つで、R1 は4つ目の列の中の項目。qualifiers の「表の列(CSF Element、CSF Element Description、R1)」は列名として厳密ではないが、意味は通じるため不合格にしない(F611、F613 も同じ)"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c5: 合格
+  - id: F613
+    前回の指摘: "区切りの「 — 」が qualifiers にない(R6-1 の注記)"
+    解消: 解消
+    c1: "合格(RS.MA-02 R1 は PDF 35ページ目・下端の番号 27、RS.MA-03 R2 は36ページ目・28。\"time-critical\" は行末で time- と critical に分かれ、ハイフンは保たれている)"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c4_note: "qualifiers に列の連結と、RS.MA-02 と RS.MA-03 の2つの行の連結が加わった。「[...]」は RS.MA-02 の R2 以降、RS.MA-03 の説明と R1 の省略"
+    c5: 合格
+  - id: F607
+    前回の指摘: "True positive と Informational の種別の選択が statement と qualifiers にない。Informational の「通常は無視するが、実際の攻撃者による同様の活動では検知を期待する」という含みが落ちている(R6-2 軽微)"
+    解消: "一部が解消。種別の選択は statement と qualifiers に入った。Informational の含みは statement にまだない"
+    c1: 合格
+    c1_note: "節 \"Manage alert status and classification\" で quote の全文を確かめた。「[...]」は True positive の \"Specifying this threat type alerts your security team see threat patterns and act to defend your organization from them.\" の省略"
+    c2: 合格
+    c3: 合格
+    c3_note: "statement に足した Informational の用途(セキュリティテスト、レッドチームの活動、信頼するアプリや利用者の想定内の異常な振る舞い)は quote の \"Use the options in this category to classify alerts for security tests, red team activity, and expected unusual behavior from trusted apps and users\" と合う。statement の「解決するときの」を削ったのも、quote の節が解決に限らない分類を述べているため合う。未解消の点: \"You generally want to ignore these alerts but expect them for similar activities in the future where the activities are triggered by actual attackers or malware\" と、False positive の \"you generally don't want to see these alerts again\" が statement にない。言い過ぎではないため不合格にしない"
+    c4: 合格
+    c4_note: "要修正(直したことで生じた): 108行目の qualifiers は引用符なしの流れ形式で、項目 True positive は「with a type of threat」、Informational, expected activity は「with a type of activity」を選ぶ が、\"Informational,\" の後のコンマで「True positive は「with a type of threat」、Informational」と「expected activity は「with a type of activity」を選ぶ」の2項目に分かれて読み込まれる(PyYAML で確かめた)。文字は失われていないが、台帳を機械で読むと意味が崩れる。この項目を引用符で囲む。参考: F609 の qualifiers(132行目)の Informational, expected activity も同じ形で分かれるが、今回の修正で変えた箇所ではないため指摘にしない"
+    c5: "合格(ページの Last updated on 2026-11-09、ms.date も 2026-11-09)"
+  - id: F609
+    前回の指摘: "as_of(2026-09-01)はメタデータの ms.date で、ページに表示される Last updated on は 2026-09-02(R6-1 の参考)"
+    解消: 解消
+    c1: 合格
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c5: "合格(as_of 2026-09-02 は、ページの表示 Last updated on 2026-09-02 と合う。ファイル冒頭に足された as_of の決まり「Microsoft Learn は Last updated on の日付」とも合う)"
+  - id: F618
+    前回の指摘: "as_of 2025-03-26 は ms.date で、表示の Last updated on は 2026-06-02(R6-1 判定できない)。Applies to が Plans 1 and 2(R6-2 軽微)"
+    解消: 解消
+    c1: 合格
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c4_note: "value 6、unit か月は \"stored for six months\" と一致。要修正(軽微): ページの Applies to は \"Microsoft Defender for Endpoint Plans 1 and 2\" と \"Microsoft Defender XDR\"。qualifiers の「文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2(Applies to)」は2つ目を書いていない。事実を広げて述べる誤りではないため不合格にしない"
+    c5: "合格(as_of 2026-06-02 は表示の Last updated on 2026-06-02T17:37Z と合う。ms.date は 2025-03-26 のまま)"
+  - id: F619
+    前回の指摘: "F618 と同じ(as_of)"
+    解消: 解消
+    c1: "合格(\"aggregated into an entity called an incident\"、\"Our sensor has an internal throttling mechanism\" を本文と Note で確かめた)"
+    c2: 合格
+    c3: 合格
+    c4: 合格
+    c4_note: "要修正(軽微): Applies to の書き漏れは F618 と同じ"
+    c5: 合格
+  - id: F616
+    前回の指摘: "2-7 の箇条の連結が qualifiers にない(R6-1 の注記)"
+    解消: "解消(qualifiers に箇条の連結が加わった)。ただし直したことで、次の問題が明らかになった"
+    c1: 不合格
+    c1_quote: '"... 2-6 EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity. Relevant data for EDR solution must include information covering the following areas: Processes, Connections, Files, Drivers, Autorun, System, Machine, Users. 2-7 Additional data sources may be used, including but not limited to: ..."'
+    c1_source: "PDF の8ページ目(下端の番号 7)の表。行 2-6 は \"EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity.\" だけ。行 2-7 は \"Relevant data for EDR solution must include information covering the following areas: Processes, Connections, Files, Drivers, Autorun, System, Machine, Users.\" から始まり、\"Additional data sources may be used, including but not limited to:\" と5つの箇条が続く(ページを画像にして表の罫線で確かめた。pdftotext の抽出では「2-7」が箇条の横に出るため、行の区切りを取り違えやすい)"
+    c1_reason: "quote は「2-7」を \"Additional data sources\" の前に置き、\"Relevant data ... Users.\" を 2-6 の続きとしている。原文の項番と本文の対応と違う。今回足した qualifiers「「Objective:」と項番(2-6、2-7)は表の列の見出しと番号で、収集セッションが本文と連結した」は、この誤った対応を正しいものとして説明している"
+    c2: 合格
+    c2_note: "項番の位置の違いは、要求の主体(EDR solution)と強さ(must)を変えない"
+    c3: 合格
+    c3_note: "statement は項番に触れておらず、述べている内容は原文と合う"
+    c4: 合格
+    c5: 合格
+    直し方の案: "quote を「... 2-6 EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity. 2-7 Relevant data for EDR solution must include information covering the following areas: Processes, Connections, Files, Drivers, Autorun, System, Machine, Users. Additional data sources may be used, ...」とし、locator の項番を合わせる"
+    参考: "locator の「p.6-7」は下端のページ番号(Objective は下端 6、2-6 と 2-7 は下端 7)。PDF のページ目では 7〜8"
+
+冒頭の注記(直したもの):
+  判定: 合格
+  理由: "「行末のハイフンが語の一部であるもの(rules-based、time-critical、cyber-threats)は、ハイフンを残した」は F615、F613 の quote と合う。as_of の決まり(Microsoft Learn は Last updated on)は F607、F609、F618、F619 の as_of と合う"
