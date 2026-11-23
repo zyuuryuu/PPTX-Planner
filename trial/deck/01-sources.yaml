@@ -20,6 +20,10 @@
   answers:
   - Q1.1.3
   verified: true
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F100
   statement: SIEMは、複数のログ源のデータを分析し、ログ項目間でイベントを相関させ、重要なイベントを特定して優先順位を付ける
   kind: fact
@@ -37,6 +41,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F101
   statement: ログのイベント相関で最も一般的なのは、タイムスタンプ、IPアドレス、イベント種別などの記録値に基づいて複数のログ項目を照合するルールベース相関である
   kind: fact
@@ -54,6 +62,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F102
   statement: シグネチャ検知は、既知の脅威に対応するパターンを観測イベントと比較して潜在的なインシデントを見つける。既知の脅威には非常に有効だが、未知の脅威や回避された脅威には効果が乏しい
   kind: fact
@@ -72,6 +84,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F103
   statement: 振る舞い異常検知は、通常とみなす活動の定義(プロファイル)を観測イベントと比較し、大きな逸脱を見つける。未知の脅威の検知に有効である
   kind: fact
@@ -89,6 +105,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F104
   statement: ホスト型IDPSは、単一ホストの特性とそのホスト内のイベント(システムログ、実行中のプロセス、アプリケーション活動、ファイルの変更など)を監視する
   kind: fact
@@ -106,6 +126,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F105
   statement: セキュリティソフトのログは、主にコンピュータのセキュリティに関する情報を含む。OSログとアプリケーションログは、セキュリティ関連のデータを含む様々な情報を通常含む
   kind: fact
@@ -123,6 +147,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F106
   statement: 侵入検知・防止システムのログは、不審な挙動や検出した攻撃の詳細と、防止システムが実行した遮断の内容を記録する
   kind: fact
@@ -139,6 +167,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F107
   statement: マルウェア対策ソフトのログは、検出したマルウェア、駆除の試み、隔離を記録する
   kind: fact
@@ -156,6 +188,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F108
   statement: 認証サーバのログは、認証の試行ごとに、接続元、ユーザー名、成否、日時を記録する
   kind: fact
@@ -174,6 +210,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F109
   statement: ファイアウォールはポリシーに基づき通信を許可または遮断し、ルータよりも詳細なログを生成する
   kind: fact
@@ -191,6 +231,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F110
   statement: OSの監査記録は、認証の成功と失敗、ファイルアクセス、セキュリティポリシーの変更、アカウントの変更、権限の使用を記録する
   kind: fact
@@ -208,6 +252,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F111
   statement: OSログは、特定のホストに関する不審な活動の特定と調査に最も役立つ。セキュリティソフトが不審な活動を見つけた後に、詳細を得るために参照されることが多い
   kind: fact
@@ -225,6 +273,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F112
   statement: アプリケーションログは、クライアントの要求とサーバの応答、アカウント情報、利用状況などを記録し、アプリケーション関連のインシデントの調査に特に有用である。一方、独自形式が多く、内容が文脈に依存するため、確認に多くの資源が要る
   kind: fact
@@ -243,6 +295,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F113
   statement: 複数のログ源のログ時刻は、時間帯の違いや時計のずれのため、正規化が必要になることが多い
   kind: fact
@@ -261,6 +317,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F114
   statement: MITRE ATT&CKは、実世界の観測に基づく攻撃者の戦術と技術の、世界中から利用できる知識ベースである
   kind: fact
@@ -278,6 +338,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F115
   statement: ATT&CKは、攻撃者の行動を体系的に分類しようとするモデルである
   kind: fact
@@ -293,6 +357,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F116
   statement: ATT&CKでは、戦術は技術の「なぜ」(攻撃者の戦術上の目的)を、技術は戦術上の目的を達成する「どのように」を表す
   kind: fact
@@ -309,6 +377,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F117
   statement: 戦術は、技術の文脈となる分類(持続、情報収集、横展開、実行、持ち出しなど)であり、技術にタグとして付けられる
   kind: fact
@@ -325,6 +397,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F118
   statement: ATT&CKは、攻撃者が使うツールに依存しない、振る舞いに基づく検知分析(アナリティクス)を作り、試験するために使える
   kind: fact
@@ -341,6 +417,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F119
   statement: ATT&CKは、防御側が攻撃者の使う技術を検知するアナリティクスを作る助けになる。脅威インテリジェンスでは、構造化・比較・分析のための共通言語になる
   kind: fact
@@ -359,6 +439,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F120
   statement: ATT&CKの各技術の記述には、その技術が使われたことを見つけるための分析、センサー、データ、検知方針を示す項目がある
   kind: fact
@@ -374,6 +458,10 @@
   verified: false
   collected_verified: true
   request: R1
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F200
   statement: 実在のSOCの4年間のネットワークアラートログ(約1.16億件)では、解析者が直面するアラートは1日あたり2.4万〜13.4万件だった
   value: 24000-134000
@@ -396,6 +484,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F201
   statement: 同SOCで自動遮断(BHR)を除いた後も、解析者が処理するアラートは1日あたり約13,764件残った
   value: 13764
@@ -417,6 +509,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F202
   statement: SOC実務者の調査(n=20)で、1日に受けるアラートが5,000件未満と答えたのは45%。10万件超を受ける回答者もいた
   value: 45
@@ -438,6 +534,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F203
   statement: 業界調査(ベンダーのVectra)では、SOCは1日平均4,484件のアラートを受け、解析者は1日に約2.7時間を手作業のトリアージに使う
   value: 4484
@@ -459,6 +559,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F204
   statement: 業界調査(ベンダーのVectra)では、解析者は受けるアラートの67%に対応できず、アラートの83%が誤検知で時間をかける価値がないと答えた
   value: 83
@@ -481,6 +585,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F205
   statement: SOC実務者へのインタビューで、ある解析者は「自分たちが出すアラームの99%は誤検知だ」と述べた。この99%は、多くが良性のトリガーで、技術の性能の測定値ではないと論文は分析している
   value: 99
@@ -502,6 +610,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F206
   statement: 同論文のアンケートの回答例では、調査したアラート100件のうち実際の脅威は1件、別の回答者では200件のうち50件だった
   value: 1/100, 50/200
@@ -523,6 +635,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F207
   statement: 実SOCの実測では、真の攻撃に関連するアラートは0.01%。攻撃の試み(侵害に至らず)が27%、正当な業務上の理由がある「良性のトリガー」が49%を占めた
   value: 0.01
@@ -547,6 +663,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F208
   statement: NISTの文書は、誤検知を『通常の非悪性の背景トラフィックで起きたアラート』と定義し、ネットワークIDSでの原因に、弱いシグネチャ、正当な管理ツールのトラフィックを挙げる
   kind: fact
@@ -565,6 +685,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F209
   statement: 'NIST SP 800-94: 良性の活動を悪性と誤認すると誤検知になる。すべての誤検知をなくすことはできず、一方を減らすと他方が増える。チューニングで調整する'
   kind: fact
@@ -582,6 +706,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F210
   statement: 'NIST SP 800-94: 異常検知型IDPSは、プロファイルから大きく外れる良性の活動(保守作業など)のために多くの誤検知を出す。環境が多様・動的なほど多い'
   kind: fact
@@ -598,6 +726,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F211
   statement: 'NIST SP 800-94: ネットワーク型IDPSは、監視対象の環境に合わせた多大なチューニングが必要で、新規導入では調整が済むまで多数の誤検知が出る'
   kind: fact
@@ -614,6 +746,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F212
   statement: 'NIST SP 800-94: NBA(ネットワーク挙動分析)型では、環境の良性の変化(新サービスの追加、サービスの移設)でも誤検知が起きる'
   kind: fact
@@ -631,6 +767,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F213
   statement: 'SOC実務者へのインタビュー: 誤検知の多くは「良性のトリガー」(シグネチャに正しく一致するが、組織が正当な事情で無視するもの。例: レガシーシステム)で、ツールの欠陥ではない'
   kind: fact
@@ -649,6 +789,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F214
   statement: 'SOC実務者の証言: ルールが緩く(広く)書かれているために、多くの誤検知が出る'
   kind: fact
@@ -665,6 +809,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F215
   statement: 実SOCで、良性のトリガーが多いパターンは、内部の脆弱性スキャン、外部の委託ペネトレーションテスト、DNS設定、SSL(弱い鍵・旧版)とレガシーシステム、情報提供目的のアラートだった。これらは正当な活動が悪性の活動と似た振る舞いをするために起きる
   kind: fact
@@ -683,6 +831,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F216
   statement: 同SOCで、外部ドメインを内部IPで運用していることがDNS関連アラートを大量に引き起こした(約140万件)。検知ルールは内部ホストの侵害を捉える設計だったが、共同研究のサイトが該当した
   value: 1.4
@@ -703,6 +855,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F217
   statement: 同SOCで、SSLの弱い鍵・弱い暗号・旧版に関するアラートは、主にレガシーシステムに起因し、変更が難しい、または無視して安全と判断されていた
   kind: fact
@@ -719,6 +875,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F218
   statement: '同SOCで、2.5百万件超のアラートは攻撃と無関係で、情報・文脈の提供目的(例: Zeekのログ失敗、新しいIP範囲やホストの追加)だった'
   value: 2.5
@@ -739,6 +899,10 @@
   verified: false
   collected_verified: false
   request: R2
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F300
   statement: インシデントの対応は到着順ではなく、機能への影響・情報への影響・復旧の難しさなどの要因で優先順位を付けて行う
   kind: fact
@@ -755,6 +919,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
 - id: F301
   statement: 優先順位の要因は、機能への影響(現在と、封じ込めないときの将来の影響)、情報への影響(機密性・完全性・可用性)、復旧のしやすさの3つ
   kind: fact
@@ -771,6 +939,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
 - id: F302
   statement: 機能への影響が大きく復旧の労力が小さいインシデントは、即時対応の候補とされる。復旧の道筋がないものは、より戦略的なチームに回すことがある
   kind: fact
@@ -786,6 +958,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
 - id: F303
   statement: NIST の枠組み(CSF 2.0)に対応した指針では、新しいインシデント報告の予備的な確認の後に、深刻度と対応の緊急度を見積もるとされる
   kind: fact
@@ -803,6 +979,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: supports
+    H2: contradicts
+    H3: neutral
 - id: F304
   statement: NIST SP 800-61r3 は、対応の速さを、範囲、見込まれる影響、時間的な緊急性、使える資源から決めるとする
   kind: fact
@@ -818,6 +998,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
 - id: F305
   statement: NIST SP 800-61r3 は、トリアージ・優先順位付け・エスカレーション・復旧開始の判断を、リスク評価の要因の集合に基づけるとし、到着順での処理を戒める
   kind: fact
@@ -834,6 +1018,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
 - id: F306
   statement: 民間の SOC 向け解説は、アラートの優先順位を、資産の重要度、攻撃の段階、脅威インテリジェンスとの一致、異常スコア、業務上の文脈で付けるとし、SIEM の深刻度スコアを最終判断にしないよう述べる
   kind: fact
@@ -851,6 +1039,10 @@
   verified: false
   collected_verified: false
   request: R3
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
 - id: F307
   statement: NIST の標準的な取扱いの手順書は、インシデント対応の最初の段階を、「兆候の分析」「相関情報の探索」「調査」「文書化と証拠の収集」の順に並べ、その後に優先順位付けを置く
   kind: fact
@@ -867,6 +1059,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: supports
+    H2: contradicts
+    H3: supports
 - id: F308
   statement: NIST は、指標(兆候)のそれぞれが正当かを評価すべきだとし、指標が正確でもインシデントとは限らないと述べる
   kind: fact
@@ -884,6 +1080,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F309
   statement: NIST は、インシデントと考えたら、初期分析で影響範囲(影響を受けるネットワーク・システム・アプリケーション、発生源、発生の仕方)を確かめ、その結果を後続の作業の優先順位付けに使うとする
   kind: fact
@@ -900,6 +1100,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F310
   statement: CISA のプレイブックは、初期の範囲の確認を、自動検知システムやセンサー、利用者・委託先・第三者からの報告、状況認識の更新などの結果の分析から始めるとする
   kind: fact
@@ -917,6 +1121,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F311
   statement: CISA のプレイブックは、技術分析で、情報の相関と平常時の基準との比較から根本原因と攻撃者の手口を記録し、その後の対応の優先順位付けに使うとする
   kind: fact
@@ -934,6 +1142,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F312
   statement: 民間の SOC 向け解説は、1件のアラートを、取り込み、分類、優先順位付け、調査と証拠収集、真偽の判定、エスカレーション、文書化の7段階で扱うとする
   kind: fact
@@ -951,6 +1163,10 @@
   verified: false
   collected_verified: false
   request: R3
+  stance:
+    H1: contradicts
+    H2: supports
+    H3: neutral
 - id: F313
   statement: NIST は、インシデント判定の際に既知の誤検知を考慮するよう述べる
   kind: fact
@@ -967,6 +1183,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: supports
+    H2: neutral
+    H3: neutral
 - id: F314
   statement: NIST は、誤検知を「悪意ある活動が起きていると誤って示すアラート」と定義する
   kind: fact
@@ -982,6 +1202,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F315
   statement: 民間の SOC 向け解説は、アラートが良性の活動で発火した場合を誤検知として閉じ、所見を記録するとする。挙動が実在しても承認済みか想定内なら閉じて、ルールの調整を検討するとする。証拠が足りない場合は閉じずに上位の分析者へ回すか追加データを待つとする
   kind: fact
@@ -1001,6 +1225,10 @@
   verified: false
   collected_verified: false
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F316
   statement: NIST は、インシデントの取扱いの各段階を、時刻を付けて文書化し、状況の記録を課題追跡システムなどで保つよう述べる(インシデントと判断した後の記録の規定)
   kind: fact
@@ -1016,6 +1244,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F317
   statement: NIST は、継続的な監視の技術を、誤検知と見逃しを許容できる水準まで調整するよう述べる
   kind: fact
@@ -1032,6 +1264,10 @@
   verified: false
   collected_verified: true
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F318
   statement: 民間の SOC 向け解説は、誤検知は閉じて終わりにせず、検知ルールの調整、既知の安全な条件の抑制、基準モデルの更新に使うべきだとし、閉じた全てのアラートに記録を残すよう述べる
   kind: fact
@@ -1049,6 +1285,10 @@
   verified: false
   collected_verified: false
   request: R3
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F400
   statement: インシデント対応チームは、事象がインシデントだと判断したとき、初動の分析で、影響を受ける範囲(ネットワーク、システム、アプリケーション)、発生源、手口を速やかに判定する。この初動の分析は、後続の作業(封じ込め、より深い分析)の優先づけに足りる情報を出すものとされる
   kind: fact
@@ -1066,6 +1306,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F401
   statement: インシデントかどうかの判定が判断の問題になることがあり、他の技術者や情報セキュリティの担当者と協力して決める必要が生じうる
   kind: fact
@@ -1083,6 +1327,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F402
   statement: CISAの連邦政府向けプレイブックは、調査範囲を、アクセスの種類、影響を受けた資産の範囲、攻撃者が得た権限の水準、業務や情報への影響で決めるとしている
   kind: fact
@@ -1099,6 +1347,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F403
   statement: アラート1件あたりのトリアージの持ち時間は、Tier 1では12〜20分が一般的とされる。その時間内に判定に達しなければ、記録した要約を付けてTier 2へ上げる
   value: 12-20
@@ -1122,6 +1374,10 @@
   verified: false
   collected_verified: false
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F404
   statement: 重大度P2のアラートは30分以内にTier 2へ上げる。P1は直ちに上げる(SOCの運用手順書の例)
   value: 30
@@ -1144,6 +1400,10 @@
   verified: false
   collected_verified: false
   request: R4
+  stance:
+    H1: contradicts
+    H2: supports
+    H3: neutral
 - id: F405
   statement: 同じSOP集は、P1を「もっと調べる」ために遅らせず、先に上げて調査は並行して進めるとしている。判断に迷うときは、上げすぎる側に倒すとしている
   kind: fact
@@ -1162,6 +1422,10 @@
   verified: false
   collected_verified: false
   request: R4
+  stance:
+    H1: contradicts
+    H2: supports
+    H3: neutral
 - id: F406
   statement: Tier 1が偽陽性と無害な真陽性を処理し、それ以外は全て上げる。上げる条件の例として、重要資産での真陽性またはその疑い、複数ホストにまたがる横展開の証拠、持ち時間内に判定できないアラートが挙がっている
   kind: fact
@@ -1181,6 +1445,10 @@
   verified: false
   collected_verified: false
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F407
   statement: 上げる条件は、担当者の技術的な守備範囲を超えたときとされる。標準の手順を超える調査(詳細なパケット検査、複雑なログの突き合わせ)が要るときは引き継ぐ
   kind: fact
@@ -1200,6 +1468,10 @@
   verified: false
   collected_verified: false
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F408
   statement: CISAのプレイブックは、インシデントの宣言を、CISAへの報告と機関のIT幹部への通知で行うとしている。連邦文民行政機関(FCEB)は、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告する
   kind: fact
@@ -1220,6 +1492,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F409
   statement: NISTは、分析と優先づけの後、誰に何をいつ報告するかを方針で定めるべきとし、通知先の例にCIO、情報セキュリティ責任者、組織内外の他のインシデント対応チームを挙げている
   kind: fact
@@ -1237,6 +1513,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F410
   statement: NISTは、インシデントの優先づけを、機能への影響、情報への影響、復旧の可能性などの要因に基づいて行うべきで、先着順にしないとしている
   kind: fact
@@ -1256,6 +1536,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: supports
+    H3: neutral
 - id: F411
   statement: NISTは、担当チームが指定時間内に応答しない場合の引き上げ手順を定めるべきとし、待ち時間は15分程度を例に挙げている
   value: 15
@@ -1276,6 +1560,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F412
   statement: NISTは、インシデント管理の記録(課題管理システム)に、状況、概要、関連する指標、関連するインシデント、各担当者の対応、影響の評価、集めた証拠、次の手順などを含めるべきとしている
   kind: fact
@@ -1293,6 +1581,10 @@
   verified: false
   collected_verified: true
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F413
   statement: Tier 2へ上げるときは、アラートの出どころとID、トリアージの経過、集めた証拠、現時点の判定の仮説、次の推奨手順を必ず含める。文脈のない引き継ぎでは、Tier 2がやり直しになる
   kind: fact
@@ -1311,6 +1603,10 @@
   verified: false
   collected_verified: false
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F414
   statement: 引き継ぎには、関連するメタデータと初期の所見を全て含める。見落としを防ぐために、標準の書式のテンプレートを使う
   kind: fact
@@ -1329,6 +1625,10 @@
   verified: false
   collected_verified: false
   request: R4
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F500
   statement: 2013年のTarget侵害で、侵入検知製品FireEyeはデータ持ち出し用マルウェアの導入のたびに緊急アラートを出したが、Targetのセキュリティチームは反応せず、自動削除も許可していなかった(報道を引いた上院の報告)
   kind: fact
@@ -1347,6 +1647,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F501
   statement: 同じ上院報告は、Target職員がFireEyeの汎用名のアラートを、頻繁に警報が鳴る状況なら誤検知とみなした可能性があると述べている(推定の記述)
   kind: fact
@@ -1364,6 +1668,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: contradicts
+    H2: neutral
+    H3: neutral
 - id: F502
   statement: SOCの運用では、チケットの処理数で担当者を評価するSOCがあり、チケットを閉じる圧力が人的な誤りと疲労・燃え尽きを生むとされる(先行研究を引いた記述)
   kind: fact
@@ -1380,6 +1688,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: contradicts
+    H2: neutral
+    H3: neutral
 - id: F503
   statement: SOC実務者21人の質的調査では、誤検知とされるアラームの多くは、組織の正当な振る舞いで説明できる「本物のアラーム」であり、分析者が無視を選ぶことがあるとされた
   kind: fact
@@ -1396,6 +1708,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: contradicts
+    H2: neutral
+    H3: neutral
 - id: F504
   statement: SOCの分析者12人に実際のアラームを判断させた調査で、判断の正答は83%だったが、説明が実際の根本原因を反映していたのは39%だった
   value: 83
@@ -1418,6 +1734,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F505
   statement: 同調査では、一部の事例は体系的に判断が難しいと受け取られ、参加者は「情報が足りない」と述べた(必要なツールは提供されていたにもかかわらず)
   kind: fact
@@ -1435,6 +1755,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F506
   statement: 分析者が使うSOCの運用で、過去の誤検知の経験からアラートを無視したことがあると答えた割合は56%(RSA Conference 2018での179人の調査。ベンダーの調査)
   value: 56
@@ -1455,6 +1779,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: contradicts
+    H2: neutral
+    H3: neutral
 - id: F507
   statement: IDCとFireEyeの調査記事は、キューが一杯のときにアラートを無視するセキュリティ管理者・分析者が3分の1を超えると報じている
   kind: fact
@@ -1472,6 +1800,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F508
   statement: Tier-1分析者の現地実験で、エスカレーションすべきアラートは、そうでないアラートより調査の操作数が平均で多く、分析者は時間と認知の負担をかけて調べる
   kind: fact
@@ -1489,6 +1821,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F509
   statement: SOC分析者12人の事前調査で、不確かなときにチケットを作って引き継ぐと答えたのは33%にとどまり、同僚に相談する92%、自分で調べる71%と比べて少なかった
   value: 33
@@ -1510,6 +1846,10 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F510
   statement: 顧客に報告する立場のMSSPの分析者は、能力不足と見られることや罰金を避けるため、疑わしいアラームをできる限り全て顧客に上げる圧力を受ける
   kind: fact
@@ -1530,3 +1870,7 @@
   verified: false
   collected_verified: true
   request: R5
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
