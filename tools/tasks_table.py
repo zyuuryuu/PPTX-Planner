@@ -244,10 +244,10 @@ def check_skills(plan, docs):
     for role, entry in plan.roles.items():
         if role not in ROLES or role in NO_SKILL:
             errors.append(f"roles の {role}: スキルを持てない担当である")
-        if not isinstance(entry, dict) or not set(entry) <= {"rules", "report"} or not entry.get("rules"):
-            errors.append(f"roles の {role}: 項目は rules と report で、rules は必ず書く")
+        if not isinstance(entry, dict) or not set(entry) <= {"rules", "rules_after", "report"} or not entry.get("rules"):
+            errors.append(f"roles の {role}: 項目は rules、rules_after、report で、rules は必ず書く")
             continue
-        for key in ("rules", "report"):
+        for key in ("rules", "rules_after", "report"):
             refs = entry.get(key, [])
             if not isinstance(refs, list) or any(not isinstance(x, str) for x in refs):
                 errors.append(f"roles の {role}: {key} が文字列の一覧でない")

@@ -51,6 +51,42 @@ description: スライド資料の検査セッションが、成果物を検査�
 - ユーザーが承認した成果物は、承認のときにタグを付ける。タグを付けるのは、設計の時期(工程0から6)は設計セッション、製造の時期(工程7から9)はPMである。承認の後に内容が変わった成果物は、検査のコマンドがタグとの差分から機械的に挙げ、承認を取り直すまで、下流の工程の開始を止める。設計セッションが、検査を通すために承認済みの成果物を直すことを、これで拾う。
 - 検査を通すための書き換えや、検査の回避が見つかった場合は、PMまたは設計セッションが、変更を取り消し、そのセッションを新しいセッションに替える。事実をIssueに記録する。
 
+作業の一覧の後に、「守ること(続き)」がある。
+
+## 作業の一覧
+
+| 順 | 作業 | 名前 | 工程 | 手順 |
+|---|---|---|---|---|
+| 1 | `inspect-brief` | ブリーフを検査する | 0 | [tasks/inspect-brief.md](tasks/inspect-brief.md) |
+| 2 | `inspect-plan` | 探索の計画を検査する | 1 | [tasks/inspect-plan.md](tasks/inspect-plan.md) |
+| 3 | `inspect-sources` | 素材台帳の事実を出典と突き合わせる | 1 | [tasks/inspect-sources.md](tasks/inspect-sources.md) |
+| 4 | `inspect-images` | 画像の素材を検査する | 1 | [tasks/inspect-images.md](tasks/inspect-images.md) |
+| 5 | `inspect-model` | 仕組みの定義を出典と突き合わせる | 1 | [tasks/inspect-model.md](tasks/inspect-model.md) |
+| 6 | `extract-model-independently` | 同じ出典から、仕組みの定義を独立に抜き出す | 1 | [tasks/extract-model-independently.md](tasks/extract-model-independently.md) |
+| 7 | `compare-model-extractions` | 独立の抜き出しを仕組みの定義と比べる | 1 | [tasks/compare-model-extractions.md](tasks/compare-model-extractions.md) |
+| 8 | `inspect-claims` | 問いごとの答えと主張の骨子を検査する | 2 | [tasks/inspect-claims.md](tasks/inspect-claims.md) |
+| 9 | `derive-answer-independently` | ブリーフの問いと素材台帳だけから答えを書く | 2 | [tasks/derive-answer-independently.md](tasks/derive-answer-independently.md) |
+| 10 | `compare-derived-answer` | 独立した導出の答えを `answer` と比べる | 2 | [tasks/compare-derived-answer.md](tasks/compare-derived-answer.md) |
+| 11 | `read-summary-alone` | 要約の文だけを読んで結論と理由を述べる | 2 | [tasks/read-summary-alone.md](tasks/read-summary-alone.md) |
+| 12 | `compare-summary-reading` | 要約の文から読み取った結論と理由を主張の骨子と比べる | 2 | [tasks/compare-summary-reading.md](tasks/compare-summary-reading.md) |
+| 13 | `inspect-chapters` | 章構成を検査する | 3 | [tasks/inspect-chapters.md](tasks/inspect-chapters.md) |
+| 14 | `inspect-storyline` | スライドの題と要点を検査する | 4 | [tasks/inspect-storyline.md](tasks/inspect-storyline.md) |
+| 15 | `inspect-proof` | 立証の設計を検査する | 5 | [tasks/inspect-proof.md](tasks/inspect-proof.md) |
+| 16 | `restore-point-from-proof` | 立証の設計だけから要点を書く | 5 | [tasks/restore-point-from-proof.md](tasks/restore-point-from-proof.md) |
+| 17 | `compare-restored-points` | 復元した要点を元の要点と比べる | 5 | [tasks/compare-restored-points.md](tasks/compare-restored-points.md) |
+| 18 | `read-relations-from-sample` | 見本の画像だけから関係を読み取る | 6 | [tasks/read-relations-from-sample.md](tasks/read-relations-from-sample.md) |
+| 19 | `compare-sample-relations` | 見本から読み取った関係を型の定義と比べる | 6 | [tasks/compare-sample-relations.md](tasks/compare-sample-relations.md) |
+| 20 | `inspect-samples` | 型の見本を検査する | 6 | [tasks/inspect-samples.md](tasks/inspect-samples.md) |
+| 21 | `inspect-chapter` | 章のスライド仕様を検査する | 7 | [tasks/inspect-chapter.md](tasks/inspect-chapter.md) |
+| 22 | `inspect-unsupported-sentences` | 裏付けのない文がないかを検査する | 7 | [tasks/inspect-unsupported-sentences.md](tasks/inspect-unsupported-sentences.md) |
+| 23 | `read-back-slides` | スライドの文だけを読んで意味を書き直す | 7 | [tasks/read-back-slides.md](tasks/read-back-slides.md) |
+| 24 | `compare-read-back` | 書き直した意味をスライドが使う事実と比べる | 7 | [tasks/compare-read-back.md](tasks/compare-read-back.md) |
+| 25 | `inspect-chapter-images` | 描いた結果の画像を検査する | 7 | [tasks/inspect-chapter-images.md](tasks/inspect-chapter-images.md) |
+| 26 | `inspect-summary-evidence` | 要約に添えた根拠を検査する | 8 | [tasks/inspect-summary-evidence.md](tasks/inspect-summary-evidence.md) |
+| 27 | `inspect-final-images` | 最終の出力の画像の写り込みを検査する | 9 | [tasks/inspect-final-images.md](tasks/inspect-final-images.md) |
+
+## 守ること(続き)
+
 ### 不合格のときの手順(`docs/rework.md`)
 
 1. **検査が不合格を返す。** 落ちた条件、該当する箇所、理由を添える。検査セッションの指摘には、対象の該当する箇所の引用を付け、条件のどの部分に反するかを書く。
@@ -102,36 +138,3 @@ description: スライド資料の検査セッションが、成果物を検査�
 - 設計の時期は設計セッションが、製造の時期はPMが、無効になった成果物を挙げる。挙げる元になるのは、検査の記録にある前提の項目である。前提の項目は、検査のコマンドが、成果物の中の参照(事実のID、主張のID、スライドのIDなど)から機械的に導く。検査セッションが書き足すことはできるが、機械が導いた項目を減らすことはできない。
 
 スライド、事実、主張などのIDは、一度付けたら変えない。順序や章を変えても、IDは変えない。
-
-## 作業の一覧
-
-| 順 | 作業 | 名前 | 工程 | 手順 |
-|---|---|---|---|---|
-| 1 | `inspect-brief` | ブリーフを検査する | 0 | [tasks/inspect-brief.md](tasks/inspect-brief.md) |
-| 2 | `inspect-plan` | 探索の計画を検査する | 1 | [tasks/inspect-plan.md](tasks/inspect-plan.md) |
-| 3 | `inspect-sources` | 素材台帳の事実を出典と突き合わせる | 1 | [tasks/inspect-sources.md](tasks/inspect-sources.md) |
-| 4 | `inspect-images` | 画像の素材を検査する | 1 | [tasks/inspect-images.md](tasks/inspect-images.md) |
-| 5 | `inspect-model` | 仕組みの定義を出典と突き合わせる | 1 | [tasks/inspect-model.md](tasks/inspect-model.md) |
-| 6 | `extract-model-independently` | 同じ出典から、仕組みの定義を独立に抜き出す | 1 | [tasks/extract-model-independently.md](tasks/extract-model-independently.md) |
-| 7 | `compare-model-extractions` | 独立の抜き出しを仕組みの定義と比べる | 1 | [tasks/compare-model-extractions.md](tasks/compare-model-extractions.md) |
-| 8 | `inspect-claims` | 問いごとの答えと主張の骨子を検査する | 2 | [tasks/inspect-claims.md](tasks/inspect-claims.md) |
-| 9 | `derive-answer-independently` | ブリーフの問いと素材台帳だけから答えを書く | 2 | [tasks/derive-answer-independently.md](tasks/derive-answer-independently.md) |
-| 10 | `compare-derived-answer` | 独立した導出の答えを `answer` と比べる | 2 | [tasks/compare-derived-answer.md](tasks/compare-derived-answer.md) |
-| 11 | `read-summary-alone` | 要約の文だけを読んで結論と理由を述べる | 2 | [tasks/read-summary-alone.md](tasks/read-summary-alone.md) |
-| 12 | `compare-summary-reading` | 要約の文から読み取った結論と理由を主張の骨子と比べる | 2 | [tasks/compare-summary-reading.md](tasks/compare-summary-reading.md) |
-| 13 | `inspect-chapters` | 章構成を検査する | 3 | [tasks/inspect-chapters.md](tasks/inspect-chapters.md) |
-| 14 | `inspect-storyline` | スライドの題と要点を検査する | 4 | [tasks/inspect-storyline.md](tasks/inspect-storyline.md) |
-| 15 | `inspect-proof` | 立証の設計を検査する | 5 | [tasks/inspect-proof.md](tasks/inspect-proof.md) |
-| 16 | `restore-point-from-proof` | 立証の設計だけから要点を書く | 5 | [tasks/restore-point-from-proof.md](tasks/restore-point-from-proof.md) |
-| 17 | `compare-restored-points` | 復元した要点を元の要点と比べる | 5 | [tasks/compare-restored-points.md](tasks/compare-restored-points.md) |
-| 18 | `read-relations-from-sample` | 見本の画像だけから関係を読み取る | 6 | [tasks/read-relations-from-sample.md](tasks/read-relations-from-sample.md) |
-| 19 | `compare-sample-relations` | 見本から読み取った関係を型の定義と比べる | 6 | [tasks/compare-sample-relations.md](tasks/compare-sample-relations.md) |
-| 20 | `inspect-samples` | 型の見本を検査する | 6 | [tasks/inspect-samples.md](tasks/inspect-samples.md) |
-| 21 | `compare-handover-explanation` | 引き継ぎの説明を成果物と比べる | 7 | [tasks/compare-handover-explanation.md](tasks/compare-handover-explanation.md) |
-| 22 | `inspect-chapter` | 章のスライド仕様を検査する | 7 | [tasks/inspect-chapter.md](tasks/inspect-chapter.md) |
-| 23 | `inspect-unsupported-sentences` | 裏付けのない文がないかを検査する | 7 | [tasks/inspect-unsupported-sentences.md](tasks/inspect-unsupported-sentences.md) |
-| 24 | `read-back-slides` | スライドの文だけを読んで意味を書き直す | 7 | [tasks/read-back-slides.md](tasks/read-back-slides.md) |
-| 25 | `compare-read-back` | 書き直した意味をスライドが使う事実と比べる | 7 | [tasks/compare-read-back.md](tasks/compare-read-back.md) |
-| 26 | `inspect-chapter-images` | 描いた結果の画像を検査する | 7 | [tasks/inspect-chapter-images.md](tasks/inspect-chapter-images.md) |
-| 27 | `inspect-summary-evidence` | 要約に添えた根拠を検査する | 8 | [tasks/inspect-summary-evidence.md](tasks/inspect-summary-evidence.md) |
-| 28 | `inspect-final-images` | 最終の出力の画像の写り込みを検査する | 9 | [tasks/inspect-final-images.md](tasks/inspect-final-images.md) |

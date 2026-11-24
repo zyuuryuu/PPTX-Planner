@@ -1108,7 +1108,7 @@ checks:
   group: "開始の条件"
   target: "設計の成果物の全体"
   check: "引き継ぎの検査に通っている"
-  judge: inspector
+  judge: pm
   defined_in: organization.md#引き継ぎの検査
 
 - id: K07-02

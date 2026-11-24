@@ -70,7 +70,7 @@
 <!-- checks:begin 開始の条件 -->
 <!-- この区間は tools/checks_table.py が checks.yaml から作る。直接は直さない -->
 
-- 引き継ぎの検査に通っている(検査セッション)。 `K07-01` [定義](../organization.md#引き継ぎの検査)
+- 引き継ぎの検査に通っている(PM)。 `K07-01` [定義](../organization.md#引き継ぎの検査)
 
 <!-- checks:end -->
 

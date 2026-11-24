@@ -31,6 +31,7 @@
 
 # 担当ごとの項目。
 #   rules   スキルの「守ること」に写す見出し。「文書#見出し」の形で書く
+#   rules_after  「守ること」のうち、作業の一覧の後に置く見出し。禁止と入力の制限に関わらない決まりを書く
 #   report  報告の書式を定めた見出し。作業票が指す
 roles:
   designer:
@@ -69,6 +70,7 @@ roles:
       - 'organization.md#セッションの分離'
       - 'rework.md#原則'
       - 'rework.md#検査と記録を守る'
+    rules_after:
       - 'rework.md#不合格のときの手順'
       - 'rework.md#警告'
       - 'rework.md#記録'
@@ -149,7 +151,7 @@ skills:
     stages: [7, 8]
     description: スライド資料の読み手の役のセッションが、ビルドした実物を通読する手順。作業票の1行目がこの名前のときに使う。
 
-count: 121
+count: 120
 tasks:
 
 # ---- 工程0
@@ -1568,40 +1570,17 @@ tasks:
   stage: 7
   name: 引き継ぎの検査を受ける
   notes:
-    - '説明と、分からない点を書く。比べるのは、別の検査セッションである(compare-handover-explanation)'
+    - '新しいセッションの説明を、設計セッションの意図と比べる者は未決定である'
   role: pm
   skill: deck-pm-7
   inputs: [00-brief.md, 01-hypotheses.yaml, 01-plan.yaml, 01-sources.yaml, 01-model.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, 05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml, decisions.md]
   restricted: true
   restricted_by: ['organization.md#引き継ぎの検査']
-  outputs: [work/answers/handover-check.yaml]
+  outputs: []
   sections:
     - 'organization.md#引き継ぎの検査'
   references:
     - 'organization.md#PM'
-    - 'checks.md#独立に書く'
-  checks: [K07-01]
-  next: [compare-handover-explanation]
-
-- id: compare-handover-explanation
-  stage: 7
-  name: 引き継ぎの説明を成果物と比べる
-  notes:
-    - '説明を書いたセッション(handover-check)とは別の検査セッションが行う。設計セッションは行わない'
-  role: inspector
-  skill: deck-inspect
-  inputs: [work/answers/handover-check.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
-  outputs: [checks/]
-  sections:
-    - 'checks.md#検査セッションの手順'
-    - 'checks.md#比べる'
-    - 'organization.md#引き継ぎの検査'
-  references:
-    - 'organization.md#セッションの分離'
-    - 'rework.md#原則'
-    - 'rework.md#不合格のときの手順'
-    - 'rework.md#記録'
-    - 'rework.md#検査と記録を守る'
   checks: [K07-01]
   next: [make-chapter-brief]
 

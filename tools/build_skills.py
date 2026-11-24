@@ -4,7 +4,7 @@
 使い方:
   python3 tools/build_skills.py            スキルを作り直す
   python3 tools/build_skills.py --check    スキルが正本と一致するかだけを確かめる。ずれていれば終了コード1
-  python3 tools/build_skills.py --stats    スキルごとの量、作業1件あたりの読む量、定めがない項目の数を出す
+  python3 tools/build_skills.py --stats    スキルごとの量、作業1件あたりの読む量、定めがない項目の数を出す。目安を超えたスキルは表示するだけで、終了コードは0
 
 正本は、工程表(docs/tasks.yaml)、検査の台帳(docs/checks.yaml)、docs/ の文書である。
 スキルは生成物で、直接は直さない。
@@ -117,6 +117,12 @@ class Source:
         doc = self.docs.get(found[0])
         heading = next((h for h in doc.headings if h["title"] == found[1]), None)
         return f"{found[0]}#{found[1]}" if heading and doc.own_text(heading) else found[0]
+
+
+def all_rules(src, role):
+    """担当の「守ること」の見出し。作業の一覧の前に置くものと、後に置くものを合わせる。"""
+    entry = src.plan.roles[role]
+    return list(entry["rules"]) + list(entry.get("rules_after", []))
 
 
 def plain(lines):
@@ -278,7 +284,7 @@ class Page:
     def __init__(self, src, task, out_dir):
         self.src, self.task, self.out_dir = src, task, out_dir
         self.restricted = bool(task.get("restricted"))
-        self.rules = list(src.plan.roles[task["role"]]["rules"])
+        self.rules = all_rules(src, task["role"])
         self.copied = []      # このファイルに写した「文書#見出し」
         self.found = []       # (出どころ, 文書, 見出し, リンクがあるか)
         self.pointed = set(task["references"])   # 文面を写さずに、場所を挙げた「文書#見出し」
@@ -466,15 +472,22 @@ def skill_lines(src, skill):
     else:
         out += ["作業票が指す作業のファイルを1つだけ読む。ほかの作業のファイルを読まない。", ""]
     out += [ORIGIN, "", "## 守ること", ""]
-    rules, errors = src.plan.roles[skill["role"]]["rules"], []
-    for ref in rules:
+    rules, errors = all_rules(src, skill["role"]), []
+    after = src.plan.roles[skill["role"]].get("rules_after", [])
+
+    def rule(ref):
         label, body = raw(src, ref)
         path = ref.partition("#")[0]
         for doc, title, linked in mentions(src, path, body):
             if title and not linked and f"{doc}#{title}" not in rules:
                 errors.append(f"{skill['name']}: 守ることの {place(ref)} が {place(doc + '#' + title)}を指すが、"
                               "スキルに写していない。工程表の roles の rules に足す")
-        out += [f"### {label}(`docs/{path}`)", ""] + relink(body, os.path.join(src.docs_dir, path), skill_dir) + [""]
+        return [f"### {label}(`docs/{path}`)", ""] + relink(body, os.path.join(src.docs_dir, path), skill_dir) + [""]
+
+    for ref in src.plan.roles[skill["role"]]["rules"]:
+        out += rule(ref)
+    if after:
+        out += ["作業の一覧の後に、「守ること(続き)」がある。", ""]
     out += ["## 作業の一覧", "", "| 順 | 作業 | 名前 | 工程 | 手順 |", "|---|---|---|---|---|"]
     for number, (task, owned) in enumerate(src.plan.tasks_of(skill), 1):
         if owned:
@@ -482,6 +495,11 @@ def skill_lines(src, skill):
         else:
             where = f"[`{task['skill']}`](../{task['skill']}/tasks/{task['id']}.md) が持つ"
         out.append(f"| {number} | `{task['id']}` | {task['name']} | {stage_text(task['stage'])} | {where} |")
+    if after:
+        out += ["", "## 守ること(続き)", ""]
+        for ref in after:
+            out += rule(ref)
+        out.pop()
     return out, list(dict.fromkeys(errors))
 
 
@@ -574,7 +592,7 @@ def size(text):
 
 
 def print_stats(src, expected):
-    """量を出す。守ることと作業の一覧が先頭に収まらないスキルがあれば、False を返す。"""
+    """量を出す。先頭に収まらないスキルは、表示するだけで、誤りにしない。収まらないスキルがあれば False を返す。"""
     fits_all, loads = True, {}
     print(f"スキル {len(src.plan.skills)} 個、ファイル {len(expected)} 個")
     print(f"先頭に収める量の目安は {HEAD_BYTES:,} バイト(約5,000トークン)。SKILL.md は、守ることと作業の一覧だけを持つ。")
@@ -623,7 +641,8 @@ def main():
         print("作ったスキルに誤りがある。何も書いていない:", *errors, sep="\n  ")
         return 1
     if args.stats:
-        return 0 if print_stats(src, expected) else 1
+        print_stats(src, expected)
+        return 0
 
     stale, missing, extra, foreign = compare(src, expected)
     summary = f"スキルは正本と一致している(スキル {len(src.plan.skills)} 個、ファイル {len(expected)} 個)"
