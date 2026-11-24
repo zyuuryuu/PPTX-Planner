@@ -1,0 +1,63 @@
+# 工程7 重大な検査: 裏付けのない文、限定の残存(ch5、3回目。再検査)
+check: 裏付けのない文、限定の残存(docs/writing.md「検査」の表の2行)
+round: 3
+target: trial/deck/07-slides/ch5.yaml(e14a915 の直し。検査時の HEAD は ff273b6 で、ch5.yaml は e14a915 から変わっていない)
+judge: claude-opus-5-5
+scope: >-
+  前回(7-ch5-2.yaml)の不合格 ch5-2-F1 が解消したかと、e14a915 で直した1行に新しい問題がないかだけを確かめた。
+  直していない箇所は判定していない。
+materials:
+  - git show e14a915(ch5.yaml の差分 1行。ch5-s6 の notes 3文目)
+  - trial/deck/checks/7-ch5-2.yaml の ch5-2-F1
+  - trial/deck/07-slides/ch3.yaml の ch3-s15(HEAD の版。b952460 で ch3.yaml は変わったが、変わったのは ch3-s12 のノートで、ch3-s15 は見出しが「案として、…」、body.mark が 案)
+  - trial/deck/decisions.md の D015
+  - docs/writing.md「検査」の表の「裏付けのない文」「限定の残存」
+premises:
+  - 講義の決まりを述べる文の裏付けは、その決まりを述べるスライドのID。案か運用かは、そのスライドの印による(D015)
+
+summary:
+  unsupported:     # 条件1: 裏付けのない文(直した1行と前回の指摘のみ)
+    pass: 2
+    fail: 0
+    undetermined: 0
+  qualifiers:      # 条件2: 限定の残存
+    pass: 0
+    fail: 0
+    undetermined: 0
+    note: ch5-s6 は事実を使わない(sources 空)。直した文も事実によらない。判定の対象がない
+  previous:
+    resolved: [ch5-2-F1]
+    not_resolved: []
+
+resolved:
+  - id: ch5-2-F1
+    slide: ch5-s6
+    field: notes(3〜4文目。前回の数え方では4文目)
+    verdict: 合格
+    before: '防がれた記録は、上げるときに添える証拠になります(ch3-s15)。'
+    quote: '防がれた記録は、上げるときに添える証拠になります。ただし、添える項目は案です(ch3-s15)。'
+    context_quote: 'notes 1文目: ch3-s14 の規則を当てはめます。このSOCの運用です。'
+    source_quote: 'ch3-s15 headline: 案として、上げるときは、出どころとID、調べた経過、証拠、判定の仮説、次の手順を添える(body.mark: 案、items[2]: 集めた証拠)'
+    reason: >-
+      ch3-s15 の印(案)が「ただし、添える項目は案です」と示され、直前の「このSOCの運用です」(ch3-s14 の規則)と分けて述べられた。
+      前回の提案どおりで、ch5-s8 の notes の「いずれもこのSOCの運用です。ただし、誤検知と言える基準は案です(ch3-s5)。」と同じ書き方である
+
+changed:
+  - slide: ch5-s6
+    field: notes(直した1行の2文)
+    checks:
+      - sentence: '防がれた記録は、上げるときに添える証拠になります。'
+        verdict: 合格
+        reason: >-
+          直しで文の末尾のIDが次の文へ移ったが、次の文が「ただし」で受けて同じ ch3-s15 の内容(添える項目)を述べ、IDはこの2文に掛かると読める。
+          防がれた記録は ch3-s15 の items[2]「集めた証拠」に当たり、導出は前回確かめたとおりで変わらない
+      - sentence: 'ただし、添える項目は案です(ch3-s15)。'
+        verdict: 合格
+        reason: ch3-s15 の見出し「案として」と body.mark 案に合う。「添える項目」は ch3-s15 の body.title「上げるときに添える5項目」と同じ範囲で、広げていない
+    new_problems: なし
+
+observations:   # 判定には入れない気づき
+  - slide: ch5-s6
+    note: >-
+      IDが2文目の末尾だけにあるため、1文目だけを切り出して読むと出典が見えない。今の形は ch5-s8 の notes の前例と同じで、判定は合格とした。
+      より明確にするなら、1文目の末尾にも (ch3-s15) を置く形もある
