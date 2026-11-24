@@ -4,27 +4,33 @@
 使い方:
   python3 tools/build_skills.py            スキルを作り直す
   python3 tools/build_skills.py --check    スキルが正本と一致するかだけを確かめる。ずれていれば終了コード1
-  python3 tools/build_skills.py --stats    スキルごとの行数とバイト数、先頭に収まる範囲を出す
+  python3 tools/build_skills.py --stats    スキルごとの量、作業1件あたりの読む量、定めがない項目の数を出す
 
 正本は、工程表(docs/tasks.yaml)、検査の台帳(docs/checks.yaml)、docs/ の文書である。
 スキルは生成物で、直接は直さない。
 
 スキルは、工程表の skills に挙げたものを作る。
-  SKILL.md            守ること、作業の一覧、作業ごとの手順の順に書く
-  tasks/<作業>.md     作業ごとの手順。次の場合に、SKILL.md から出す
-                        収集、執筆、検査、読み手の役のスキル(全ての作業)
-                        複数の工程で行う作業(最初の工程のスキルが持ち、後の工程のスキルは指すだけにする)
-                        SKILL.md が行数の上限を超える場合の、長い作業
+  SKILL.md            守ることと、作業の一覧
+  tasks/<作業>.md     作業ごとの手順。複数の工程で行う作業は、最初の工程のスキルが持ち、後の工程のスキルは指すだけにする
 
 守ることは、工程表の roles の rules が指す見出しの文面である。
 作業の手順は、工程表の sections が指す見出しの文面である。どちらも、言い換えずに写す。
-リンクの先だけを、スキルの置き場から届く形に直す。references は、文面を写さず、場所だけを挙げる。
+references は、文面を写さず、場所だけを挙げる。リンクの先は、スキルの置き場から届く形に直す。
+
+入力に制限のある作業(restricted)は、正本の文書を開かずに済む形にする。
+  - references、検査の定義(defined_in)、制限の定め(restricted_by)、報告の書式が指す見出しの文面を、作業のファイルに写す。
+  - 写した文面のリンクは、先を消して、文字だけにする。
 
 --check が確かめること:
   - 工程表に誤りがない(tools/tasks_table.py と同じ確かめ)。
   - スキルのファイルが、正本から作り直したものと一致する。
   - 作り直したものにないファイルが、スキルのディレクトリにない。
   - SKILL.md の先頭の name と description が YAML として読める。SKILL.md が500行未満である。
+  - 写した文面が指す見出しが、スキルにある。指し方は、文書へのリンクと、「」で囲んだ見出しの名前である。
+      制限のある作業では、指す先の文面が、作業のファイルか「守ること」に写してある。
+      文書の全体を指すリンクは、見出しまで絞れないので、確かめない。
+      制限のない作業では、リンクのない「」の見出しが、写してあるか、参照に挙がっている。
+  - 制限のある作業の references が、見出しまで絞られている。
 
 道具が作ったファイルは、目印の行を持つ。作り直すとき、目印のある余分なファイルは消す。
 目印のない余分なファイルは消さずに、誤りとして挙げる。
@@ -32,6 +38,7 @@
 import argparse
 import os
 import re
+import statistics
 import sys
 
 import yaml
@@ -46,11 +53,19 @@ ORIGIN = ("道具 `tools/build_skills.py` が作ったファイルである。�
           "直すときは、正本を直して、道具を実行する。")
 SKILL_FILE = "SKILL.md"
 MAX_LINES = 500          # SKILL.md は、この行数より短くする
-SPLIT_AT = MAX_LINES   # この行数以上になったら、長い作業を tasks/ に出す
 HEAD_BYTES = 12000       # 先頭の約5,000トークンに当たる量の目安
-PER_STAGE = ("designer", "pm")   # 工程ごとにスキルを持ち、手順を SKILL.md に入れる担当
+PER_STAGE = ("designer", "pm")   # 工程ごとにスキルを持つ担当。入力の制限がなく、報告を返さない
 COMMENT = re.compile(r"^<!-- .* -->$")
-LINK = checks_table.LINK
+BACK = re.compile(r"^\[目次に戻る\]\([^)]*\)$")
+LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
+QUOTED = re.compile(r"「([^「」]+)」")
+NUMBERED = re.compile(r"^(\d+)\. ")
+CHECKS = "checks.yaml"   # 検査の文面の出どころ。リンクは docs/ からの相対で書いてある
+
+
+def slug(title):
+    """見出しから、リンクのアンカーを作る。tools/checks_table.py の anchors と同じ作り方。"""
+    return re.sub(r"[^\w\- ]", "", title.strip().lower()).replace(" ", "-")
 
 
 class Source:
@@ -76,17 +91,52 @@ class Source:
                 return self.docs.get("stages/" + name).headings[0]["title"]
         return f"工程{stage}"
 
+    def titles(self, path):
+        doc = self.docs.get(path) if path.endswith(".md") else None
+        return [h["title"] for h in doc.headings] if doc else []
+
+    def target(self, link, path):
+        """リンクの先を、(docs/ からの文書のパス, 見出し)にする。文書でなければ None。見出しがなければ、見出しは None。"""
+        if re.match(r"[a-z]+:", link):
+            return None
+        name, _, anchor = link.partition("#")
+        full = os.path.normpath(os.path.join(os.path.dirname(path), name)) if name else path
+        full = full.replace(os.sep, "/")
+        if full.startswith("..") or not self.titles(full):
+            return None
+        title = next((t for t in self.titles(full) if slug(t) == anchor), None) if anchor else None
+        return full, title
+
+    def defined(self, entry):
+        """検査の defined_in を、「文書#見出し」にする。見出しまで絞れなければ、文書だけを返す。"""
+        found = self.target(entry["defined_in"], CHECKS) if entry.get("defined_in") else None
+        if not found:
+            return None
+        doc = self.docs.get(found[0])
+        heading = next((h for h in doc.headings if h["title"] == found[1]), None)
+        return f"{found[0]}#{found[1]}" if heading and doc.own_text(heading) else found[0]
+
+
+def plain(lines):
+    """リンクの先を消して、文字だけにする。"""
+    out, fenced = [], False
+    for text in lines:
+        if text.lstrip().startswith("```"):
+            fenced = not fenced
+        out.append(text if fenced else LINK.sub(lambda m: m.group(0) if re.match(r"[a-z]+:", m.group(2)) else m.group(1), text))
+    return out
+
 
 def relink(lines, source, out_dir):
     """リンクの先を、書き出すファイルの場所から届く形に直す。source は、元の文書の絶対パス。"""
     def fix(m):
-        target = m.group(1)
+        target = m.group(2)
         if re.match(r"[a-z]+:", target):
             return m.group(0)
         path, _, anchor = target.partition("#")
         full = os.path.normpath(os.path.join(os.path.dirname(source), path)) if path else source
         rel = os.path.relpath(full, out_dir).replace(os.sep, "/")
-        return "](" + rel + ("#" + anchor if anchor else "") + ")"
+        return f"[{m.group(1)}](" + rel + ("#" + anchor if anchor else "") + ")"
     out, fenced = [], False
     for text in lines:
         if text.lstrip().startswith("```"):
@@ -95,18 +145,48 @@ def relink(lines, source, out_dir):
     return out
 
 
-def excerpt(src, ref, out_dir):
-    """「文書#見出し」が指す文面を、(見出し, 行の一覧)で返す。見出しの行と、道具の目印の行は除く。"""
+def raw(src, ref):
+    """「文書#見出し」が指す文面を、(見出し, 行の一覧)で返す。見出しの行、道具の目印の行、目次に戻る行は除く。"""
     path, _, title = ref.partition("#")
     doc = src.docs.get(path)
     numbers = sorted(doc.span(title))
-    body = [t for t in doc.lines[numbers[0] + 1:numbers[-1] + 1] if not COMMENT.match(t.strip())]
+    body = [t for t in doc.lines[numbers[0] + 1:numbers[-1] + 1]
+            if not COMMENT.match(t.strip()) and not BACK.match(t.strip())]
     while body and not body[0].strip():
         body.pop(0)
     while body and not body[-1].strip():
         body.pop()
-    label = doc.headings[0]["title"] + "の前文" if title == PREAMBLE else title
-    return label, relink(body, os.path.join(src.docs_dir, path), out_dir)
+    return (doc.headings[0]["title"] + "の前文" if title == PREAMBLE else title), body
+
+
+def mentions(src, path, lines, fallback=None):
+    """文面が指す先を、(文書, 見出し, リンクがあるか)の組で挙げる。
+
+    指し方は、文書へのリンクと、「」で囲んだ見出しの名前である。文書の題は、見出しに数えない。
+    「」の名前は、同じ行で先に出たリンクの文書か、文面のある文書(fallback があれば、その文書)の見出しと比べる。"""
+    found, fenced = [], False
+    for text in lines:
+        if text.lstrip().startswith("```"):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        tokens = [(m.start(), "link", m.group(2)) for m in LINK.finditer(text)]
+        tokens += [(m.start(), "quote", m.group(1)) for m in QUOTED.finditer(text)]
+        linked = None
+        for _, kind, value in sorted(tokens):
+            if kind == "link":
+                hit = src.target(value, path)
+                if hit:
+                    found.append((hit[0], hit[1], True))
+                    linked = hit[0]
+            elif linked and value in src.titles(linked)[1:]:
+                found.append((linked, value, True))
+            else:
+                own = fallback or (path if path != CHECKS else None)
+                if own and value in src.titles(own)[1:]:
+                    found.append((own, value, False))
+    return found
 
 
 def place(ref):
@@ -147,103 +227,183 @@ def input_lines(task):
     return ["- " + input_text(e) for e in task["inputs"]]
 
 
-def unread_lines(src, task):
-    """読まないものを書く。"""
-    if not task.get("restricted"):
-        return ["この作業だけの制限はない。「守ること」に従う。"]
-    out = ["入力に挙げたもの以外を読まない。スキルの手順と、手順の「参照」に挙げた文書の箇所は読む。"]
-    by = [f"検査 `{r}`" if r in src.ledger else place(r) for r in task.get("restricted_by", [])]
-    if by:
-        out += ["", "ファイルをまるごと渡す入力は、次の定めによる: " + "、".join(by) + "。"]
-    return out
-
-
 def output_lines(task):
     if not task["outputs"]:
         return ["工程表に、成果物のファイルの定めがない。"]
     return [f"- `{name}`" for name in task["outputs"]]
 
 
-def check_line(src, e, out_dir):
-    text = f"- `{e['id']}` {e['check']}({checks_table.judge_text(e)})。{e.get('note', '')}".rstrip()
-    if e.get("defined_in"):
-        text += f" [定義]({e['defined_in']})"
-    return relink([text], os.path.join(src.docs_dir, "checks.yaml"), out_dir)[0]
+class Page:
+    """作業1件のファイル。写した見出しと、文面が指す先を覚えておき、後で確かめる。"""
 
+    def __init__(self, src, task, out_dir):
+        self.src, self.task, self.out_dir = src, task, out_dir
+        self.restricted = bool(task.get("restricted"))
+        self.rules = list(src.plan.roles[task["role"]]["rules"])
+        self.copied = []      # このファイルに写した「文書#見出し」
+        self.found = []       # (出どころ, 文書, 見出し, リンクがあるか)
+        self.pointed = set(task["references"])   # 文面を写さずに、場所を挙げた「文書#見出し」
 
-def check_lines(src, task, out_dir, hashes):
-    """検査を、判定するものと、満たすものに分けて書く。"""
-    judged = [src.ledger[c] for c in task["checks"] if task["role"] in as_list(src.ledger[c]["judge"])]
-    met = [src.ledger[c] for c in task["checks"] if task["role"] not in as_list(src.ledger[c]["judge"])]
-    if not task["checks"]:
-        return ["工程表に、この作業の検査がない。"]
-    out = []
-    for title, lead, entries in (
-            ("判定する検査", "次の検査を判定する。", judged),
-            ("満たす合格条件", "成果物は、次の条件を満たす。括弧の中は、判定者である。「警告」とある条件は、合否にしない。", met)):
-        if not entries:
-            continue
-        out += ([""] if out else []) + [f"{hashes} {title}", "", lead, ""]
-        for e in entries:
-            out.append(check_line(src, e, out_dir))
-            for cid in as_list(e.get("refers", [])):
-                if cid not in task["checks"]:
-                    out.append("  " + check_line(src, src.ledger[cid], out_dir))
-    return out
+    def text(self, lines, path, origin, fallback=None):
+        """正本の文面を、書き出す形にする。指す先を覚える。"""
+        self.found += [(origin,) + m for m in mentions(self.src, path, lines, fallback)]
+        if self.restricted:
+            return plain(lines)
+        return relink(lines, os.path.join(self.src.docs_dir, path), self.out_dir)
 
+    def copy(self, ref, hashes):
+        """見出しの文面を写す。既に写したものと、「守ること」にあるものは、場所だけを書く。"""
+        label, body = raw(self.src, ref)
+        path = ref.partition("#")[0]
+        out = [f"{hashes} {label}(`docs/{path}`)", ""]
+        if ref in self.rules:
+            return out + [f"スキル `{self.task['skill']}` の「守ること」に写してある。", ""]
+        if ref in self.copied:
+            return out + ["このファイルの上に写してある。", ""]
+        self.copied.append(ref)
+        return out + self.text(body, path, place(ref)) + [""]
 
-def next_lines(src, task):
-    if not task["next"]:
-        return ["次の作業はない。ここで終わる。"]
-    out = []
-    for tid in task["next"]:
-        t = src.plan.by_id[tid]
-        who = ROLES[t["role"]] + (f"、スキル `{t['skill']}`" if t["skill"] else "")
-        out.append(f"- `{tid}` {t['name']}({who})")
-    if len(out) > 1:
-        out = ["分かれる場合と、順序が決まっていない場合がある。", ""] + out
-    return out
+    def has(self, ref):
+        return ref in self.copied or ref in self.rules
 
+    def check_line(self, entry):
+        text = f"- `{entry['id']}` {entry['check']}({checks_table.judge_text(entry)})。{entry.get('note', '')}".rstrip()
+        where = self.src.defined(entry)
+        line = self.text([text], CHECKS, f"検査 {entry['id']}", where.partition("#")[0] if where else None)[0]
+        if not where:
+            return line
+        if not self.restricted:
+            self.pointed.add(where)
+            return line + relink([f" [定義]({entry['defined_in']})"], os.path.join(self.src.docs_dir, CHECKS), self.out_dir)[0]
+        self.found.append((f"検査 {entry['id']} の定義", where.partition("#")[0], where.partition("#")[2] or None, True))
+        return line + f" 定義は、写してある「{where.partition('#')[2]}」にある。" if "#" in where else line
 
-def task_lines(src, task, out_dir, level, printed=None):
-    """作業1件の手順を、行の一覧で返す。level は、作業の題の見出しの深さ。
+    def checks(self, hashes):
+        """検査を、判定するものと、満たすものに分けて書く。"""
+        task, ledger = self.task, self.src.ledger
+        if not task["checks"]:
+            return ["工程表に、この作業の検査がない。"]
+        judged = [ledger[c] for c in task["checks"] if task["role"] in as_list(ledger[c]["judge"])]
+        met = [ledger[c] for c in task["checks"] if task["role"] not in as_list(ledger[c]["judge"])]
+        out = []
+        for title, lead, entries in (
+                ("判定する検査", "次の検査を判定する。", judged),
+                ("満たす合格条件", "成果物は、次の条件を満たす。括弧の中は、判定者である。「警告」とある条件は、合否にしない。", met)):
+            if not entries:
+                continue
+            out += ([""] if out else []) + [f"{hashes} {title}", "", lead, ""]
+            for e in entries:
+                out.append(self.check_line(e))
+                for cid in as_list(e.get("refers", [])):
+                    if cid not in task["checks"]:
+                        out.append("  " + self.check_line(ledger[cid]))
+        return out
 
-    printed は、同じファイルに既に写した見出しから、写した作業への対応。同じ文面を2度は写さない。"""
-    h1, h2, h3 = "#" * level, "#" * (level + 1), "#" * (level + 2)
-    stages = as_list(task["stage"])
-    out = [f"{h1} `{task['id']}` {task['name']}", ""]
-    out += [f"担当は{ROLES[task['role']]}、工程は{stage_text(stages)}である。", ""]
-    if task.get("notes"):
-        out += [f"{h2} 条件と覚え書き", ""] + [f"- {n}" for n in task["notes"]] + [""]
-    out += [f"{h2} 入力", ""] + input_lines(task) + [""]
-    out += [f"{h2} 読まないもの", ""] + unread_lines(src, task) + [""]
-    out += [f"{h2} 手順", ""]
-    if not task["sections"]:
-        out += ["工程表に、手順を定めた見出しがない。" + ("「検査」の条件の文に従う。" if task["checks"] else ""), ""]
-    for ref in task["sections"]:
-        label, body = excerpt(src, ref, out_dir)
-        out += [f"{h3} {label}(`docs/{ref.partition('#')[0]}`)", ""]
-        if printed is not None and ref in printed:
-            out += [f"上の `{printed[ref]}` の手順に写した文面と同じである。", ""]
-            continue
-        if printed is not None:
-            printed[ref] = task["id"]
-        out += body + [""]
-    out += [f"{h2} 成果物", ""] + output_lines(task) + [""]
-    out += [f"{h2} 検査", ""] + check_lines(src, task, out_dir, h3) + [""]
-    out += [f"{h2} 参照", ""]
-    rules = src.plan.roles[task["role"]]["rules"]
-    copied = [r for r in task["references"] if r in rules]
-    others = [r for r in task["references"] if r not in rules]
-    if others:
-        out += ["次の箇所は、文面を写していない。必要なときに読む。パスは、リポジトリの根からである。", ""]
-        out += places(others) + [""]
-    if copied:
-        out += [f"次の箇所は、スキル `{task['skill']}` の「守ること」に写してある。", ""] + places(copied) + [""]
-    if not task["references"]:
-        out += ["工程表に、参照する箇所がない。", ""]
-    out += [f"{h2} 次の作業", ""] + next_lines(src, task) + [""]
-    return out
+    def unread(self, hashes):
+        """読まないものを書く。"""
+        task = self.task
+        if not self.restricted:
+            return ["この作業だけの制限はない。「守ること」に従う。"]
+        out = ["入力に挙げたもの以外を読まない。このファイルと、スキルの「守ること」は読む。"
+               "正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。"]
+        by = task.get("restricted_by", [])
+        if by:
+            out += ["", "ファイルをまるごと渡す入力は、次の定めによる。"]
+            for ref in by:
+                if ref in self.src.ledger:
+                    out += ["", f"- 検査 `{ref}`: " + self.text([self.src.ledger[ref]["check"]], CHECKS, f"検査 {ref}")[0]]
+            for ref in by:
+                if ref not in self.src.ledger:
+                    out += [""] + self.copy(ref, hashes)[:-1]
+        return out
+
+    def siblings(self):
+        """番号つきの手順のうち、この作業が行わないものを、行う作業とあわせて挙げる。"""
+        out = []
+        for path in dict.fromkeys(r.partition("#")[0] for r in self.task["sections"]):
+            doc = self.src.docs.get(path)
+            mine = {r.partition("#")[2] for r in self.task["sections"] if r.partition("#")[0] == path}
+            parents = {tuple(h["parents"]) for h in doc.headings if h["title"] in mine and NUMBERED.match(h["title"])}
+            for h in doc.headings:
+                if tuple(h["parents"]) in parents and NUMBERED.match(h["title"]) and h["title"] not in mine:
+                    owners = [t for t in self.src.plan.tasks if f"{path}#{h['title']}" in t["sections"]]
+                    who = "、".join(f"`{t['id']}`({ROLES[t['role']]})" for t in owners) or "割り当てた作業がない"
+                    out.append(f"- 「{h['title']}」: {who}")
+        if out:
+            out = ["番号は、正本の手順の番号のままである。この作業にない番号の手順は、次の作業が行う。", ""] + out + [""]
+        return out
+
+    def lines(self):
+        """作業1件の手順を、行の一覧で返す。"""
+        src, task = self.src, self.task
+        out = [MARK, "", f"# `{task['id']}` {task['name']}", "", ORIGIN, ""]
+        out += [f"担当は{ROLES[task['role']]}、工程は{stage_text(task['stage'])}である。", ""]
+        if task.get("notes"):
+            out += ["## 条件と覚え書き", ""] + [f"- {n}" for n in task["notes"]] + [""]
+        out += ["## 入力", ""] + input_lines(task) + [""]
+        out += ["## 読まないもの", ""] + self.unread("###") + [""]
+        out += ["## 手順", ""]
+        if self.restricted:
+            out += ["この作業では、「守ること」の表より、入力の制限が優先する。", ""]
+        if not task["sections"]:
+            out += ["工程表に、手順を定めた見出しがない。" + ("「検査」の条件の文に従う。" if task["checks"] else ""), ""]
+        out += self.siblings()
+        for ref in task["sections"]:
+            out += self.copy(ref, "###")
+        out += ["## 成果物", ""] + output_lines(task) + [""]
+        out += ["## 検査", ""] + self.checks("###") + [""]
+        out += ["## 参照", ""]
+        refs = [r for r in task["references"] if r not in task["sections"]]
+        if self.restricted:
+            extra = [src.defined(src.ledger[c]) for c in task["checks"]]
+            extra += [src.defined(src.ledger[r]) for c in task["checks"] for r in as_list(src.ledger[c].get("refers", []))]
+            refs += [r for r in dict.fromkeys(extra) if r and "#" in r and r not in refs and r not in task["sections"]]
+            refs = [r for r in refs if "#" in r and r not in self.rules]
+            if refs:
+                out += ["次の箇所を、正本から写した。正本の文書は開かない。", ""]
+                for ref in refs:
+                    out += self.copy(ref, "###")
+        else:
+            others = [r for r in refs if r not in self.rules]
+            copied = [r for r in refs if r in self.rules]
+            if others:
+                out += ["次の箇所は、文面を写していない。必要なときに読む。パスは、リポジトリの根からである。", ""]
+                out += places(others) + [""]
+            if copied:
+                out += [f"次の箇所は、スキル `{task['skill']}` の「守ること」に写してある。", ""] + places(copied) + [""]
+        if not refs:
+            out += ["工程表に、参照する箇所がない。", ""]
+        report = src.plan.roles[task["role"]].get("report", [])
+        if report:
+            out += ["## 報告の書式", ""]
+            for ref in report:
+                out += self.copy(ref, "###")
+        out += ["## 次の作業", ""]
+        if not task["next"]:
+            out += ["次の作業はない。ここで終わる。"]
+        else:
+            if len(task["next"]) > 1:
+                out += ["分かれる場合と、順序が決まっていない場合がある。", ""]
+            for tid in task["next"]:
+                t = src.plan.by_id[tid]
+                who = ROLES[t["role"]] + (f"、スキル `{t['skill']}`" if t["skill"] else "")
+                out.append(f"- `{tid}` {t['name']}({who})")
+        return out
+
+    def errors(self):
+        """文面が指す先のうち、スキルにないものを挙げる。lines() の後に呼ぶ。"""
+        task, out = self.task, []
+        for ref in task["references"]:
+            if self.restricted and "#" not in ref:
+                out.append(f"{task['id']}: references の {ref}: 入力に制限のある作業では、見出しまで絞る")
+        for origin, path, title, linked in self.found:
+            ref = f"{path}#{title}" if title else path
+            if not title:
+                continue      # 文書の全体を指す言及は、見出しまで絞れないので、確かめない
+            if not (self.has(ref) or (not self.restricted and (linked or ref in self.pointed))):
+                out.append(f"{task['id']}: {origin} が {place(ref)}を指すが、スキルに写していない。"
+                           "工程表の sections か references に足す")
+        return list(dict.fromkeys(out))
 
 
 def skill_title(src, skill):
@@ -254,73 +414,51 @@ def skill_title(src, skill):
     return f"{ROLES[skill['role']]}: {name}"
 
 
-def skill_lines(src, skill, files):
-    """SKILL.md の行の一覧を返す。files は、tasks/ に出す作業の id の集合。"""
+def skill_lines(src, skill):
+    """SKILL.md の行の一覧と、誤りの一覧を返す。"""
     skill_dir = os.path.join(src.out_dir, skill["name"])
-    listed = src.plan.tasks_of(skill)
     front = yaml.safe_dump({"name": skill["name"], "description": skill["description"]},
                            allow_unicode=True, sort_keys=False, width=10000).rstrip("\n")
     out = ["---", front, "---", MARK, "", f"# {skill_title(src, skill)}", ""]
     if skill["role"] in PER_STAGE:
-        out += ["作業票が指す作業の手順に従う。手順が別のファイルにある作業は、そのファイルを読む。", ""]
+        out += ["いま行う作業のファイルを読む。工程の中の前後の作業のファイルは、必要なら読んでよい。", ""]
     else:
         out += ["作業票が指す作業のファイルを1つだけ読む。ほかの作業のファイルを読まない。", ""]
     out += [ORIGIN, "", "## 守ること", ""]
-    for ref in src.plan.roles[skill["role"]]["rules"]:
-        label, body = excerpt(src, ref, skill_dir)
-        out += [f"### {label}(`docs/{ref.partition('#')[0]}`)", ""] + body + [""]
+    rules, errors = src.plan.roles[skill["role"]]["rules"], []
+    for ref in rules:
+        label, body = raw(src, ref)
+        path = ref.partition("#")[0]
+        for doc, title, linked in mentions(src, path, body):
+            if title and not linked and f"{doc}#{title}" not in rules:
+                errors.append(f"{skill['name']}: 守ることの {place(ref)} が {place(doc + '#' + title)}を指すが、"
+                              "スキルに写していない。工程表の roles の rules に足す")
+        out += [f"### {label}(`docs/{path}`)", ""] + relink(body, os.path.join(src.docs_dir, path), skill_dir) + [""]
     out += ["## 作業の一覧", "", "| 順 | 作業 | 名前 | 工程 | 手順 |", "|---|---|---|---|---|"]
-    for number, (task, owned) in enumerate(listed, 1):
-        if not owned:
-            where = f"[`{task['skill']}`](../{task['skill']}/tasks/{task['id']}.md) が持つ"
-        elif task["id"] in files:
+    for number, (task, owned) in enumerate(src.plan.tasks_of(skill), 1):
+        if owned:
             where = f"[tasks/{task['id']}.md](tasks/{task['id']}.md)"
         else:
-            where = "下にある"
+            where = f"[`{task['skill']}`](../{task['skill']}/tasks/{task['id']}.md) が持つ"
         out.append(f"| {number} | `{task['id']}` | {task['name']} | {stage_text(task['stage'])} | {where} |")
-    out.append("")
-    head = len("\n".join(out).encode("utf-8"))
-    inline = [t for t, owned in listed if owned and t["id"] not in files]
-    if inline:
-        out += ["## 作業ごとの手順", ""]
-        printed = {}
-        for task in inline:
-            out += task_lines(src, task, skill_dir, 3, printed)
-    while out and not out[-1]:
-        out.pop()
-    return out, head
+    return out, list(dict.fromkeys(errors))
 
 
 def build(src):
-    """全てのファイルを作る。(パスから中身への対応, スキルごとの統計)を返す。パスは、スキルの置き場から。"""
-    expected, stats = {}, []
+    """全てのファイルを作る。(パスから中身への対応, 誤りの一覧)を返す。パスは、スキルの置き場から。"""
+    expected, errors = {}, []
     for skill in src.plan.skills:
-        owned = [t for t, mine in src.plan.tasks_of(skill) if mine]
-        if skill["role"] in PER_STAGE:
-            files = {t["id"] for t in owned if len(as_list(t["stage"])) > 1}
-        else:
-            files = {t["id"] for t in owned}
-        sizes = {t["id"]: len(task_lines(src, t, "", 3)) for t in owned}
-        while True:
-            lines, head = skill_lines(src, skill, files)
-            rest = [t["id"] for t in owned if t["id"] not in files]
-            if len(lines) < SPLIT_AT or not rest:
-                break
-            files.add(max(rest, key=lambda tid: sizes[tid]))
-        moved = sorted(files - {t["id"] for t in owned if len(as_list(t["stage"])) > 1}) \
-            if skill["role"] in PER_STAGE else []
+        lines, found = skill_lines(src, skill)
+        errors += found
         expected[f"{skill['name']}/{SKILL_FILE}"] = "\n".join(lines) + "\n"
         task_dir = os.path.join(src.out_dir, skill["name"], "tasks")
-        for task in owned:
-            if task["id"] in files:
-                body = [MARK, ""] + task_lines(src, task, task_dir, 1)
-                body[4:4] = [ORIGIN, ""]
-                while not body[-1]:
-                    body.pop()
+        for task, owned in src.plan.tasks_of(skill):
+            if owned:
+                page = Page(src, task, task_dir)
+                body = page.lines()
+                errors += page.errors()
                 expected[f"{skill['name']}/tasks/{task['id']}.md"] = "\n".join(body) + "\n"
-        stats.append({"skill": skill["name"], "head": head, "moved": moved,
-                      "paths": [p for p in expected if p.startswith(skill["name"] + "/")]})
-    return expected, stats
+    return expected, errors
 
 
 def validate(expected):
@@ -390,32 +528,47 @@ def write(src, expected, stale, missing, extra):
             folder = os.path.dirname(folder)
 
 
-def print_stats(expected, stats):
-    print(f"スキル {len(stats)} 個、ファイル {len(expected)} 個")
-    print(f"先頭に収める量の目安は {HEAD_BYTES:,} バイト(約5,000トークン)。「先頭」は、守ることと作業の一覧が終わる位置である。")
-    print("スキルごと(SKILL.md の行数とバイト数、先頭、作業のファイルの数と合計のバイト数):")
-    for s in stats:
-        text = expected[f"{s['skill']}/{SKILL_FILE}"]
-        others = [expected[p] for p in s["paths"] if not p.endswith("/" + SKILL_FILE)]
-        fits = "収まる" if s["head"] <= HEAD_BYTES else "収まらない"
-        line = (f"  {s['skill']}: {text.count(chr(10))}行、{len(text.encode('utf-8')):,}バイト、"
-                f"先頭 {s['head']:,}バイト({fits})、作業のファイル {len(others)}個")
-        if others:
-            line += f" {sum(len(t.encode('utf-8')) for t in others):,}バイト"
-        print(line)
-        if s["moved"]:
-            print(f"    行数の上限のために出した作業: {'、'.join(s['moved'])}")
-    longest = max((p for p in expected if "/tasks/" in p), key=lambda p: len(expected[p]), default=None)
-    if longest:
-        print(f"最も長い作業のファイル: {longest}({expected[longest].count(chr(10))}行、"
-              f"{len(expected[longest].encode('utf-8')):,}バイト)")
+def size(text):
+    return len(text.encode("utf-8"))
+
+
+def print_stats(src, expected):
+    """量を出す。守ることと作業の一覧が先頭に収まらないスキルがあれば、False を返す。"""
+    fits_all, loads = True, {}
+    print(f"スキル {len(src.plan.skills)} 個、ファイル {len(expected)} 個")
+    print(f"先頭に収める量の目安は {HEAD_BYTES:,} バイト(約5,000トークン)。SKILL.md は、守ることと作業の一覧だけを持つ。")
+    print("スキルごと(SKILL.md の行数とバイト数、作業のファイルの数と合計のバイト数):")
+    for s in src.plan.skills:
+        head = expected[f"{s['name']}/{SKILL_FILE}"]
+        files = {p: t for p, t in expected.items() if p.startswith(s["name"] + "/tasks/")}
+        fits = size(head) <= HEAD_BYTES
+        fits_all = fits_all and fits
+        print(f"  {s['name']}: {head.count(chr(10))}行、{size(head):,}バイト({'収まる' if fits else '収まらない'})、"
+              f"作業のファイル {len(files)}個 {sum(size(t) for t in files.values()):,}バイト")
+        for path, text in files.items():
+            loads[path.split("/")[-1][:-3]] = (size(head) + size(text), s["role"])
+    print("作業1件あたりの読む量(SKILL.md と、その作業のファイルの合計。バイト。作業の数、最大、中央):")
+    for role, label in ROLES.items():
+        found = sorted((n, tid) for tid, (n, r) in loads.items() if r == role)
+        if found:
+            print(f"  {label}: {len(found)}件、{found[-1][0]:,}({found[-1][1]})、{int(statistics.median(n for n, _ in found)):,}")
+    every = sorted((n, tid) for tid, (n, _) in loads.items())
+    print(f"  計: {len(every)}件、{every[-1][0]:,}({every[-1][1]})、{int(statistics.median(n for n, _ in every)):,}")
+    tasks = [t for t in src.plan.tasks if t["skill"]]
+    reportless = [t for t in tasks if t["role"] not in PER_STAGE and not src.plan.roles[t["role"]].get("report")]
+    print(f"工程表に定めがない項目(スキルを持つ作業 {len(tasks)} 件のうち。誤りにはしない):")
+    for label, found in (("入力", [t for t in tasks if not t["inputs"]]), ("成果物", [t for t in tasks if not t["outputs"]]),
+                         ("手順の見出し", [t for t in tasks if not t["sections"]]),
+                         ("検査", [t for t in tasks if not t["checks"]]), ("報告の書式", reportless)):
+        print(f"  {label}: {len(found)}件" + (f"({'、'.join(t['id'] for t in found)})" if found else ""))
+    return fits_all
 
 
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     parser = argparse.ArgumentParser(description="工程表、工程の文書、検査の台帳から、スキルを作る")
     parser.add_argument("--check", action="store_true", help="スキルが正本と一致するかだけを確かめる")
-    parser.add_argument("--stats", action="store_true", help="行数とバイト数を出す")
+    parser.add_argument("--stats", action="store_true", help="量と、定めがない項目の数を出す")
     parser.add_argument("--root", default=os.path.join(here, ".."), help="リポジトリの根")
     args = parser.parse_args()
 
@@ -423,16 +576,16 @@ def main():
     if src.errors:
         print("正本に誤りがある。何も書いていない:", *src.errors, sep="\n  ")
         return 1
-    expected, stats = build(src)
-    errors = validate(expected)
+    expected, errors = build(src)
+    errors += validate(expected)
     if errors:
-        print("作ったスキルの書式に誤りがある。何も書いていない:", *errors, sep="\n  ")
+        print("作ったスキルに誤りがある。何も書いていない:", *errors, sep="\n  ")
         return 1
     if args.stats:
-        print_stats(expected, stats)
-        return 1 if any(s["head"] > HEAD_BYTES for s in stats) else 0
+        return 0 if print_stats(src, expected) else 1
 
     stale, missing, extra, foreign = compare(src, expected)
+    summary = f"スキルは正本と一致している(スキル {len(src.plan.skills)} 個、ファイル {len(expected)} 個)"
     if args.check:
         for title, paths in (("正本とずれているファイルがある:", stale), ("ないファイルがある:", missing),
                              ("余分なファイルがある:", extra + foreign)):
@@ -440,7 +593,7 @@ def main():
                 print(title, *[os.path.join(".claude/skills", p) for p in paths], sep="\n  ")
         if stale or missing or extra or foreign:
             return 1
-        print(f"スキルは正本と一致している(スキル {len(stats)} 個、ファイル {len(expected)} 個)")
+        print(summary)
         return 0
     write(src, expected, stale, missing, extra)
     for title, paths in (("書いたファイル:", stale + missing), ("消したファイル:", extra)):
@@ -451,7 +604,7 @@ def main():
               *[os.path.join(".claude/skills", p) for p in foreign], sep="\n  ")
         return 1
     if not (stale or missing or extra):
-        print(f"スキルは正本と一致している(スキル {len(stats)} 個、ファイル {len(expected)} 個)")
+        print(summary)
     return 0
 
 

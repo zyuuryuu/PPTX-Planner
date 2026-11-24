@@ -68,6 +68,10 @@ roles:
       - 'organization.md#セッションの分離'
       - 'rework.md#原則'
       - 'rework.md#検査と記録を守る'
+      - 'rework.md#不合格のときの手順'
+      - 'rework.md#警告'
+      - 'rework.md#記録'
+      - 'rework.md#上流が変わったとき'
     report:
       - 'rework.md#記録'
       - 'rework.md#不合格のときの手順'
@@ -396,6 +400,9 @@ tasks:
     - 'writing.md#削ってよいものと、削ってはいけないもの'
     - 'rework.md#役割'
     - 'rework.md#不合格のときの手順'
+    - 'stages/01-exploration.md#画像の素材'
+    - 'stages/01-exploration.md#調査依頼'
+    - 'git.md#管理の方法'
   checks: [K01-06, K01-07, K01-08, K01-09, K01-10, K01-11, K01-12, K01-13]
   next: [record-stance]
 
@@ -452,7 +459,8 @@ tasks:
   sections:
     - 'stages/01-exploration.md#素材台帳 `01-sources.yaml`'
     - 'stages/01-exploration.md#仮説への立場'
-  references: []
+  references:
+    - 'stages/01-exploration.md#画像の素材'
   checks: [K01-16]
   next: [judge-exploration-end]
 
@@ -518,15 +526,16 @@ tasks:
   outputs: [checks/, 01-sources.yaml]
   sections:
     - 'stages/01-exploration.md#検証済みの印'
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
-    - 'checks.md#重大な検査'
     - 'writing.md#削ってよいものと、削ってはいけないもの'
     - 'stages/01-exploration.md#素材台帳 `01-sources.yaml`'
+    - 'stages/01-exploration.md#画像の素材'
   checks: [K01-08, K01-10, K01-15]
   next: [answer-questions]
 
@@ -539,13 +548,13 @@ tasks:
   outputs: [checks/, 01-sources.yaml]
   sections:
     - 'stages/01-exploration.md#検証済みの印'
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
-    - 'checks.md#重大な検査'
     - 'stages/01-exploration.md#画像の素材'
   checks: [K01-20, K01-21, K01-22]
   next: [answer-questions]
@@ -557,14 +566,14 @@ tasks:
   skill: deck-inspect
   inputs: [01-model.yaml, 01-sources.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
-    - 'checks.md#重大な検査'
     - 'model.md#成果物'
     - 'model.md#抜き出し'
   checks: [K01-25, K01-26, K01-27]
@@ -736,6 +745,7 @@ tasks:
     - 'organization.md#ユーザーとのやり取り'
     - 'rework.md#役割'
     - 'rework.md#不合格のときの手順'
+    - 'terms.md#語の登録の手順'
   checks: []
   next: [confirm-terms]
 
@@ -779,7 +789,8 @@ tasks:
   skill: deck-inspect
   inputs: [01-plan.yaml, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -787,7 +798,6 @@ tasks:
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
-    - 'checks.md#重大な検査'
     - 'writing.md#削ってよいものと、削ってはいけないもの'
   checks: [K02-03, K02-04, K02-08, K02-09, K02-11, K02-15, K02-16, K02-19, K02-22]
   next: [write-claims, approve-claims]
@@ -903,7 +913,8 @@ tasks:
   skill: deck-inspect
   inputs: [00-brief.md, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'stages/03-chapters.md#1. 結論の位置を決める'
     - 'organization.md#セッションの分離'
@@ -913,7 +924,6 @@ tasks:
     - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
     - 'checks.md#題と要点の通読'
-    - 'checks.md#重大な検査'
   checks: [K03-07, K03-08, K03-09, K03-15, K03-16, K03-17, K03-18, K03-19, K03-20]
   next: [approve-chapters]
 
@@ -1041,7 +1051,8 @@ tasks:
   skill: deck-inspect
   inputs: [00-brief.md, 01-sources.yaml, 02-answers.yaml, 03-chapters.yaml, 04-storyline.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -1050,7 +1061,6 @@ tasks:
     - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
     - 'checks.md#題と要点の通読'
-    - 'checks.md#重大な検査'
     - 'vocabulary.md#スライドの区分'
     - 'deck-types.md#定義の項目'
   checks: [K04-08, K04-17, K04-18, K04-19, K04-20, K04-21, K04-22, K04-23, K04-24, K04-25]
@@ -1142,7 +1152,8 @@ tasks:
   skill: deck-inspect
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'stages/05-proof.md#1. 主張の種類を判定する'
     - 'organization.md#セッションの分離'
@@ -1151,7 +1162,6 @@ tasks:
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
-    - 'checks.md#重大な検査'
     - 'vocabulary.md#主張の種類の語彙'
     - 'visual-grammar.md#含意の語彙'
     - 'visual-grammar.md#A と B: 含意の照合'
@@ -1322,6 +1332,7 @@ tasks:
     - 'terms.md#工程6: 凍結する'
   references:
     - 'terms.md#成果物'
+    - 'terms.md#語の登録の手順'
   checks: [K06-17, K06-18, K06-19]
   next: [check-patterns-machine]
 
@@ -1493,7 +1504,7 @@ tasks:
     - 'stages/07-slide-spec.md#前文'
     - 'stages/07-slide-spec.md#成果物'
     - 'stages/07-slide-spec.md#2. スライド仕様を書く'
-  references:
+    - 'organization.md#章の作業票'
     - 'writing.md#項目ごとの書き方'
     - 'writing.md#限定と出どころ'
     - 'writing.md#内部のID'
@@ -1502,6 +1513,7 @@ tasks:
     - 'writing.md#削ってよいものと、削ってはいけないもの'
     - 'writing.md#技術的な内容の規則'
     - 'writing.md#収まらないときの順序'
+  references:
     - 'organization.md#セッションの分離'
     - 'organization.md#完了の報告'
     - 'organization.md#上流の問題の戻し方'
@@ -1515,6 +1527,9 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#検査と記録を守る'
+    - 'terms.md#語の登録の手順'
+    - 'git.md#管理の方法'
+    - 'checks.md#検査の実行'
   checks: [K07-02, K07-03, K07-04, K07-05, K07-06, K07-07, K07-08, K07-09, K07-10, K07-11, K07-12, K07-13, K07-14, K07-15, K07-16, K07-18, K07-21, K07-22, K07-23, K07-24, K07-25, K07-26, K07-27, K07-28, K07-30, K07-31, K07-32, K07-33, K07-34, K07-35, K07-36, K07-37, K07-38, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
   next: [check-chapter-machine, check-term-application]
 
@@ -1543,7 +1558,8 @@ tasks:
   skill: deck-inspect
   inputs: [00-brief.md, 01-sources.yaml, 04-storyline.yaml, 05-proof.yaml, 07-slides/, terms.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -1552,7 +1568,6 @@ tasks:
     - 'rework.md#検査と記録を守る'
     - 'writing.md#検査セッションが判断するもの'
     - 'writing.md#削ってよいものと、削ってはいけないもの'
-    - 'checks.md#重大な検査'
     - 'visual-grammar.md#E: 注目'
     - 'terms.md#成果物'
   checks: [K07-05, K07-09, K07-14, K07-25, K07-26, K07-27, K07-28, K07-29]
@@ -1567,14 +1582,14 @@ tasks:
   restricted: true
   restricted_by: ['writing.md#検査セッションが判断するもの']
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
     - 'writing.md#検査セッションが判断するもの'
-    - 'checks.md#重大な検査'
   checks: [K07-13]
   next: [accept-chapter]
 
@@ -1722,7 +1737,9 @@ tasks:
     - 'rework.md#検査と記録を守る'
     - 'rework.md#上流が変わったとき'
     - 'rework.md#直す成果物と、無効になる範囲'
-  checks: [K07-42]
+    - 'stages/08-integration.md#結合の進め方'
+    - 'stages/08-integration.md#裁定'
+  checks: [K07-39, K07-40, K07-41, K07-42]
   next: [write-chapter-slides, coordinate-integration, coordinate-regression]
 
 - id: check-term-application
@@ -1893,6 +1910,7 @@ tasks:
   name: 全ての場面を通しで読む
   notes:
     - '期待する結果を読まない。題と要点の一覧は、「題と要点だけ」の場面だけで渡す'
+    - '前の章が未完成の場合と、途中の章から読む場合は、その章の入口の状態も渡される(stages/08-integration.md#渡すもの)'
   role: reader
   skill: deck-read
   inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '「題と要点の一覧」']
@@ -2118,14 +2136,14 @@ tasks:
   skill: deck-inspect
   inputs: [build/deck.pptx, 00-brief.md]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
-    - 'checks.md#重大な検査'
   checks: [K09-02]
   next: [make-inspection-report]
 

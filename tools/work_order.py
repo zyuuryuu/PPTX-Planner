@@ -21,7 +21,7 @@ import os
 import sys
 
 import build_skills
-from build_skills import input_lines, output_lines, place, places, unread_lines
+from build_skills import input_lines, output_lines, places
 from tasks_table import ROLES, as_list, stage_text
 
 PLACEHOLDER = "<資料のディレクトリ>"
@@ -52,24 +52,24 @@ def next_lines(src, task):
     return out
 
 
-def where(src, task):
-    """手順のある場所。スキルの置き場からのパス。"""
-    path = f"{task['skill']}/tasks/{task['id']}.md"
-    if os.path.isfile(os.path.join(src.out_dir, path)):
-        return f"スキル `{task['skill']}` の `tasks/{task['id']}.md`"
-    return f"スキル `{task['skill']}` の「`{task['id']}` {task['name']}」"
+def unread_lines(src, task):
+    """読まないもの。制限の定めの文面は、作業のファイルにある。"""
+    if not task.get("restricted"):
+        return ["この作業だけの制限はない。スキルの「守ること」に従う。"]
+    return ["入力に挙げたもの以外を読まない。作業のファイルと、スキルの「守ること」は読む。正本の文書(`docs/`)は開かない。",
+            "この作業では、「守ること」の表より、入力の制限が優先する。"]
 
 
 def for_session(src, task, args):
     """LLMの担当の作業票。"""
-    out = [f"/{task['skill']}", "", header(task), f"手順は、{where(src, task)} にある。ほかの作業の手順は読まない。", ""]
+    out = [f"/{task['skill']}", "", header(task), f"手順は、スキル `{task['skill']}` の `tasks/{task['id']}.md` にある。", ""]
     out += target_lines(args) + note_lines(task)
     out += ["", "入力:"] + input_lines(task)
-    out += ["", "読まないもの:"] + [t for t in unread_lines(src, task) if t]
+    out += ["", "読まないもの:"] + unread_lines(src, task)
     out += ["", "成果物:"] + output_lines(task)
     report = src.plan.roles[task["role"]].get("report", [])
     if report:
-        out += ["", "報告の書式: 次の定めによる。"] + places(report)
+        out += ["", "報告の書式: 作業のファイルの「報告の書式」による。"]
     elif task["role"] not in build_skills.PER_STAGE:
         out += ["", "報告の書式: 文書に定めがない。"]
     if task["role"] not in build_skills.PER_STAGE:
