@@ -329,6 +329,28 @@
   axis: null
   base: none
   holds: []
+- id: ch3-s17
+  relation: branching-flow
+  show: 'このSOCの運用の流れ図: 新人に届いたアラートから、一覧にある→閉じる、誤検知と根拠をもって言える→閉じる、重大度が高い→すぐ上げる、攻撃の試み→上げる、どれでもない→調べる(30分)→閉じる根拠があれば閉じる/なければ見たことを付けて上げる。案の部分(誤検知と言える基準、30分の後の分かれ方)に「案」の印を付ける'
+  focus: どのアラートも、この流れのどれか1つの道を通ること
+  real: true
+  view:
+    scenario: S-newbie-ops
+    elements:
+    - E-newbie
+    - D-op-alert
+    - A-close
+    - A-investigate
+    - A-escalate
+  facts:
+  - F002
+  - F003
+  - F005
+  axis: null
+  base: none
+  holds:
+  - ordered
+  - connected
 - id: ch4-s1
   relation: statement
   show: 米上院の報告の記述の要約1文(マルウェアの導入のたびに検知製品が緊急のアラートを出したが、対応がなかった。報道を引いた記述)
@@ -449,20 +471,11 @@
 - id: ap-s2
   relation: statement
   relation_reason: 「見つからなかった」ことを述べるスライドで、比べる対象も順序もない
-  show: 近い調査の2件と、それぞれが測ったもの(調べる操作の数、不確かなときの行動の自己申告)。遅れそのものは測っていないことを示す
-  focus: 直接測った調査がないこと
+  show: 近い調査の3件と、それぞれが測ったもの(調べる操作の数、不確かなときの行動の自己申告、上げすぎる圧力の証言)。どれも誤りの割合は測っていないことを示す
+  focus: どちらの誤りも、割合を測った調査がないこと
   facts:
   - F508
   - F509
-  axis: null
-  base: none
-  holds: []
-- id: ap-s3
-  relation: statement
-  relation_reason: 「見つからなかった」ことを述べるスライドで、比べる対象も順序もない
-  show: 近い調査の1件(上げすぎる圧力の証言)と、割合は測っていないこと
-  focus: 割合を測った調査がないこと
-  facts:
   - F510
   axis: null
   base: none

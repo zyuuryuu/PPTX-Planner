@@ -304,6 +304,19 @@
   - F413
   - F414
   source: Decryption Digest の解説記事(2026年)、Security Scientist の解説(日付なし)。どちらも標準や公的文書ではない
+- id: ch3-s17
+  chapter: ch3
+  section: null
+  question: 1件のアラートを受けたら、新人はどう動くのか
+  headline: このSOCの新人は、一覧か誤検知なら閉じ、重大度が高いか攻撃の試みなら上げ、残りは30分調べる
+  from:
+  - Q2
+  - Q3
+  evidence:
+  - F002
+  - F003
+  - F005
+  source: このSOCの運用。「誤検知と言える」の基準と、30分で根拠がなければ上げる分かれ方は案
 - id: ch4-s1
   chapter: ch4
   section: null
@@ -390,23 +403,14 @@
 - id: ap-s2
   chapter: appendix
   section: null
-  question: 上げるのが遅れる誤りは、どれだけ起きているのか
-  headline: 上げるのが遅れる誤りを直接測った公開の調査は見つからなかった
+  question: 上げるのが遅れる誤りや、上げすぎる誤りは、どれだけ起きているのか
+  headline: 上げるのが遅れる誤りも、上げすぎる誤りも、割合を測った公開の調査は見つからなかった
   from:
   - Q4.2
+  - Q4.3
   evidence:
   - F508
   - F509
-  appendix_of: ch3-s11
-  source: Kerstenら(2025年)、Moosmannら(2026年)。どちらも遅れそのものは測っていない
-- id: ap-s3
-  chapter: appendix
-  section: null
-  question: 上げすぎる誤りは、どれだけ起きているのか
-  headline: 上げすぎる誤りの割合を測った調査は見つからなかった
-  from:
-  - Q4.3
-  evidence:
   - F510
-  appendix_of: ch3-s14
-  source: Alahmadiら(USENIX Security 2022)。上げすぎる圧力の証言はあるが、割合は測っていない
+  appendix_of: ch3-s11
+  source: Kerstenら(2025年)、Moosmannら(2026年)、Alahmadiら(USENIX Security 2022)。近い調査はあるが、どれも誤りの割合は測っていない

@@ -16,6 +16,8 @@
 #     notify(from が to に知らせる) / investigate(from が to を調べる)
 #     store_in(from のログの保存先が to である。経路や転送は表さない) / based_on(from が to を基にする)
 #   basis: description(出典が仕組みを記述している) / requirement(標準の要件・ひな形の「〜しなければならない」) / product(特定の製品の記述)
+#     / operation(依頼者のSOCの運用。依頼者の証言 F002〜F005。工程5で設計セッションが足した)
+#   要素 kind に action(新人の行き先: 閉じる、調べる、上げる)を、つながり kind に route(from の状態から、condition のとき to の行き先へ進む)を足した(工程5)
 #   mode: 送り方(push / pull / リアルタイムなど)。condition: つながりが成り立つ条件。書かれていないものは unknown。
 #
 # 出典で裏付けられず、つながりを登録しなかった箇所(図では途切れとして示す必要がある):
@@ -287,6 +289,38 @@ elements:
     name: 悪意のある可能性のある振る舞い(potentially malicious behavior)
     evidence: [F620]
     note: Symantec EDR
+
+  # ---------- このSOCの運用(依頼者の証言。工程5で設計セッションが足した) ----------
+  - id: E-newbie
+    basis: operation
+    kind: actor
+    name: 配属から3か月の新人
+    evidence: [F002, F003, F005]
+    note: このSOCの運用
+  - id: D-op-alert
+    basis: operation
+    kind: data
+    name: 新人に届いたアラート
+    evidence: [F002]
+    note: このSOCの運用
+  - id: A-close
+    basis: operation
+    kind: action
+    name: 閉じる(記録して終える)
+    evidence: [F002]
+    note: このSOCの運用
+  - id: A-investigate
+    basis: operation
+    kind: action
+    name: 調べる(30分まで)
+    evidence: [F005]
+    note: このSOCの運用
+  - id: A-escalate
+    basis: operation
+    kind: action
+    name: 上げる
+    evidence: [F003, F005]
+    note: このSOCの運用
 
 relations:
   # ---------- SIEM(一般。NIST SP 800-92) ----------
@@ -613,6 +647,78 @@ relations:
     evidence: [F620]
     note: Symantec EDR(NIST SP 1800-24C の構築例)
 
+  # ---------- このSOCの運用(依頼者の証言) ----------
+  - id: R-op-list
+    basis: operation
+    kind: route
+    from: D-op-alert
+    to: A-close
+    label: 閉じる
+    mode: unknown
+    condition: リーダーの一覧にある活動に当てはまる
+    evidence: [F002]
+    note: このSOCの運用
+  - id: R-op-fp
+    basis: operation
+    kind: route
+    from: D-op-alert
+    to: A-close
+    label: 閉じる
+    mode: unknown
+    condition: 誤検知と根拠をもって言える
+    evidence: [F002]
+    note: このSOCの運用。誤検知と言える基準は案(D001、ch3-s5)
+  - id: R-op-severe
+    basis: operation
+    kind: route
+    from: D-op-alert
+    to: A-escalate
+    label: 30分を待たずにすぐ上げる
+    mode: unknown
+    condition: 重大度が高い
+    evidence: [F005]
+    note: このSOCの運用
+  - id: R-op-attempt
+    basis: operation
+    kind: route
+    from: D-op-alert
+    to: A-escalate
+    label: 上げる
+    mode: unknown
+    condition: 侵害に至らなかった攻撃の試み(配属から3か月)
+    evidence: [F003]
+    note: このSOCの運用
+  - id: R-op-other
+    basis: operation
+    kind: route
+    from: D-op-alert
+    to: A-investigate
+    label: 調べる
+    mode: unknown
+    condition: 上のどれにも当たらない
+    evidence: [F005]
+    note: このSOCの運用。依頼者が挙げた順に確かめる
+  - id: R-op-inv-close
+    basis: operation
+    kind: route
+    from: A-investigate
+    to: A-close
+    label: 閉じる
+    mode: unknown
+    condition: 30分の中で閉じる根拠が得られた
+    evidence: [F005]
+    note: このSOCの運用(30分)。根拠が得られたら閉じる分かれ方は案(D008)
+  - id: R-op-inv-esc
+    basis: operation
+    kind: route
+    from: A-investigate
+    to: A-escalate
+    label: 見たことを付けて上げる
+    mode: unknown
+    condition: 30分たっても閉じる根拠がない
+    evidence: [F005]
+    note: このSOCの運用(30分、見たことを付ける)。根拠がなければ上げる分かれ方は案(D008)
+
 scenarios:
   - id: S-siem-agent
     basis: description
@@ -662,3 +768,9 @@ scenarios:
     steps: [R-sep-symedr, R-symedr-malicious]
     evidence: [F620]
     note: Symantec EDR(NIST SP 1800-24C の構築例)
+  - id: S-newbie-ops
+    basis: operation
+    name: このSOCで、配属から3か月の新人が1件のアラートを扱う流れ
+    steps: [R-op-list, R-op-fp, R-op-severe, R-op-attempt, R-op-other, R-op-inv-close, R-op-inv-esc]
+    evidence: [F002, F003, F005]
+    note: 依頼者が工程5で挙げた順(一覧/誤検知→閉じる、重大度が高い→すぐ上げる、攻撃の試み→上げる、それ以外→30分調べる)。依頼者の運用で、線は依頼者が決めた
