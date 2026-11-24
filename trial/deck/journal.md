@@ -58,6 +58,9 @@
 | 49 | 3 | 検査(重大・再検査) | 章構成の直した箇所 | claude-sonnet-5-5 | session_01LpWHd4CDLXnd7pz9PDaitf |
 | 50 | 3 | 検査(重大・最終の再検査) | ch3 の運用の出どころ、ch5 の枚数の理由 | claude-haiku-5-5 | session_01LpWHd3vPqAZnuiJPnbhqLy |
 | 51 | 3 | 検査(重大) | 依頼者の指示で短くした ch2、ch3 の message | claude-sonnet-5-5 | session_01LpWHd3u2EmqF7vGtrojH76 |
+| 52 | 4 | 検査(重大・1回目) | 見出しの限定(49a88e2) | claude-opus-5-5 | session_01LpWHczvFKASJS7eRocW5mJ |
+| 53 | 4 | 検査(重大・2回目) | 見出しの限定(49a88e2) | claude-sonnet-5-5 | session_01LpWHd3MTSE6Wksms1BKyJE |
+| 54 | 4 | 検査(意味の検査) | 見出し、章の状態、場面(49a88e2) | claude-opus-5-5 | session_01LpWHd1rMh49VFsWMDBcTmH |
 
 ## 工程0 依頼の確定
 
@@ -381,3 +384,4 @@
 - 骨組みの資料に章のまとめのスライドが出ないため、章の枚数の配分(章扉とまとめを含む)と、ビルドした枚数が一致しない。
 - 依頼者に見出しの長さを聞いた(待ち始め 00:41 UTC)。返事: B(見出しは2行まで。出典の行は見出しのすぐ下に、後ろの席から読める大きさで)。D006 として記録し、`style.yaml` に `headline_chars: 50` を足した。全ての見出しを50字以内に書き直し、スライドごとに `source`(出典の行)を足した。書き直しで事実の言い方から離れた見出し(「その多くは」、「公的な目安はない」の検索範囲の脱落、出典の助言を言い切りにした見出し)を自分で見つけて直した。出典の助言から組み立てた手順の見出しには「案として」を付けた(D001)。
 - `build.py` は `source` を知らないため、骨組みの資料の HTML に出典の行を足すスクリプト(`preview/add_source.py`)を作り、`preview/skeleton.html` はそれを通したものにした。PowerPoint 版には出典の行がない。
+- 検査を3つ起こした(表の52〜54。対象 49a88e2)。待ち始め: 00:44 UTC。
