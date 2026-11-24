@@ -1,5 +1,9 @@
 # 検査の台帳。項目の説明は checks.md にある。
 # 工程の文書の合格条件は、tools/checks_table.py がこの台帳から作る。
+# count は検査の件数。項目を足すとき、消すときに、あわせて直す。
+
+count: 243
+checks:
 
 # ---- 工程0
 
@@ -470,6 +474,7 @@
   target: "主張の骨子: `answer`、`summary`、主張"
   check: "`answer`、`summary`、各主張が、[文章の書き方](writing.md)の機械で測る検査と、[使う語彙](terms.md)の検査を通る。新しい語は、語彙表に登録されている"
   judge: machine
+  refers: [KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
 
 - id: K02-26
   stage: 2
@@ -548,6 +553,7 @@
   target: "章構成: 章と節の題と要点"
   check: "章と節の題と要点が、[文章の書き方](writing.md)の機械で測る検査と、[使う語彙](terms.md)の検査を通る"
   judge: machine
+  refers: [KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
 
 - id: K03-12
   stage: 3
@@ -719,6 +725,7 @@
   target: "ストーリーライン: 題と要点"
   check: "題と要点が、[文章の書き方](writing.md)の機械で測る検査と、[使う語彙](terms.md)の検査を通る。新しい語は、語彙表に登録されている"
   judge: machine
+  refers: [KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
 
 - id: K04-16
   stage: 4
@@ -886,6 +893,7 @@
   target: "立証の設計: `facts`"
   check: "同じ事実を複数のスライドが使う場合は、警告とする"
   judge: machine
+  level: warning
   note: "意図した再掲かどうかは、工程5の承認のときに、警告の扱いとして決める。"
 
 - id: K05-10
@@ -893,6 +901,7 @@
   target: "立証の設計: `view` の要素"
   check: "やり取りや状態の遷移の図に出る要素が、構成または要素の関係の図のいずれかにも出る。出ない場合は警告とする"
   judge: machine
+  level: warning
 
 - id: K05-11
   stage: 5
@@ -1253,6 +1262,7 @@
   target: "スライド仕様: 読み手に見せる文"
   check: "[文章の書き方](writing.md)の機械で測る検査を通る"
   judge: machine
+  refers: [KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16]
 
 - id: K07-22
   stage: 7
@@ -1260,6 +1270,7 @@
   target: "スライド仕様: 読み手に見せる文"
   check: "[使う語彙](terms.md)の検査を通る"
   judge: machine
+  refers: [KX-17, KX-18, KX-19]
 
 - id: K07-23
   stage: 7
@@ -1379,6 +1390,7 @@
   target: "スライド仕様: 図の要素とつながりの数"
   check: "図の要素とつながりの数が型の収容量を超える場合は、警告とする"
   judge: machine
+  level: warning
   defined_in: visual-grammar.md#d-知覚の限界
 
 - id: K07-38
@@ -1417,7 +1429,8 @@
   group: "章の受け入れ"
   target: "章をビルドした実物: 主な読み手の通読"
   check: "骨組みの資料の該当する章を実物に差し替え、主な読み手の通読をその章について実行する。前の章が未完成の場合は、入口の状態を章の前提と到達点から与える。重大度が高のエラーがなく、章の出口の状態が到達点と合う"
-  judge: reader
+  judge: [reader, machine]
+  judge_text: "読み手の役のセッションが読み、PMが出口の状態と到達点を機械的に照合する"
   defined_in: stages/08-integration.md#実行の方法
 
 # ---- 工程8
@@ -1593,6 +1606,7 @@
   target: "最終の出力: ノートの字数"
   check: "口頭の資料で、ノートの字数から見積もった発表時間が、ブリーフの制約を超える"
   judge: machine
+  level: warning
 
 - id: K09-11
   stage: 9
