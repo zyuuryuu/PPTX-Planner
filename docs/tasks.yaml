@@ -40,7 +40,7 @@ roles:
       - 'organization.md#ユーザーとのやり取り'
       - 'principles.md#原則'
       - 'rework.md#原則'
-      - 'rework.md#承認のタグ'
+      - 'rework.md#承認の記録'
   pm:
     rules:
       - 'organization.md#PM'
@@ -266,21 +266,21 @@ tasks:
     - 'stages/00-brief.md#受け入れの問い'
   references: []
   checks: [K00-06, K00-09]
-  next: [tag-approval]
+  next: [record-approval]
 
-- id: tag-approval
+- id: record-approval
   stage: [0, 1, 2, 3, 4, 5, 6]
-  name: 承認した成果物にタグを付ける
+  name: ユーザーの承認を状態の記録に書く
   notes:
     - 'ユーザーが成果物を承認するたびに行う'
-    - 'outputs: 承認のタグ(rework.md#承認のタグ)'
+    - '承認を記録する命令の道具は、まだない'
     - 'next: 承認した工程の、次の作業に進む'
   role: designer
   skill: deck-design-0
   inputs: [00-brief.md, 01-plan.yaml, 01-model.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 05-proof.yaml, 06-samples/, terms.yaml]
-  outputs: []
+  outputs: [status.yaml]
   sections:
-    - 'rework.md#承認のタグ'
+    - 'rework.md#承認の記録'
   references:
     - 'git.md#管理の方法'
   checks: []
@@ -373,7 +373,7 @@ tasks:
     - 'stages/01-exploration.md#計画の承認'
   references: []
   checks: [K01-05]
-  next: [tag-approval]
+  next: [record-approval]
 
 - id: request-research
   stage: 1
@@ -669,7 +669,7 @@ tasks:
   sections: []
   references: []
   checks: [K01-29, K01-30]
-  next: [tag-approval]
+  next: [record-approval]
 
 # ---- 工程2
 
@@ -956,7 +956,7 @@ tasks:
   sections: []
   references: []
   checks: [K02-24, K02-26]
-  next: [tag-approval]
+  next: [record-approval]
 
 # ---- 工程3
 
@@ -1058,7 +1058,7 @@ tasks:
     - 'stages/03-chapters.md#7. 承認する'
   references: []
   checks: [K03-21]
-  next: [tag-approval]
+  next: [record-approval]
 
 # ---- 工程4
 
@@ -1198,7 +1198,7 @@ tasks:
     - 'stages/04-storyline.md#10. 承認する'
   references: []
   checks: [K04-30]
-  next: [tag-approval]
+  next: [record-approval]
 
 # ---- 工程5
 
@@ -1345,7 +1345,7 @@ tasks:
     - 'stages/05-proof.md#8. 承認する'
   references: []
   checks: [K05-17]
-  next: [tag-approval]
+  next: [record-approval]
 
 # ---- 工程6
 
@@ -1557,7 +1557,7 @@ tasks:
     - 'stages/06-patterns.md#8. 型の見本と語彙表を承認する'
   references: []
   checks: [K06-06, K06-16]
-  next: [tag-approval]
+  next: [record-approval]
 
 - id: approve-terms
   stage: 6
@@ -1572,7 +1572,7 @@ tasks:
     - 'stages/06-patterns.md#8. 型の見本と語彙表を承認する'
   references: []
   checks: [K06-20]
-  next: [tag-approval]
+  next: [record-approval]
 
 - id: freeze-terms
   stage: 6
@@ -1946,9 +1946,9 @@ tasks:
   role: pm
   skill: deck-pm-7
   notes:
-    - 'outputs: 承認のタグ(rework.md#承認のタグ)。状態の記録は、検査のコマンドがタグから写す'
+    - '章の受け入れは、承認を記録する命令で状態の記録に書く(rework.md#承認の記録)。命令の道具は、まだない'
   inputs: [status.yaml, checks/, runs/, 04-chapter-states.yaml]
-  outputs: []
+  outputs: [status.yaml]
   sections:
     - 'stages/07-slide-spec.md#3. 章を受け入れる'
     - 'stages/08-integration.md#渡すもの'
@@ -1961,7 +1961,7 @@ tasks:
     - 'rework.md#役割'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
-    - 'rework.md#承認のタグ'
+    - 'rework.md#承認の記録'
     - 'rework.md#検査と記録を守る'
     - 'rework.md#上流が変わったとき'
     - 'rework.md#直す成果物と、無効になる範囲'
@@ -2477,18 +2477,18 @@ tasks:
 
 - id: hand-over
   stage: 9
-  name: 承認した版にタグを付けて引き渡す
+  name: ユーザーの承認を状態の記録に書いて引き渡す
   notes:
-    - 'outputs: 承認のタグ(rework.md#承認のタグ)'
+    - '承認を記録する命令の道具は、まだない'
   role: pm
   skill: deck-pm-9
   inputs: []
-  outputs: []
+  outputs: [status.yaml]
   sections:
     - 'stages/09-finish.md#7. 引き渡す'
   references:
     - 'git.md#管理の方法'
-    - 'rework.md#承認のタグ'
+    - 'rework.md#承認の記録'
   checks: []
   next: [record-reactions, tally-metrics]
 

@@ -58,19 +58,20 @@ description: スライド資料の工程6(表現設計)で、設計セッショ�
 5. 往復に上限を持つ。超えたら人が決める。
 6. 合格も不合格も、記録に残す。記録は、検査した側が書く。
 
-### 承認のタグ(`docs/rework.md`)
+### 承認の記録(`docs/rework.md`)
 
-ユーザーが承認した成果物と、PMが受け入れた章には、その時点の版にGitのタグを付ける。付けるのは、設計の時期(工程0から6)は設計セッション、製造の時期(工程7から9)はPMである。
+ユーザーの承認と、PMによる章の受け入れは、状態の記録に書く。書くのは、承認を記録する命令である。命令を実行するのは、設計の時期(工程0から6)は設計セッション、製造の時期(工程7から9)はPMである。
 
-- タグの名前は、`approved/` に、成果物のファイル名から拡張子を除いたものを続ける。章のスライド仕様 `07-slides/ch2.yaml` のタグは、`approved/07-slides/ch2` である。
-- 承認を取り直したときは、新しい版に付け直す。
-- 検査のコマンドが、タグを状態の記録に写す。
+- 命令は、成果物の `state` を `approved` にし、承認した版のコミットのIDを `commit` に、承認した者を `approved_by` に、日付を `approved_on` に書く。
+- ユーザーの承認は、ユーザーが承認したと言った成果物についてだけ記録する。言っていないものを記録しない。
+- 章の受け入れは、PMが、受け入れの条件を全て満たした章について記録する。
+- 承認を取り直したときは、新しい版で記録し直す。
 
 ## 作業の一覧
 
 | 順 | 作業 | 名前 | 工程 | 手順 |
 |---|---|---|---|---|
-| 1 | `tag-approval` | 承認した成果物にタグを付ける | 0〜6 | [`deck-design-0`](../deck-design-0/tasks/tag-approval.md) が持つ |
+| 1 | `record-approval` | ユーザーの承認を状態の記録に書く | 0〜6 | [`deck-design-0`](../deck-design-0/tasks/record-approval.md) が持つ |
 | 2 | `map-patterns` | 主張の種類ごとに型を選ぶ | 6 | [tasks/map-patterns.md](tasks/map-patterns.md) |
 | 3 | `set-common-rules` | 要点の位置と資料に共通の規則を決める | 6 | [tasks/set-common-rules.md](tasks/set-common-rules.md) |
 | 4 | `write-samples` | 型の見本のスライド仕様を書く | 6 | [tasks/write-samples.md](tasks/write-samples.md) |
