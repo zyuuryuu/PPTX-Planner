@@ -1,0 +1,69 @@
+# 章構成(工程3)。研修資料の chapter_order(目標、全体像、単元ごとの説明と演習、まとめ)を出発点にした。
+# 手順(C2)と基準(C3)は1つの章に入れ、確かめる段階ごとに基準を対にする(工程0の検査の提案)。
+order:
+  conclusion: first
+  basis: structure
+chapters:
+  - id: ch1
+    kind: intro
+    title: この講義で身につけること
+    message: アラートは、誤検知、想定内の検知、攻撃の疑いの3つに分ける。根拠をもって誤検知か想定内と言えるものだけを記録して閉じ、迷ったら上げる
+    slides: 4
+    slides_reason: 結論と講義の進め方だけを示し、説明は本論に回すため少なくする
+  - id: ch2
+    kind: body
+    title: アラートは本物の攻撃とは限らない
+    message: アラートは、SIEMやEDRが検知の条件に合うイベントを見つけて出す知らせで、本物の攻撃とは限らない。誤検知の割合は数え方で割れ、1つの実在のSOCの実測では、侵害に至らなかった攻撃の試みが27%以上、想定内の検知が49%以上あった
+    claims: [C1]
+    slides: 12
+    slides_reason: 新人は SIEM、EDR、ログの見方、攻撃の手口の分類を知らず(ブリーフ)、誤検知と想定内の検知のパターンも依頼者が残すよう求めたため、多く充てる
+  - id: ch3
+    kind: body
+    title: 1件のアラートの扱い方
+    message: 閉じる、調べる、上げるの線は調べた公的な文書になく、この講義は案として、まず根拠とログで3つに分けて影響で優先度を付け、根拠をもって誤検知か想定内と言えれば記録して閉じ、時間内に決められないとき、重要な資産での疑い、横展開の証拠があるとき、迷うときは上げる手順を示す
+    claims: [C2, C3]
+    slides: 18
+    slides_reason: 講義の目的そのもので、新人の3つの懸念(何を見ればよいか、閉じるのが怖い、どこまで調べたら上げるか)の全てに答える章のため、最も多く充てる
+  - id: ch4
+    kind: body
+    title: 誤りやすい点
+    message: 誤検知に慣れると、本物の攻撃のアラートを見過ごしうる
+    claims: [C4]
+    slides: 5
+    slides_reason: 見過ごしの事例と調査は少なく、1つの事案と1つの調査で足りるため少なくする
+  - id: ch5
+    kind: closing
+    title: 演習とまとめ
+    message: 新人は、この講義の最後の演習で、架空のアラートを3つに分け、閉じる、調べる、上げるのどれにするかと根拠を答え、配属から3か月で1人で決められるようにする
+    slides: 11
+    slides_reason: 習得を演習で確かめる(ブリーフ)。架空のアラート1件につき問題と解説の2枚を、4件分充てる
+omitted:
+  - question: Q4.2
+    to: appendix
+    reason: 上げるのが遅れる誤りを直接測った公開の調査がなく、本論で教える材料がない。限界として付録に示す
+  - question: Q4.3
+    to: appendix
+    reason: 上げすぎる誤りの測定がなく、依頼者の運用(攻撃の試みは全て上げる)では新人の判断の対象でない。付録に示す
+  - question: Q1.1.2
+    to: appendix
+    reason: 届く量は出典で大きく違い、新人が1件を扱う手順には要らない。数字を問われたときのために付録に示す
+contradictions: []
+objections:
+  - claim: C1
+    index: 0
+    to: body
+  - claim: C1
+    index: 1
+    to: body
+  - claim: C3
+    index: 0
+    to: body
+  - claim: C3
+    index: 1
+    to: appendix
+  - claim: C3
+    index: 2
+    to: body
+  - claim: C3
+    index: 3
+    to: body
