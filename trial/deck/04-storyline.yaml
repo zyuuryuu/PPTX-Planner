@@ -239,12 +239,13 @@
   chapter: ch3
   section: null
   question: どこまで調べたら上げてよいのか
-  headline: 調べた公的な文書に持ち時間の目安はない。実務者の解説の1件は12〜20分を目安とする
+  headline: このSOCでは、最初の3か月は1件30分まで調べ、過ぎたら見たことを付けて上げる
   from:
   - Q3.2
   evidence:
+  - F005
   - F403
-  source: Decryption Digest の解説記事(2026年)。標準や公的文書ではない。根拠の調査は示されていない
+  source: 'このSOCの運用(測った値ではなく、外の目安より長めに取った)。参考: Decryption Digest の解説記事(2026年)は一次解析で12〜20分とする'
 - id: ch3-s12
   chapter: ch3
   section: null
@@ -363,7 +364,7 @@
   chapter: ch5
   section: null
   question: 演習4の答えは何か
-  headline: '演習4の答え: 閉じずに調べ、持ち時間の中で正当と確かめられなければ、経過を添えて上げる'
+  headline: '演習4の答え: 閉じずに調べ、30分の中で正当と確かめられなければ、見たことを付けて上げる'
 - id: ap-s1
   chapter: appendix
   section: null
