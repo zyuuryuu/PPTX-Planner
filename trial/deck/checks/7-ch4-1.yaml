@@ -1,0 +1,156 @@
+# 検査の結果(工程7、ch4、1回目)
+check: 工程7の重大な検査(裏付けのない文、限定の残存)
+definition:
+- docs/writing.md「検査」の節「検査セッションが判断するもの」の「裏付けのない文」「限定の残存」
+- docs/checks.md「重大な検査」の工程7の2行(スライドの文に、裏付けのない文がない / スライドの文が、事実の限定を落としていない)
+target:
+  file: trial/deck/07-slides/ch4.yaml
+  commit: e35873c
+  slides: [ch4-s1, ch4-s3]   # ch4-s2 は承認済みの型の見本のため対象外
+  upstream: trial/deck/work/ch4.md(F500、F506、ストーリーラインの source、立証の設計)
+inspector: claude-opus-5-5
+assumptions:
+- '{F506} は台帳の value と unit で「56%」に置き換わるものとして読んだ。'
+- ストーリーラインの source は見出しの下に描かれるため、そこにある限定は残っているとみなした(依頼の指示、作業票の D006 の説明)。見出しも画面に出るため、限定が見出しにある場合も残っているとみなした。
+- 限定の残存は、スライドの単位で、事実の qualifiers が全て画面かノートに残るかを見る。文ごとの判定は、その文が限定を外して主張を事実より強く、広くしていないかを見る。
+- 出典の原文は開いていない(照合は依頼されていない)。事実の quote と qualifiers を正とした。
+
+summary:
+  fail: 1
+  undeterminable: 1
+  pass: 40   # 文ごとの2条件の判定(20文×2)と、スライドごとの限定の判定(2件)を合わせた42件のうち
+
+slides:
+- id: ch4-s1
+  facts: [F500]
+  qualifiers_coverage:   # スライド単位の限定の残存
+    verdict: 合格
+    items:
+    - qualifier: Bloomberg Businessweekの報道を引用した記述
+      where: 出典の行「報道(Bloomberg Businessweek)を引いた記述」、notes の1文目
+    - qualifier: 報告自身は新たな技術的事実を示していない公開情報ベースのスタッフ報告
+      where: body.caveat「報告は公開情報にもとづき、新たな技術的事実は示していない」
+    - qualifier: 2013年の1事案
+      where: 見出し「2013年のTargetの侵害では」
+  sentences:
+  - field: takeaway
+    text: 検知の仕組みが攻撃を捉えていても、アラートを扱う人の側で見過ごしは起こりうる
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 1事案からの一般化だが「起こりうる」(可能性)に留めており、1件の発生で裏付けられる範囲にある。
+  - field: body.text
+    text: 侵入を検知する製品は、データを持ち出すためのマルウェアが導入されるたびに緊急のアラートを出したが、Targetのセキュリティチームは対応しなかった
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F500 の quote(triggered urgent alerts with each installation of the data exfiltration malware ... neither reacted to the alarms)と合う。報道を引いた記述であることは出典の行にある。
+  - field: body.caveat
+    text: 報告は公開情報にもとづき、新たな技術的事実は示していない
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 報告は報道(Bloomberg Businessweek)を引いてこの経過を述べている。
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 強調したいのは、検知の製品はアラートを出していた、という点である。
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 見落としたのは検知の仕組みではなく、アラートを受けた側だった。
+    unsupported: 不合格
+    qualifiers: 合格
+    quote_slide: 見落としたのは検知の仕組みではなく、アラートを受けた側だった。
+    quote_fact: 'F500 quote: "However, Target’s security team neither reacted to the alarms nor allowed the FireEye software to automatically delete the malware in question."'
+    reason: >-
+      F500 が述べるのは、チームがアラートに「反応しなかった」(neither reacted)ことで、アラートに気づかなかった(見落とした)ことではない。
+      気づいたうえで対応しなかった可能性は事実の範囲で否定されず、次のスライドの F501 はむしろ「誤検知とみなした可能性」(気づいたうえでの判断)を推定している。
+      「見落とした」は事実より強い(または別の)主張である。また、この文は「報告によれば」を付けた5文目と並ぶため、話し手自身の断定として聞こえる。
+    suggestion: 「見落とした」を、事実の語に合わせて「対応しなかったのは、検知の仕組みではなく、アラートを受けた側だった」とする。
+  - field: notes
+    text: 報告によれば、チームはマルウェアを自動で削除する機能も許可していなかった。
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: では、なぜ対応がなかったのか。
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 問いで、主張を含まない。
+  - field: notes
+    text: 次のスライドで、報告の推定を見る。
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 構成の案内で、主張を含まない。
+
+- id: ch4-s3
+  facts: [F506]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: 自己申告
+      where: body.caveat「回答は自己申告」、出典の行「自己申告」、notes の3文目
+    - qualifier: 調査会社がセキュリティ製品のベンダーであり、製品の宣伝を含む資料(一次情報として扱わない)
+      where: 見出し「ベンダーの調査」、body.caveat「ベンダー(Imperva)の調査で、製品の宣伝を含む」、notes の3文目
+    - qualifier: RSA Conference 2018で、IT専門職179人を対象に実施。SOC分析者に限らない
+      where: 出典の行「2018年、RSA Conference の参加者のIT専門職179人」、body.caveat「回答者はSOCの解析者に限らず」
+    - qualifier: 誤検知は出典の言い方(立証の設計の show)
+      where: 出典の行「原文の false positive」、notes の5文目
+  sentences:
+  - field: takeaway
+    text: 過去の誤検知の経験が、次のアラートを無視する理由になりうる
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F506 の quote(ignored an alert based on past false-positive experiences、tempting to disregard future alerts)の範囲。「なりうる」に留めている。
+  - field: body.text
+    text: 回答者の{F506}(描画では「回答者の56%」)
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.caveat
+    text: ベンダー(Imperva)の調査で、製品の宣伝を含む。
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 限定は「製品の宣伝を含む資料」で、宣伝を含むのは公表した資料。この文は「調査が宣伝を含む」とも読める。限定より強くはならないため合格とするが、notes の3文目(宣伝を含めて公表したもの)の言い方のほうが限定に近い。
+  - field: body.caveat
+    text: 回答者はSOCの解析者に限らず、回答は自己申告
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 大きく示した値は、過去の誤検知を理由にアラートを無視したことがある、と答えた回答者の割合である。
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 強調したいのは、半数を超える回答者がそう答えた点である。
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: ただし、調査はベンダーが自社の製品の宣伝を含めて公表したもので、回答者はSOCの解析者に限らず、回答は自己申告である。
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 無視したアラートが本物の攻撃だったかどうかは、この調査には示されていない。
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F506 の quote と metric に本物かどうかの記述はなく、章の主張 C4 も「無視したアラートが本物だったかは示されていない」とする。出典の全文は開いていない。
+  - field: notes
+    text: また、回答者の言う誤検知は原文の false positive で、この講義の誤検知の定義と同じとは限らない。
+    unsupported: 合格
+    qualifiers: 合格
+    remark: quote の false-positive と、語彙の T 誤検知の定義(検知の条件そのものが誤っていて、無害な活動に反応したアラート。想定内の検知を含めない)による。
+  - field: notes
+    text: 前のスライドまでの事案と合わせ、誤検知に慣れると、本物の攻撃のアラートを見過ごしうる。
+    unsupported: 合格
+    qualifiers: 合格
+    remark: >-
+      F500(本物の攻撃のアラートに対応がなかった)、F501(頻繁な警報なら誤検知とみなした可能性。推定)、F506(過去の誤検知を理由に無視。本物かは不明)を合わせた、可能性の主張。
+      どの事実も単独では「慣れ」から「本物の見過ごし」への因果を確かめていないため、「うる」を外すと不合格になる。章の主張 C4 と同じ文。
+  - field: notes
+    text: だから、閉じてよいのは根拠をもって誤検知か想定内の検知と言えるものだけになる。
+    unsupported: 判定できない
+    qualifiers: 合格
+    quote_slide: だから、閉じてよいのは根拠をもって誤検知か想定内の検知と言えるものだけになる。
+    reason: >-
+      事実の主張ではなく、講義の決まり(何を閉じてよいか)を前の文から導く規範の文である。
+      このスライドが使う事実 F506 は、この決まりを裏付けない(無視が起きうることは示すが、閉じる範囲をどう限るかは示さない)。
+      作業票の章の message は、これを「根拠をもって言えるものだけを閉じる理由として示す」としており、章の設計としては予定された文である。
+      一方、前の章の見出しでは、閉じる線は「案として」(ch3-s5)と「このSOCでは」(ch3-s6)と区別されており、この文は「だから〜になる」と事実からの帰結として言い切っている。
+      規範の文が「裏付けのない文」の検査の対象か、対象なら何を裏付けとするか(章の主張か、ch3 の案と運用か)が検査の定義にないため、判定できない。
+    suggestion: 事実からの帰結でなく講義の決まりであることが分かる言い方にする(例「この講義が、閉じてよいものを、根拠をもって誤検知か想定内の検知と言えるものに限るのは、このためである」)。対象かどうかは設計セッションが決める。
