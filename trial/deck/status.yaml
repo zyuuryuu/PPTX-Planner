@@ -52,3 +52,5 @@ artifacts:
     state: 承認済み   # ストーリーラインと一緒に同意(d47160c)
   04-scenarios.yaml:
     state: 承認済み   # ストーリーラインと一緒に同意(d47160c)
+  05-proof.yaml:
+    state: 作成中   # 仮置きの資料 preview/placeholder.html
