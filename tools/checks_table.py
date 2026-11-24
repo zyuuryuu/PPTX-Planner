@@ -29,6 +29,7 @@ JUDGES = {
     "user": "ユーザー",
     "reader": "読み手の役のセッション",
     "designer": "設計セッション",
+    "pm": "PM",
 }
 REQUIRED = ("id", "stage", "target", "check", "judge")
 ALLOWED = REQUIRED + ("group", "judge_text", "critical", "level", "refers", "note", "defined_in")
