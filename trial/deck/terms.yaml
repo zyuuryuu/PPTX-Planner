@@ -1,5 +1,26 @@
 # 語彙表(草案)。工程1では、素材台帳の metric の語だけを登録する。対象を指す語の登録と、ユーザーの確認は工程6で行う。
 terms:
+- id: T-close
+  term: 閉じる
+  kind: action
+  definition: アラートを、誤検知か想定内の検知と判断して、調べたことと判断を記録し、対応を終える
+  note: 依頼者が決めた3つの行き先の1つ(2026-11-24)
+  defined_in: null
+  no_definition: null
+- id: T-investigate
+  term: 調べる
+  kind: action
+  definition: 閉じるか上げるかを決めるために、持ち時間の中でログなどを確かめ続ける
+  note: 依頼者が決めた3つの行き先の1つ。ブリーフの「調査を続ける」と同じ
+  defined_in: null
+  no_definition: null
+- id: T-escalate
+  term: 上げる
+  kind: action
+  definition: アラートを、経過と証拠を添えて上位の担当者に引き継ぐ
+  note: 依頼者が決めた3つの行き先の1つ。ブリーフの「上に上げる」と同じ
+  defined_in: null
+  no_definition: null
 - id: T-event
   term: イベント
   kind: noun
@@ -163,6 +184,18 @@ banned:
   reason: 想定内の検知と同じ対象を指す。出典の訳語
   use:
   - T-expected-detection
+- term: 調査を続ける
+  reason: 3つの行き先は「閉じる・調べる・上げる」で揃える(依頼者の指定)
+  use:
+  - T-investigate
+- term: 上に上げる
+  reason: 同上
+  use:
+  - T-escalate
+- term: エスカレーション
+  reason: 同上。出典の語として引く場合を除く
+  use:
+  - T-escalate
 allowed: []
 model_labels:
   D-sentinel-incident: 'アラートのまとまり(製品の呼び名: インシデント。資料で言うインシデントではない)'
