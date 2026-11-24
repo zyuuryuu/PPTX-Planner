@@ -53,6 +53,8 @@
 | 44 | 2 | 検査(重大・再検査) | 主張の骨子の直しと、足した反論 | claude-opus-5-5 | session_01LpWHd2NSS315Kh4h3zbAAB |
 | 45 | 2 | 検査(要約の文だけを読む) | summary | claude-haiku-5-5 | session_01LpWHd1YhJoXJ3yho1k6d4K |
 | 46 | 2 | 検査(重大・最終の再検査) | 主張の骨子の直した箇所と summary | claude-sonnet-5-5 | session_01LpWHd11KfJDE8Sssg7Thkq |
+| 47 | 3 | 検査(重大・1回目と意味の検査) | 章構成 | claude-opus-5-5 | session_01LpWHd2aSFXJjdoA7BqKwFb |
+| 48 | 3 | 検査(重大・2回目) | 章構成の message | claude-sonnet-5-5 | session_01LpWHd21KweQ1eu7DrPpcLZ |
 
 ## 工程0 依頼の確定
 
@@ -332,6 +334,7 @@
 - `docs/stages/03-chapters.md` を読んだ。
 - 章構成 `03-chapters.yaml` を作った。導入、本論3章、結び(演習とまとめ)の5章、50枚。手順(C2)と基準(C3)は1つの章に入れた(工程0の検査の提案: 順序の章と基準の章に分けると問いが2つに割れる)。機械の検査: 合格9、未実装1、不合格0。
 - 目次と章扉の資料をビルドし(`build.py --level toc`)、画面に描いて確かめた。`preview/toc.html` に写した。
+- 章構成の検査を2つ起こした(表の47、48)。待ち始め: 00:28 UTC。
 
 ### 自分で決めた点
 
