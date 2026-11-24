@@ -26,6 +26,64 @@
     H1: supports
     H2: neutral
     H3: neutral
+- id: F002
+  statement: 依頼者のSOCの運用では、新人が自分で閉じてよいのは、誤検知と、リーダーが事前に一覧にした想定内の活動(承認済みのスキャン、委託した診断など)に当てはまるものだけである
+  kind: testimony
+  source: 依頼者(SOCのリーダー)が、自分のSOCの運用として述べた
+  locator: 2026-11-24 の聞き取り
+  as_of: '2026-11-24'
+  superseded_by: null
+  quote: おすすめのが近い。それでいい。
+  qualifiers:
+  - 依頼者のSOCの運用
+  - 設計セッションが示した案に依頼者が同意したもの
+  origin: 依頼者
+  answers:
+  - Q3.1.1
+  verified: true
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F003
+  statement: 依頼者のSOCの運用では、配属から最初の3か月の新人には、侵害に至らなかった攻撃の試みを全て上げさせる。上が溢れるかはリーダーの側で対処する
+  kind: testimony
+  source: 依頼者(SOCのリーダー)が、自分のSOCの運用として述べた
+  locator: 2026-11-24 の聞き取り
+  as_of: '2026-11-24'
+  superseded_by: null
+  quote: 攻撃の試みは、最初の3か月は全部上げさせる。上が溢れるかは俺の側で何とかする話で、新人に背負わせることじゃない。
+  qualifiers:
+  - 依頼者のSOCの運用
+  - 配属から最初の3か月
+  origin: 依頼者
+  answers:
+  - Q3.3.1
+  verified: true
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
+- id: F004
+  statement: 依頼者のSOCでは、新人が閉じたアラートを、後でリーダーかベテランが見直している(頻度は決まっておらず、およそ週1回)
+  kind: testimony
+  source: 依頼者(SOCのリーダー)が、自分のSOCの運用として述べた
+  locator: 2026-11-24 の聞き取り
+  as_of: '2026-11-24'
+  superseded_by: null
+  quote: うちでは新人が閉じたものは、後で俺かベテランが見直してる(頻度は決まってない、だいたい週1くらいの感覚)。
+  qualifiers:
+  - 依頼者のSOCの運用
+  - 頻度は決まっていない(およそ週1回の感覚)
+  - 資料には「閉じたものは後で見直される」程度に書く(依頼者の指定)
+  origin: 依頼者
+  answers:
+  - Q3.1.2
+  verified: true
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F100
   statement: SIEMは、複数のログ源のデータを分析し、ログ項目間でイベントを相関させ、重要なイベントを特定して優先順位を付ける
   kind: fact
