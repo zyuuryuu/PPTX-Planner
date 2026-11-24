@@ -20,11 +20,12 @@
   - connected
 - id: ch2-s1
   relation: entity-relation
-  show: 製品の例(Microsoft Sentinel)で、集めたデータ→分析ルール→アラートのつながり。アラートの先に、1つのSOCの実測の3つの区分(侵害に至った攻撃、攻撃の試み、想定内の検知)を小さく添える
-  focus: アラートはルールが「探すものを見つけた」知らせで、その中身は本物の攻撃とは限らない
+  show: '製品の例(Microsoft Sentinel)の3つのつながり: データソースがデータを集める、分析ルールが集めたデータに問い合わせる、ルールがアラートを生成する。図の下に1行で「1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは0.01%(ch2-s6で詳しく)」'
+  focus: アラートは、ルールが探すものを見つけたときに出す知らせであること
   real: true
   view:
     elements:
+    - E-sentinel-source
     - D-sentinel-data
     - E-sentinel-rule
     - D-sentinel-alert
@@ -40,20 +41,19 @@
   base: none
   holds:
   - connected
-  - ordered
 - id: ch2-s2
   relation: architecture
-  show: 複数のログの発生源(OS、セキュリティソフト、アプリケーション)→SIEMのサーバ→重要なイベント。サーバの中で記録値(時刻、IPアドレス、種別)を照らすルールを示す
-  focus: 複数のログの記録値をルールで照らすところ
+  show: ログの発生源がSIEMのサーバへログを送り、サーバが全てのログ源のデータを分析して相関させ、重要と判断されたイベント(まだアラートではない)を特定する。サーバの中の注記に「相関で最も一般的なのはルール(ログ管理ソフトウェア一般の記述)」
+  focus: 複数のログをまとめて相関させるところ
   real: true
   view:
     elements:
-    - E-src-os
-    - E-src-secsw
-    - E-src-app
+    - E-log-source
     - E-siem-server
     - D-significant-event
-    scenario: S-siem-agent
+    relations:
+    - R-source-server-push
+    - R-server-significant
   facts:
   - F100
   - F101
@@ -63,41 +63,45 @@
   - connected
 - id: ch2-s3
   relation: architecture
-  show: '端末→EDRのセンサー→振る舞いの記録(プロセス、ネットワーク、ログオン、レジストリとファイルの変更)→検知→アラート(製品の例: Microsoft Defender for Endpoint)'
-  focus: 端末の振る舞いを継続して集めた記録から、アラートが作られること
+  show: '2つの枠。左: EDRの要件の例(NCA)で、端末→エージェント→中央のデータベースと、記録を集める流れ。右: 製品の例(Microsoft Defender for Endpoint)で、製品がセンサーを持ち、振る舞いのテレメトリ(プロセス、ネットワーク、ログオン、レジストリとファイルの変更)を集め、アラートを作る。右の枠では、テレメトリからアラートへの矢印を描かない(出典に経路がない)'
+  focus: 端末の振る舞いの記録を継続して集めることが、アラートの材料になること
   real: true
   view:
     elements:
     - E-endpoint
+    - E-edr-agent
+    - E-edr-central-db
+    - E-mde
     - E-mde-sensor
     - D-mde-telemetry
     - D-mde-alert
     relations:
+    - R-endpoint-agent
+    - R-agent-central-db
     - R-mde-sensor
     - R-mde-alert
   facts:
   - F615
   - F618
   - F619
+  - F616
   axis: null
   base: none
   holds:
   - connected
-  - ordered
 - id: ch2-s4
-  relation: item-comparison
-  show: ログの種類(OSのログ、認証のログ、マルウェア対策ソフトのログ)ごとに、そこから分かることを並べた表
-  focus: アラートの詳細を確かめる先として、OSのログが多く使われること
+  relation: list
+  show: '2つのログと、そこから分かること: OSのログ(不審な活動の詳細。セキュリティソフトが見つけた後に参照されることが多い)、認証のログ(試行ごとの接続元、利用者、成否、日時を通常は記録する)'
+  focus: アラートの詳細を確かめる先としてOSのログが多く使われること
   facts:
   - F111
   - F108
   - F110
   - F107
-  axis: ログの種類
+  axis: null
   base: none
-  holds:
-  - comparable
-  - distinct-kinds
+  holds: []
+  relation_reason: 見る先の2つのログを、それぞれ何が分かるかとともに挙げる。量の比較ではない
 - id: ch2-s5
   relation: structure
   show: ATT&CKの戦術(なぜ)と技術(どのように)の2層と、架空のアラートの活動を1つの戦術に当てはめた例。当てはめた戦術から、優先度の要因「活動の段階」へ矢印(案)
@@ -124,18 +128,16 @@
   - partition
   - proportional
 - id: ch2-s7
-  relation: item-comparison
-  show: 「誤検知の割合」を述べる2つの出典を並べた表。調べ方(自己申告か実測か)、「誤検知」の定義、値
-  focus: 8割に近い値(83%)は自己申告で、誤検知の定義が示されていないこと
+  relation: statement
+  show: '「83%」の値と、その条件の注記: ベンダーの調査、解析者の自己申告、「誤検知」の定義が示されていない。別の出典では誤検知と想定内の検知を分けて定義していることを1行で添える'
+  focus: 8割に近い値が自己申告で、誤検知の定義がないこと
   facts:
   - F204
   - F220
-  - F207
-  axis: 出典
+  axis: null
   base: none
-  holds:
-  - comparable
-  - distinct-kinds
+  holds: []
+  relation_reason: 1つの値(83%)と、その値の条件を示すスライドで、比べる対象や順序がない
 - id: ch2-s8
   relation: causality
   show: 緩く書かれた(弱い)検知のルール→無害な通信にも合ってしまう→誤検知、のつながり。ルールの書き方の例を架空で添える
@@ -151,20 +153,18 @@
 - id: ch2-s9
   relation: list
   relation_reason: 原因の例を挙げるスライドで、例の間に順序、比較の観点、全体を分ける関係がない
-  show: '1つのSOCで想定内の検知を起こした業務上正当な活動の例: 定期の内部の脆弱性スキャン、外部のベンダーの診断、内部で運用する外部ドメイン、変更が難しい古いシステム'
-  focus: どれも業務上正当な活動で、ルールは正しく反応していること
+  show: '1つのSOCで想定内の検知を起こした業務上正当な活動の2例: 定期の内部の脆弱性スキャン、外部のベンダーによる診断(ペネトレーションテスト)'
+  focus: どちらも業務上正当な活動で、ルールは正しく反応していること
   facts:
   - F215
   - F221
-  - F216
-  - F217
   axis: null
   base: none
   holds: []
 - id: ch3-s1
   relation: item-comparison
-  show: '2つの出典の、確かめる順を横に並べる。NIST SP 800-61 Rev.3(インシデントの報告: 起きたかの確認→深刻度の見積もり)、民間の解説(アラート: 分類→優先付け→調べる)'
-  focus: 最初の段が出典で違うこと
+  show: '2つの出典の段を横に並べる。NIST SP 800-61 Rev.3(インシデントの報告): 起きたかの確認→深刻度の見積もり。民間の解説(アラート): 取り込み→分類→優先付け→調べる→本物か誤検知かの判定'
+  focus: NISTは確認が最初で、民間の解説は判定より前に優先付けを置くこと
   facts:
   - F303
   - F312
@@ -174,17 +174,16 @@
   - comparable
   - ordered
 - id: ch3-s2
-  relation: structure
-  show: 'この講義の線を2つに分ける。案(公開資料の材料から組み立てたもの)と、このSOCの運用(リーダーが決めたもの)。それぞれに、後のスライドで出る線の例を入れる。上に「公的な文書の線: なし」'
-  focus: 線が案と運用の2つからなり、公的な文書の線はないこと
+  relation: list
+  show: '上に「調べた公的な文書の線: なし」。下に、この講義の線の出どころ2つ: 案(公開資料の材料から組み立てたもの)、このSOCの運用(リーダーが決めたもの)'
+  focus: 公的な文書の線がないこと
   facts:
   - F600
   - F610
-  axis: 線を決めたのは誰か
+  axis: null
   base: none
-  holds:
-  - partition
-  - distinct-kinds
+  holds: []
+  relation_reason: この講義の線の出どころ2つを挙げる。1つの線が両方を使うこともあり、全体を漏れなく重なりなく分けるものではない
 - id: ch3-s3
   relation: process
   show: '2段の手順(案): 1. 根拠とログで3つに分ける 2. 影響の大きさで優先度を付ける'
@@ -198,7 +197,7 @@
   - ordered
 - id: ch3-s4
   relation: process
-  show: '根拠の確かめ方の3段(案): 1. アラートを出したルールの条件を読む 2. アラートに含まれる利用者や端末を見る 3. 元のログと照らす'
+  show: '根拠の確かめ方の2段(案): 1. アラートを出したルールの条件と、アラートに含まれる利用者や端末を読む 2. それを元のログと照らす'
   focus: 元のログと照らすところ
   facts:
   - F709
@@ -208,17 +207,18 @@
   holds:
   - ordered
 - id: ch3-s5
-  relation: structure
-  show: '誤検知として閉じてよい理由を2つに分ける: 検知の条件の誤り、データの誤り(製品の閉じるときの分類の例)。下に、閉じてはいけない例(根拠を言えないもの)'
+  relation: list
+  show: '誤検知として閉じてよい理由の2つ(案): 検知の条件の誤り、データの誤り。下に、閉じてはいけない例(根拠を言えないもの)を1行'
   focus: 根拠をもって言える2つの理由だけが、誤検知として閉じる理由であること
   facts:
   - F605
   - F609
   - F220
-  axis: 誤りがどこにあるか
+  axis: null
   base: none
-  holds:
-  - partition
+  holds: []
+  relation_reason: 誤検知として閉じてよい理由を2つ挙げる(案)。2つの間に順序や重みがない
+  real: false
 - id: ch3-s6
   relation: statement
   relation_reason: このSOCの運用の規則を1つ述べるスライドで、比べる対象も順序もない
@@ -234,8 +234,8 @@
 - id: ch3-s7
   relation: list
   relation_reason: 要因は例示で、要因の間に順序や重みの定めがない(F305)
-  show: 優先度の要因(資産の重要度、機能とデータへの影響、活動の段階)を並べ、その横にSIEMの深刻度を「要因の1つの材料」として置く
-  focus: SIEMの深刻度だけで決めないこと
+  show: '優先度の要因の例(案): 資産の重要度、機能とデータへの影響、活動の段階、SIEMの深刻度(材料の1つ)を並べる'
+  focus: SIEMの深刻度は要因の1つの材料にすぎないこと
   facts:
   - F610
   - F305
@@ -246,7 +246,7 @@
 - id: ch3-s9
   relation: list
   relation_reason: 記録する項目の一覧で、項目の間に順序や比較の関係がない
-  show: 閉じるときに記録する4項目(発火した内容、調べたこと、見つかった証拠、下した判断)を記録の書式の形で並べる
+  show: '閉じるときに記録する4項目(案): 発火した内容、調べたこと、見つかった証拠、下した判断。記録の書式の形で並べる'
   focus: 4項目そろえて残すこと
   facts:
   - F318
@@ -265,20 +265,20 @@
   base: none
   holds: []
 - id: ch3-s11
-  relation: process
-  show: '1件のアラートの時間の線: 0分 調べ始める → 30分 決められなければ、見たことを付けて上げる'
+  relation: statement
+  show: このSOCの運用の規則の1文(配属から3か月の新人、1件30分、過ぎたら見たことを付けて上げる)
   focus: 30分という区切り
   facts:
   - F005
   - F403
   axis: null
   base: none
-  holds:
-  - ordered
+  holds: []
+  relation_reason: このSOCの運用の規則を1つ述べるスライドで、比べる対象も順序もない。運用の流れ図は仕組みの定義にないため、図にしない
 - id: ch3-s16
   relation: statement
   relation_reason: このSOCの運用の規則を1つ述べるスライドで、比べる対象も順序もない
-  show: 規則の1文。前のスライドの時間の線の0分の位置から「すぐ上げる」の矢印
+  show: このSOCの運用の規則の1文(重大度が高いアラートは30分を待たずにすぐ上げる)
   focus: 30分を待たないこと
   facts:
   - F005
@@ -288,7 +288,7 @@
 - id: ch3-s12
   relation: list
   relation_reason: 条件はどれか1つで足りる並列のもので、順序や重みがない
-  show: 上げる条件の3つ(重要な資産での疑い、複数の端末にまたがる横展開の証拠、自分の守備範囲を超える)
+  show: '上げる条件の3つ(案): 重要な資産での疑い、複数の端末にまたがる横展開の証拠、自分の守備範囲を超える'
   focus: どれか1つで上げる
   facts:
   - F406
@@ -298,7 +298,7 @@
   holds: []
 - id: ch3-s13
   relation: branching-flow
-  show: '30分の時点で「閉じる根拠があるか」で分かれる: ある→記録して閉じる、なく迷う→閉じずに上げる'
+  show: '30分の時点で「閉じる根拠があるか」で分かれる流れ(案): ある→記録して閉じる、なく迷う→閉じずに上げる'
   focus: 根拠がなければ閉じない側に倒すこと
   facts:
   - F405
@@ -321,7 +321,7 @@
 - id: ch3-s15
   relation: list
   relation_reason: 添える項目の一覧で、項目の間に順序や比較の関係がない
-  show: 上げるときに添える5項目(出どころとID、調べた経過、証拠、判定の仮説、次の手順)を引き継ぎの書式の形で並べる
+  show: '上げるときに添える5項目(案): 出どころとID、調べた経過、証拠、判定の仮説、次の手順。引き継ぎの書式の形で並べる'
   focus: 5項目そろえて渡すこと
   facts:
   - F413
@@ -330,109 +330,112 @@
   base: none
   holds: []
 - id: ch4-s1
-  relation: process
-  show: '2013年のTargetの侵害の時間の線: 持ち出し用のマルウェアの導入→検知製品の緊急のアラート→対応なし(報告の記述)'
-  focus: アラートが出ていたのに対応がなかったところ
+  relation: statement
+  show: 米上院の報告の記述の要約1文(マルウェアの導入のたびに検知製品が緊急のアラートを出したが、対応がなかった。報道を引いた記述)
+  focus: アラートが出ていたのに対応がなかったこと
   real: false
   facts:
   - F500
   axis: null
   base: none
-  holds:
-  - ordered
+  holds: []
+  relation_reason: 報告の記述を1つ示すスライド。実在の事案の経過は仕組みの定義にないため、図にしない
 - id: ch4-s2
-  relation: causality
-  show: アラートが頻繁→誤検知とみなす→対応しない、のつながり。全体に「報告の推定(仮定)」の枠
-  focus: これが推定であり、確認された原因ではないこと
+  relation: statement
+  show: 米上院の報告の推定の文を、仮定の形のまま示す(アラートが頻繁だったなら、職員が誤検知とみなした可能性がある)。「推定であり、確認された原因ではない」と添える
+  focus: これが推定であること
   facts:
   - F501
   axis: null
   base: none
-  holds:
-  - causal
-  - ordered
+  holds: []
+  relation_reason: 報告の推定を1つ示すスライド。実在の組織の振る舞いは仕組みの定義にないため、因果の図にしない
 - id: ch4-s3
   relation: composition
-  show: IT専門職179人のうち、アラートを無視したことがあると答えた56%を1本の帯で示す
+  show: IT専門職179人のうち、過去の誤検知を理由にアラートを無視したことがあると答えた56%を1本の帯で示す(自己申告)
   focus: 56%
   facts:
   - F506
-  axis: 無視したことがあるか(自己申告)
+  axis: 過去の誤検知を理由に、アラートを無視したことがあるか(自己申告)
   base: none
   holds:
   - partition
   - proportional
 - id: ch5-s1
-  relation: exhibit
-  show: 演習1の架空のアラートの表示(検知のルール、端末、時刻、宛先などの項目)。架空であることを明記する
-  focus: 判断に使う項目(端末、時刻、一覧との一致など)
+  relation: list
+  show: '演習1の架空のアラートの項目: 検知のルール(多数の宛先への接続)、接続元の端末(一覧に載ったスキャン用の端末)、時刻(一覧のスキャンの時間帯の中)、宛先の数。架空であることを明記する'
+  focus: 端末と時刻が一覧と合うこと
   facts: []
   axis: null
   base: none
   holds: []
+  relation_reason: 架空のアラートの項目を並べる。実物ではないため exhibit にしない
 - id: ch5-s2
-  relation: branching-flow
-  show: 第1章の流れ図(閉じる・調べる・上げる)の上で、演習1がたどる道を強調する
-  focus: 演習の答えがたどった分かれ目
+  relation: statement
+  show: '答えの1文と、当てはめた規則のスライドの番号: 端末と時刻が一覧と合うため、想定内の検知として記録して閉じる(ch3-s6 の規則を当てはめる)'
+  focus: 当てはめた規則
   facts: []
   axis: null
   base: none
-  holds:
-  - ordered
+  holds: []
+  relation_reason: 答えの1文と、当てはめた規則を示すスライドで、比べる対象も順序もない
 - id: ch5-s3
-  relation: exhibit
-  show: 演習2の架空のアラートの表示(検知のルール、端末、時刻、宛先などの項目)。架空であることを明記する
-  focus: 判断に使う項目(端末、時刻、一覧との一致など)
+  relation: list
+  show: '演習2の架空のアラートの項目: 検知のルールの条件(緩く書かれた条件)、接続元(管理ツールのサーバ)、通信の周期(定期)。架空であることを明記する'
+  focus: ルールの条件が緩く、無害な通信に合っていること
   facts: []
   axis: null
   base: none
   holds: []
+  relation_reason: 架空のアラートの項目を並べる。実物ではないため exhibit にしない
 - id: ch5-s4
-  relation: branching-flow
-  show: 第1章の流れ図(閉じる・調べる・上げる)の上で、演習2がたどる道を強調する
-  focus: 演習の答えがたどった分かれ目
+  relation: statement
+  show: '答えの1文と、当てはめた規則のスライドの番号: 検知の条件の誤りと根拠をもって言えるため、誤検知として記録して閉じる(ch3-s5 を当てはめる)'
+  focus: 当てはめた規則
   facts: []
   axis: null
   base: none
-  holds:
-  - ordered
+  holds: []
+  relation_reason: 答えの1文と、当てはめた規則を示すスライドで、比べる対象も順序もない
 - id: ch5-s5
-  relation: exhibit
-  show: 演習3の架空のアラートの表示(検知のルール、端末、時刻、宛先などの項目)。架空であることを明記する
-  focus: 判断に使う項目(端末、時刻、一覧との一致など)
+  relation: list
+  show: '演習3の架空のアラートの項目: 検知のルール(既知の攻撃の通信)、接続元(外部)、防がれた記録。架空であることを明記する'
+  focus: 攻撃の試みが防がれた記録があること
   facts: []
   axis: null
   base: none
   holds: []
+  relation_reason: 架空のアラートの項目を並べる。実物ではないため exhibit にしない
 - id: ch5-s6
-  relation: branching-flow
-  show: 第1章の流れ図(閉じる・調べる・上げる)の上で、演習3がたどる道を強調する
-  focus: 演習の答えがたどった分かれ目
-  facts: []
-  axis: null
-  base: none
-  holds:
-  - ordered
-- id: ch5-s7
-  relation: exhibit
-  show: 演習4の架空のアラートの表示(検知のルール、端末、時刻、宛先などの項目)。架空であることを明記する
-  focus: 判断に使う項目(端末、時刻、一覧との一致など)
+  relation: statement
+  show: '答えの1文と、当てはめた規則のスライドの番号: 侵害に至らなかった攻撃の試みで、配属から3か月の新人は全て上げる(ch3-s14 を当てはめる)'
+  focus: 当てはめた規則
   facts: []
   axis: null
   base: none
   holds: []
-- id: ch5-s8
-  relation: branching-flow
-  show: 第1章の流れ図(閉じる・調べる・上げる)の上で、演習4がたどる道を強調する
-  focus: 演習の答えがたどった分かれ目
+  relation_reason: 答えの1文と、当てはめた規則を示すスライドで、比べる対象も順序もない
+- id: ch5-s7
+  relation: list
+  show: '演習4の架空のアラートの項目: 端末(重要でない業務用のPC)、見慣れないプロセス名、一覧に当てはまらないこと。架空であることを明記する'
+  focus: 一覧にない活動で、資産が重要でないこと
   facts: []
   axis: null
   base: none
-  holds:
-  - ordered
+  holds: []
+  relation_reason: 架空のアラートの項目を並べる。実物ではないため exhibit にしない
+- id: ch5-s8
+  relation: statement
+  show: '答えの1文と、当てはめた規則のスライドの番号: 閉じずに調べ、30分の中で誤検知と根拠をもって言えなければ、見たことを付けて上げる(ch3-s6、ch3-s11、ch3-s13 を当てはめる)'
+  focus: 当てはめた規則
+  facts: []
+  axis: null
+  base: none
+  holds: []
+  relation_reason: 答えの1文と、当てはめた規則を示すスライドで、比べる対象も順序もない
 - id: ap-s1
   relation: item-comparison
-  show: '1日に扱うアラートの量を出典ごとに並べた表: 1つのSOCの実測(自動遮断の後 約13,764件)、実務者20人の回答(5,000件未満が45%)、ベンダーの調査の自己申告(平均4,484件)。調べ方を列に入れる'
+  show: '1日に扱うアラートの量を出典ごとに並べた表: 1つのSOCの実測(自動遮断の後に解析者が扱った約13,764件)、実務者20人の回答(5,000件未満が45%)、ベンダーの調査の自己申告(平均4,484件)。調べ方を列に入れる'
   focus: 調べ方と値が出典ごとに違うこと
   facts:
   - F201

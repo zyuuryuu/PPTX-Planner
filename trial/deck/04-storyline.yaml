@@ -49,7 +49,7 @@
   - F615
   - F618
   - F619
-  source: 米国 OMB の覚書 M-22-01(2021年)、Microsoft Learn(Microsoft Defender for Endpoint の文書、2026年)
+  source: 米国 OMB の覚書 M-22-01(2021年)、サウジアラビア国家サイバーセキュリティ庁(NCA)のEDR標準のひな形、Microsoft Learn(Microsoft Defender for Endpoint の文書、2026年)
 - id: ch2-s4
   chapter: ch2
   section: null
@@ -121,14 +121,12 @@
   evidence:
   - F215
   - F221
-  - F216
-  - F217
   source: Yangら(USENIX Security 2024)。1つのSOCのネットワークの検知(Zeek)の2020年12月〜2022年7月のアラート約1,443万件を著者らが分類
 - id: ch3-s1
   chapter: ch3
   section: null
   question: 1件のアラートは何から確かめるのか
-  headline: 何から確かめるかは出典で食い違い、NISTは報告の確認を、民間の解説は優先付けを先に置く
+  headline: 何から確かめるかは出典で食い違い、NISTは確認を、民間の解説は優先付けを判定より先に置く
   from:
   - Q2.2
   evidence:
@@ -388,7 +386,7 @@
   - F202
   - F203
   appendix_of: ch2-s6
-  source: Yangら(USENIX Security 2024。1つのSOCの2020年12月〜2022年7月)、Alahmadiら(USENIX Security 2022。SOC実務者20人の回答)、Vectra AI の調査(2023年、自己申告で1日平均4,484件)
+  source: Yangら(USENIX Security 2024。1つのSOCの2020年12月〜2022年7月。自動遮断の後に解析者が扱った件数)、Alahmadiら(USENIX Security 2022。SOC実務者20人の回答)、Vectra AI の調査(2023年、自己申告で1日平均4,484件)
 - id: ap-s2
   chapter: appendix
   section: null
