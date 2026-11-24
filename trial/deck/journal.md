@@ -514,3 +514,4 @@
 - PM(session_01LpWHd12Hi4a7B7kXpdhYg5)から質問3件: flowchart の場面がない2枚(ch1-s2、ch3-s13)、架空の数値の例外、第5章の章扉の問い。D013 として答え、05-proof.yaml、03-chapters.yaml、style.yaml を直した。ch1-s2 の見せ方の変更は、依頼者の確認が要る(PM に伝えた)。
 - PM から Issue #1(ch4-s3 の円グラフの残りの値が台帳にない)。D014 として言い切りに変えた。
 - PM から2件: 講義の決まりを導く文の裏付け、流れ図の見本の折り返しの警告。D015 として答え、06-samples/flowchart.yaml の labels を直した(描画の道具で警告0件を確かめた)。
+- PM から: 事実の value でない数値(F204 の1,000人超、F005 の30分、F221 の92%)の書き方。D016 として、事実の本文にある数値は参照を添えて直接書いてよいとした(style.yaml の exceptions)。
