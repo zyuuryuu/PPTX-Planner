@@ -1,0 +1,1005 @@
+# 検査の結果(工程7、ch3、1回目)
+check: 工程7の重大な検査(裏付けのない文、限定の残存)
+definition:
+- docs/writing.md「検査」の節「検査セッションが判断するもの」の「裏付けのない文」「限定の残存」
+- docs/checks.md「重大な検査」の工程7の2行(スライドの文に、裏付けのない文がない / スライドの文が、事実の限定を落としていない)
+- 依頼の追加の定め: 案(公開資料から組み立てた部分)と、このSOCの運用(依頼者のSOCの規則)の区別が文で崩れていれば、裏付けのない文として扱う
+target:
+  file: trial/deck/07-slides/ch3.yaml
+  commit: e8124ae   # eda8038 以降。e8124ae は描画の道具の変更で、ch3.yaml と作業票は eda8038 から変わっていない
+  slides: [ch3-s1, ch3-s2, ch3-s3, ch3-s4, ch3-s5, ch3-s6, ch3-s7, ch3-s9, ch3-s10, ch3-s11, ch3-s16, ch3-s12, ch3-s13, ch3-s14]
+  excluded: [ch3-s15, ch3-s17]   # 承認済みの型の見本
+  upstream: trial/deck/work/ch3.md(章の主張、スライドごとのストーリーラインと立証の設計、使う事実の全文、仕組みの定義の S-newbie-ops の部分、語彙)
+inspector: claude-opus-5-5
+assumptions:
+- '{F403} は台帳の value と unit で「12-20分」に、{F207} は「0.01%」に置き換わるものとして読んだ。'
+- ストーリーラインの source は見出しの下に描かれるため、そこにある限定は残っているとみなした(依頼の指示)。見出しも画面に出るため、見出しにある限定も残っているとみなした。見出しの文そのものは判定していない。
+- 文ごとの判定は、そのスライドの立証の設計の facts だけを裏付けとした(writing.md の「スライド仕様と、そのスライドが使う事実だけを渡す」)。ほかのスライドの事実なら裏付けられる場合は、その旨を reason に書いた。語彙の定義(terms.yaml)と同じ内容の文は、言葉の定義として合格とした。
+- 限定の残存は、スライドの単位で、事実の qualifiers が画面かノートに残るかを見た。qualifiers のうち、引用の写し方の記録(「写した」「連結した」「区切りを付けた」「省略した」)と、依頼者の同意の経緯の記録は、主張の範囲を限るものではないため対象外とした(items に「対象外」と書いた)。
+- flowchart(ch3-s13)は、labels に加え、描画で載る仕組みの定義のつながりの label(行き先の札)と「案の基準」の印も文として判定した。
+- 出典の原文は開いていない(照合は依頼されていない)。事実の quote と qualifiers を正とした。
+
+summary:
+  counts_note: 文ごとの2条件(134文×2=268件)と、スライドごとの限定の判定(14件)を合わせた282件
+  fail: 15
+  undeterminable: 6
+  pass: 261
+  main_findings:
+  - ch3-s13 の限定の残存: 30分の持ち時間が「配属から3か月」の新人のもので、測って決めた値ではないこと(F005)が、画面にもノートにもない。
+  - ch3-s13 notes「上げると決めるところまでが、新人が1人で行う判断。」は、章の主張 C3 の反論への応答で「この資料では」とする講義の位置づけで、運用の印のスライドでこのSOCの規則として読める(案と運用の区別の崩れ)。
+  - ch3-s10 caveat「見直しの材料は、閉じるときに残した記録」は、運用の枠にあるが、このスライドの事実(F004、F318)では裏付けられない。F008(このスライドの facts にない)なら裏付けられる。ノートは同じことを「この講義は…使う」と講義の選択として書いており、枠と食い違う。
+  - ch3-s1 takeaway「公的な順序は1つに決まっていない」は、スライドが示す食い違い(公的な文書1つと民間の解説1つ)と合わない。
+  - ch3-s3 takeaway「民間の解説とは逆に」は、民間の解説の順(F312)がこのスライドの facts になく、裏付けられない。
+  - ch3-s14 notes「全て上げれば、上げる件数は多くなる」は、1つのSOC(論文のSOC)の割合を、このSOCに当てはめている。限定の残存では、F207 の期間と分類不能(Unknown 23.72%)がこのスライドにない。
+
+slides:
+- id: ch3-s1
+  facts: [F303, F312]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F303 対象は「インシデント報告」
+      where: body の表の対象の列「インシデントの報告」、notes の2文目と4文目、出典の行
+    - qualifier: F303 優先度の区分は High(推奨の度合い)
+      where: なし。推奨の強さの記録で、主張を事実より強くも広くもしないため、落としても不合格としない
+    - qualifier: F303 RS.MA-02 の説明と validated の語、表の R1 の文を写した
+      where: 対象外(写し方の記録)
+    - qualifier: F312 訓練事業者のブログで公的機関・標準ではない
+      where: 表の「民間の解説」、出典の行「CyberDefenders(SOC解析者の訓練事業者)の解説(2026年)。標準や公的文書ではない」
+    - qualifier: F312 7段階の名称と順序は各段の見出しによる
+      where: 表の行(1〜5段)、notes の5文目「民間の解説の段は判定の後にも続き、表は判定までを載せた」
+    - qualifier: F312 第4段階の確認項目の順序の厳密な指定はない
+      where: スライドは第4段階の中の項目に触れないため、関係しない
+  sentences:
+  - field: takeaway
+    text: '公的な順序は1つに決まっていないため、この講義は案として順を決める'
+    unsupported: 不合格
+    qualifiers: 合格
+    quote_slide: '公的な順序は1つに決まっていないため'
+    quote_fact: 'F303: NIST SP 800-61r3 は、新しいインシデント報告に対して…確かめる予備的な確認を行い、その後に深刻度と対応の緊急度を見積もる / F312 qualifiers: 訓練事業者のブログで公的機関・標準ではない'
+    reason: >-
+      スライドが並べるのは、公的な文書1つ(NIST。対象はインシデントの報告)と、公的でない民間の解説1つで、食い違いは「公的」と「民間」の間にある。
+      「公的な順序が1つに決まっていない」は、公的な順序が複数あるとも読め、2つの事実はそれを示さない。
+      案として順を決める理由になるのは、アラートについての公的な順序がこのスライドの範囲にないこと(NISTの対象はインシデントの報告)と、出典の間の食い違いである。
+    suggestion: 「アラートについての公的な順序は見当たらず、出典の順も食い違うため、この講義は案として順を決める」のように、事実に合う理由にする。
+  - field: body.columns
+    text: '出典 / 対象 / 段の順(前から)'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.rows[0]
+    text: 'NIST SP 800-61 Rev.3 / インシデントの報告 / 起きたかの確認、重さと対応の緊急度の見積もり'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F303 の quote と合う。
+  - field: body.rows[1]
+    text: '民間の解説 / アラート / 取り込み、分類、優先付け、調べる、本物か誤検知かの判定'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F312 の qualifiers の第1〜5段の見出しと合う。
+  - field: notes
+    text: '右の列を左から読む。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 読み方の案内で、主張を含まない。
+  - field: notes
+    text: 'NISTは、新しいインシデントの報告について、起きたかを確かめた後に、重さと対応の緊急度を見積もる。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '民間の解説は、本物か誤検知かの判定より前に優先付けを置く。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'NISTの対象はアラートではなくインシデントの報告で、インシデントはNISTの語のまま載せている。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '民間の解説の段は判定の後にも続き、表は判定までを載せた。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'この解説は、どの段を飛ばしても誤って分ける危険が増すとする。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F312 の quote(skipping any step increases the risk of misclassification)と合う。
+  - field: notes
+    text: '次は、閉じる・調べる・上げるの線がどこに決められているか。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s2
+  facts: [F600, F610]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F600 CSF 2.0 Community Profile の推奨事項
+      where: notes の1文目「…考慮するよう推奨する」
+    - qualifier: F600 インシデントの宣言の判断
+      where: text、notes の1文目
+    - qualifier: F600 組織が定めた基準が前提
+      where: text「組織が定めた基準を当てはめる」、出典の行「インシデントの基準は組織が定めるとする」
+    - qualifier: F600 誤検知として閉じる条件そのものは定めていない
+      where: text「誤検知として閉じる条件は定めていない」
+    - qualifier: F600 表の列を連結した
+      where: 対象外(写し方の記録)
+    - qualifier: F610 推奨事項と注記
+      where: notes の1文目「推奨する」に続く2文目
+    - qualifier: F610 要因は例示
+      where: notes の2文目「要因は例示で」
+    - qualifier: F610 要因の組み合わせは組織の必要と成熟度による
+      where: notes の2文目
+  sentences:
+  - field: takeaway
+    text: 'この講義の線を、公的な基準として扱わない'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.title
+    text: '調べた公的な文書の線は、なし'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: このスライドの事実は NIST だけで、「調べた」範囲が NIST のほかを含むかは事実からは分からない。「調べた」で範囲を限っており、事実(F600 の qualifiers、F610)と食い違わないため合格とした。
+  - field: body.items[0].text
+    text: 'この講義の線の出どころ'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.items[0].sub[0]
+    text: '案(公開資料の材料から組み立てたもの)'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 語彙 T-proposal の定義と同じ。
+  - field: body.items[0].sub[1]
+    text: 'このSOCの運用(リーダーが決めたもの)'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 語彙 T-soc-ops の定義と同じ。
+  - field: text
+    text: 'NISTは、インシデントの宣言に組織が定めた基準を当てはめるとし、誤検知として閉じる条件は定めていない'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'NIST SP 800-61 Rev.3 は、インシデントを宣言するかの判断に、組織が定めた基準を当てはめ、既知の誤検知を考慮するよう推奨する。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '優先度付けや上げる判断はリスク評価の要因に基づけるとし、要因は例示で、その組み合わせは組織の必要と成熟度によるとする。'
+    unsupported: 不合格
+    qualifiers: 合格
+    quote_slide: '優先度付けや上げる判断はリスク評価の要因に基づけるとし'
+    quote_fact: 'F610 quote: Incident triage, prioritization, escalation, and elevation ... should all be based on a set of risk evaluation factors.'
+    reason: >-
+      F610 が述べるのは、インシデントのトリアージ、優先度付け、エスカレーションである。文は対象を書かず、この講義の語「上げる」(語彙 T-escalate: アラートを上位の担当者に引き継ぐ)を使うため、NISTがアラートの優先度付けと上げる判断について述べたと読める。
+      対象が事実より広い。出典の行の「インシデントの基準」は宣言の基準を指し、この文の対象の限定にはならない。
+      ch3-s3 と ch3-s7 は「NISTはインシデントについて述べ、この講義はアラートにも当てはめる」と区別しており、このスライドだけ区別が落ちている。
+    suggestion: 「インシデントの優先度付けや上位への引き上げの判断は…」とする。
+  - field: notes
+    text: '案は公開資料の材料から組み立てたもの、このSOCの運用はリーダーが決めたもの。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '1つの線が両方を使うこともある。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 立証の設計の relation_reason と同じ。ch3-s3 の最初の段(運用)と後の段(案)が例。
+  - field: notes
+    text: '以降のスライドは、図の上の札で案と運用を見分けられる。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 描画(mark)の案内で、主張を含まない。
+
+- id: ch3-s3
+  facts: [F303, F305, F009]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F303 対象は「インシデント報告」
+      where: notes の2文目「NISTがインシデントの報告について」
+    - qualifier: F303 優先度の区分、validated の語、R1 の文を写した
+      where: 対象外、または主張を強くしないもの(ch3-s1 と同じ)
+    - qualifier: F305 R1 と R2 を連続して引用、要因の例は N2、行末の語の連結
+      where: 対象外(写し方の記録)。要因の例は ch3-s7 で使う
+    - qualifier: F009 依頼者のSOCの運用
+      where: steps[0] の「(このSOCの運用)」、notes の1文目
+    - qualifier: F009 選択肢 A に依頼者が同意したもの
+      where: 対象外(同意の経緯)
+  sentences:
+  - field: takeaway
+    text: '民間の解説とは逆に、優先度は3つに分けた後に付ける'
+    unsupported: 不合格
+    qualifiers: 合格
+    quote_slide: '民間の解説とは逆に'
+    quote_fact: このスライドの facts(F303、F305、F009)に民間の解説の順はない。民間の解説の順は F312(ch3-s1 の facts)にある。
+    reason: >-
+      民間の解説の段の順は、このスライドが使う事実にない。F312 なら「優先付け(第3段)が本物か誤検知かの判定(第5段)より前」は裏付けられる。
+      ただし F312 では「分類(Categorization、第2段)」が優先付けより前にあり、ch3-s1 の表にも「分類、優先付け」と載る。「3つに分けた後に付ける」を「分類の後に優先付け」と読むと、民間の解説と同じ順で「逆」にならない。
+      逆なのは「本物か誤検知かの判定」と優先付けの順である。
+    suggestion: 立証の設計の facts に F312 を足すか、「民間の解説は判定の前に優先度を付けるが、この案は3つに分けた後に付ける」のように、何と逆かを書く。
+  - field: body.steps[0]
+    text: '重大度を見る: 製品の重大度が High 以上なら / 上げる / (このSOCの運用) / それ以外'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F009。案の印のスライドの中で、この段だけ「このSOCの運用」と書き分けている。
+  - field: body.steps[1]
+    text: '3つに分ける: 根拠とログで / 誤検知、想定内の検知、攻撃の疑い'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 案の段。分ける段を先に置く根拠は F303(確認が先)で、notes の2文目が理由を書く。
+  - field: body.steps[2]
+    text: '優先度を付ける: 影響の大きさで'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F305 はリスク評価の要因の集合で付けるとし、要因の例(N2)は資産の重要度、影響、活動の段階などである。「影響の大きさ」は要因の一部への言い換えだが、見出しの言い方と同じで、ch3-s7 で要因を示すため合格とした。
+  - field: text
+    text: '複数のアラートの間は、届いた順ではなく優先度の順に扱う。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 案の文。次の文が NIST の対象(インシデント)と、この講義の当てはめを区別している。
+  - field: text
+    text: 'NISTはインシデントについて述べ、この講義はアラートにも当てはめる'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '最初の段はこのSOCの運用で、製品が付けた値で線を引くため、新人が自分で重大度を判断しなくてよい。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '分ける段を優先度の段より前に置いたのは、NISTがインシデントの報告について、起きたかの確認を重さの見積もりより前に置くことに合わせたため。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'NISTは、資源に限りがあるため、インシデントを届いた順に扱わないとする。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、分ける段で使う根拠の確かめ方。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s4
+  facts: [F709, F710]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F709 製品の定義(Microsoft Sentinel)
+      where: notes の1文目「製品の文書(Microsoft Sentinel)の例では」、出典の行
+    - qualifier: F709 文書の適用範囲は Defender portal と Azure portal の Sentinel
+      where: なし。Sentinel の両方の画面に当てはまるという記録で、主張を狭めるものではない
+    - qualifier: F709 新しいルールの作成には custom detections が最良になったとの注記
+      where: なし。スライドはルールがアラートを出す仕組みだけを使い、ルールの作り方に触れないため、落としても主張は強くならないと判断した
+    - qualifier: F710 製品の定義(Microsoft Sentinel)
+      where: notes の1文目の「製品の文書(Microsoft Sentinel)の例では」に続く3文目
+    - qualifier: F710 スケジュールされたルールの記述。ほかの種類は別に記述がある
+      where: notes の3文目「最も一般的な種類のルールは」、4文目
+  sentences:
+  - field: takeaway
+    text: 'アラートの記載だけで、根拠があるとは判断しない'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 案の文(スライドの印が案)。アラートがルールの問い合わせの結果であること(F709、F710)から組み立てた確かめ方として、事実と食い違わない。
+  - field: body.steps[0]
+    text: 'アラートを読む: アラートを出したルールの条件と、アラートに含まれる利用者や端末を読む'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F709(アラートは関わる実体を含む)、F710(ルールの条件と閾値)。
+  - field: body.steps[1]
+    text: '元のログと照らす: 読んだ条件と利用者や端末を、元のログで確かめる'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F710(ルールは生データを調べる)から組み立てた案の段。
+  - field: notes
+    text: '製品の文書(Microsoft Sentinel)の例では、ルールは集めたデータに定期的に問い合わせ、探しているものを見つけるとアラートを出す。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'アラートは、関わる利用者、端末、アドレスなどを含む。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '最も一般的な種類のルールは、定めた遡りの期間の生データを調べ、結果の件数がルールの閾値を超えるとアラートを出す。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'ほかの種類のルールは別の動き方をする。'
+    unsupported: 不合格
+    qualifiers: 合格
+    quote_slide: 'ほかの種類のルールは別の動き方をする。'
+    quote_fact: 'F710 qualifiers: スケジュールされたルールの記述。ほかの種類(NRT、異常、Microsoft セキュリティのルールなど)は別に記述がある'
+    reason: >-
+      事実が示すのは、ほかの種類のルールが「別に記述されている」ことで、どう動くか、スケジュールされたルールと違う動きかは示していない。
+      限定(この記述はスケジュールされたルールだけのもの)を伝える文だが、事実にない内容を言い切っている。影響は小さい。
+    suggestion: 「ほかの種類のルールは、この記述に含まれない」とする。
+  - field: notes
+    text: 'この2段は、その仕組みから組み立てた案。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、誤検知として閉じてよいとき。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s5
+  facts: [F605, F609, F220]
+  qualifiers_coverage:
+    verdict: 不合格
+    items:
+    - qualifier: F605 製品の定義(Microsoft Sentinel)
+      where: notes の1文目「製品の文書(Microsoft Sentinel)が」
+    - qualifier: F605 Azure portal での操作
+      where: なし。出典の行は「Microsoft Sentinel、Microsoft Defender for Endpoint の文書」で、画面の限定がない
+    - qualifier: F605 一覧の区切りは収集セッションが付けた
+      where: 対象外(写し方の記録)
+    - qualifier: F609 製品の定義(Microsoft Defender for Endpoint)
+      where: notes の3文目
+    - qualifier: F609 省略と区切りは収集セッションによる
+      where: 対象外(写し方の記録)
+    - qualifier: F609 正確だが無害なアラートの分類が、同じ会社の製品の文書の間で一致しない
+      where: notes の4文目
+    - qualifier: F220 論文中の用語の定義
+      where: notes の2文目「Yangらは、誤検知を…とし」、出典の行「Yangら(2024年)の定義」
+    quote_fact: 'F605 qualifiers: Azure portal での操作'
+    reason: >-
+      F605 の閉じるときの分類の選択肢は、Azure portal での操作の記述である。スライドは「製品の文書(Microsoft Sentinel)が閉じるときに選ばせる」とし、画面の限定がないため、Sentinel のどの画面でも同じ選択肢だと読める。
+      案の2つの理由を取った元の記述なので、案そのものの正しさには響かない。影響は小さい。
+    suggestion: notes の1文目に「Azure portal の」を足すか、出典の行の側で示す。
+  sentences:
+  - field: takeaway
+    text: '正しく反応した想定内の検知は、誤検知としては閉じない'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F220(良性のトリガーは誤検知と別)、F605(Benign Positive は False Positive と別の分類)。
+  - field: body.title
+    text: '誤検知として閉じてよい2つの理由'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 案の印のスライド。F605 の False Positive の2つの選択肢から取った。
+  - field: body.items[0]
+    text: '検知の条件の誤り(ルールの誤り、誤った設定)'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F605「incorrect alert logic」、F220「bad rules, errors, or misconfigurations」。
+  - field: body.items[1]
+    text: 'データの誤り'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F605「incorrect data」。
+  - field: text
+    text: 'どちらの誤りかを根拠をもって言えないものは、誤検知として閉じない'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 案の規則。
+  - field: notes
+    text: '2つの理由は、製品の文書(Microsoft Sentinel)が閉じるときに選ばせる誤検知の分類、「アラートの論理が誤り」と「データが誤り」から取った。'
+    unsupported: 不合格
+    qualifiers: 不合格
+    quote_slide: '製品の文書(Microsoft Sentinel)が閉じるときに選ばせる誤検知の分類'
+    quote_fact: 'F605: Microsoft Sentinel では、インシデントを閉じるときに分類の選択が必須で… / qualifiers: Azure portal での操作'
+    reason: >-
+      F605 で閉じるのは、Sentinel のインシデント(語彙の model_labels では「アラートのまとまり」)である。文は何を閉じるかを書かず、この講義で「閉じる」のはアラートなので、Sentinel がアラートを閉じるときに選ばせると読める。
+      また、Azure portal での操作という限定がない(スライド単位の判定と同じ)。
+      案の2つの理由を取った元の説明として、案の中身には響かない。影響は小さい。
+    suggestion: 「製品の文書(Microsoft Sentinel、Azure portal)が、アラートのまとまり(製品の呼び名はインシデント)を閉じるときに選ばせる…」とする。
+  - field: notes
+    text: 'Yangらは、誤検知を、悪いルールや誤り、誤った設定によって無害な活動に誤って反応したアラートとし、正しく反応したが業務上説明のつく想定内の検知とは別のものとする。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F220 の原文は、一般の「誤検知」が「通常」そうしたアラートを指す(usually refer to)という書き方で、Yangら自身の定義というより一般の用法の説明である。「通常」が落ちているが、主張の向き(誤検知と想定内の検知は別)は変わらないため合格とした。
+  - field: notes
+    text: 'Microsoft Defender for Endpoint の文書も、分類の前に、アラートが正確か、誤検知か、無害かを判断するよう求める。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'ただし、正確だが無害なアラートの分類は、同じ会社の製品の文書の間で扱いが異なる。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、想定内の検知として閉じてよいとき。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s6
+  facts: [F002, F220, F215]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F002 依頼者のSOCの運用
+      where: 見出し「このSOCでは」、body の mark(運用)、出典の行
+    - qualifier: F002 設計セッションが示した案に依頼者が同意したもの
+      where: 対象外(同意の経緯)
+    - qualifier: F220 論文中の用語の定義
+      where: notes の1文目は語彙の定義として述べ、F220 を定義の裏付けに使う。Yangらの名は2文目にある
+    - qualifier: F215 1つのSOC
+      where: notes の2文目「Yangらが調べた1つのSOCでは」
+    - qualifier: F215 本文は「最初の一般的な原因」と述べる
+      where: notes の2文目「最初に挙げられていた」
+  sentences:
+  - field: takeaway
+    text: '攻撃のスキャンと似て見える社内のスキャンは、一覧で見分ける'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 「似て見える」は F215(1つのSOCで、悪性のスキャンと似た振る舞い)による。文はこのSOCの運用(一覧で見分ける)を述べ、似て見えることは前提として使う。1つのSOCの観察からの一般化だが、可能性の範囲の言い方で、notes に1つのSOCと書かれているため合格とした。
+  - field: body.text
+    text: '新人が自分で閉じてよいのは、誤検知と、リーダーが事前に一覧にした想定内の活動(承認済みのスキャン、委託した診断など)に当てはまるものだけ'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F002 の statement と同じ。
+  - field: body.caveat
+    text: '一覧にない活動は、新人が想定内の検知として閉じる対象に入らない'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '想定内の検知は、検知の条件どおりに正しく反応したが、業務上は問題のない活動によるアラート。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 語彙 T-expected-detection の定義。F220 の benign trigger の定義と合う。
+  - field: notes
+    text: 'Yangらが調べた1つのSOCでは、定期的な社内の脆弱性スキャンが、悪性のスキャンと似た振る舞いをしながら、無視してよいアラートの原因として最初に挙げられていた。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F215 は「脆弱性と設定不備の確認」のスキャンとする。「脆弱性スキャン」は対象を狭める言い方で、主張を強くしない。
+  - field: notes
+    text: '一覧は、こうした活動をリーダーが事前に書き出したもの。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、優先度の付け方。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s7
+  facts: [F610, F305, F306]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F610 推奨事項と注記
+      where: 出典の行「インシデントのリスク評価の要因の例示」
+    - qualifier: F610 要因は例示
+      where: body の title「優先度の要因の例」、notes の1文目と2文目
+    - qualifier: F610 要因の組み合わせは組織の必要と成熟度による
+      where: notes の3文目
+    - qualifier: F305 写し方の記録、要因の例は N2
+      where: 対象外(写し方の記録)。要因の例は body の items
+    - qualifier: F306 訓練事業者のブログで公的機関・標準ではない
+      where: text「民間の解説は」、出典の行「標準や公的文書ではない」
+    - qualifier: F306 日付は Last updated の表示、Stage 3 の節
+      where: 対象外(出典の位置の記録)
+  sentences:
+  - field: takeaway
+    text: '重大度が同じアラートでも、要因が違えば優先度は変わりうる'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 案の文。F610(要因で付ける)と F306(重大度は判断の材料)から組み立てた帰結で、「うる」に留めている。
+  - field: body.title
+    text: '優先度の要因の例'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.items[0]
+    text: '資産の重要度'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.items[1]
+    text: '機能への影響、データへの影響'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.items[2]
+    text: '活動の段階'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: text
+    text: '民間の解説は、SIEMが付けた重大度は判断の材料であり、判断の代わりではないとする'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F306 の quote と合う。
+  - field: notes
+    text: '要因は NIST SP 800-61 Rev.3 の例示から取った。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: NIST の要因がインシデントについてのものであることは、出典の行(インシデントのリスク評価の要因の例示)にある。
+  - field: notes
+    text: 'NISTの例示には、ほかに脅威主体の特徴と回復可能性がある。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '要因の間に順序や重みの定めはなく、どの要因を使うかは組織の必要と成熟度による。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 「順序や重みの定めはない」は、F610 と F305 の quote に定めがないことによる(立証の設計の relation_reason と同じ)。NIST の全文は開いていない。
+  - field: notes
+    text: '活動の段階は、ch2-s5 の ATT&CK の戦術で表せる。'
+    unsupported: 判定できない
+    qualifiers: 判定できない
+    quote_slide: '活動の段階は、ch2-s5 の ATT&CK の戦術で表せる。'
+    reason: >-
+      このスライドの事実(F610、F305、F306)には ATT&CK がなく、裏付けは ch2-s5 の事実にあるはずだが、渡されていない。
+      前後の章の見出しによれば、ch2-s5 の見出しは「案として、ATT&CKの戦術で…表し」で、ATT&CK で段階を表すのは案である。このスライド自体が案の印を持つため案と読めるが、文は「表せる」と言い切っている。
+    suggestion: 「ch2-s5 の案では、活動の段階を ATT&CK の戦術で表す」とする。
+  - field: notes
+    text: '民間の解説はSIEMの重大度について述べており、この講義は製品の重大度を優先度の材料の1つとして扱う。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、閉じるときに残すもの。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s9
+  facts: [F318]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F318 訓練事業者のブログで公的機関・標準ではない
+      where: notes の1文目「民間の解説は」、出典の行「標準や公的文書ではない」
+    - qualifier: F318 閉じた個々の判断の監査や承認の手順は同ページに記載されていない
+      where: notes の3文目
+  sentences:
+  - field: takeaway
+    text: '記録は事務の手間ではなく、後から判断をたどる材料になる'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F318「This isn't administrative overhead; it's institutional memory」。「後から判断をたどる材料」は institutional memory の言い換えとして範囲内。
+  - field: body.title
+    text: '閉じるときに記録する4項目'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.items
+    text: '発火した内容 / 調べたこと / 見つかった証拠 / 下した判断'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '民間の解説は、本物か誤検知かを問わず、閉じた全てのアラートに記録を残すとし、記録を組織の記憶と呼ぶ。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '誤検知として閉じるときも、想定内の検知として閉じるときも、4項目をそろえる。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 案の文。F318 の「閉じた全てのアラート」に含まれる。
+  - field: notes
+    text: '同じページに、閉じた判断を監査や承認する手順は書かれていない。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、間違って閉じたらどうなるか。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s10
+  facts: [F004, F318]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F004 依頼者のSOCの運用
+      where: 見出し「このSOCでは」、body の mark(運用)、出典の行
+    - qualifier: F004 頻度は決まっていない(およそ週1回の感覚)
+      where: notes の1文目「頻度は決まっていない」。週1回の感覚は、依頼者の指定(次の行)により載せない
+    - qualifier: F004 資料には「閉じたものは後で見直される」程度に書く(依頼者の指定)
+      where: body の text
+    - qualifier: F318 訓練事業者のブログで公的機関・標準ではない
+      where: notes の2文目「民間の解説は」。出典の行はこのSOCの運用だけで、「標準ではない」は明示されていない。「民間の」で公的機関でないことは伝わるため合格とした
+    - qualifier: F318 監査や承認の手順は同ページに記載されていない
+      where: notes の2文目「見直しの手順は書いていない」
+  sentences:
+  - field: takeaway
+    text: '閉じる判断は、新人1人で終わらない'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.text
+    text: '閉じたものは、後で見直される'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.caveat
+    text: '見直しの材料は、閉じるときに残した記録(ch3-s9)'
+    unsupported: 不合格
+    qualifiers: 合格
+    quote_slide: '見直しの材料は、閉じるときに残した記録(ch3-s9)'
+    quote_fact: 'F004: 新人が閉じたアラートを、後でリーダーかベテランが見直している / F318 qualifiers: 閉じた個々の判断の監査や承認の手順は同ページに記載されていない'
+    reason: >-
+      運用の印の枠にあり、このSOCの見直しが記録を材料にすると読める。このスライドの事実では、F004 は見直すことだけを述べ、材料を述べない。F318 は記録を勧めるが、見直しの手順を書いていない。
+      notes の3文目は同じことを「この講義は、その記録を見直しの材料として使う」と講義の選択として書いており、枠(運用)と notes(講義)で出どころが食い違う。案と運用の区別が崩れている。
+      なお、F008(依頼者の証言「後で見直すのもその記録を見る」)はこのスライドの facts にないが、F008 なら運用として裏付けられる。
+    suggestion: 立証の設計の facts に F008 を足し、notes の3文目を「このSOCでは、見直しはその記録を見て行う」に揃える。F008 を使わないなら、caveat を運用の枠から外し、講義の選択と分かる言い方にする。
+  - field: notes
+    text: '見直すのはリーダーかベテランで、頻度は決まっていない。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '民間の解説は、閉じた全てのアラートに記録を残すとするが、見直しの手順は書いていない。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'この講義は、その記録を見直しの材料として使う。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 章の主張 C3 の反論への応答(この資料は、その記録を見直しの材料として使う)と同じ。ただし body の caveat(運用の枠)と出どころが食い違う(caveat の指摘を参照)。
+  - field: notes
+    text: '記録の4項目がそろっていれば、見直す人が判断をたどれる。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F318(記録は組織の記憶)からの帰結。
+  - field: notes
+    text: '次は、どこまで調べたら上げるか。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s11
+  facts: [F005, F403]
+  qualifiers_coverage:
+    verdict: 判定できない
+    items:
+    - qualifier: F005 依頼者のSOCの運用
+      where: 見出し「このSOCでは」、body の mark(運用)、出典の行
+    - qualifier: F005 配属から最初の3か月
+      where: 見出し、body の text「配属から3か月は」
+    - qualifier: F005 測って決めた値ではなく、依頼者の判断(外の目安12〜20分より長めに取った)
+      where: body の caveat、notes の3文目、出典の行
+    - qualifier: F005 スライドには「このSOCの運用」として載せる
+      where: body の mark(運用)、出典の行
+    - qualifier: F403 Tier 1の場合
+      where: body の caveat「一次解析の担当で」、notes の1文目
+    - qualifier: F403 実務者向けの解説記事で標準や公的文書ではない
+      where: notes の1文目
+    - qualifier: F403 根拠となる調査や数値の出典は記事中で確認できていない
+      where: notes の1文目
+    - qualifier: F403 出版社は広告やスポンサー募集を掲載している
+      where: なし
+    quote_fact: 'F403 qualifiers: 出版社は広告やスポンサー募集を掲載している'
+    reason: >-
+      広告の掲載の限定は、スライドのどこにもない。これは記述の範囲を限るものではなく、出典の信頼性の注記である。
+      検査の定義(qualifiers が全て文に残っているか)をそのまま当てはめれば不合格だが、承認済みの型の見本 ch3-s15 も、同じ記事の F413 の同じ限定を載せていない。
+      こうした信頼性の注記を画面に残す必要があるかが、定義と承認済みの見本から決められないため、判定できないとした。ほかの限定は全て残っている。
+    suggestion: 信頼性の注記を残す対象に含めるかを、設計セッションが決める。含めるなら notes の1文目に「広告を掲載する出版社の」を足す。
+  sentences:
+  - field: takeaway
+    text: '決められないまま調べ続けず、時間で区切って上げる'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.text
+    text: '持ち時間は、新人が1件のアラートを調べてよい時間。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 語彙 T-timebox の定義。
+  - field: body.text
+    text: '配属から3か月は1件30分で、過ぎたら、そこまでに見たことを付けて上げる'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.caveat
+    text: '30分は測って決めた値ではなく、外の目安(一次解析の担当で{F403})より長めに取った'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: '{F403} は「12-20分」。F005 の quote と合う。'
+  - field: notes
+    text: '外の目安は、実務者向けの解説記事(標準や公的文書ではない)が、Tier 1(一次解析の担当)のアラート1件について一般的とする値で、根拠となる調査は記事中で確認できていない。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'その記事も、時間内に判定に達しなければ、記録した要約を付けて上げ、その場で調べ続けないとする。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '新人は慣れていないため、リーダーがそれより長めに取った。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、30分を待たずに上げるとき。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s16
+  facts: [F005, F009]
+  qualifiers_coverage:
+    verdict: 合格
+    items:
+    - qualifier: F005 依頼者のSOCの運用
+      where: 見出し「このSOCでは」、body の mark(運用)、出典の行
+    - qualifier: F005 配属から最初の3か月
+      where: body の text「持ち時間を待たずに」。持ち時間は語彙で「このSOCでは配属から3か月は1件30分」と定義され、ch3-s11 で定義される。High 以上ですぐ上げる規則自体は F009 により3か月に限られない
+    - qualifier: F005 測って決めた値ではない
+      where: このスライドの文は30分の値を使わない(30分は見出しだけ)。ch3-s11 に残る
+    - qualifier: F009 依頼者のSOCの運用
+      where: body の mark(運用)、notes の2文目「このSOCでは」
+    - qualifier: F009 選択肢 A に依頼者が同意したもの
+      where: 対象外(同意の経緯)
+  sentences:
+  - field: takeaway
+    text: '上げるかは、調べ始める前にも確かめる'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F005、F009 の「すぐ上げる」による。
+  - field: body.text
+    text: '重大度は、製品(SIEM、EDR)がアラートに付けた値。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.text
+    text: 'High 以上なら、持ち時間を待たずにすぐ上げる'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.caveat
+    text: '新人が自分で重大度を判断しなくてよいように、製品の値で線を引く'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '製品は、High、Critical などの値で重大度を付ける。'
+    unsupported: 判定できない
+    qualifiers: 合格
+    quote_slide: '製品は、High、Critical などの値で重大度を付ける。'
+    quote_fact: 'F009 quote: うちでは High 以上ならすぐ上げる。'
+    reason: >-
+      F009 は High と「以上」を述べるが、Critical という値の名前は、このスライドの事実にない。同じ例は語彙 T-severity の定義(High、Critical など)にあるが、その出典は作業票に示されていない。
+      製品の一般の記述として正しい可能性は高いが、渡された材料では確かめられないため、判定できないとした。
+    suggestion: 値の名前を事実で裏付けるか、「製品は、High などの段階の値で重大度を付ける」のように F009 の範囲に留める。
+  - field: notes
+    text: 'このSOCでは、その値が High 以上なら、調べ始める前に上げる。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '優先度(ch3-s7)とは別のもので、優先度は複数のアラートのどれから扱うかの順位。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: 語彙 T-priority と T-severity の not の定め。
+  - field: notes
+    text: '次は、上げる条件の案。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s12
+  facts: [F406, F407]
+  qualifiers_coverage:
+    verdict: 判定できない
+    items:
+    - qualifier: F406 実務者向けの解説記事で標準や公的文書ではない
+      where: notes の4文目、出典の行
+    - qualifier: F406 出版社は広告やスポンサー募集を掲載している
+      where: なし
+    - qualifier: F406 「Tier 1 asset」は資産の重要度の階層を指す
+      where: notes の1文目
+    - qualifier: F406 4つの引用を「 / 」でつないで写している
+      where: 対象外(写し方の記録)
+    - qualifier: F407 個人が運営する企業ブログで標準や公的文書ではない
+      where: notes の4文目、出典の行
+    - qualifier: F407 同ページは自社の書籍を宣伝している
+      where: なし
+    - qualifier: F407 時間の目安は書かれていない
+      where: notes の5文目
+    - qualifier: F407 終端記号の省略、引用の連結
+      where: 対象外(写し方の記録)
+    quote_fact: 'F406 qualifiers: 出版社は広告やスポンサー募集を掲載している / F407 qualifiers: 同ページは自社の書籍を宣伝している'
+    reason: >-
+      広告の掲載と自社の書籍の宣伝の限定が、スライドのどこにもない。ch3-s11 と同じく、出典の信頼性の注記を画面に残す必要があるかが、定義と承認済みの見本(ch3-s15 は同じ2つの出典の同じ限定を載せていない)から決められないため、判定できないとした。
+      ch4 の検査(7-ch4-1)では、ベンダーの調査の「製品の宣伝を含む」が限定として扱われ、画面に残っていた。書籍の宣伝はそれに近い。ほかの限定は全て残っている。
+    suggestion: 設計セッションが決める。含めるなら notes の4文目に「片方は広告を掲載し、もう片方は自社の書籍を宣伝している」を足す。
+  sentences:
+  - field: takeaway
+    text: '誤検知と想定内の検知のほかは、上げる側に入る'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F406「Tier 1 analysts resolve false positives and benign true positives. Everything else escalates.」。案の印のスライド。
+  - field: body.title
+    text: '上げる条件(どれか1つで上げる)'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.items[0]
+    text: '重要な資産での攻撃の疑い'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F406「Any confirmed or likely TP on a Tier 1 asset」。
+  - field: body.items[1]
+    text: '横展開(入り込んだ端末から別の端末へ広がること)の証拠'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.items[2]
+    text: '事前に決めた自分の守備範囲を超える'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F407「exceeds your predefined technical scope」。
+  - field: notes
+    text: '重要な資産は、資産の重要度の階層で上位にある資産。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '横展開は複数の端末にまたがる。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '守備範囲は、技術の範囲と、調べる権限の範囲を指し、権限の限界に達したら直ちに上げる。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F407 は技術の範囲を超えるときと、権限の限界に達したときを別の条件として挙げ、この文はそれを「守備範囲」の1語にまとめた案の定義。F407 のもう1つの条件(単純な監視で足りる範囲を超えた調査が要る)は載っていないが、条件を狭める向きで、主張を強くしない。
+  - field: notes
+    text: 'どちらの出典も実務者向けの解説で、標準や公的文書ではない。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '片方は時間の目安を書いていない。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'もう片方は、持ち時間の中で判定できないアラートも上げる条件に挙げる(ch3-s11)。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '次は、迷ったとき。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s13
+  facts: [F005, F006, F405]
+  qualifiers_coverage:
+    verdict: 不合格
+    items:
+    - qualifier: F005 依頼者のSOCの運用
+      where: 見出し「このSOCでは」、body の mark(運用)、出典の行
+    - qualifier: F005 配属から最初の3か月
+      where: なし
+    - qualifier: F005 測って決めた値ではなく、依頼者の判断
+      where: なし
+    - qualifier: F006 依頼者のSOCの運用
+      where: 同上
+    - qualifier: F006 誤検知と言える基準は案(D001)
+      where: body の proposal_parts(R-op-fp を案の基準として描く)、notes の3文目
+    - qualifier: F006 確かめる順は F007
+      where: このスライドは調べる段から出る道だけを描き、確かめる順に触れないため関係しない
+    - qualifier: F405 1つ目の規則(P1を遅らせない)はP1の場合の規則
+      where: スライドは1つ目の規則を使わないため関係しない
+    - qualifier: F405 2つ目の規則は一般規則で、P1に限らない
+      where: notes の6文目
+    - qualifier: F405 有志のSOP集で標準や公的文書ではない
+      where: notes の6文目「有志の手順書(標準ではない)」、出典の行
+    - qualifier: F405 2つの規則を連結して写した
+      where: 対象外(写し方の記録)
+    quote_slide: 'body の labels「調べる\n(30分まで)」「30分で根拠なし」、notes「30分たっても閉じる根拠がなければ、見たことを付けて上げる。」'
+    quote_fact: 'F005 qualifiers: 配属から最初の3か月 / 測って決めた値ではなく、依頼者の判断(外の目安12〜20分より長めに取った)'
+    reason: >-
+      このスライドは30分の区切りを図とノートで使うが、30分が配属から3か月の新人の値であることが、見出し、出典の行、図、ノートのどこにもない。3か月を過ぎた解析者にも30分が当てはまると読める。
+      仕組みの定義の場面の名前(このSOCで、配属から3か月の新人が…)には3か月があるが、flowchart の描き方の定めでは、場面の名前は描かれない。
+      30分が測って決めた値でないことも残っていない(ch3-s11 にはある)。前者は主張の範囲を広げるため、影響がある。
+    suggestion: notes の4文目を「配属から3か月の新人は、30分たっても…」とするか、図の上に「配属から3か月の新人」を添える。測って決めた値でないことは「30分(ch3-s11)」のように参照で足りるかを設計セッションが決める。
+  sentences:
+  - field: takeaway
+    text: '迷うなら、上げすぎる側に倒す'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: >-
+      このSOCの運用(F006: 30分調べて根拠がなければ上げる)と、有志の手順書の一般規則(F405)による。「上げすぎる側に倒す」は F405 の言い方で、運用の印のスライドに置かれているが、notes の6文目が手順書「も」と書き分けている。
+      結論1行だけを読むと、迷った時点ですぐ上げるとも読めるが、見出しが「30分調べても…迷うなら」と条件を持つため合格とした。
+  - field: body.labels.A-investigate
+    text: '調べる(30分まで)'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F005。3か月の限定はスライド単位の判定を参照。
+  - field: body.labels.R-op-fp
+    text: '誤検知と根拠をもって言えた? → 誤検知として記録して閉じる(仕組みの定義の label)、案の基準'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F006(誤検知と言える→閉じる、基準は案)。「記録して」は F008 にあるが、F008 はこのスライドの facts にない。語彙 T-close の定義(調べたことと判断を記録し、対応を終える)と同じため合格とした。
+  - field: body.labels.R-op-inv-esc
+    text: '30分で根拠なし → 見たことを付けて上げる(仕組みの定義の label)'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F005、F006。
+  - field: notes
+    text: '調べる段から出る道は2つだけ。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: >-
+      F006 の運用は、調べる段の結果を「誤検知と言える→閉じる」「30分調べて根拠がなければ上げる」の2つだけで述べる。運用の記述としては裏付けられる。
+      ただし、30分の途中で攻撃の証拠(ch3-s12 の案の横展開の証拠など)を見つけたときに、30分を待たずに上げるかは、F005、F006 に書かれていない。「2つだけ」はその場合も30分まで調べ続けると読める。運用の欠けの可能性として、設計セッションに伝える。
+  - field: notes
+    text: '誤検知と根拠をもって言えたら、記録して閉じる。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '言える基準は案(ch3-s5)。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '30分たっても閉じる根拠がなければ、見たことを付けて上げる。'
+    unsupported: 合格
+    qualifiers: 不合格
+    quote_slide: '30分たっても閉じる根拠がなければ、見たことを付けて上げる。'
+    quote_fact: 'F005 qualifiers: 配属から最初の3か月'
+    reason: 30分が配属から3か月の新人の値であることが落ちている(スライド単位の判定を参照)。
+    suggestion: 「配属から3か月の新人は、30分たっても…」とする。
+  - field: notes
+    text: '迷っている状態は、閉じる根拠がない状態として扱う。'
+    unsupported: 判定できない
+    qualifiers: 合格
+    quote_slide: '迷っている状態は、閉じる根拠がない状態として扱う。'
+    quote_fact: 'F006 quote: それ以外→30分調べて、根拠がなければ上げる。'
+    reason: >-
+      依頼者の証言(F005、F006)は「根拠がなければ上げる」とし、「迷う」に触れていない。迷う状態を根拠がない状態と同じに扱うのが、依頼者のSOCの規則か、この講義の読み替えかは、渡された材料から分からない。
+      運用の印のスライドで主体のない「扱う」と書かれているため、このSOCの規則として読める。読み替えなら案と運用の区別が崩れるが、見出し(上流)も同じ読み替えに立つため、上流で意図されたものかもしれない。
+    suggestion: 講義の読み替えなら「この講義では、迷っている状態を、閉じる根拠がない状態として扱う」とする。運用なら依頼者に確かめる。
+  - field: notes
+    text: '有志の手順書(標準ではない)も、迷うときは上げすぎる側に倒すとし、これは最も重大な場合に限らない一般の規則である。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '上げると決めるところまでが、新人が1人で行う判断。'
+    unsupported: 不合格
+    qualifiers: 合格
+    quote_slide: '上げると決めるところまでが、新人が1人で行う判断。'
+    quote_fact: '章の主張 C3 の反論への応答: この資料では、持ち時間の中で決められないときや迷うときに上げることまでを、新人が1人で行う判断に含める'
+    reason: >-
+      このスライドの事実(F005、F006、F405)は、新人の判断の範囲を述べない。同じ内容は章の主張 C3 の応答にあり、そこでは「この資料では…含める」と、講義の位置づけとして書かれている。
+      運用の印のスライドで主体なく言い切っているため、このSOCの規則として読める。案(講義の位置づけ)と運用の区別が崩れている。
+    suggestion: 「この講義では、上げると決めるところまでを、新人が1人で行う判断に含める」とする。
+  - field: notes
+    text: '次は、攻撃の試みの扱い。'
+    unsupported: 合格
+    qualifiers: 合格
+
+- id: ch3-s14
+  facts: [F003, F207]
+  qualifiers_coverage:
+    verdict: 不合格
+    items:
+    - qualifier: F003 依頼者のSOCの運用
+      where: 見出し「このSOCでは」、body の mark(運用)、出典の行
+    - qualifier: F003 配属から最初の3か月
+      where: 見出し、body の text、notes の4文目
+    - qualifier: F207 1つのSOC
+      where: notes の2文目「1つのSOCの実測では」
+    - qualifier: F207 割合は表4の期間(2020-12〜2022-07、14,429,534件)のもの
+      where: なし
+    - qualifier: F207 27%と49%は下限
+      where: notes の2文目「下限の値でも」
+    - qualifier: F207 分類不能(Unknown)が23.72%残る
+      where: なし
+    - qualifier: F207 「攻撃の試み」は侵害に至らなかった攻撃と定義されている
+      where: notes の1文目
+    quote_slide: 'ch2-s6 で見た1つのSOCの実測では、攻撃の試みは下限の値でも、侵害に至った攻撃({F207})よりはるかに多い。'
+    quote_fact: 'F207 qualifiers: 割合は表4の期間(2020-12〜2022-07、14,429,534件)のもの / 分類不能(Unknown)が23.72%残る'
+    reason: >-
+      期間と分類不能の割合が、このスライドにない。分類不能は比べ方に関わる。攻撃の試み(27%以上)と侵害に至った攻撃(0.01%)の比べは、分類できたアラートの中のもので、約24%が分類されずに残る。
+      文は「ch2-s6 で見た」と参照しており、ch2-s6 に限定が載っている可能性はあるが、ch2-s6 の仕様は渡されていない。検査の定義はスライドの文に残っているかを見るため、不合格とした。
+    suggestion: notes の2文目に「分類できなかったものが約24%残る」を足すか、参照で足りるとするかを設計セッションが決める。
+  sentences:
+  - field: takeaway
+    text: '上が溢れるかは、新人が判断に入れなくてよい'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.text
+    text: '配属から3か月の新人は、侵害に至らなかった攻撃の試みを、全て上げる'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: body.caveat
+    text: '上げたものが溢れるかは、リーダーの側で対処する'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '攻撃の試みは、侵害に至らなかった攻撃によるアラート。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: 'ch2-s6 で見た1つのSOCの実測では、攻撃の試みは下限の値でも、侵害に至った攻撃({F207})よりはるかに多い。'
+    unsupported: 合格
+    qualifiers: 不合格
+    quote_slide: 'ch2-s6 で見た1つのSOCの実測では、攻撃の試みは下限の値でも、侵害に至った攻撃({F207})よりはるかに多い。'
+    quote_fact: 'F207: 攻撃の試み…が27%(下限)、真の攻撃に関連するのは0.01% / qualifiers: 分類不能(Unknown)が23.72%残る、表4の期間'
+    reason: 比べそのものは F207 で裏付けられる(27%以上と0.01%)。分類不能と期間の限定が落ちている(スライド単位の判定を参照)。
+  - field: notes
+    text: '全て上げれば、上げる件数は多くなる。'
+    unsupported: 不合格
+    qualifiers: 不合格
+    quote_slide: '全て上げれば、上げる件数は多くなる。'
+    quote_fact: 'F207: 実SOCの実測では… / qualifiers: 1つのSOC'
+    reason: >-
+      前の文の割合は、論文が調べた1つのSOCのものである。この文は、それをこのSOC(依頼者のSOC)の新人が上げる件数に当てはめているが、このSOCでも攻撃の試みが同じように多いことは、事実にない。
+      「1つのSOC」の限定を外した一般化になっている。章の主張 C3 の反論(攻撃の試みを含めると大半が上に上がる)も同じ前提に立つが、反論の側の想定である。
+    suggestion: 「このSOCでも同じ割合なら、全て上げれば、上げる件数は多くなる」とする。
+  - field: notes
+    text: 'それでも配属から3か月は全て上げ、溢れるかはリーダーの側で対処する。'
+    unsupported: 合格
+    qualifiers: 合格
+  - field: notes
+    text: '新人が背負うことではない。'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: F003 の quote「新人に背負わせることじゃない」。
+  - field: notes
+    text: '次は、上げるときに添えるもの。'
+    unsupported: 合格
+    qualifiers: 合格
+
+out_of_scope_observations:   # 検査の対象(スライド仕様の文)の外で、気づいたこと。判定の件数に含めない
+- 'ch3-s1 の出典の行「NIST SP 800-61 Rev.3(…)、CyberDefenders(…)の解説(2026年)。標準や公的文書ではない」は、「標準や公的文書ではない」が NIST にもかかるように読める。出典の行はストーリーライン(上流)の文で、この検査の対象外。'
+- 'ch3-s3 の出典の行は CyberDefenders の解説を材料に挙げるが、立証の設計の facts(F303、F305、F009)に CyberDefenders の事実はない。takeaway の「民間の解説とは逆に」の不合格と同じ原因と考える。'
+- 'ch3-s13 の notes の1文目の remark のとおり、30分の途中で攻撃の証拠を見つけたときに30分を待たずに上げるかが、このSOCの運用(F005、F006)に書かれていない。ch3-s12 の案(横展開の証拠なら上げる)との関係が、新人に分からない可能性がある。'
