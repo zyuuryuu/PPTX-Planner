@@ -116,7 +116,7 @@ exceptions:
   - target: 07-slides の演習(ch5-s1、s3、s5、s7)の架空のアラートの項目と、架空の例(ch2-s8 の「宛先のポートが443」など)
     rule: text、body.data、notes に、事実のIDによらない数値がない(docs/stages/07-slide-spec.md の合格条件)
     reason: 架空の例の数値は事実ではなく、台帳に載せるものではない。スライドに「架空」と明記することを条件に、事実のIDによらずに書いてよい(D013)。事実を述べる数値には適用しない
-  - target: 07-slides の text、notes の数値のうち、事実の value ではないが、そのスライドの sources にある事実の statement、quote、qualifiers に書かれている数値(例: F204 の「従業員1,000人超」、F005 の「30分」、F221 の「92%」「2022年前半」)
+  - target: '07-slides の text、notes の数値のうち、事実の value ではないが、そのスライドの sources にある事実の statement、quote、qualifiers に書かれている数値(たとえば F204 の「従業員1,000人超」、F005 の「30分」、F221 の「92%」「2022年前半」)'
     rule: text、body.data、notes に、事実のIDによらない数値がない(docs/stages/07-slide-spec.md の合格条件)
-    reason: 規則の目的は、数値を台帳の事実にたどれるようにすることにある。sources の事実の本文にそのまま書かれた数値は、たどれる。数値の直後に、その事実のIDを括弧なしの参照の印で添えることを条件に、直接書いてよい(D016)。事実の本文にない数値(引き算などで作った値)には使えない
+    reason: 規則の目的は、数値を台帳の事実にたどれるようにすることにある。sources の事実の本文にそのまま書かれた数値は、たどれる。どの事実の数値かを同じ文の事実の参照で示すことを条件に、直接書いてよい(D016)。事実の本文にない数値(引き算などで作った値)には使えない
 terms: terms.yaml
