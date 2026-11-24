@@ -1191,6 +1191,11 @@ def graph_figure(ctx, kind):
             if r['kind'] == 'contain':
                 parent[r['to']] = r['from']
     containers = set(parent.values())
+    for e in details:
+        if e in containers:
+            ctx.diag('unrendered', f'details の {e} は枠(contain で中に部品を持つ要素)のため描けない', 'error', e)
+        elif e not in els:
+            ctx.diag('unrendered', f'details の {e} が elements にない', 'error', e)
     connected = {r['from'] for r in R} | {r['to'] for r in R}
     isolated = [e for e in els if e not in connected and e not in containers]
     # 部品の大きさ
@@ -1199,7 +1204,7 @@ def graph_figure(ctx, kind):
         nm = dk.name(e, labels)
         bold = e == hl
         lines = ctx.wrap(nm, FS, 176, bold, e)
-        det = [l for x in details.get(e, []) for l in ctx.wrap(ctx.text(x), NOTE, 150, False, e + '.details')]
+        det = [l for x in details.get(e, []) for l in ctx.wrap(ctx.text(x), NOTE, 150 if e in isolated else 240, False, e + '.details')]
         w = max(150, maxw(lines, FS, bold) + 48)
         h = max(64, len(lines) * LH + 34)
         if det:
@@ -1311,7 +1316,17 @@ def graph_figure(ctx, kind):
                 p = parent.get(p)
             fill = '#fff' if parent.get(e) else PART
             ids[e] = sv.rect(x0, y0, w, h, fill=fill, stroke=INK if em else GRAY_LINE, sw=5 if em else 2, name=e, anc=[a for a in anc if a])
-            sv.lines(x0 + w / 2, y0 + h / 2, i['lines'], 26 if em and len(i['lines']) == 1 else FS, INK, em, inside=ids[e])
+            if i['det']:   # 中に一覧を持つ部品: 名前を上に、一覧をその下に描く
+                yy = y0 + 12
+                for l in i['lines']:
+                    sv.text(x0 + w / 2, yy + FS * 0.95, l, FS, 'middle', INK, em, inside=ids[e])
+                    yy += LH
+                yy += 6
+                for d in i['det']:
+                    sv.text(x0 + 20, yy + NOTE * 1.0, d, NOTE, role='note', inside=ids[e])
+                    yy += NOTE * 1.45
+            else:
+                sv.lines(x0 + w / 2, y0 + h / 2, i['lines'], 26 if em and len(i['lines']) == 1 else FS, INK, em, inside=ids[e])
         for x in edges:
             if x['r']['id'] not in epos or not (x['t'] in mset and x['h'] in mset):
                 continue
@@ -1693,7 +1708,10 @@ def main():
     secs = ''
     for k, (sid, kind) in enumerate(slides, 1):
         spec = deck.specs.get(sid) or {}
-        notes = f'<div class="notes">ノート: {E(str(spec["notes"]))}</div>' if spec.get('notes') else ''
+        notes = ''
+        if spec.get('notes'):   # ノートの {F...} も素材台帳の値に置き換える(参照の診断は出さない)
+            nt = re.sub(r'\[(F\d+)\?\]', r'\1', Ctx(deck, sid, spec).text(spec['notes']))   # 値のない事実は ID のまま
+            notes = f'<div class="notes">ノート: {E(nt)}</div>'
         nd = len([d for d in per.get(sid, {}).get('diagnostics', []) if d['severity'] == 'error'])
         badge = f' <span class="bad">診断 {nd}件</span>' if nd else ''
         secs += (f'<section id="{E(sid)}"><div class="cap">{k}. {E(sid)}({E(kind)}){badge}</div>'
