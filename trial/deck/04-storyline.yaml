@@ -269,16 +269,17 @@
   chapter: ch3
   section: null
   question: 迷ったときは、どうするのか
-  headline: 案として、30分調べても閉じる根拠がなく迷うなら、閉じずに上げる
+  headline: このSOCでは、30分調べても閉じる根拠がなく迷うなら、閉じずに上げる
   from:
   - Q3.3.1
   evidence:
-  - F405
   - F005
+  - F006
+  - F405
   objection:
     claim: C3
     index: 1
-  source: SOC-SOP「Escalation Matrix」(有志の手順書、2026年)。標準や公的文書ではない
+  source: このSOCの運用。有志の手順書(SOC-SOP「Escalation Matrix」、2026年)も、判断に迷うときは上げる側に倒すとする
 - id: ch3-s14
   chapter: ch3
   section: null
