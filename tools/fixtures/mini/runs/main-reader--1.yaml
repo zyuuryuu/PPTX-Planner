@@ -1,0 +1,18 @@
+# 読み手の役のセッションが書いた実行の記録の見本(一部)。
+scenario: main-reader
+commit: 0000000
+round: 1
+steps:
+  - slide: ch1-s1
+    understood: 応答率は、前の年度の81%から19ポイント下がった
+    carried: [応答率]
+  - slide: ch1-s2
+    understood: 応答率は、代表番号への着信のうち、担当者が応答した着信の割合である
+    carried: [応答率, 着信]
+  - slide: ch1-s3
+    understood: 応答できなかった社員がかけ直すので、着信がさらに増える
+    stuck: かけ直しが着信の全体のどれだけを占めるかが分からない
+findings:
+  - slide: ch1-s1
+    kind: undefined-term
+    note: 「応答率」が、定義のスライド「応答率の数え方」より前に出る

@@ -1,0 +1,872 @@
+# 見本(tools/fixtures/mini)を壊す差分の一覧。tools/selftest.py が、見本の写しに当てて使う。
+#   cases    検査のIDごとの壊し方。当てると、その検査が不合格(警告の検査は警告)になる
+#   format   書式と参照の確かめ(台帳にない)が誤りを出す壊し方。expect は、出る誤りの文の一部
+#   records  検査の記録と実行の記録の書式の確かめ(check.py --records)が誤りを出す壊し方
+# edits の1件は、次のいずれか。
+#   {file, old, new}    old をちょうど1か所、new に置き換える
+#   {file, delete: true} ファイルを消す
+#   {file, write}       ファイルを、この文面で書く
+# stage は、複数の工程で使う検査(KX)を当てる工程。item は、不合格になる対象。見本のままでも不合格の行がある検査(工程8)に書く。
+cases:
+- check: K00-01
+  how: 推定のままの項目を残す
+  edits:
+  - file: 00-brief.md
+    old: |-
+      ## 副次的な読み手
+      - 状態: 確定
+    new: |-
+      ## 副次的な読み手
+      - 状態: 推定
+- check: K00-02
+  how: 目的を未定にする
+  edits:
+  - file: 00-brief.md
+    old: |-
+      ## 目的
+      - 状態: 確定
+    new: |-
+      ## 目的
+      - 状態: 未定
+      - 決める人と時期: 部長が、工程1の承認までに決める
+- check: K00-08
+  how: 外に出せない情報を未定にする
+  edits:
+  - file: 00-brief.md
+    old: |-
+      ## 外に出せない情報
+      - 状態: 確定
+    new: |-
+      ## 外に出せない情報
+      - 状態: 未定
+      - 決める人と時期: 部長が、工程1の承認までに決める
+- check: K01-01
+  how: 枝分かれの axis を消す
+  edits:
+  - file: 01-plan.yaml
+    old: |2
+        axis: 量、時間帯、体制
+    new: ''
+- check: K01-02
+  how: 資料の型の定義の観点を、問いから外す
+  edits:
+  - file: 01-plan.yaml
+    old: 'perspective: データの限界'
+    new: 'perspective: null'
+- check: K01-06
+  how: fact の quote を消す
+  edits:
+  - file: 01-sources.yaml
+    old: 'quote: "2025年度の応答率は62%"'
+    new: 'quote: null'
+- check: K01-09
+  how: quote の数値を value と食い違わせる
+  edits:
+  - file: 01-sources.yaml
+    old: 'quote: "2024年度の応答率は81%"'
+    new: 'quote: "2024年度の応答率は約8割"'
+- check: K01-11
+  how: metric を語彙表にない語にする
+  edits:
+  - file: 01-sources.yaml
+    old: 'metric: T-staff-count'
+    new: 'metric: T-nothing'
+- check: K01-12
+  how: 時点と範囲が同じで値が違う事実を作る
+  edits:
+  - file: 01-sources.yaml
+    old: 'qualifiers: [2025年度, 午後, 代表番号への着信]'
+    new: 'qualifiers: [2025年度, 午前, 代表番号への着信]'
+- check: K01-13
+  how: testimony の source を消す
+  edits:
+  - file: 01-sources.yaml
+    old: 'source: 窓口の主任の証言。日々の応対の経験に基づく'
+    new: 'source: null'
+- check: K01-14
+  how: 末端の問いの result を消す
+  edits:
+  - file: 01-plan.yaml
+    old: |2-
+        perspective: 対立する見解
+        result: answered
+    new: |2-
+        perspective: 対立する見解
+        result: null
+- check: K01-16
+  how: 仮説の1つに対する stance を消す
+  edits:
+  - file: 01-sources.yaml
+    old: |-
+      origin: 窓口の主任
+        answers: [Q1.1]
+        stance: {H1: neutral, H2: neutral}
+    new: |-
+      origin: 窓口の主任
+        answers: [Q1.1]
+        stance: {H1: neutral}
+- check: K01-17
+  how: 対立する仮説を消す
+  edits:
+  - file: 01-hypotheses.yaml
+    old: |
+      - id: H2
+        statement: つながりにくい原因は、窓口の担当者の人数が減ったことである
+        proposed_by: session
+    new: ''
+- check: K01-18
+  how: 重要度が high の問いを partial にする
+  edits:
+  - file: 01-plan.yaml
+    old: |2-
+        perspective: データの限界
+        result: answered
+    new: |2-
+        perspective: データの限界
+        result: partial
+- check: K01-19
+  how: 画像の素材の version と captured_at を消す
+  edits:
+  - file: 01-sources.yaml
+    old: |2
+        version: "2.0"
+        captured_at: 2026-04-10
+    new: ''
+- check: K01-24
+  how: '仕組みの定義の根拠の事実を verified: false にする'
+  edits:
+  - file: 01-sources.yaml
+    old: |-
+      verified: true
+      - id: A001
+    new: |-
+      verified: false
+      - id: A001
+- check: K01-28
+  how: 元のつながりをたどれない summarizes を足す
+  edits:
+  - file: 01-model.yaml
+    old: |-
+      scenarios:
+        - id: S-expense-apply
+    new: |2-
+        - id: R-short
+          kind: call
+          from: E-ui-receipt
+          to: E-ui-submit
+          summarizes: [R-attach, R-submit]
+          evidence: [F021]
+      scenarios:
+        - id: S-expense-apply
+- check: K02-01
+  how: 問いの1つの答えを消す
+  edits:
+  - file: 02-answers.yaml
+    old: |
+      - question: Q1.3
+        answer: 窓口の担当者の人数は、2024年度も2025年度も8人で変わっていない
+        evidence: [F007]
+    new: ''
+- check: K02-02
+  how: 末端の問いの答えの evidence を空にする
+  edits:
+  - file: 02-answers.yaml
+    old: 'evidence: [F007]'
+    new: 'evidence: []'
+- check: K02-05
+  how: 答えの数値を事実と食い違わせる
+  edits:
+  - file: 02-answers.yaml
+    old: 'answer: 応答率は、午前が48%で、午後の74%より低い'
+    new: 'answer: 応答率は、午前が45%で、午後の74%より低い'
+- check: K02-06
+  how: 主張の1つを、別の階層の問いに対応させる
+  edits:
+  - file: 02-claims.yaml
+    old: |2
+          question: Q2
+    new: |2
+          question: Q2.1
+- check: K02-07
+  how: 主張の数の上限を下げる
+  edits:
+  - file: style.yaml
+    old: 'max_claims: 5'
+    new: 'max_claims: 1'
+- check: K02-10
+  how: 主張の evidence を空にする
+  edits:
+  - file: 02-claims.yaml
+    old: 'evidence: [F001, F002, F007]'
+    new: 'evidence: []'
+- check: K02-12
+  how: 主張の数値を事実と食い違わせる
+  edits:
+  - file: 02-claims.yaml
+    old: 'statement: 担当者が8人のまま、窓口の応答率は2025年度に62%まで下がった'
+    new: 'statement: 担当者が8人のまま、窓口の応答率は2025年度に60%まで下がった'
+- check: K02-17
+  how: 採った仮説を否定する事実を、contradictions にないまま足す
+  edits:
+  - file: 01-sources.yaml
+    old: |-
+      stance: {H1: supports, H2: neutral}
+        verified: true
+      - id: F009
+    new: |-
+      stance: {H1: contradicts, H2: neutral}
+        verified: true
+      - id: F009
+- check: K02-20
+  how: summary を2文にする
+  edits:
+  - file: 02-claims.yaml
+    old: 'summary: 窓口の応答率が62%まで下がったのは、担当者が8人のまま、'
+    new: 'summary: 窓口の応答率は62%まで下がった。原因は、担当者が8人のまま、'
+- check: K02-21
+  how: summary の数値を主張と食い違わせる
+  edits:
+  - file: 02-claims.yaml
+    old: |-
+      月平均1,200件増えたためである
+      hypothesis
+    new: |-
+      月平均1,500件増えたためである
+      hypothesis
+- check: K03-01
+  how: 主張の割り当てを消す
+  edits:
+  - file: 03-chapters.yaml
+    old: 'claims: [C2]'
+    new: 'claims: []'
+- check: K03-02
+  how: 本論の章の claims を空にする
+  edits:
+  - file: 03-chapters.yaml
+    old: 'claims: [C1]'
+    new: 'claims: []'
+- check: K03-03
+  how: omitted の理由を消す
+  edits:
+  - file: 03-chapters.yaml
+    old: 'reason: 担当者の人数は章の要点で述べており、本編に内訳は要らない'
+    new: 'reason: null'
+- check: K03-04
+  how: 章の問いを消す
+  edits:
+  - file: 03-chapters.yaml
+    old: |2
+          question: なぜつながりにくくなったのか
+    new: ''
+- check: K03-05
+  how: 節の from を、主張の問いの下にない答えにする
+  edits:
+  - file: 03-chapters.yaml
+    old: 'from: [Q2.1]'
+    new: 'from: [Q1.1]'
+- check: K03-06
+  how: 章の要点の数値を主張と食い違わせる
+  edits:
+  - file: 03-chapters.yaml
+    old: 'point: 担当者が8人のまま、窓口の応答率は62%まで下がった'
+    new: 'point: 担当者が9人のまま、窓口の応答率は62%まで下がった'
+- check: K03-10
+  how: 否定する事実に触れる章を消す
+  edits:
+  - file: 03-chapters.yaml
+    old: |
+      contradictions:
+        - fact: F013
+          chapter: ch2
+    new: |
+      contradictions: []
+- check: K03-12
+  how: 反論の置き場を消す
+  edits:
+  - file: 03-chapters.yaml
+    old: |
+      objections:
+        - claim: C2
+          index: 0
+          to: appendix
+    new: |
+      objections: []
+- check: K03-13
+  how: ブリーフの枚数の目安を下げる
+  edits:
+  - file: 00-brief.md
+    old: '- 枚数の目安: 10'
+    new: '- 枚数の目安: 8'
+- check: K03-14
+  how: slides_reason を消す
+  edits:
+  - file: 03-chapters.yaml
+    old: |2
+          slides_reason: 原因は件数と内容の2点で示せるため、少なく充てる
+    new: ''
+- check: K04-01
+  how: スライドの題を消す
+  edits:
+  - file: 04-storyline.yaml
+    old: |2
+        title: 着信の内訳
+    new: ''
+- check: K04-02
+  how: 出どころの区別を求める資料の型にする
+  edits:
+  - &id001
+    file: 00-brief.md
+    old: 調査報告(research-report)
+    new: 研修資料(training)
+- check: K04-03
+  how: 要点のないスライドの役割を消す
+  edits:
+  - file: 04-storyline.yaml
+    old: |2-
+        point: null
+        role: detail
+      - id: ch1-s3
+    new: |2-
+        point: null
+      - id: ch1-s3
+- check: K04-04
+  how: 章構成にない節に入れる
+  edits:
+  - file: 04-storyline.yaml
+    old: 'section: ch2-1'
+    new: 'section: ch9-9'
+- check: K04-05
+  how: 1節あたりの枚数の上限を下げる
+  edits:
+  - file: style.yaml
+    old: 'section_max_slides: 6'
+    new: 'section_max_slides: 3'
+- check: K04-06
+  how: 節の最後のスライドに、節の要点を引かせない
+  edits:
+  - file: 04-storyline.yaml
+    old: |2-
+        point_from: section
+        from: [Q1.2]
+    new: |2-
+        point: 応答率は、午前が48%で、午後の74%より低い
+        from: [Q1.2]
+- check: K04-07
+  how: 必ず置くスライドがある資料の型にする
+  edits:
+  - *id001
+- check: K04-09
+  how: 章の枚数の配分を下げる
+  edits:
+  - file: 03-chapters.yaml
+    old: 'slides: 3'
+    new: 'slides: 2'
+- check: K04-10
+  how: 付録のスライドの appendix_of を消す
+  edits:
+  - file: 04-storyline.yaml
+    old: |2
+        appendix_of: ch2-s2
+    new: ''
+- check: K04-11
+  how: 反論に答えるスライドの objection を消す
+  edits:
+  - file: 04-storyline.yaml
+    old: |2
+        objection: {claim: C2, index: 0}
+    new: ''
+- check: K04-12
+  how: 否定する事実に触れるスライドの contradiction を消す
+  edits:
+  - file: 04-storyline.yaml
+    old: |2
+        contradiction: F013
+    new: ''
+- check: K04-13
+  how: 要点を持つスライドの問いを消す
+  edits:
+  - file: 04-storyline.yaml
+    old: |2
+        question: 応答率はどれだけ下がったのか
+    new: ''
+- check: K04-14
+  how: 本論の要点を持つスライドの evidence を空にする
+  edits:
+  - file: 04-storyline.yaml
+    old: 'evidence: [F001, F015]'
+    new: 'evidence: []'
+- check: K04-16
+  how: 要点の数値を事実と食い違わせる
+  edits:
+  - file: 04-storyline.yaml
+    old: 'point: 2025年度は、着信の38%に応答できなかった'
+    new: 'point: 2025年度は、着信の40%に応答できなかった'
+- check: K04-26
+  how: 前の章の出口にない主張を、入口に置く
+  edits:
+  - file: 04-chapter-states.yaml
+    old: |2-
+          accepted: [C1]
+          open_questions: [なぜつながりにくくなったのか]
+        exit:
+          terms: [経費精算システム]
+    new: |2-
+          accepted: [C1, C2]
+          open_questions: [なぜつながりにくくなったのか]
+        exit:
+          terms: [経費精算システム]
+- check: K04-27
+  how: 最後の章の出口に疑問を残す
+  edits:
+  - file: 04-chapter-states.yaml
+    old: |2-
+          open_questions: []
+          concerns_answered: [原因は担当者の人数ではないか]
+    new: |2-
+          open_questions: [対策は何か]
+          concerns_answered: [原因は担当者の人数ではないか]
+- check: K04-28
+  how: 懸念の1つを、どの章の到達点にも置かない
+  edits:
+  - file: 04-chapter-states.yaml
+    old: 'concerns_answered: [原因は担当者の人数ではないか]'
+    new: 'concerns_answered: []'
+- check: K04-29
+  how: 場面の expected を消す
+  edits:
+  - file: 04-scenarios.yaml
+    old: |2
+        expected: 応答率が下がったことと、その原因が問い合わせの増加であることを述べられる
+    new: ''
+- check: K05-01
+  how: relation を語彙にない値にする
+  edits:
+  - file: 05-proof.yaml
+    old: 'relation: causality'
+    new: 'relation: cause'
+- check: K05-02
+  how: 素材台帳にない事実を使う
+  edits:
+  - file: 05-proof.yaml
+    old: 'facts: [F016, F017]'
+    new: 'facts: [F016, F017, F999]'
+- check: K05-03
+  how: ストーリーラインの evidence を facts から外す
+  edits:
+  - file: 05-proof.yaml
+    old: 'facts: [F004, F005]'
+    new: 'facts: [F004]'
+- check: K05-04
+  how: 仕組みの定義にない場面を選ぶ
+  edits:
+  - file: 05-proof.yaml
+    old: 'scenario: S-expense-apply'
+    new: 'scenario: S-nothing'
+- check: K05-07
+  how: focus を空にする
+  edits:
+  - file: 05-proof.yaml
+    old: |2
+        focus: 午前の応答率の低さ
+    new: |2
+        focus: ''
+- check: K05-08
+  how: 言い切りを選んだ理由を消す
+  edits:
+  - file: 05-proof.yaml
+    old: |2
+        relation_reason: 値が2つの年度の分しかなく、推移の図にならない
+    new: ''
+- check: K05-09
+  how: 同じ事実を2枚で使う(警告)
+  edits:
+  - file: 05-proof.yaml
+    old: 'facts: [F013]'
+    new: 'facts: [F013, F001]'
+- check: K05-10
+  how: やり取りの図に、構成の図に出ない要素を出す(警告)
+  edits:
+  - file: 05-proof.yaml
+    old: 'relation: process'
+    new: 'relation: interaction'
+- check: K05-11
+  how: 言い切りのスライドの holds を空でなくする
+  edits:
+  - file: 05-proof.yaml
+    old: |-
+      holds: []
+        relation_reason: 値が2つの年度
+    new: |-
+      holds: [ordered]
+        relation_reason: 値が2つの年度
+- check: K06-01
+  how: 対応表の行を、量の区分が決まらない形にする
+  edits:
+  - file: 06-patterns.yaml
+    old: |-
+      - relation: causality
+        size: any
+    new: |-
+      - relation: causality
+        size: within
+- check: K06-02
+  how: 主な型を、2つの主張の種類に使う
+  edits:
+  - file: 06-patterns.yaml
+    old: 'pattern: bar-chart'
+    new: 'pattern: pie-chart'
+- check: K06-03
+  how: 型の含意を、holds から外す
+  edits:
+  - file: 05-proof.yaml
+    old: 'holds: [causal, ordered]'
+    new: 'holds: [ordered]'
+- check: K06-04
+  how: 分割を伝える型のスライドの axis を空にする
+  edits:
+  - file: 05-proof.yaml
+    old: |2
+        axis: 応答したかどうか
+    new: |2
+        axis: null
+- check: K06-07
+  how: 要点の位置を、認めない値にする
+  edits:
+  - file: style.yaml
+    old: '  statement: body'
+    new: '  statement: above-title'
+- check: K06-10
+  how: 型の見本を1つ消す
+  edits:
+  - file: 06-samples/bar-chart.yaml
+    delete: true
+- check: K06-18
+  how: 対象を指す語の defined_in を消す
+  edits:
+  - file: terms.yaml
+    old: |2
+          defined_in: ch1-s2
+          no_definition: null
+        - id: T-answer-rate
+    new: |2
+          defined_in: null
+          no_definition: null
+        - id: T-answer-rate
+- check: K07-02
+  how: スライド仕様の題を、ストーリーラインと変える
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: |2
+        title: 着信の内訳
+    new: |2
+        title: 着信の内わけ
+- check: K07-03
+  how: 対応表と違う型を使う
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: 'type: bar-chart'
+    new: 'type: pie-chart'
+- check: K07-04
+  how: 立証設計にない事実を sources に足す
+  edits:
+  - file: 07-slides/ch2.yaml
+    old: 'sources: [F013]'
+    new: 'sources: [F013, F001]'
+- check: K07-05
+  how: 否定する事実を sources から外す
+  edits:
+  - file: 07-slides/ch2.yaml
+    old: 'sources: [F013]'
+    new: 'sources: []'
+- check: K07-06
+  how: view にない要素を中身に書く
+  edits:
+  - file: 07-slides/appendix.yaml
+    old: |2
+          scenario: S-expense-apply
+    new: |2
+          scenario: S-expense-apply
+          actor: E-applicant
+- check: K07-07
+  how: 図のスライドの highlight を消す
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: |2
+          highlight: 午前
+    new: ''
+- check: K07-08
+  how: 強調を2か所にする
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: |2
+          highlight: chain[1]
+    new: |2
+          highlight: ["chain[1]", "chain[2]"]
+- check: K07-11
+  how: 説明に数値を直接書く
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: 'text: 前の年度の応答率は{F002}である'
+    new: 'text: 前の年度の応答率は81%である'
+- check: K07-12
+  how: 要点の数値を sources の事実と食い違わせる
+  edits:
+  - file: 07-slides/ch2.yaml
+    old: 午前の応答率は55%にとどまる
+    new: 午前の応答率は50%にとどまる
+- check: K07-16
+  how: 画像の素材にない regions を参照する
+  edits:
+  - file: 07-slides/appendix.yaml
+    old: 'crop: [receipt-field, submit-button]'
+    new: 'crop: [receipt-field, cancel-button]'
+- check: K07-24
+  how: 実在しないスライドを参照する
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: 数え方は「{ch1-s2}」に示す
+    new: 数え方は「{ch9-s9}」に示す
+- check: K07-34
+  how: 型の定義にない型を使う
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: 'type: cause-chain'
+    new: 'type: cube-chart'
+- check: K07-38
+  how: 保留のスライドに issue を書かない
+  edits:
+  - &id002
+    file: 07-slides/ch2.yaml
+    old: |-
+      - id: ch2-s3
+        status: done
+    new: |-
+      - id: ch2-s3
+        status: blocked
+- check: K08-01
+  how: 工程2の検査を不合格にする
+  edits:
+  - file: style.yaml
+    old: 'max_claims: 5'
+    new: 'max_claims: 1'
+- check: K08-02
+  how: 保留のスライドを残す
+  item: ch2-s3
+  edits:
+  - *id002
+- check: K08-03
+  how: 状態の記録に無効の成果物を置く
+  item: 05-proof.yaml
+  edits:
+  - file: status.yaml
+    write: |
+      artifacts:
+        05-proof.yaml:
+          state: invalid
+          commit: null
+          reason: F001 の値が変わった
+      slides: {}
+- check: K08-09
+  how: 場面の実行の記録を消す
+  item: main-reader
+  edits:
+  - file: runs/main-reader--1.yaml
+    delete: true
+- check: KX-02
+  how: 要点に読点を増やす
+  stage: 4
+  edits:
+  - file: 04-storyline.yaml
+    old: 'point: 応答できなかった社員のかけ直しが、着信をさらに増やしている'
+    new: 'point: 応答できなかった、社員の、かけ直しが、着信を、さらに増やしている'
+- check: KX-04
+  how: 節の題に漢字を連ねる
+  stage: 3
+  edits:
+  - file: 03-chapters.yaml
+    old: 'title: 問い合わせの件数'
+    new: 'title: 経費精算問合件数増加傾向分析'
+- check: KX-13
+  how: 題に句点を付け、動詞で終える
+  stage: 4
+  edits:
+  - file: 04-storyline.yaml
+    old: |2
+        title: 着信の内訳
+    new: |2
+        title: 着信の内訳を示す。
+- check: KX-14
+  how: 要点を「がわかる」で止める
+  stage: 4
+  edits:
+  - file: 04-storyline.yaml
+    old: 'point: 2025年度は、着信の38%に応答できなかった'
+    new: 'point: 2025年度は、着信の38%に応答できなかったことがわかる'
+- check: KX-15
+  how: 説明に事実のIDを書く
+  stage: 7
+  edits:
+  - file: 07-slides/ch1.yaml
+    old: 'text: 前の年度の応答率は{F002}である'
+    new: 'text: F002によると、前の年度の応答率は{F002}である'
+- check: KX-16
+  how: 主張に全角の数字を書く
+  stage: 2
+  edits:
+  - file: 02-claims.yaml
+    old: 'statement: 担当者が8人のまま'
+    new: 'statement: 担当者が８人のまま'
+- check: KX-17
+  how: 節の題に、登録のない語を使う
+  stage: 3
+  edits:
+  - file: 03-chapters.yaml
+    old: 'title: 問い合わせの件数'
+    new: 'title: 問い合わせの件数の推移'
+- check: KX-18
+  how: 題に banned の語を使う
+  stage: 4
+  edits:
+  - file: 04-storyline.yaml
+    old: 'title: 窓口の担当者の人数'
+    new: 'title: ヘルプデスクの担当者の人数'
+- check: KX-19
+  how: 題の語の送り仮名を変える
+  stage: 4
+  edits:
+  - file: 04-storyline.yaml
+    old: 'title: 増えた問い合わせの内訳'
+    new: 'title: 増えた問合せの内訳'
+format:
+- name: YAMLが壊れている
+  stage: 4
+  expect: YAMLとして読めない
+  edits:
+  - file: 04-storyline.yaml
+    old: |
+      - id: ch1-s1
+    new: |
+      - id: [ch1-s1
+- name: 参照先のない事実
+  stage: 4
+  expect: 'evidence: F999 が素材台帳にない'
+  edits:
+  - file: 04-storyline.yaml
+    old: 'evidence: [F013]'
+    new: 'evidence: [F013, F999]'
+- name: 成果物がない
+  stage: 5
+  expect: ファイルがない
+  edits:
+  - file: 05-proof.yaml
+    delete: true
+- name: 定めた値でない
+  stage: 3
+  expect: 'kind: main は、定めた値'
+  edits:
+  - file: 03-chapters.yaml
+    old: |2-
+        - id: ch2
+          kind: body
+    new: |2-
+        - id: ch2
+          kind: main
+- name: ブリーフの項目がない
+  stage: 0
+  expect: 項目がない
+  edits:
+  - file: 00-brief.md
+    old: |
+      ## 手元の資料
+      - 状態: 確定
+    new: ''
+records:
+- name: verdict が pass でも fail でもない
+  expect: 'verdict: ok'
+  edits:
+  - file: checks/inspect-sources--all--1.yaml
+    old: |2-
+          item: F001
+          verdict: pass
+          quote: "2025年度の応答率は62%"
+        - check: K01-10
+    new: |2-
+          item: F001
+          verdict: ok
+          quote: "2025年度の応答率は62%"
+        - check: K01-10
+- name: 合格の行に引用がない
+  expect: quote がない
+  edits:
+  - file: checks/inspect-sources--all--1.yaml
+    old: |2-
+          quote: "同じ番号から30分以内の再着信は月平均400件"
+        - check: K01-10
+    new: '  - check: K01-10'
+- name: 台帳にない検査
+  expect: 'check: K01-99 が検査の台帳にない'
+  edits:
+  - file: checks/inspect-sources--all--1.yaml
+    old: |2-
+        - check: K01-08
+          item: F016
+    new: |2-
+        - check: K01-99
+          item: F016
+- name: 作業の検査でない検査
+  expect: が、作業 inspect-sources の検査でない
+  edits:
+  - file: checks/inspect-sources--all--1.yaml
+    old: |2-
+        - check: K01-08
+          item: F016
+    new: |2-
+        - check: K02-04
+          item: F016
+- name: 不合格の行に理由がない
+  expect: 不合格の行に reason がない
+  edits:
+  - file: checks/inspect-sources--all--1.yaml
+    old: |2-
+          item: F016
+          verdict: pass
+          quote: "同じ番号から30分以内の再着信は月平均400件"
+        - check: K01-10
+    new: |2-
+          item: F016
+          verdict: fail
+          quote: "同じ番号から30分以内の再着信は月平均400件"
+        - check: K01-10
+- name: 検査セッションの記録に model がない
+  expect: 判定したモデル(model)がない
+  edits:
+  - file: checks/inspect-sources--all--1.yaml
+    old: |
+      model: claude-sonnet-5-5
+    new: ''
+- name: 必須の項目がない
+  expect: commit がない
+  edits:
+  - file: checks/inspect-sources--all--1.yaml
+    old: |
+      commit: 0000000
+    new: ''
+- name: エラーの種類が定義にない
+  expect: 'kind: typo が、エラーの種類の識別子でない'
+  edits:
+  - file: runs/main-reader--1.yaml
+    old: 'kind: undefined-term'
+    new: 'kind: typo'
+- name: 実行の記録の場面が定義にない
+  expect: 'scenario: reader が、ファイル名の場面と違う'
+  edits:
+  - file: runs/main-reader--1.yaml
+    old: 'scenario: main-reader'
+    new: 'scenario: reader'
+- name: 実行の記録の steps に理解がない
+  expect: understood がない
+  edits:
+  - file: runs/main-reader--1.yaml
+    old: |2
+          understood: 応答できなかった社員がかけ直すので、着信がさらに増える
+    new: ''

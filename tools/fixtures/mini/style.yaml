@@ -1,6 +1,23 @@
-# 資料の表現規約(見本)。limits の項目名は、tools/check.py が決めたものである
-deck_type: proposal
+# 資料の表現規約(見本)。値は見本のための仮の値である。
 limits:
-  max_claims: 3
-rules: []
-terms: terms.yaml
+  max_claims: 5                    # 主張の数の上限
+  summary_max_chars: 80            # 要約の文の字数の上限
+  title_max_chars: 20              # 題の字数の上限
+  point_max_chars: 60              # 要点の字数の上限(2行に収まる字数)
+  section_max_slides: 6            # 1節あたりの枚数の上限
+  section_summary_min_slides: 4    # 節のまとめを置く境目の枚数
+  max_commas: 3                    # 1文の読点の数の上限
+  max_kanji_run: 8                 # 漢字の連なりの字数の上限
+point_position:
+  default: below-title
+  cause-chain: below-body
+  pie-chart: below-body
+  bar-chart: below-body
+  statement: body
+rules:
+  - id: R001
+    rule: 情報を足さない飾りの形容を書かない
+    reason: 読み手の注意を、情報のない語に使わせない
+    check: inspection
+    issue: null
+    exceptions: []

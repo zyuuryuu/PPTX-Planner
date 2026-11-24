@@ -4,27 +4,19 @@
     accepted: []
     open_questions: []
   exit:
-    terms: [定型の問い合わせ]
-    accepted: []
-    open_questions: [問い合わせ対応の負荷はどの程度か, チャットボットで本当に減るのか]
+    terms: [応答率, 着信]
+    accepted: [C1]
+    answered: [電話はどれだけつながりにくいのか]
+    open_questions: [なぜつながりにくくなったのか]
+    concerns_answered: [つながりにくいのは一部の時間帯だけではないか]
 - chapter: ch2
   entry:
-    terms: [定型の問い合わせ]
-    accepted: []
-    open_questions: [問い合わせ対応の負荷はどの程度か, チャットボットで本当に減るのか]
+    terms: [応答率, 着信]
+    accepted: [C1]
+    open_questions: [なぜつながりにくくなったのか]
   exit:
-    terms: [試行での削減率, 回答の誤りの割合]
-    accepted: [C1, C2]
-    answered: [問い合わせ対応の負荷はどの程度か, チャットボットで本当に減るのか]
-    open_questions: [何を承認すればよいか]
-    concerns_answered: [費用が見合うのか, 回答の誤りで混乱しないか]
-- chapter: ch3
-  entry:
-    terms: [定型の問い合わせ]
-    accepted: [C1, C2]
-    open_questions: [何を承認すればよいか]
-  exit:
-    terms: []
-    accepted: []
-    answered: [何を承認すればよいか]
+    terms: [経費精算システム]
+    accepted: [C2]
+    answered: [なぜつながりにくくなったのか]
     open_questions: []
+    concerns_answered: [原因は担当者の人数ではないか]

@@ -1,149 +1,330 @@
 - id: F001
-  statement: 2026年4月から9月の問い合わせは、月平均1,200件
-  value: 1200
-  unit: 件/月
-  kind: fact
-  source: 問い合わせ管理システムの集計
-  locator: 月次の集計表 2026年4月から9月
-  as_of: 2026-09
-  metric: T-inquiry-count
-  superseded_by: null
-  quote: "4月から9月の月平均は1,200件"
-  qualifiers: [2026年4月から9月, 月平均]
-  origin: 問い合わせ管理システムの記録
-  answers: [Q1.1]
-  stance: {H1: supports, H2: contradicts}
-  verified: true
-- id: F002
-  statement: 問い合わせの62%は、手順書の通りに答えられる定型の問い合わせである
+  statement: 2025年度の応答率は62%である
   value: 62
   unit: "%"
   kind: fact
-  source: 情報システム部の分類の報告
-  locator: p.3 表1
-  as_of: 2026-09
-  metric: T-routine-share
+  source: 窓口の通話記録 2025年度の集計
+  locator: 表1 年度ごとの応答率
+  as_of: 2026-04
+  metric: T-answer-rate
   superseded_by: null
-  quote: "定型の問い合わせは全体の62%を占めた"
-  qualifiers: [2026年4月から9月]
-  origin: 情報システム部による分類の作業
-  answers: [Q1.2]
-  stance: {H1: supports, H2: contradicts}
+  quote: "2025年度の応答率は62%"
+  qualifiers: [2025年度, 代表番号への着信]
+  origin: 電話交換機の記録
+  answers: [Q1.1]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F002
+  statement: 2024年度の応答率は81%である
+  value: 81
+  unit: "%"
+  kind: fact
+  source: 窓口の通話記録 2025年度の集計
+  locator: 表1 年度ごとの応答率
+  as_of: 2026-04
+  metric: T-answer-rate
+  superseded_by: null
+  quote: "2024年度の応答率は81%"
+  qualifiers: [2024年度, 代表番号への着信]
+  origin: 電話交換機の記録
+  answers: [Q1.1]
+  stance: {H1: neutral, H2: neutral}
   verified: true
 - id: F003
-  statement: 問い合わせ1件の対応時間は、平均12分
-  value: 12
-  unit: 分/件
-  kind: fact
-  source: 問い合わせ管理システムの集計
-  locator: 月次の集計表 2026年4月から9月
-  as_of: 2026-09
-  metric: T-handle-time
+  statement: 応答率は、2024年度から2025年度にかけて19ポイント下がった
+  value: 19
+  unit: ポイント
+  kind: derived
+  formula: F002 - F001
+  as_of: 2026-04
+  metric: T-answer-rate-change
   superseded_by: null
-  quote: "1件あたりの対応時間は平均12分"
-  qualifiers: [2026年4月から9月, 平均]
-  origin: 問い合わせ管理システムの記録
+  qualifiers: [2024年度から2025年度, 代表番号への着信]
+  origin: 電話交換機の記録
   answers: [Q1.1]
   stance: {H1: neutral, H2: neutral}
   verified: true
 - id: F004
-  statement: 問い合わせの対応に、月あたり240時間かかっている
-  value: 240
-  unit: 時間/月
-  kind: derived
-  formula: F001 * F003 / 60
-  metric: T-handle-hours
-  superseded_by: null
-  qualifiers: [2026年4月から9月, 月平均]
-  origin: 問い合わせ管理システムの記録
-  answers: [Q1.1]
-  stance: {H1: supports, H2: contradicts}
-  verified: true
-- id: F005
-  statement: 2部署での8週間の試行で、人が答える定型の問い合わせが41%減った
-  value: 41
+  statement: 2025年度の午前の応答率は48%である
+  value: 48
   unit: "%"
   kind: fact
-  source: 試行の報告書
-  locator: p.5 図2
-  as_of: 2026-10
-  metric: T-trial-reduction
+  source: 窓口の通話記録 2025年度の集計
+  locator: 表2 時間帯ごとの応答率
+  as_of: 2026-04
+  metric: T-answer-rate
   superseded_by: null
-  quote: "2部署、8週間の試行で、担当者が答えた定型の問い合わせは41%減少した"
-  qualifiers: [2部署, 8週間]
-  origin: 試行の記録
-  answers: [Q2.1]
-  stance: {H1: supports, H2: contradicts}
+  quote: "午前の応答率は48%"
+  qualifiers: [2025年度, 午前, 代表番号への着信]
+  origin: 電話交換機の記録
+  answers: [Q1.2]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F005
+  statement: 2025年度の午後の応答率は74%である
+  value: 74
+  unit: "%"
+  kind: fact
+  source: 窓口の通話記録 2025年度の集計
+  locator: 表2 時間帯ごとの応答率
+  as_of: 2026-04
+  metric: T-answer-rate
+  superseded_by: null
+  quote: "午後の応答率は74%"
+  qualifiers: [2025年度, 午後, 代表番号への着信]
+  origin: 電話交換機の記録
+  answers: [Q1.2]
+  stance: {H1: neutral, H2: neutral}
   verified: true
 - id: F006
-  statement: 導入の初期費用の見積もりは180万円
-  value: 180
-  unit: 万円
+  statement: 応答率は、代表番号への着信のうち、担当者が応答した着信の割合である
   kind: fact
-  source: 業者の見積書
-  locator: 1ページ目 合計の欄
-  as_of: 2026-10
-  metric: T-initial-cost
+  source: 窓口の運用の手引き 第3版
+  locator: 2.1 用語
+  as_of: 2025-10
   superseded_by: null
-  quote: "初期費用 合計 1,800,000円"
-  qualifiers: [見積もり]
-  origin: 業者の見積書
-  answers: [Q2.2]
+  quote: "応答率とは、代表番号への着信のうち、担当者が応答した着信の割合をいう"
+  qualifiers: [代表番号への着信]
+  origin: 窓口の運用の手引き
+  answers: [Q1.1]
   stance: {H1: neutral, H2: neutral}
   verified: true
 - id: F007
-  statement: 運用費用の見積もりは月5万円
-  value: 5
-  unit: 万円/月
+  statement: 窓口の担当者の人数は、2024年度も2025年度も8人である
+  value: 8
+  unit: 人
   kind: fact
-  source: 業者の見積書
-  locator: 2ページ目 月額の欄
-  as_of: 2026-10
-  metric: T-running-cost
+  source: 人員配置表 2025年度
+  locator: 窓口の欄
+  as_of: 2025-04
+  metric: T-staff-count
   superseded_by: null
-  quote: "月額利用料 50,000円"
-  qualifiers: [見積もり]
-  origin: 業者の見積書
+  quote: "窓口 8人(前年度 8人)"
+  qualifiers: [2024年度, 2025年度]
+  origin: 人事部の記録
+  answers: [Q1.3]
+  stance: {H1: neutral, H2: contradicts}
+  verified: true
+- id: F008
+  statement: 2025年度の問い合わせの件数は、月平均4,200件である
+  value: 4200
+  unit: 件
+  kind: fact
+  source: 問い合わせの分類の集計 2025年度
+  locator: 表1 年度ごとの件数
+  as_of: 2026-04
+  metric: T-inquiry-count
+  superseded_by: null
+  quote: "2025年度 月平均4,200件"
+  qualifiers: [2025年度, 月平均]
+  origin: 問い合わせの管理簿
+  answers: [Q2.1]
+  stance: {H1: supports, H2: neutral}
+  verified: true
+- id: F009
+  statement: 2024年度の問い合わせの件数は、月平均3,000件である
+  value: 3000
+  unit: 件
+  kind: fact
+  source: 問い合わせの分類の集計 2025年度
+  locator: 表1 年度ごとの件数
+  as_of: 2026-04
+  metric: T-inquiry-count
+  superseded_by: null
+  quote: "2024年度 月平均3,000件"
+  qualifiers: [2024年度, 月平均]
+  origin: 問い合わせの管理簿
+  answers: [Q2.1]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F010
+  statement: 問い合わせの件数は、2024年度から2025年度にかけて月平均1,200件増えた
+  value: 1200
+  unit: 件
+  kind: derived
+  formula: F008 - F009
+  as_of: 2026-04
+  metric: T-inquiry-increase
+  superseded_by: null
+  qualifiers: [2024年度から2025年度, 月平均]
+  origin: 問い合わせの管理簿
+  answers: [Q2.1]
+  stance: {H1: supports, H2: neutral}
+  verified: true
+- id: F011
+  statement: 2025年度の経費精算システムの操作についての問い合わせは、月平均900件である
+  value: 900
+  unit: 件
+  kind: fact
+  source: 問い合わせの分類の集計 2025年度
+  locator: 表2 内容ごとの件数
+  as_of: 2026-04
+  metric: T-expense-inquiry-count
+  superseded_by: null
+  quote: "経費精算システムの操作 月平均900件"
+  qualifiers: [2025年度, 月平均]
+  origin: 問い合わせの管理簿
+  answers: [Q2.2]
+  stance: {H1: supports, H2: neutral}
+  verified: true
+- id: F012
+  statement: 経費精算システムは、2025年4月に入れ替えた
+  kind: fact
+  source: 情報システム部の通知
+  locator: 件名「経費精算システムの入れ替えについて」
+  as_of: 2025-03
+  superseded_by: null
+  quote: "2025年4月1日から、新しい経費精算システムに切り替える"
+  qualifiers: []
+  origin: 情報システム部
+  answers: [Q2.2]
+  stance: {H1: supports, H2: neutral}
+  verified: true
+- id: F013
+  statement: 経費精算システムの操作についての問い合わせを除くと、2025年度の午前の応答率は55%である
+  value: 55
+  unit: "%"
+  kind: fact
+  source: 窓口の通話記録 2025年度の集計
+  locator: 表4 内容を除いた応答率
+  as_of: 2026-04
+  metric: T-answer-rate
+  superseded_by: null
+  quote: "経費精算システムの操作を除いた場合の午前の応答率は55%"
+  qualifiers: [2025年度, 午前, 経費精算システムの操作についての問い合わせを除く]
+  origin: 電話交換機の記録
+  answers: [Q2.2]
+  stance: {H1: contradicts, H2: neutral}
+  verified: true
+- id: F014
+  statement: 時間帯は、着信の時刻が12時より前を午前、12時以降を午後として分ける
+  kind: fact
+  source: 窓口の通話記録 2025年度の集計
+  locator: 集計の注記
+  as_of: 2026-04
+  superseded_by: null
+  quote: "着信の時刻が12時より前を午前、12時以降を午後とする"
+  qualifiers: []
+  origin: 電話交換機の記録
+  answers: [Q1.2]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F015
+  statement: 2025年度は、着信の38%に応答できなかった
+  value: 38
+  unit: "%"
+  kind: derived
+  formula: 100 - F001
+  as_of: 2026-04
+  metric: T-unanswered-rate
+  superseded_by: null
+  qualifiers: [2025年度, 代表番号への着信]
+  origin: 電話交換機の記録
+  answers: [Q1.1]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F016
+  statement: 同じ番号から30分以内にかけ直した着信は、2025年度に月平均400件あった
+  value: 400
+  unit: 件
+  kind: fact
+  source: 窓口の通話記録 2025年度の集計
+  locator: 表3 かけ直しの件数
+  as_of: 2026-04
+  metric: T-redial-count
+  superseded_by: null
+  quote: "同じ番号から30分以内の再着信は月平均400件"
+  qualifiers: [2025年度, 月平均, 同じ番号から30分以内]
+  origin: 電話交換機の記録
+  answers: [Q1.1]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F017
+  statement: 応答できなかった社員の多くは、すぐにかけ直す
+  kind: testimony
+  source: 窓口の主任の証言。日々の応対の経験に基づく
+  as_of: 2026-05
+  superseded_by: null
+  qualifiers: [多くは]
+  origin: 窓口の主任
+  answers: [Q1.1]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F018
+  statement: 社員の数は、2024年度から2025年度にかけて2%増えた
+  value: 2
+  unit: "%"
+  kind: fact
+  source: 人事部の年次報告 2025年度
+  locator: 1.2 人員
+  as_of: 2026-04
+  metric: T-employee-growth
+  superseded_by: null
+  quote: "社員の数は前年度から2%増加した"
+  qualifiers: [2024年度から2025年度]
+  origin: 人事部の記録
+  answers: [Q2.1]
+  stance: {H1: neutral, H2: neutral}
+  verified: true
+- id: F019
+  statement: 増えた問い合わせのうち、経費精算システムの操作についてのものは75%である
+  value: 75
+  unit: "%"
+  kind: derived
+  formula: F011 / F010 * 100
+  as_of: 2026-04
+  metric: T-increase-share
+  superseded_by: null
+  qualifiers: [2024年度から2025年度, 経費精算システムの操作]
+  origin: 問い合わせの管理簿
+  answers: [Q2.2]
+  stance: {H1: supports, H2: neutral}
+  verified: true
+- id: F020
+  statement: 増えた問い合わせのうち、そのほかの内容のものは25%である
+  value: 25
+  unit: "%"
+  kind: derived
+  formula: 100 - F019
+  as_of: 2026-04
+  metric: T-increase-share
+  superseded_by: null
+  qualifiers: [2024年度から2025年度, そのほかの内容]
+  origin: 問い合わせの管理簿
   answers: [Q2.2]
   stance: {H1: neutral, H2: neutral}
   verified: true
-- id: F008
-  statement: 試行では、チャットボットの回答の6%に誤りがあった
-  value: 6
-  unit: "%"
+- id: F021
+  statement: 経費の申請は、領収書を添付してから、申請のボタンを押す
   kind: fact
-  source: 試行の報告書
-  locator: p.7 表3
-  as_of: 2026-10
-  metric: T-error-rate
+  source: 経費精算システム 操作の手引き
+  locator: 3章 申請
+  as_of: 2025-04
   superseded_by: null
-  quote: "回答のうち6%に内容の誤りが確認された"
-  qualifiers: [2部署, 8週間]
-  origin: 試行の記録
-  answers: [Q2.3]
-  stance: {H1: contradicts, H2: supports}
+  quote: "領収書を添付し、申請のボタンを押す"
+  qualifiers: []
+  origin: 経費精算システム 操作の手引き
+  answers: [Q2.2]
+  stance: {H1: neutral, H2: neutral}
   verified: true
-- id: F009
-  statement: 繁忙期には、回答まで2日待たせることがある
-  kind: testimony
-  source: 情報システム部の窓口の担当者。本人の経験に基づく
-  qualifiers: [繁忙期]
-  answers: [Q1.1]
-  stance: {H1: supports, H2: contradicts}
-  verified: true
-- id: F010
-  statement: 試行の後のアンケートで、利用者の72%が続けて使いたいと答えた
-  value: 72
-  unit: "%"
-  kind: fact
-  source: 試行の後のアンケートの集計
-  locator: 設問4
-  as_of: 2026-10
-  metric: T-continue-share
-  superseded_by: null
-  quote: "「続けて使いたい」と答えた利用者は72%"
-  qualifiers: [試行に参加した2部署の利用者]
-  origin: 試行の後のアンケート
-  answers: [Q2.1]
-  stance: {H1: supports, H2: contradicts}
+- id: A001
+  kind: image
+  file: assets/expense-apply.png
+  statement: 経費精算システムの申請の画面
+  source: 経費精算システム
+  version: "2.0"
+  captured_at: 2026-04-10
+  environment: 検証環境
+  regions:
+    - id: receipt-field
+      element: E-ui-receipt
+      label: 領収書の添付欄
+      box: [0.10, 0.30, 0.50, 0.20]
+      box_origin: recorded
+    - id: submit-button
+      element: E-ui-submit
+      label: 申請のボタン
+      box: [0.70, 0.80, 0.20, 0.10]
+      box_origin: recorded
+  masked: [申請者の氏名]
   verified: true

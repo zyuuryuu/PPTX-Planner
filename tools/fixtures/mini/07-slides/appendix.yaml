@@ -1,0 +1,36 @@
+- id: ap-s1
+  status: done
+  title: 窓口の担当者の人数
+  point: 窓口の担当者の人数は、2024年度も2025年度も8人で変わっていない
+  body:
+    type: statement
+    data:
+      value: F007
+      text: 窓口の担当者の人数
+    highlight: value
+  sources: [F007]
+- id: ap-s2
+  status: done
+  title: 社員の数の変化
+  point: 社員の数は、2024年度から2025年度にかけて2%しか増えていない
+  body:
+    type: statement
+    data:
+      value: F018
+      text: 社員の数が増えた割合
+    highlight: value
+  sources: [F018]
+- id: ap-s3
+  status: done
+  title: 経費の申請の手順
+  point: null
+  role: reference
+  body:
+    type: annotated-image-steps
+    asset: A001
+    crop: [receipt-field, submit-button]
+    scenario: S-expense-apply
+    captions:
+      receipt-field: 領収書を添付する
+      submit-button: 申請のボタンを押す
+  sources: [A001, F021]

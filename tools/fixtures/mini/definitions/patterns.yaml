@@ -1,0 +1,71 @@
+# 資料の型の定義(docs/patterns.md の項目)。この資料で使う型だけを置く。収容量の値は未確定である。
+- id: statement
+  relations: [statement]
+  base: none
+  expresses: [emphasized]
+  implies: [emphasized]
+  data: {text: 言い切る文, value: 大きく示す値}
+  point_position: body
+  capacity: {text_chars: null}
+  overflow_to: null
+  renderers: {}
+- id: plain-list
+  relations: [list]
+  base: none
+  expresses: []
+  implies: []
+  data: {items: [項目]}
+  point_position: below-title
+  capacity: {items: null, item_chars: null}
+  overflow_to: table
+  renderers: {}
+- id: cause-chain
+  relations: [causality]
+  base: none
+  expresses: [causal, ordered]
+  implies: [causal, ordered]
+  data: {chain: [原因から結果への順の項目]}
+  point_position: below-body
+  capacity: {chain: null, item_chars: null}
+  overflow_to: null
+  renderers: {}
+- id: pie-chart
+  relations: [composition]
+  base: none
+  expresses: [partition, proportional]
+  implies: [partition, proportional]
+  data: [{label: 項目の名前, value: 値}]
+  point_position: below-body
+  capacity: {items: null, label_chars: null}
+  overflow_to: stacked-bar-chart
+  renderers: {}
+- id: bar-chart
+  relations: [item-comparison]
+  base: none
+  expresses: [comparable, proportional]
+  implies: [comparable, proportional]
+  data: [{label: 項目の名前, value: 値}]
+  point_position: below-body
+  capacity: {items: null, label_chars: null}
+  overflow_to: table
+  renderers: {}
+- id: before-after
+  relations: [contrast-before-after]
+  base: none
+  expresses: [opposed, ordered]
+  implies: [opposed, ordered]
+  data: {before: {label: 前の名前, value: 値}, after: {label: 後の名前, value: 値}}
+  point_position: below-title
+  capacity: {label_chars: null}
+  overflow_to: null
+  renderers: {}
+- id: annotated-image-steps
+  relations: [process]
+  base: image
+  expresses: [ordered]
+  implies: [ordered]
+  data: {asset: 画像の素材, crop: [切り抜く範囲], scenario: 場面, captions: {範囲: 説明}}
+  point_position: below-title
+  capacity: {regions: null, caption_chars: null}
+  overflow_to: null
+  renderers: {}

@@ -222,7 +222,7 @@ tasks:
   name: ブリーフと資料の表現規約を機械で検査する
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 0'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-brief-machine --write'
   inputs: [00-brief.md, style.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -332,7 +332,7 @@ tasks:
   name: 探索の計画と仮説の一覧を機械で検査する
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 1'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-plan-machine --write'
   inputs: [01-plan.yaml, 01-hypotheses.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -532,7 +532,7 @@ tasks:
   name: 素材台帳と仕組みの定義を機械で検査する
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 1'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-sources-machine --write'
   inputs: [01-plan.yaml, 01-hypotheses.yaml, 01-sources.yaml, 01-model.yaml, terms.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -826,7 +826,7 @@ tasks:
   name: 問いごとの答えと主張の骨子を機械で検査する
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 2'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-claims-machine --write'
   inputs: [01-plan.yaml, 01-hypotheses.yaml, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml, style.yaml, terms.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -996,7 +996,7 @@ tasks:
   name: 章構成を機械で検査する
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 3'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-chapters-machine --write'
   inputs: [00-brief.md, 01-plan.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, style.yaml, terms.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -1135,7 +1135,7 @@ tasks:
     - 'K04-17 と K04-18 では、機械が候補を挙げ、検査セッションが判定する'
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 4'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-storyline-machine --write'
   inputs: [00-brief.md, 01-sources.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, decisions.md, style.yaml, terms.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -1237,7 +1237,7 @@ tasks:
   name: 立証の設計を機械で検査する
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 5'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-proof-machine --write'
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -1467,7 +1467,7 @@ tasks:
   name: 表現の対応表、共通の規則、見本、語彙表を機械で検査する
   role: machine
   skill: null
-  command: 'python3 tools/check.py <資料のディレクトリ> --stage 6'
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-patterns-machine --write'
   inputs: [05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -1735,7 +1735,7 @@ tasks:
     - '執筆のセッションが書き終えたときと、PMが受け入れるときの2回実行する(checks.md#検査の実行)'
   role: machine
   skill: null
-  command: null
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-chapter-machine --chapter <章のID> --write'
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml, 06-patterns.yaml, 07-slides/, style.yaml, terms.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -2086,7 +2086,7 @@ tasks:
   name: 結合テストの開始の条件を機械で確かめる
   role: machine
   skill: null
-  command: null
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-integration-entry --write'
   inputs: [status.yaml, 07-slides/, 02-claims.yaml]
   outputs: [checks/, status.yaml]
   sections: []
@@ -2289,7 +2289,7 @@ tasks:
   name: 網羅と終了の条件を機械で確かめる
   role: machine
   skill: null
-  command: null
+  command: 'python3 tools/check.py <資料のディレクトリ> --task check-coverage --write'
   inputs: [runs/, 00-brief.md, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 07-slides/, terms.yaml]
   outputs: [checks/, status.yaml]
   sections:

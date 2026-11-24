@@ -1,0 +1,15 @@
+- id: ch1-s3
+  status: done
+  title: かけ直しによる着信の増加
+  point: 応答できなかった社員のかけ直しが、着信をさらに増やしている
+  qualifiers: [2025年度]
+  body:
+    type: cause-chain
+    data:
+      chain:
+        - 担当者が着信に応答できない
+        - 社員がすぐにかけ直す
+        - 着信がさらに増える
+    highlight: chain[1]
+  text: かけ直しは、月平均{F016}あった。数え方は「{ch1-s2}」に示す
+  sources: [F016, F017]

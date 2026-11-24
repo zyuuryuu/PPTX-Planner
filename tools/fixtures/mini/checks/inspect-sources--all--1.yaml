@@ -1,0 +1,23 @@
+# 検査セッションが書いた検査の記録の見本(一部)。
+task: inspect-sources
+target: 01-sources.yaml
+commit: 0000000
+round: 1
+model: claude-sonnet-5-5
+results:
+  - check: K01-08
+    item: F001
+    verdict: pass
+    quote: "2025年度の応答率は62%"
+  - check: K01-10
+    item: F001
+    verdict: pass
+    quote: "2025年度の応答率は62%"
+  - check: K01-08
+    item: F016
+    verdict: pass
+    quote: "同じ番号から30分以内の再着信は月平均400件"
+  - check: K01-10
+    item: F016
+    verdict: pass
+    quote: "同じ番号から30分以内の再着信は月平均400件"

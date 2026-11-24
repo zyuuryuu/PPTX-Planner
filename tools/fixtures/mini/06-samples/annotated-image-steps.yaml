@@ -1,0 +1,14 @@
+- id: ap-s3
+  status: done
+  title: 経費の申請の手順
+  point: null
+  role: reference
+  body:
+    type: annotated-image-steps
+    asset: A001
+    crop: [receipt-field, submit-button]
+    scenario: S-expense-apply
+    captions:
+      receipt-field: 領収書を添付する
+      submit-button: 申請のボタンを押す
+  sources: [A001, F021]

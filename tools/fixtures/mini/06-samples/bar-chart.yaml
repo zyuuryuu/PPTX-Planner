@@ -1,0 +1,11 @@
+- id: ch1-s6
+  status: done
+  title: 午前と午後の応答率
+  point_from: section
+  body:
+    type: bar-chart
+    data:
+      - {label: 午前, value: F004}
+      - {label: 午後, value: F005}
+    highlight: 午前
+  sources: [F004, F005]

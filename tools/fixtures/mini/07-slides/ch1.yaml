@@ -1,0 +1,75 @@
+- id: ch1-s1
+  status: done
+  title: 年度ごとの応答率
+  point: 応答率は、2024年度の81%から19ポイント下がった
+  qualifiers: [代表番号への着信]
+  body:
+    type: statement
+    data:
+      value: F003
+      text: 応答率が前の年度から下がった幅
+    highlight: value
+  text: 前の年度の応答率は{F002}である
+  sources: [F002, F003]
+- id: ch1-s2
+  status: done
+  title: 応答率の数え方
+  point: null
+  role: detail
+  body:
+    type: plain-list
+    data:
+      items:
+        - 応答率は、着信のうち、担当者が応答した着信の割合である
+        - 着信は、窓口の代表番号にかかった電話を数える
+  sources: [F006]
+- id: ch1-s3
+  status: done
+  title: かけ直しによる着信の増加
+  point: 応答できなかった社員のかけ直しが、着信をさらに増やしている
+  qualifiers: [2025年度]
+  body:
+    type: cause-chain
+    data:
+      chain:
+        - 担当者が着信に応答できない
+        - 社員がすぐにかけ直す
+        - 着信がさらに増える
+    highlight: chain[1]
+  text: かけ直しは、月平均{F016}あった。数え方は「{ch1-s2}」に示す
+  sources: [F016, F017]
+- id: ch1-s4
+  status: done
+  title: 着信の内訳
+  point: 2025年度は、着信の38%に応答できなかった
+  qualifiers: [代表番号への着信]
+  body:
+    type: pie-chart
+    data:
+      - {label: 応答した着信, value: F001}
+      - {label: 応答できなかった着信, value: F015}
+    highlight: 応答できなかった着信
+  sources: [F001, F015]
+- id: ch1-s5
+  status: done
+  title: 時間帯の分け方
+  point: null
+  role: detail
+  body:
+    type: plain-list
+    data:
+      items:
+        - 着信の時刻が正午より前を、午前とする
+        - 着信の時刻が正午以降を、午後とする
+  sources: [F014]
+- id: ch1-s6
+  status: done
+  title: 午前と午後の応答率
+  point_from: section
+  body:
+    type: bar-chart
+    data:
+      - {label: 午前, value: F004}
+      - {label: 午後, value: F005}
+    highlight: 午前
+  sources: [F004, F005]

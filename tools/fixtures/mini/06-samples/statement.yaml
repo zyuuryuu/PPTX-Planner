@@ -1,0 +1,13 @@
+- id: ch1-s1
+  status: done
+  title: 年度ごとの応答率
+  point: 応答率は、2024年度の81%から19ポイント下がった
+  qualifiers: [代表番号への着信]
+  body:
+    type: statement
+    data:
+      value: F003
+      text: 応答率が前の年度から下がった幅
+    highlight: value
+  text: 前の年度の応答率は{F002}である
+  sources: [F002, F003]

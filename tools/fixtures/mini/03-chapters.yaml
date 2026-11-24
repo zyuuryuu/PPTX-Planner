@@ -1,29 +1,50 @@
 order:
   conclusion: first
-  basis: importance
+  basis: structure
 chapters:
   - id: ch1
-    kind: intro
-    title: お願いしたいこと
-    message: 定型の問い合わせをチャットボットに任せる導入を、来期に始めたい
-    slides: 4
-    slides_reason: 結論と、今決める理由だけを述べるため、少なくする
+    kind: body
+    title: 窓口の応答率の現状
+    question: 電話はどれだけつながりにくいのか
+    point: 担当者が8人のまま、窓口の応答率は62%まで下がった
+    qualifiers: [2025年度, 代表番号への着信]
+    claims: [C1]
+    sections:
+      - id: ch1-1
+        title: 応答率の変化
+        point: 応答率は、2024年度の81%から2025年度の62%に下がった
+        qualifiers: [代表番号への着信]
+        from: [Q1.1]
+      - id: ch1-2
+        title: つながりにくい時間帯
+        point: 応答率は、午前が48%で、午後の74%より低い
+        qualifiers: [2025年度]
+        from: [Q1.2]
+    slides: 6
+    slides_reason: 読み手が現状の数値を知らないため、多く充てる
   - id: ch2
     kind: body
-    title: 導入を勧める理由
-    message: 問い合わせの62%を占める定型の問い合わせを、試行では41%減らせた。回答の6%に誤りがある
-    claims: [C1, C2]
-    slides: 7
-    slides_reason: 読み手が疑う効果と誤りに、多く充てる
-  - id: ch3
-    kind: closing
-    title: 承認いただきたいこと
-    message: 管理部の部長に、2026年12月の会議で、来期の導入の開始を承認いただきたい
+    title: つながりにくい原因
+    question: なぜつながりにくくなったのか
+    point: つながりにくい主な原因は、経費精算システムの入れ替えによる問い合わせの増加である
+    claims: [C2]
+    sections:
+      - id: ch2-1
+        title: 問い合わせの件数
+        point: 問い合わせの件数は、2024年度の月平均3,000件から2025年度の4,200件に増えた
+        from: [Q2.1]
+      - id: ch2-2
+        title: 増えた問い合わせの内容
+        point: 増えた問い合わせの75%は、経費精算システムの操作についてである
+        from: [Q2.2]
     slides: 3
-    slides_reason: 求める判断を1枚で述べる
-omitted: []
+    slides_reason: 原因は件数と内容の2点で示せるため、少なく充てる
+omitted:
+  - question: Q1.3
+    to: appendix
+    reason: 担当者の人数は章の要点で述べており、本編に内訳は要らない
 contradictions:
-  - fact: F008
+  - fact: F013
     chapter: ch2
 objections:
   - claim: C2

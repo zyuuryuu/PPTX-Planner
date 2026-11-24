@@ -1,0 +1,35 @@
+- id: ch2-s1
+  status: done
+  title: 年度ごとの問い合わせの件数
+  point_from: section
+  body:
+    type: before-after
+    data:
+      before: {label: 前の年度, value: F009}
+      after: {label: 今の年度, value: F008}
+    highlight: after
+  sources: [F008, F009]
+- id: ch2-s2
+  status: done
+  title: 増えた問い合わせの内訳
+  point: 増えた月平均1,200件のうち900件は、経費精算システムの操作についての問い合わせである
+  body:
+    type: pie-chart
+    data:
+      - {label: 経費精算システムの操作, value: F019}
+      - {label: そのほかの内容, value: F020}
+    highlight: 経費精算システムの操作
+  text: 経費精算システムの操作についての問い合わせは、月平均{F011}である。年度ごとの件数は「{ch2-s1}」に示す
+  sources: [F010, F011, F019, F020]
+- id: ch2-s3
+  status: done
+  title: 経費精算システムを除いた応答率
+  point: 経費精算システムの問い合わせを除いても、午前の応答率は55%にとどまる
+  qualifiers: [2025年度]
+  body:
+    type: statement
+    data:
+      value: F013
+      text: 経費精算システムの問い合わせを除いた、午前の応答率
+    highlight: value
+  sources: [F013]

@@ -1,76 +1,106 @@
 - id: ch1-s1
   relation: statement
-  relation_reason: 求める判断を1文で述べるスライドであり、項目の間に関係がない
-  show: 求める判断の1文
-  focus: 来期に始めるという時期
-  facts: []
+  show: 応答率が前の年度から下がった幅を、1つの数値で示す
+  focus: 下がった幅の大きさ
+  facts: [F002, F003]
   axis: null
   base: none
   holds: []
+  relation_reason: 値が2つの年度の分しかなく、推移の図にならない
 - id: ch1-s2
-  relation: statement
-  relation_reason: 証言を1つ示すスライドであり、比べる対象も推移もない
-  show: 窓口の担当者の証言
-  focus: 2日という待ち時間
-  facts: [F009]
+  relation: list
+  show: 応答率の定義と、数える着信の範囲
+  focus: 分母が代表番号への着信であること
+  facts: [F006]
   axis: null
   base: none
   holds: []
-- id: ch2-s1
+  relation_reason: 定義を並べるだけで、項目の間に関係がない
+- id: ch1-s3
   relation: causality
-  show: 月あたりの件数に、1件あたりの対応時間を掛けると、月あたりの対応時間になること
-  focus: 月240時間という結果
-  facts: [F001, F003, F004]
+  show: 応答できないことから、着信が増えるまでの連鎖
+  focus: かけ直しが着信を増やす段
+  facts: [F016, F017]
   axis: null
   base: none
   holds: [causal, ordered]
-- id: ch2-s2
+- id: ch1-s4
   relation: composition
-  show: 問い合わせの全体を、定型と定型以外に分けた割合
-  focus: 定型の62%
-  facts: [F002]
-  axis: 手順書の通りに答えられるかどうか
+  show: 着信を、応答した着信と応答できなかった着信に分ける
+  focus: 応答できなかった着信の割合
+  facts: [F001, F015]
+  axis: 応答したかどうか
   base: none
   holds: [partition, proportional]
-- id: ch2-s3
+- id: ch1-s5
+  relation: list
+  show: 午前と午後の分け方
+  focus: 境目の時刻
+  facts: [F014]
+  axis: null
+  base: none
+  holds: []
+  relation_reason: 分け方の定義を並べるだけで、項目の間に関係がない
+- id: ch1-s6
+  relation: item-comparison
+  show: 午前と午後の応答率を並べる
+  focus: 午前の応答率の低さ
+  facts: [F004, F005]
+  axis: null
+  base: none
+  holds: [comparable, proportional]
+- id: ch2-s1
   relation: contrast-before-after
-  show: 試行の前と後の、人が答える定型の問い合わせの件数
-  focus: 41%の減少
-  facts: [F005]
+  show: 前の年度と今の年度の問い合わせの件数を、前後に並べる
+  focus: 今の年度の件数
+  facts: [F008, F009]
   axis: null
   base: none
   holds: [opposed, ordered]
-- id: ch2-s4
+- id: ch2-s2
   relation: composition
-  show: チャットボットの回答の全体を、正しい回答と誤った回答に分けた割合
-  focus: 誤りの6%
-  facts: [F008]
-  axis: 回答の内容が正しいかどうか
+  show: 増えた問い合わせを、内容で分ける
+  focus: 経費精算システムの操作が占める割合
+  facts: [F010, F011, F019, F020]
+  axis: 問い合わせの内容
   base: none
   holds: [partition, proportional]
-- id: ch2-s5
-  relation: list
-  relation_reason: 1度だけ払う費用と毎月払う費用は単位が違い、同じ観点で比べられない
-  show: 初期費用と運用費用の見積もりの金額
-  focus: 初期費用の180万円
-  facts: [F006, F007]
-  axis: null
-  base: none
-  holds: []
-- id: ch3-s1
+- id: ch2-s3
   relation: statement
-  relation_reason: 求める判断を1文で述べるスライドであり、項目の間に関係がない
-  show: 誰が、何を、いつまでに決めるかの1文
-  focus: 2026年12月の会議という期限
-  facts: []
+  show: 経費精算システムの問い合わせを除いた午前の応答率を、1つの数値で示す
+  focus: 除いても低いままであること
+  facts: [F013]
   axis: null
   base: none
   holds: []
+  relation_reason: 値が1つだけで、比べる相手を同じ図に置かない
 - id: ap-s1
-  relation: composition
-  show: アンケートの回答の全体を、続けて使いたいと答えた利用者とそれ以外に分けた割合
-  focus: 続けて使いたいと答えた72%
-  facts: [F010]
-  axis: 続けて使いたいと答えたかどうか
+  relation: statement
+  show: 窓口の担当者の人数を、1つの数値で示す
+  focus: 人数が変わっていないこと
+  facts: [F007]
+  axis: null
   base: none
-  holds: [partition, proportional]
+  holds: []
+  relation_reason: 値が1つだけである
+- id: ap-s2
+  relation: statement
+  show: 社員の数が増えた割合を、1つの数値で示す
+  focus: 増えた割合の小ささ
+  facts: [F018]
+  axis: null
+  base: none
+  holds: []
+  relation_reason: 値が1つだけである
+- id: ap-s3
+  relation: process
+  show: 申請の画面の上に、操作の順を番号で示す
+  focus: 領収書の添付が先であること
+  real: true
+  view:
+    scenario: S-expense-apply
+    elements: [E-ui-receipt, E-ui-submit]
+  facts: [A001, F021]
+  axis: null
+  base: image
+  holds: [ordered]

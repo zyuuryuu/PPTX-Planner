@@ -1,6 +1,6 @@
 - id: H1
-  statement: 社内の問い合わせ対応に、チャットボットを導入すべきである
+  statement: つながりにくい原因は、経費精算システムの入れ替えで問い合わせが増えたことである
   proposed_by: user
 - id: H2
-  statement: 現状のまま、人だけで対応を続けるべきである
+  statement: つながりにくい原因は、窓口の担当者の人数が減ったことである
   proposed_by: session

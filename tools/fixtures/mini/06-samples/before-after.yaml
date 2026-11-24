@@ -1,0 +1,11 @@
+- id: ch2-s1
+  status: done
+  title: 年度ごとの問い合わせの件数
+  point_from: section
+  body:
+    type: before-after
+    data:
+      before: {label: 前の年度, value: F009}
+      after: {label: 今の年度, value: F008}
+    highlight: after
+  sources: [F008, F009]

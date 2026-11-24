@@ -1,54 +1,146 @@
 terms:
+  - id: T-desk
+    term: 窓口
+    kind: noun
+    definition: 社員からの問い合わせを電話で受ける、管理部の部署
+    defined_in: null
+    no_definition: ブリーフの「読み手が既に知っていること」にある
+  - id: T-agent
+    term: 担当者
+    kind: noun
+    definition: 窓口で、着信に応答する社員
+    defined_in: null
+    no_definition: ブリーフの「読み手が既に知っていること」にある
+  - id: T-employee
+    term: 社員
+    kind: noun
+    definition: 窓口に問い合わせる、当社の社員
+    not: [T-agent]
+    defined_in: null
+    no_definition: 読み手が日常で使う語である
+  - id: T-incoming-call
+    term: 着信
+    kind: noun
+    definition: 窓口の代表番号にかかった電話の1回
+    defined_in: ch1-s2
+    no_definition: null
+  - id: T-answer-rate
+    term: 応答率
+    kind: noun
+    definition: 代表番号への着信のうち、担当者が応答した着信の割合
+    defined_in: ch1-s2
+    no_definition: null
+  - id: T-inquiry
+    term: 問い合わせ
+    kind: noun
+    definition: 社員が窓口に尋ねた用件の1件
+    not: [T-incoming-call]
+    defined_in: null
+    no_definition: ブリーフの「読み手が既に知っていること」にある
+  - id: T-expense-system
+    term: 経費精算システム
+    kind: noun
+    definition: 社員が経費を申請する社内のシステム
+    defined_in: null
+    no_definition: ブリーフの「読み手が既に知っていること」にある
+  - id: T-redial
+    term: かけ直し
+    kind: noun
+    definition: 応答されなかった社員が、同じ番号からもう一度かける着信
+    defined_in: ch1-s3
+    no_definition: null
+  - id: T-respond
+    term: 応答する
+    kind: action
+    definition: 担当者が、着信に出て話す
+  - id: T-answer-rate-change
+    term: 応答率の変化
+    kind: noun
+    definition: 2つの年度の応答率の差
+    defined_in: null
+    no_definition: 指標の名前で、資料の文には出さない
+  - id: T-staff-count
+    term: 担当者の人数
+    kind: noun
+    definition: 窓口に配置された担当者の数
+    defined_in: null
+    no_definition: 読み手が日常で使う語である
   - id: T-inquiry-count
-    term: 問い合わせ件数
+    term: 問い合わせの件数
     kind: noun
-    definition: 社員から情報システム部に届いた問い合わせの、月あたりの件数
-    defined_in: ch2-s1
-  - id: T-routine-share
-    term: 定型の問い合わせの割合
-    kind: noun
-    definition: 問い合わせのうち、手順書の通りに答えられるものの割合
-    defined_in: ch2-s2
-  - id: T-handle-time
-    term: 対応時間
-    kind: noun
-    definition: 問い合わせ1件に答えるまでにかかる作業の時間
+    definition: 1か月に窓口が受けた問い合わせの数
     defined_in: null
-    no_definition: 読み手が日常的に使う語である
-  - id: T-handle-hours
-    term: 月あたりの対応時間
+    no_definition: 読み手が日常で使う語である
+  - id: T-inquiry-increase
+    term: 問い合わせの件数の増加
     kind: noun
-    definition: 問い合わせ件数に対応時間を掛けたもの
-    defined_in: ch2-s1
-  - id: T-trial-reduction
-    term: 試行での削減率
-    kind: noun
-    definition: 試行の期間に、人が答えた定型の問い合わせが減った割合
-    defined_in: ch2-s3
-  - id: T-error-rate
-    term: 回答の誤りの割合
-    kind: noun
-    definition: チャットボットの回答のうち、内容が誤っていたものの割合
-    defined_in: ch2-s4
-  - id: T-initial-cost
-    term: 初期費用
-    kind: noun
-    definition: 導入のときに1度だけ払う費用
+    definition: 2つの年度の問い合わせの件数の差
     defined_in: null
-    no_definition: 読み手が日常的に使う語である
-  - id: T-running-cost
-    term: 運用費用
+    no_definition: 指標の名前で、資料の文には出さない
+  - id: T-expense-inquiry-count
+    term: 経費精算システムの問い合わせの件数
     kind: noun
-    definition: 導入の後に毎月払う費用
+    definition: 経費精算システムの操作についての問い合わせの数
     defined_in: null
-    no_definition: 読み手が日常的に使う語である
-  - id: T-continue-share
-    term: 継続を望む利用者の割合
+    no_definition: 指標の名前で、資料の文には出さない
+  - id: T-unanswered-rate
+    term: 応答できなかった着信の割合
     kind: noun
-    definition: 試行の後のアンケートで、続けて使いたいと答えた利用者の割合
-    defined_in: ap-s1
+    definition: 代表番号への着信のうち、担当者が応答しなかった着信の割合
+    defined_in: ch1-s4
+    no_definition: null
+  - id: T-redial-count
+    term: かけ直しの件数
+    kind: noun
+    definition: 1か月のかけ直しの数
+    defined_in: null
+    no_definition: 指標の名前で、資料の文には出さない
+  - id: T-employee-growth
+    term: 社員の数の増加率
+    kind: noun
+    definition: 2つの年度の社員の数の差を、前の年度の数で割った割合
+    defined_in: null
+    no_definition: 指標の名前で、資料の文には出さない
+  - id: T-increase-share
+    term: 増えた問い合わせに占める割合
+    kind: noun
+    definition: 増えた問い合わせのうち、ある内容の問い合わせが占める割合
+    defined_in: null
+    no_definition: 指標の名前で、資料の文には出さない
 banned:
-  - term: ユーザー
-    reason: 問い合わせる社員と、対応する担当者の両方を指しうる
+  - term: ヘルプデスク
+    reason: 窓口と同じ対象を指しうる
+    use: [T-desk]
+  - term: オペレーター
+    reason: 担当者と同じ対象を指しうる
+    use: [T-agent]
+  - term: 入電
+    reason: 着信と同じ対象を指しうる
+    use: [T-incoming-call]
 allowed:
-  - 費用
+  - 年度
+  - 月平均
+  - 午前
+  - 午後
+  - 時間帯
+  - 現状
+  - 原因
+  - 内容
+  - 内訳
+  - 操作
+  - 経費
+  - 申請
+  - 手順
+  - 増加
+  - 変化
+  - 数
+  - 数え方
+  - 分け方
+  - 主な
+  - 同じ
+  - 低い
+  - 入れ替え
+  - 増える
+  - 下がる
+  - 除く
+  - 変わる

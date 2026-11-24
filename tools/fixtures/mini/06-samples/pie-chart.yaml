@@ -1,0 +1,12 @@
+- id: ch1-s4
+  status: done
+  title: 着信の内訳
+  point: 2025年度は、着信の38%に応答できなかった
+  qualifiers: [代表番号への着信]
+  body:
+    type: pie-chart
+    data:
+      - {label: 応答した着信, value: F001}
+      - {label: 応答できなかった着信, value: F015}
+    highlight: 応答できなかった着信
+  sources: [F001, F015]

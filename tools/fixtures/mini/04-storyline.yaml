@@ -1,56 +1,96 @@
 - id: ch1-s1
   chapter: ch1
-  section: null
-  question: 何を決めてほしいのか
-  headline: 定型の問い合わせをチャットボットに任せる導入を、来期に始めたい
-  from: [Q2]
+  section: ch1-1
+  question: 応答率はどれだけ下がったのか
+  title: 年度ごとの応答率
+  point: 応答率は、2024年度の81%から19ポイント下がった
+  qualifiers: [代表番号への着信]
+  from: [Q1.1]
+  evidence: [F002, F003]
 - id: ch1-s2
   chapter: ch1
-  question: なぜ今、決める必要があるのか
-  headline: 繁忙期には、回答まで2日待たせることがある
+  section: ch1-1
+  title: 応答率の数え方
+  point: null
+  role: detail
+- id: ch1-s3
+  chapter: ch1
+  section: ch1-1
+  question: なぜ着信が減らないのか
+  title: かけ直しによる着信の増加
+  point: 応答できなかった社員のかけ直しが、着信をさらに増やしている
+  qualifiers: [2025年度]
   from: [Q1.1]
-  evidence: [F009]
+  evidence: [F016, F017]
+- id: ch1-s4
+  chapter: ch1
+  section: ch1-1
+  question: 応答できなかった着信はどれだけあるのか
+  title: 着信の内訳
+  point: 2025年度は、着信の38%に応答できなかった
+  qualifiers: [代表番号への着信]
+  from: [Q1.1]
+  evidence: [F001, F015]
+- id: ch1-s5
+  chapter: ch1
+  section: ch1-2
+  title: 時間帯の分け方
+  point: null
+  role: detail
+- id: ch1-s6
+  chapter: ch1
+  section: ch1-2
+  question: どの時間帯がつながりにくいのか
+  title: 午前と午後の応答率
+  point_from: section
+  from: [Q1.2]
+  evidence: [F004, F005]
 - id: ch2-s1
   chapter: ch2
-  question: 問い合わせ対応の負荷は、どの程度か
-  headline: 問い合わせは月平均1,200件あり、対応に月240時間かかっている
-  from: [Q1.1]
-  evidence: [F001, F003, F004]
+  section: ch2-1
+  question: 問い合わせは増えたのか
+  title: 年度ごとの問い合わせの件数
+  point_from: section
+  from: [Q2.1]
+  evidence: [F008, F009]
 - id: ch2-s2
   chapter: ch2
-  question: チャットボットに任せられる問い合わせは、どれだけあるか
-  headline: 問い合わせの62%は、手順書の通りに答えられる定型である
-  from: [Q1.2]
-  evidence: [F002]
+  section: ch2-2
+  question: 何の問い合わせが増えたのか
+  title: 増えた問い合わせの内訳
+  point: 増えた月平均1,200件のうち900件は、経費精算システムの操作についての問い合わせである
+  from: [Q2.2]
+  evidence: [F010, F011]
 - id: ch2-s3
   chapter: ch2
-  question: チャットボットで、本当に減るのか
-  headline: 2部署での8週間の試行で、人が答える定型の問い合わせは41%減った
-  from: [Q2.1]
-  evidence: [F005]
-- id: ch2-s4
-  chapter: ch2
-  question: 回答の誤りで混乱しないか
-  headline: 試行では回答の6%に誤りがあり、誤りを人が確かめる手順が要る
-  from: [Q2.3]
-  evidence: [F008]
-  contradiction: F008
-- id: ch2-s5
-  chapter: ch2
-  question: 費用はいくらかかるのか
-  headline: 見積もりでは、初期費用が180万円、運用費用が月5万円である
+  section: ch2-2
+  question: 経費精算システムの問い合わせがなければ、つながるのか
+  title: 経費精算システムを除いた応答率
+  point: 経費精算システムの問い合わせを除いても、午前の応答率は55%にとどまる
+  qualifiers: [2025年度]
   from: [Q2.2]
-  evidence: [F006, F007]
-- id: ch3-s1
-  chapter: ch3
-  question: 何を承認すればよいか
-  headline: 管理部の部長に、2026年12月の会議で、来期の導入の開始を承認いただきたい
-  from: [Q2]
+  evidence: [F013]
+  contradiction: F013
 - id: ap-s1
   chapter: appendix
-  appendix_of: ch2-s3
-  question: 試行に参加した部署だけの結果ではないか
-  headline: 試行の後、利用者の72%が続けて使いたいと答えた
+  appendix_of: ch1-s1
+  question: 担当者が減ったのではないか
+  title: 窓口の担当者の人数
+  point: 窓口の担当者の人数は、2024年度も2025年度も8人で変わっていない
+  from: [Q1.3]
+  evidence: [F007]
+- id: ap-s2
+  chapter: appendix
+  appendix_of: ch2-s1
+  question: 社員が増えたためではないか
+  title: 社員の数の変化
+  point: 社員の数は、2024年度から2025年度にかけて2%しか増えていない
   from: [Q2.1]
-  evidence: [F010]
+  evidence: [F018]
   objection: {claim: C2, index: 0}
+- id: ap-s3
+  chapter: appendix
+  appendix_of: ch2-s2
+  title: 経費の申請の手順
+  point: null
+  role: reference

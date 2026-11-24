@@ -1,4 +1,4 @@
-# スライド作成工程の定義(草案 v0.38)
+# スライド作成工程の定義(草案 v0.39)
 
 状態: 草案。細部と書式は未確定である。実物で確かめていない前提は、[未検証の前提と未決定の事項](open-items.md)を参照。
 
@@ -47,6 +47,30 @@ LLMによるスライド作成は、枚数が増えると次の問題を起こ�
 | 工程ごと、判定者ごとの件数を出す | `python3 tools/checks_table.py --stats` |
 
 道具は、Python 3 と PyYAML で動く。台帳の先頭の `count` は、検査の件数である。項目を足すとき、消すときに、あわせて直す。合わなければ、道具はエラーで終わる。台帳か文書を変えたら、コミットの前に `--check` を実行する。
+
+## 機械の検査と記録の道具
+
+判定者に機械を含む検査は、道具 `tools/check.py` が、台帳のIDごとに実行する。結果は、検査のID、対象、合否、該当箇所、理由で出る。状態の記録は、道具 `tools/status.py` が書く。判定のやり方、道具が決めた書式、実装の状況は、[tools/README.md](../tools/README.md)にある。
+
+| すること | コマンド |
+|---|---|
+| 工程の機械の検査を実行する | `python3 tools/check.py <資料のディレクトリ> --stage N` |
+| 工程表の機械の作業の検査を実行し、検査の記録と状態の記録を書く | `python3 tools/check.py <資料のディレクトリ> --task <作業のid> --write` |
+| 検査1件を実行する | `python3 tools/check.py <資料のディレクトリ> --id K04-03` |
+| 台帳の機械の検査のうち、実装済みと未実装を、工程ごとに出す | `python3 tools/check.py --coverage` |
+| 検査セッションと読み手の役のセッションが書いた記録の書式を確かめる | `python3 tools/check.py --records <資料のディレクトリ>` |
+| 検査の記録から、成果物の状態を `checked` にする。不合格があれば `draft` にする | `python3 tools/status.py record-check <資料のディレクトリ>` |
+| 承認を記録する。成果物が `checked` でなければ拒む | `python3 tools/status.py record-approval <資料のディレクトリ> <成果物> --by user` |
+| 上流が変わったときに、合格が無効になった成果物とスライドを `invalid` にする | `python3 tools/status.py invalidate <資料のディレクトリ>` |
+| 状態の記録を表で出す | `python3 tools/status.py show <資料のディレクトリ>` |
+| 道具を確かめる。見本が検査に通り、壊した版が不合格になること | `python3 tools/selftest.py` |
+
+- 不合格があれば、終了コードは1になる。警告だけなら0である。
+- 台帳の機械の検査のうち、実装していないものは、実行のたびにIDを並べて出す。理由は `--coverage` が出す。
+- 台帳にない確かめ(YAMLとして読めること、必須の項目、IDの参照先)は、「書式」として別に出す。
+- 見本の資料 `tools/fixtures/mini/` は、工程0から7の成果物を、今の定義の書式で揃えたものである。`tools/fixtures/breaks.yaml` の差分を当てると、検査ごとに、その検査が不合格になる版を作れる。
+
+道具か台帳を変えたら、コミットの前に `python3 tools/selftest.py` を実行する。
 
 ## 工程表
 

@@ -1,0 +1,33 @@
+elements:
+  - id: E-applicant
+    kind: actor
+    name: 申請者
+    evidence: [F021]
+  - id: E-ui-receipt
+    kind: component
+    name: 領収書の添付欄
+    evidence: [F021]
+  - id: E-ui-submit
+    kind: component
+    name: 申請のボタン
+    evidence: [F021]
+relations:
+  - id: R-attach
+    kind: call
+    from: E-applicant
+    to: E-ui-receipt
+    label: 領収書を添付する
+    mode: unknown
+    evidence: [F021]
+  - id: R-submit
+    kind: call
+    from: E-applicant
+    to: E-ui-submit
+    label: 申請のボタンを押す
+    mode: unknown
+    evidence: [F021]
+scenarios:
+  - id: S-expense-apply
+    name: 経費の申請
+    steps: [R-attach, R-submit]
+    evidence: [F021]

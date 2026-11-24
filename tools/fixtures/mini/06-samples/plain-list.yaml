@@ -1,0 +1,12 @@
+- id: ch1-s2
+  status: done
+  title: 応答率の数え方
+  point: null
+  role: detail
+  body:
+    type: plain-list
+    data:
+      items:
+        - 応答率は、着信のうち、担当者が応答した着信の割合である
+        - 着信は、窓口の代表番号にかかった電話を数える
+  sources: [F006]
