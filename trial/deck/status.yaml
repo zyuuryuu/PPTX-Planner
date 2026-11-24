@@ -53,4 +53,4 @@ artifacts:
   04-scenarios.yaml:
     state: 承認済み   # ストーリーラインと一緒に同意(d47160c)
   05-proof.yaml:
-    state: 作成中   # 仮置きの資料 preview/placeholder.html
+    state: 検査済み   # 重大な検査2回と再検査、意味の検査、見出しの復元と再検査。往復2回。仮置きの資料 preview/placeholder.html
