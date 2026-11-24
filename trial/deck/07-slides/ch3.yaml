@@ -273,6 +273,7 @@
   notes: 送信元のIPアドレスを書き漏らすと、受けた側が元のイベントを探し直すことになる(F414 の例)。
 # 見本 06-samples/flowchart.yaml から
   # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
 - id: ch3-s17
   status: done
   headline: 配属から3か月の新人は、重大度 High 以上か攻撃の試みなら上げ、一覧なら閉じ、残りは調べる
@@ -292,8 +293,9 @@
         condition: "攻撃の\n試み?"
       R-op-list:
         condition: 一覧にある?
+        label: "想定内の検知として\n記録して閉じる"
       R-op-fp:
-        condition: 誤検知と根拠をもって言えた
+        condition: "誤検知と\n根拠をもって\n言えた"
       R-op-inv-esc:
         condition: 30分で根拠なし
     highlight:
