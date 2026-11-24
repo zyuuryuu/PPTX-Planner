@@ -15,3 +15,6 @@
 - ch5 の章扉の警告は執筆の範囲の外のため、章の受け入れの「診断0件」の対象から外し、警告として記録する(設計セッションの回答で変わりうる)。
 - 設計セッションの答え(D013、コミット 2ac8b6e)を受けた。ch1-s2 は statement に、ch3-s13 は S-newbie-ops の start: A-investigate に、架空の数値は例外に、ch5 の章扉の問いは 03-chapters の cover_question に。作業票を作り直した。
 - 道具の不足: render.py は cover_question を読まない(ch5 の章扉の警告が残る)。道具のセッションと進行役に伝える。
+- 03:36Z 執筆の子セッションを3つ起こした(すべて claude-opus-5-5): ch3 session_01LpWHd2UfjbFvamrmEHXk12、ch2 session_01LpWHd4P3wuqFUvq3qSUj8K、ch4 session_01LpWHd4Wzgiecu46rYkU9tV。1分後に get_session で3つとも RUNNING、起動の失敗なしを確かめた。待ち始め 03:36Z。
+- 受け入れの機械的な確かめのスクリプト `work/accept.py` を書いた(見出し、型、sources の範囲、見本の一致、その章の診断のエラーと警告、差分のファイル)。
+- 気づいた点: 子セッションの道具の一覧(get_session の turn_handoff.tools)に send_message が見えない。報告が届かない場合は、コミットと get_session で状態を知る。
