@@ -91,20 +91,24 @@ samples['plain-list'] = dict(spec=dict(id='ch3-s15', status='done', headline=S['
     html=page('ch3-s15', TAG_P + '<span style="display:inline-block;border:5px solid #111827;padding:4px 14px;font-size:26px;font-weight:bold;vertical-align:middle">上げるときに添える5項目</span>' +
         '<ul style="margin-top:18px;list-style:none;font-size:28px;line-height:1.75;padding-left:24px">' + ''.join(f'<li>・{E(i)}</li>' for i in items) + '</ul>', tk))
 
-# 3. step-flow: ch1-s1(左右の項目を同じ高さに並べない。区分と行き先は色で塗らない。強調は2段をつなぐ矢印)
-f = box(0, 20, 400, 320, '', fill='#fff', stroke='#9CA3AF')
-f += text(200, 66, '1. 3つに分ける', 26, 'middle', bold=True)
+# 3. step-flow: ch1-s1(0. 重大度 → 1. 分ける → 2. 行き先。項目を段どうしで同じ高さに並べない。強調は最初の段)
+f = box(0, 60, 270, 230, '', fill='#fff', stroke=INK, sw=5)
+f += text(135, 104, '0. 重大度を見る', 26, 'middle', bold=True)
+f += text(135, 160, '製品の重大度が', 24, 'middle') + text(135, 192, 'High 以上なら', 24, 'middle')
+f += text(135, 246, 'まず上げる', 24, 'middle', C['上げる'], True)
+f += arrow(270, 175, 385, 175, 'それ以外')
+f += box(390, 20, 310, 310, '', fill='#fff', stroke='#9CA3AF')
+f += text(545, 66, '1. 3つに分ける', 26, 'middle', bold=True)
 for i, k in enumerate(['誤検知', '想定内の検知', '攻撃の疑い']):
-    f += text(200, 130 + i*70, k, 26, 'middle')
-f += f'<line x1="420" y1="180" x2="640" y2="180" stroke="{INK}" stroke-width="7" marker-end="url(#a)"/>'
-f += text(530, 160, 'それから', 26, 'middle', INK, True)
-f += box(660, 100, 520, 160, '', fill='#fff', stroke='#9CA3AF')
-f += text(920, 150, '2. 行き先を決める', 26, 'middle', bold=True)
-f += text(920, 214, '閉じる、調べる、上げる', 26, 'middle')
-tk = 'まず3つに分け、それから行き先を決める'
+    f += text(545, 132 + i*66, k, 26, 'middle')
+f += arrow(700, 175, 760, 175)
+f += box(770, 110, 410, 150, '', fill='#fff', stroke='#9CA3AF')
+f += text(975, 158, '2. 行き先を決める', 26, 'middle', bold=True)
+f += text(975, 218, '閉じる、調べる、上げる', 26, 'middle')
+tk = '最初に重大度を見る。残りを3つに分け、それから行き先を決める'
 samples['step-flow'] = dict(spec=dict(id='ch1-s1', status='done', headline=S['ch1-s1']['headline'], takeaway=tk,
-    body=dict(type='step-flow', steps=[dict(name='3つに分ける', description='誤検知、想定内の検知、攻撃の疑い'), dict(name='行き先を決める', description='閉じる、調べる、上げる')], highlight='2段をつなぐ矢印(順)'),
-    sources=[], notes='どの区分がどの行き先になるかは、第3章の流れで扱う。区分と行き先は1対1ではない。'),
+    body=dict(type='step-flow', steps=[dict(name='重大度を見る', description='製品の重大度が High 以上ならまず上げる(このSOCの運用)'), dict(name='3つに分ける', description='誤検知、想定内の検知、攻撃の疑い'), dict(name='行き先を決める', description='閉じる、調べる、上げる')], highlight='steps[0]'),
+    sources=['F009'], notes='この順は第3章の最後の流れ図と同じ。区分と行き先は1対1ではなく、どの区分がどの行き先になるかは第3章で扱う。'),
     html=page('ch1-s1', svg(1184, 350, f), tk))
 
 # 4. flowchart: ch3-s17(行き先は塗らない。強調は先に確かめる2つの分かれ目を囲む1か所)

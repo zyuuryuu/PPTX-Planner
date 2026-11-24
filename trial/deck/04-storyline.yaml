@@ -5,9 +5,12 @@
   chapter: ch1
   section: null
   question: アラートを受けたら、何を決めるのか
-  headline: アラートを誤検知、想定内の検知、攻撃の疑いの3つに分け、閉じる・調べる・上げるを決める
+  headline: 重大度 High 以上はまず上げ、残りを3つに分けて、閉じる・調べる・上げるを決める
   from:
   - Q0
+  evidence:
+  - F009
+  source: このSOCの運用(重大度は製品が付けた値)
 - id: ch1-s2
   chapter: ch1
   section: null
@@ -151,12 +154,13 @@
   chapter: ch3
   section: null
   question: この講義では、どの順で確かめるのか
-  headline: 案として、まず根拠とログで3つに分け、次に影響の大きさで優先度を付ける
+  headline: 案として、重大度で上げるものを除いた後、根拠とログで3つに分け、影響で優先度を付ける
   from:
   - Q2
   evidence:
   - F303
   - F305
+  - F009
   source: NIST SP 800-61 Rev.3(2025年)と、CyberDefenders(SOC解析者の訓練事業者)の解説(2026年)。標準や公的文書ではない。この2つの材料から組み立てた案
 - id: ch3-s4
   chapter: ch3

@@ -1,15 +1,18 @@
 # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
 id: ch1-s1
 status: done
-headline: アラートを誤検知、想定内の検知、攻撃の疑いの3つに分け、閉じる・調べる・上げるを決める
-takeaway: まず3つに分け、それから行き先を決める
+headline: 重大度 High 以上はまず上げ、残りを3つに分けて、閉じる・調べる・上げるを決める
+takeaway: 最初に重大度を見る。残りを3つに分け、それから行き先を決める
 body:
   type: step-flow
   steps:
+  - name: 重大度を見る
+    description: 製品の重大度が High 以上ならまず上げる(このSOCの運用)
   - name: 3つに分ける
     description: 誤検知、想定内の検知、攻撃の疑い
   - name: 行き先を決める
     description: 閉じる、調べる、上げる
-  highlight: 2段をつなぐ矢印(順)
-sources: []
-notes: どの区分がどの行き先になるかは、第3章の流れで扱う。区分と行き先は1対1ではない。
+  highlight: steps[0]
+sources:
+- F009
+notes: この順は第3章の最後の流れ図と同じ。区分と行き先は1対1ではなく、どの区分がどの行き先になるかは第3章で扱う。
