@@ -16,11 +16,20 @@ begin と end の組が崩れている文書が1つでもあれば、何も書�
 
 sections と references は「文書#見出し」の形で書く。見出しは、文書にある文字列のままとする。
 「文書#前文」は、文書の題から最初の見出しまでを指す。見出しを付けなければ、文書まるごとを指す。
-1箇所は、見出しから、次の同じ深さ以上の見出しの手前までである。
+1箇所は、見出しから、次の見出しの手前までである。下位の見出しは含まない。下位の見出しは、個別に書く。
 
-工程の文書(stages/)の見出しは、いずれかの作業の sections に割り当てる。次の見出しは対象から外す。
-  - 直下に文がない見出し
-  - 直下が、検査の台帳から作る区間だけの見出し(合格条件、開始の条件、終了の条件)
+--check が確かめること:
+  - sections と references の見出しが実在する。
+  - 工程の文書(stages/)の見出しが、いずれかの作業の sections にある。次の見出しは対象から外す。
+      直下に文がない見出し
+      直下が、検査の台帳から作る区間だけの見出し(合格条件、開始の条件、終了の条件)
+  - 見出しの直下に「担当: 〇〇。」の行がある場合は、その見出しを sections に持つ作業の担当が、それと合う。
+  - 台帳の検査が、判定者ごとに、その判定者が担当である作業の checks にある。
+  - 担当と skill が、決めた一覧にある。
+  - next が実在する作業を指す。どこからも来ない作業は start: true、次がない作業は end: true である。
+  - restricted: true の作業の inputs が、「ファイル#項目」の形で項目まで絞られている。
+    まるごとのファイルを渡す場合は、そう定めた箇所(検査のID、または「文書#見出し」)が restricted_by にある。
+  - inputs の「00-brief.md#項目」の項目が、工程0のブリーフの項目にある。
 """
 import argparse
 import os
@@ -51,6 +60,7 @@ SKILLS = {
     "machine": None,
 }
 REQUIRED = ("id", "stage", "name", "role", "skill", "inputs", "outputs", "sections", "references", "checks", "next")
+OPTIONAL = ("command", "restricted", "restricted_by", "start", "end")
 LISTS = ("inputs", "outputs", "sections", "references", "checks", "next")
 PREAMBLE = "前文"
 BEGIN = "<!-- tasks:begin -->"
@@ -59,6 +69,8 @@ NOTICE = "<!-- この区間は tools/tasks_table.py が tasks.yaml から作る�
 HEADING = re.compile(r"^(#{1,6}) (.+?)\s*$")
 CHECKS_BEGIN = re.compile(r"^<!-- checks:begin(?: .+?)? -->$")
 CHECKS_END = "<!-- checks:end -->"
+ROLE_LINE = re.compile(r"^担当: (.+?)。$")
+BRIEF = "00-brief.md"
 
 
 def as_list(value):
@@ -96,7 +108,7 @@ class Doc:
         self.headings = found
 
     def span(self, title):
-        """見出しの範囲を、行の番号の集合で返す。見出しがなければ、エラーの文を返す。"""
+        """見出しの直下の範囲を、行の番号の集合で返す。見出しがなければ、エラーの文を返す。"""
         if title is None:
             return set(range(len(self.lines)))
         if title == PREAMBLE:
@@ -106,7 +118,17 @@ class Doc:
         found = [h for h in self.headings if h["title"] == title]
         if len(found) != 1:
             return "見出しがない" if not found else f"同じ見出しが {len(found)} つある"
-        return set(range(found[0]["line"], found[0]["end"]))
+        return set(range(found[0]["line"], found[0]["own_end"]))
+
+    def role_of(self, title):
+        """見出しの直下の「担当: 〇〇。」の行が示す担当。なければ None。"""
+        for h in self.headings:
+            if h["title"] == title:
+                for text in self.lines[h["line"] + 1:h["own_end"]]:
+                    m = ROLE_LINE.match(text.strip())
+                    if m:
+                        return m.group(1)
+        return None
 
     def own_text(self, h):
         """見出しの直下の文。空行と、検査の台帳から作る区間を除く。"""
@@ -169,7 +191,7 @@ def check(tasks, docs, ledger):
             if key not in t:
                 errors.append(f"{tid}: {key} がない")
         for key in t:
-            if key not in REQUIRED + ("command",):
+            if key not in REQUIRED + OPTIONAL:
                 errors.append(f"{tid}: 知らない項目 {key}")
         if not re.fullmatch(r"[a-z][a-z0-9]*(-[a-z0-9]+)*", tid):
             errors.append(f"{tid}: id が小文字とハイフンの形でない")
@@ -193,11 +215,16 @@ def check(tasks, docs, ledger):
                 errors.append(f"{tid}: command がコマンドの文でも null でもない")
         elif "command" in t:
             errors.append(f"{tid}: command は機械の作業だけに書く")
-        for key in LISTS:
-            if not isinstance(t.get(key, []), list):
-                errors.append(f"{tid}: {key} が一覧でない")
+        for key in LISTS + ("restricted_by",):
+            if not isinstance(t.get(key, []), list) or any(not isinstance(x, str) for x in t.get(key, [])):
+                errors.append(f"{tid}: {key} が文字列の一覧でない")
+        for key in ("restricted", "start", "end"):
+            if t.get(key, True) is not True:
+                errors.append(f"{tid}: {key} は true だけを書ける")
     if errors:
         return errors
+    errors += check_inputs(tasks, docs, ledger)
+    errors += check_flow(tasks)
     for t in tasks:
         for key in ("sections", "references"):
             for ref in t[key]:
@@ -213,11 +240,74 @@ def check(tasks, docs, ledger):
         for cid in t["checks"]:
             if cid not in ledger:
                 errors.append(f"{t['id']}: 台帳にない検査 {cid}")
-    used = {cid for t in tasks for cid in t["checks"]}
-    for cid in ledger:
-        if cid not in used:
-            errors.append(f"{cid}: どの作業の checks にもない")
+        for ref in t["sections"]:
+            path, _, title = ref.partition("#")
+            label = docs.get(path).role_of(title) if docs.get(path) else None
+            if label and label != ROLES[t["role"]]:
+                errors.append(f"{t['id']}: {ref} の担当は {label} で、作業の担当は {ROLES[t['role']]} である")
+    for cid, judges in ledger.items():
+        for judge in judges:
+            if not any(t["role"] == judge and cid in t["checks"] for t in tasks):
+                errors.append(f"{cid}: 判定者 {ROLES.get(judge, judge)} が担当である作業の checks にない")
     errors += uncovered(tasks, docs)
+    return errors
+
+
+def brief_items(docs):
+    """工程0の成果物の表から、ブリーフの項目の名前を集める。"""
+    doc, items = docs.get("stages/00-brief.md"), set()
+    for h in doc.headings if doc else []:
+        if h["title"] == "成果物":
+            for text in doc.lines[h["line"]:h["own_end"]]:
+                cells = [c.strip() for c in text.strip().strip("|").split("|")]
+                if text.startswith("|") and len(cells) == 2 and not set(cells[0]) <= set("-"):
+                    items.add(cells[0])
+                elif items and not text.startswith("|"):
+                    break
+    return items
+
+
+def check_inputs(tasks, docs, ledger):
+    """inputs の書き方と、入力を限る作業の絞り方を確かめる。"""
+    errors, items = [], brief_items(docs)
+    for t in tasks:
+        for entry in t["inputs"]:
+            name, sep, item = entry.partition("#")
+            if not name or (sep and not item):
+                errors.append(f"{t['id']}: inputs の {entry}: 「ファイル#項目」の形でない")
+            if name == BRIEF and sep and item not in items:
+                errors.append(f"{t['id']}: inputs の {entry}: ブリーフにない項目である")
+        if "restricted_by" in t and not t.get("restricted"):
+            errors.append(f"{t['id']}: restricted_by は restricted: true の作業だけに書く")
+        if not t.get("restricted"):
+            continue
+        if not t["inputs"]:
+            errors.append(f"{t['id']}: restricted なのに inputs が空である")
+        for ref in t.get("restricted_by", []):
+            if ref not in ledger and isinstance(docs.resolve(ref)[1], str):
+                errors.append(f"{t['id']}: restricted_by の {ref}: 検査のIDでも、実在する見出しでもない")
+        whole = [e for e in t["inputs"] if "#" not in e]
+        if whole and not t.get("restricted_by"):
+            errors.append(f"{t['id']}: restricted なのに、項目まで絞っていない入力がある {whole}。"
+                          "まるごと渡すと定めた箇所を restricted_by に書く")
+    return errors
+
+
+def check_flow(tasks):
+    """next のつながりを確かめる。"""
+    errors = []
+    reached = {target for t in tasks for target in t["next"]}
+    for t in tasks:
+        if t["id"] in t["next"]:
+            errors.append(f"{t['id']}: next が自分を指している")
+        if t["id"] not in reached and not t.get("start"):
+            errors.append(f"{t['id']}: どの作業の next からも来ない。始点なら start: true を書く")
+        if t["id"] in reached and t.get("start"):
+            errors.append(f"{t['id']}: start: true なのに、ほかの作業の next から来る")
+        if not t["next"] and not t.get("end"):
+            errors.append(f"{t['id']}: next が空である。終点なら end: true を書く")
+        if t["next"] and t.get("end"):
+            errors.append(f"{t['id']}: end: true なのに next がある")
     return errors
 
 
@@ -238,12 +328,8 @@ def uncovered(tasks, docs):
         for h in doc.headings:
             if not doc.own_text(h):
                 continue
-            if h["level"] == 1:
-                covered = PREAMBLE in titles
-            else:
-                covered = h["title"] in titles or any(p in titles for p in h["parents"][1:])
-            if not covered:
-                label = PREAMBLE if h["level"] == 1 else h["title"]
+            label = PREAMBLE if h["level"] == 1 else h["title"]
+            if label not in titles:
                 errors.append(f"{path}#{label}: どの作業の sections にもない")
     return errors
 
@@ -351,7 +437,7 @@ def main():
     tasks, errors = load(os.path.join(root, "tasks.yaml"))
     if not errors:
         with open(os.path.join(root, "checks.yaml"), encoding="utf-8") as f:
-            ledger = [e["id"] for e in yaml.safe_load(f)["checks"]]
+            ledger = {e["id"]: as_list(e["judge"]) for e in yaml.safe_load(f)["checks"]}
         errors = check(tasks, Docs(root), ledger)
     if errors:
         print("工程表に誤りがある:", *errors, sep="\n  ")

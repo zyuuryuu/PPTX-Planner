@@ -11,17 +11,22 @@
 #               writer(執筆のセッション) / inspector(検査セッション) / reader(読み手の役のセッション) / machine(機械)
 #   skill       担当のスキルの名前。機械とユーザーの作業は null
 #   command     機械の作業だけに書く。今ある道具で実行できる場合は、そのコマンド。なければ null
-#   inputs      読む成果物のファイル名
+#   inputs      読む成果物のファイル名。項目まで絞る場合は「ファイル#項目」の形で書く。
+#               ファイル名が決まっていないものは、名前を「」で囲んで書く
+#   restricted  true なら、inputs に挙げたもの以外を読まない。入力を限ることが目的の作業に書く
+#   restricted_by  restricted の作業で、ファイルをまるごと渡す場合に、そう定めた箇所(検査のID、または「文書#見出し」)
 #   outputs     作る、または書き換える成果物のファイル名
 #   sections    手順が書かれている文書の見出し。「文書#見出し」の形で書く。
+#               見出しは、その直下の文だけを指す。下位の見出しは、個別に書く。
 #               「文書#前文」は、文書の題から最初の見出しまでを指す
 #   references  手順を行うのに読む、ほかの文書の見出し。文書まるごとの場合は、見出しを付けない
 #   checks      担当が自分で満たす、または判定する検査のID(checks.yaml)
 #   next        次に行う作業の id。分かれる場合と、順序が決まっていない場合は並べる
+#   start、end  始点の作業に start: true、終点の作業に end: true を書く
 # 「#」で始まる行は、作業を行う条件と、未決定の点の覚え書きである(open-items.md)。
 # 合格条件、開始の条件、終了の条件の見出しは sections に書かない。条件は checks のIDで渡す。
 
-count: 107
+count: 111
 tasks:
 
 # ---- 工程0
@@ -46,6 +51,10 @@ tasks:
     - 'deck-types.md#定義の項目'
     - 'deck-types.md#置き場と追加'
     - 'deck-types.md#付属する定義'
+    - 'deck-types.md#提案書'
+    - 'deck-types.md#調査報告'
+    - 'deck-types.md#製品紹介'
+    - 'deck-types.md#研修資料'
     - 'vocabulary.md#スライドの区分'
     - 'organization.md#設計セッション'
     - 'organization.md#ユーザーとのやり取り'
@@ -53,6 +62,7 @@ tasks:
     - 'rework.md#不合格のときの手順'
   checks: [K00-01, K00-02, K00-03, K00-04, K00-05, K00-06, K00-08, K00-09]
   next: [create-style]
+  start: true
 
 # inputs: 資料の型の定義と個人の表現規約も読む。どちらもファイル名は未決定である
 - id: create-style
@@ -66,6 +76,7 @@ tasks:
     - 'stages/00-brief.md#2. 資料の表現規約を作る'
   references:
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'style-rules.md#規約の構成'
     - 'deck-types.md#定義の項目'
   checks: [K00-07]
@@ -83,6 +94,7 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K00-01, K00-02, K00-07, K00-08]
   next: [inspect-brief]
 
@@ -93,6 +105,8 @@ tasks:
   role: inspector
   skill: planner-inspector
   inputs: [00-brief.md]
+  restricted: true
+  restricted_by: [K00-06]
   outputs: [checks/]
   sections: []
   references:
@@ -100,6 +114,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K00-03, K00-04, K00-05, K00-06]
   next: [approve-brief]
 
@@ -170,6 +185,7 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K01-01, K01-02, K01-17]
   next: [inspect-plan]
 
@@ -186,6 +202,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
   checks: [K01-03, K01-04]
   next: [approve-plan]
@@ -219,16 +236,32 @@ tasks:
     - 'organization.md#セッションの分離'
     - 'git.md#管理の方法'
   checks: [K01-15]
-  next: [collect-facts, collect-images, extract-model]
+  next: [collect-facts, collect-images, extract-model, gather-user-knowledge]
 
-# inputs: 調査依頼と外部の資料を読む(organization.md#セッションの分離)。ファイル名は未決定である
+# 聞いた内容と、提出を受けた資料を、収集セッションに渡す形は未決定である
+- id: gather-user-knowledge
+  stage: 1
+  name: ユーザーの知識を取り込む
+  role: designer
+  skill: planner-designer
+  inputs: []
+  outputs: []
+  sections:
+    - 'stages/01-exploration.md#ユーザーの知識の取り込み'
+  references:
+    - 'organization.md#ユーザーとのやり取り'
+  checks: []
+  next: [collect-facts]
+
 # checks: K01-11 は `metric` を語彙表の語で書くことを求める。工程1の時点で語彙表に語を登録する手順は未決定である
 - id: collect-facts
   stage: 1
   name: 事実を集める
   role: collector
   skill: planner-collector
-  inputs: []
+  inputs: ['「調査依頼」', '「外部の資料」', '「ユーザーが提出した資料」']
+  restricted: true
+  restricted_by: ['organization.md#セッションの分離']
   outputs: [01-sources.yaml]
   sections:
     - 'stages/01-exploration.md#素材台帳 `01-sources.yaml`'
@@ -242,13 +275,14 @@ tasks:
   next: [record-stance]
 
 # 画像を使う資料だけで行う
-# inputs: 調査依頼と外部の資料、ユーザーが提供した画像。ファイル名は未決定である
 - id: collect-images
   stage: 1
   name: 画像の素材を登録する
   role: collector
   skill: planner-collector
-  inputs: []
+  inputs: ['「調査依頼」', '「外部の資料」', '「ユーザーが提供した画像」']
+  restricted: true
+  restricted_by: ['organization.md#セッションの分離']
   outputs: [01-sources.yaml, assets/]
   sections:
     - 'stages/01-exploration.md#画像の素材'
@@ -265,7 +299,9 @@ tasks:
   name: 仕組みの定義を抜き出す
   role: collector
   skill: planner-collector
-  inputs: [01-sources.yaml]
+  inputs: ['「調査依頼」', '「外部の資料」', 01-sources.yaml]
+  restricted: true
+  restricted_by: ['organization.md#セッションの分離']
   outputs: [01-model.yaml, 01-sources.yaml]
   sections:
     - 'stages/01-exploration.md#仕組みの定義 `01-model.yaml`'
@@ -337,8 +373,9 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K01-06, K01-07, K01-09, K01-11, K01-12, K01-13, K01-14, K01-16, K01-18, K01-19, K01-23, K01-24, K01-28]
-  next: [inspect-sources, inspect-images, inspect-model]
+  next: [inspect-sources, inspect-images, inspect-model, extract-model-independently]
 
 # inputs: 出典と、調査依頼の文面も読む。ファイル名は未決定である
 # checks: K01-15(調査依頼の文面)を検査する時点は未決定である。台帳の小見出しが素材台帳であることから、ここに入れた
@@ -356,6 +393,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#重大な検査'
     - 'writing.md#削ってよいものと、削ってはいけないもの'
   checks: [K01-08, K01-10, K01-15]
@@ -374,11 +412,11 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#重大な検査'
   checks: [K01-20, K01-21, K01-22]
   next: [answer-questions]
 
-# checks: K01-29 の独立の抜き出しは「別のセッション」が行う。入力(同じ出典)が違うので、作業を分ける余地がある
 - id: inspect-model
   stage: 1
   name: 仕組みの定義を出典と突き合わせる
@@ -392,10 +430,33 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#重大な検査'
     - 'model.md#成果物'
     - 'model.md#抜き出し'
-  checks: [K01-25, K01-26, K01-27, K01-29]
+  checks: [K01-25, K01-26, K01-27]
+  next: [approve-model]
+
+# 資料の中心になる図に使う範囲だけで行う。手順は検査の条件の文だけにある
+# 差分を出す者は未決定である
+- id: extract-model-independently
+  stage: 1
+  name: 同じ出典から、仕組みの定義を独立に抜き出す
+  role: inspector
+  skill: planner-inspector
+  inputs: ['「出典」']
+  restricted: true
+  restricted_by: [K01-29]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'model.md#成果物'
+    - 'model.md#抜き出し'
+  checks: [K01-29]
   next: [approve-model]
 
 # inputs: 定義の全体を図にしたものを見る(K01-30)。図を作る者とファイル名は未決定である
@@ -568,6 +629,7 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K02-01, K02-02, K02-05, K02-06, K02-07, K02-10, K02-12, K02-13, K02-14, K02-17, K02-20, K02-21, K02-25, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
   next: [inspect-claims, derive-answer-independently, read-summary-alone]
 
@@ -584,20 +646,22 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
     - 'checks.md#重大な検査'
     - 'writing.md#削ってよいものと、削ってはいけないもの'
   checks: [K02-03, K02-04, K02-08, K02-09, K02-11, K02-15, K02-16, K02-19, K02-22]
   next: [write-claims, approve-claims]
 
-# 仮説の一覧を読んでいない検査セッションが行う。手順は検査の条件の文だけにある
-# inputs: ブリーフのうち、問いだけを渡す
+# 仮説の一覧を読まない。手順は検査の条件の文だけにある
 - id: derive-answer-independently
   stage: 2
   name: ブリーフの問いと素材台帳だけから答えを書く
   role: inspector
   skill: planner-inspector
-  inputs: [00-brief.md, 01-sources.yaml]
+  inputs: ['00-brief.md#答えるべき問い', 01-sources.yaml]
+  restricted: true
+  restricted_by: [K02-18]
   outputs: [checks/]
   sections: []
   references:
@@ -605,16 +669,18 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K02-18]
   next: [approve-claims]
 
-# inputs: `summary` だけを渡す。手順は検査の条件の文だけにある
+# 手順は検査の条件の文だけにある
 - id: read-summary-alone
   stage: 2
   name: 要約の文だけを読んで結論と理由を述べる
   role: inspector
   skill: planner-inspector
-  inputs: [02-claims.yaml]
+  inputs: ['02-claims.yaml#summary']
+  restricted: true
   outputs: [checks/]
   sections: []
   references:
@@ -622,6 +688,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K02-23]
   next: [approve-claims]
 
@@ -657,6 +724,8 @@ tasks:
     - 'stages/03-chapters.md#5. 載せないものを決める'
   references:
     - 'vocabulary.md#資料の構造'
+    - 'vocabulary.md#要点のないスライド'
+    - 'vocabulary.md#節の要点を載せるスライド'
     - 'deck-types.md#定義の項目'
     - 'writing.md#項目ごとの書き方'
     - 'writing.md#限定と出どころ'
@@ -681,6 +750,7 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K03-01, K03-02, K03-03, K03-04, K03-05, K03-06, K03-10, K03-11, K03-12, K03-13, K03-14, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
   next: [inspect-chapters, build-toc-deck]
 
@@ -691,13 +761,14 @@ tasks:
   skill: planner-inspector
   inputs: [00-brief.md, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
   outputs: [checks/]
-  sections:
-    - 'stages/03-chapters.md#1. 結論の位置を決める'
+  sections: []
   references:
+    - 'stages/03-chapters.md#1. 結論の位置を決める'
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
     - 'checks.md#題と要点の通読'
     - 'checks.md#重大な検査'
@@ -754,6 +825,8 @@ tasks:
     - 'stages/04-storyline.md#6. 枚数を章構成の配分に合わせる'
   references:
     - 'vocabulary.md#資料の構造'
+    - 'vocabulary.md#要点のないスライド'
+    - 'vocabulary.md#節の要点を載せるスライド'
     - 'vocabulary.md#スライドの区分'
     - 'writing.md#項目ごとの書き方'
     - 'writing.md#限定と出どころ'
@@ -793,6 +866,8 @@ tasks:
     - 'stages/04-storyline.md#テストの場面 `04-scenarios.yaml`'
     - 'stages/04-storyline.md#8. テストの場面と、期待する結果を書く'
     - 'stages/08-integration.md#テストの場面'
+    - 'stages/08-integration.md#場面と読み方'
+    - 'stages/08-integration.md#期待する結果'
   references: []
   checks: [K04-29]
   next: [extract-terms]
@@ -810,6 +885,7 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K04-01, K04-02, K04-03, K04-04, K04-05, K04-06, K04-07, K04-09, K04-10, K04-11, K04-12, K04-13, K04-14, K04-15, K04-16, K04-17, K04-26, K04-27, K04-28, K04-29, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
   next: [inspect-storyline, build-skeleton-deck]
 
@@ -826,6 +902,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
     - 'checks.md#題と要点の通読'
     - 'checks.md#重大な検査'
@@ -908,6 +985,7 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K05-01, K05-02, K05-03, K05-04, K05-06, K05-07, K05-08, K05-09, K05-10, K05-11]
   next: [inspect-proof, restore-point-from-proof, build-placeholder-deck]
 
@@ -918,13 +996,14 @@ tasks:
   skill: planner-inspector
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml]
   outputs: [checks/]
-  sections:
-    - 'stages/05-proof.md#1. 主張の種類を判定する'
+  sections: []
   references:
+    - 'stages/05-proof.md#1. 主張の種類を判定する'
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#意味の検査'
     - 'checks.md#重大な検査'
     - 'vocabulary.md#主張の種類の語彙'
@@ -933,14 +1012,15 @@ tasks:
   checks: [K05-05, K05-12, K05-13, K05-14, K05-15]
   next: [approve-proof]
 
-# inputs: `show`、`focus`、`facts`、`view` だけを渡す。要点は渡さない。手順は検査の条件の文だけにある
+# 要点を読まない。手順は検査の条件の文だけにある
 # 元の要点と比べる者は未決定である
 - id: restore-point-from-proof
   stage: 5
   name: 立証の設計だけから要点を書く
   role: inspector
   skill: planner-inspector
-  inputs: [01-sources.yaml, 01-model.yaml, 05-proof.yaml]
+  inputs: ['05-proof.yaml#show', '05-proof.yaml#focus', '05-proof.yaml#facts', '05-proof.yaml#view']
+  restricted: true
   outputs: [checks/]
   sections: []
   references:
@@ -948,6 +1028,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K05-16]
   next: [approve-proof]
 
@@ -1030,6 +1111,7 @@ tasks:
     - 'visual-grammar.md#C: 一貫性'
     - 'visual-grammar.md#E: 注目'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K06-07, K06-08, K06-09]
   next: [write-samples]
 
@@ -1102,16 +1184,17 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K06-01, K06-02, K06-03, K06-04, K06-05, K06-06, K06-07, K06-08, K06-09, K06-10, K06-11, K06-17, K06-18, K06-19]
   next: [read-relations-from-sample, inspect-samples]
 
-# inputs: 見本の画像だけを渡す
 - id: read-relations-from-sample
   stage: 6
   name: 見本の画像だけから関係を読み取る
   role: inspector
   skill: planner-inspector
-  inputs: [build/]
+  inputs: ['build/#見本の画像']
+  restricted: true
   outputs: [checks/]
   sections: []
   references:
@@ -1119,6 +1202,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'visual-grammar.md#含意の語彙'
     - 'visual-grammar.md#形からの読み取り'
   checks: [K06-12]
@@ -1137,6 +1221,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'visual-grammar.md#E: 注目'
     - 'visual-grammar.md#G: 飾り'
   checks: [K06-13, K06-14, K06-15]
@@ -1154,7 +1239,7 @@ tasks:
     - 'stages/06-patterns.md#8. 型の見本と語彙表を承認する'
   references: []
   checks: [K06-06, K06-16]
-  next: [handover-check]
+  next: [freeze-terms]
 
 # 型の見本の承認とあわせて行う
 - id: approve-terms
@@ -1165,10 +1250,23 @@ tasks:
   inputs: [terms.yaml]
   outputs: []
   sections:
-    - 'stages/06-patterns.md#語彙表の凍結'
     - 'stages/06-patterns.md#8. 型の見本と語彙表を承認する'
   references: []
   checks: [K06-20]
+  next: [freeze-terms]
+
+- id: freeze-terms
+  stage: 6
+  name: 語彙表を凍結し、見本を手本として渡す
+  role: designer
+  skill: planner-designer
+  inputs: [terms.yaml, 06-samples/]
+  outputs: [terms.yaml]
+  sections:
+    - 'stages/06-patterns.md#9. 語彙表を凍結し、手本を渡す'
+  references:
+    - 'terms.md#工程6: 凍結する'
+  checks: []
   next: [handover-check]
 
 # ---- 工程7
@@ -1180,6 +1278,8 @@ tasks:
   role: pm
   skill: planner-pm
   inputs: [00-brief.md, 01-hypotheses.yaml, 01-plan.yaml, 01-sources.yaml, 01-model.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, 05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml, decisions.md]
+  restricted: true
+  restricted_by: ['organization.md#引き継ぎの検査']
   outputs: []
   sections:
     - 'organization.md#引き継ぎの検査'
@@ -1221,13 +1321,15 @@ tasks:
   checks: []
   next: [write-chapter-slides]
 
-# inputs: 章の作業票も読む。ファイル名は未決定である
+# 章の作業票のファイル名は未決定である
 - id: write-chapter-slides
   stage: 7
   name: 章のスライド仕様を書く
   role: writer
   skill: planner-writer
-  inputs: [06-samples/]
+  inputs: ['「章の作業票」', 06-samples/]
+  restricted: true
+  restricted_by: ['organization.md#章の作業票', 'organization.md#セッションの分離']
   outputs: [07-slides/]
   sections:
     - 'stages/07-slide-spec.md#前文'
@@ -1273,9 +1375,8 @@ tasks:
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
   checks: [K07-02, K07-03, K07-04, K07-05, K07-06, K07-07, K07-08, K07-10, K07-11, K07-12, K07-16, K07-18, K07-21, K07-22, K07-23, K07-24, K07-30, K07-31, K07-32, K07-33, K07-34, K07-35, K07-36, K07-37, K07-38, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
-  next: [inspect-chapter, read-back-slides, build-chapter]
+  next: [inspect-chapter, read-back-slides, build-chapter, inspect-unsupported-sentences]
 
-# inputs: 裏付けのない文の検査(K07-13)では、スライド仕様と、そのスライドが使う事実だけを渡す(writing.md)。検査ごとに渡すものが違うので、作業を分ける余地がある
 - id: inspect-chapter
   stage: 7
   name: 章のスライド仕様を検査する
@@ -1289,21 +1390,23 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'writing.md#検査セッションが判断するもの'
     - 'writing.md#削ってよいものと、削ってはいけないもの'
     - 'checks.md#重大な検査'
     - 'visual-grammar.md#E: 注目'
     - 'terms.md#成果物'
-  checks: [K07-05, K07-09, K07-13, K07-14, K07-25, K07-26, K07-27, K07-28, K07-29]
+  checks: [K07-05, K07-09, K07-14, K07-25, K07-26, K07-27, K07-28, K07-29]
   next: [rule-on-restatements, accept-chapter]
 
-# inputs: 経緯を知らない検査セッションに、スライドの文だけを渡す。書き直した文を素材台帳の事実と比べる者は未決定である
-- id: read-back-slides
+- id: inspect-unsupported-sentences
   stage: 7
-  name: スライドの文だけを読んで意味を書き直す
+  name: 裏付けのない文がないかを検査する
   role: inspector
   skill: planner-inspector
-  inputs: [07-slides/, 01-sources.yaml]
+  inputs: [07-slides/, '01-sources.yaml#そのスライドが使う事実']
+  restricted: true
+  restricted_by: ['writing.md#検査セッションが判断するもの']
   outputs: [checks/]
   sections: []
   references:
@@ -1311,6 +1414,27 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'writing.md#検査セッションが判断するもの'
+    - 'checks.md#重大な検査'
+  checks: [K07-13]
+  next: [accept-chapter]
+
+# 経緯を知らない検査セッションが行う。書き直した文を素材台帳の事実と比べる者は未決定である
+- id: read-back-slides
+  stage: 7
+  name: スライドの文だけを読んで意味を書き直す
+  role: inspector
+  skill: planner-inspector
+  inputs: ['07-slides/#スライドの文']
+  restricted: true
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'writing.md#検査セッションが判断するもの'
   checks: [K07-15]
   next: [accept-chapter]
@@ -1361,6 +1485,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'visual-grammar.md#D: 知覚の限界'
   checks: [K07-17, K07-19, K07-20]
   next: [accept-chapter]
@@ -1392,14 +1517,16 @@ tasks:
   checks: [K07-39]
   next: [write-chapter-slides]
 
-# inputs: ブリーフのうち、読み手の情報だけを渡す。前の章が未完成の場合は、入口の状態も渡す
+# 入口の状態は、前の章が未完成の場合だけ渡す
 # K07-42 は重大度が高のエラーがないことを求める。章の受け入れの時点で重大度を決める者は未決定である
 - id: read-chapter-as-reader
   stage: 7
   name: 章を主な読み手として通読する
   role: reader
   skill: planner-reader
-  inputs: [00-brief.md, build/]
+  inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '04-chapter-states.yaml#entry']
+  restricted: true
+  restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
   outputs: [runs/]
   sections:
     - 'stages/08-integration.md#通読'
@@ -1430,8 +1557,9 @@ tasks:
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
     - 'rework.md#上流が変わったとき'
+    - 'rework.md#直す成果物と、無効になる範囲'
   checks: [K07-42]
-  next: [write-chapter-slides, coordinate-integration]
+  next: [write-chapter-slides, coordinate-integration, coordinate-regression]
 
 # 執筆のセッションが語の登録を申請したときに行う。設計の時期に語を足すときも、同じ手順による
 - id: check-term-application
@@ -1552,7 +1680,9 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'rework.md#上流が変わったとき'
+    - 'rework.md#直す成果物と、無効になる範囲'
   checks: [K08-01, K08-02, K08-03, K08-08]
   next: [inspect-summary-evidence, extract-titles-and-points, run-scenarios]
 
@@ -1571,6 +1701,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K08-08]
   next: [run-scenarios]
 
@@ -1588,13 +1719,15 @@ tasks:
   checks: []
   next: [run-scenarios]
 
-# inputs: ブリーフのうち、読み手の情報だけを渡す。「題と要点だけ」の場面では、機械が抜き出した題と要点の一覧を渡す
+# 期待する結果を読まない。題と要点の一覧は、「題と要点だけ」の場面だけで渡す
 - id: run-scenarios
   stage: 8
   name: 全ての場面を通しで読む
   role: reader
   skill: planner-reader
-  inputs: [00-brief.md, build/]
+  inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '「題と要点の一覧」']
+  restricted: true
+  restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
   outputs: [runs/]
   sections:
     - 'stages/08-integration.md#場面と読み方'
@@ -1647,10 +1780,13 @@ tasks:
   sections:
     - 'stages/08-integration.md#前文'
     - 'stages/08-integration.md#エラーの種類'
-    - 'stages/08-integration.md#不具合の記録'
+    - 'stages/08-integration.md#通読で見つけるもの'
+    - 'stages/08-integration.md#集計で見つけるもの'
     - 'stages/08-integration.md#裁定'
+    - 'stages/08-integration.md#再実行の指摘の裁定'
     - 'stages/08-integration.md#この工程でやらないこと'
   references:
+    - 'stages/08-integration.md#不具合の記録'
     - 'rework.md#役割'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#直す成果物と、無効になる範囲'
@@ -1688,13 +1824,15 @@ tasks:
   checks: []
   next: [run-regression]
 
-# inputs: 変わった章の入口の状態を、保存済みの状態から渡す
+# 期待する結果と、前回の指摘を読まない。変わった章の入口の状態を、保存済みの状態から渡す
 - id: run-regression
   stage: 8
   name: 直した章から先を再び通しで読む
   role: reader
   skill: planner-reader
-  inputs: [00-brief.md, build/, runs/]
+  inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, 'runs/#章の終わりの状態', '「題と要点の一覧」']
+  restricted: true
+  restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
   outputs: [runs/]
   sections:
     - 'stages/08-integration.md#場面と読み方'
@@ -1707,6 +1845,7 @@ tasks:
   next: [tally-integration-errors]
 
 # ユーザーから指摘を受けたときに行う
+# next: 修正は、直す成果物の作業に戻す(rework.md)。ここには章の執筆だけを書いた。直した後は、回帰テストを通る
 - id: add-past-feedback-scenario
   stage: 8
   name: ユーザーの指摘を「過去の指摘」の場面に加える
@@ -1719,7 +1858,7 @@ tasks:
   references:
     - 'feedback.md#記録'
   checks: []
-  next: []
+  next: [write-chapter-slides]
 
 - id: check-coverage
   stage: 8
@@ -1734,6 +1873,7 @@ tasks:
   references:
     - 'checks.md#検査の実行'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K08-09, K08-10, K08-11, K08-13]
   next: [decide-medium-errors]
 
@@ -1789,6 +1929,7 @@ tasks:
     - 'writing.md#内部のID'
     - 'rework.md#人の手直しを守る'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K09-01, K09-02, K09-03, K09-04, K09-05, K09-06, K09-07, K09-08, K09-09, K09-10]
   next: [inspect-final-images, make-inspection-report]
 
@@ -1806,6 +1947,7 @@ tasks:
     - 'rework.md#原則'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
     - 'checks.md#重大な検査'
   checks: [K09-02]
   next: [make-inspection-report]
@@ -1834,7 +1976,7 @@ tasks:
   role: user
   skill: null
   inputs: [build/deck.pptx, 01-sources.yaml]
-  outputs: [metrics.yaml]
+  outputs: []
   sections:
     - 'stages/09-finish.md#3. 抜き取りで確かめる'
   references: []
@@ -1882,7 +2024,7 @@ tasks:
     - 'stages/00-brief.md#受け入れの問い'
   references: []
   checks: [K09-15, K09-16]
-  next: [hand-over]
+  next: [hand-over, add-past-feedback-scenario]
 
 # outputs: 承認の記録(Gitのタグ)
 - id: hand-over
@@ -1914,6 +2056,7 @@ tasks:
     - 'feedback.md#記録'
   checks: []
   next: []
+  end: true
 
 # inputs: Issueも読む
 - id: tally-metrics
@@ -1929,5 +2072,7 @@ tasks:
   references:
     - 'checks.md#守らせる方法の強さ'
     - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K09-12]
   next: []
+  end: true

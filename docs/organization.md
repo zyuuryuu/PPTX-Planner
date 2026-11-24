@@ -159,6 +159,7 @@
 | 1 | `inspect-plan` | 探索の計画を検査する | 検査セッション |
 | 1 | `approve-plan` | 探索の計画を承認する | ユーザー |
 | 1 | `request-research` | 調査依頼を出す | 設計セッション |
+| 1 | `gather-user-knowledge` | ユーザーの知識を取り込む | 設計セッション |
 | 1 | `collect-facts` | 事実を集める | 収集セッション |
 | 1 | `collect-images` | 画像の素材を登録する | 収集セッション |
 | 1 | `extract-model` | 仕組みの定義を抜き出す | 収集セッション |
@@ -169,6 +170,7 @@
 | 1 | `inspect-sources` | 素材台帳の事実を出典と突き合わせる | 検査セッション |
 | 1 | `inspect-images` | 画像の素材を検査する | 検査セッション |
 | 1 | `inspect-model` | 仕組みの定義を出典と突き合わせる | 検査セッション |
+| 1 | `extract-model-independently` | 同じ出典から、仕組みの定義を独立に抜き出す | 検査セッション |
 | 1 | `approve-model` | 仕組みの定義を承認する | ユーザー |
 | 2 | `answer-questions` | 問いごとの答えを書く | 設計セッション |
 | 2 | `tally-contradicting-facts` | 仮説ごとに否定する事実を数える | 機械 |
@@ -211,12 +213,14 @@
 | 6 | `inspect-samples` | 型の見本を検査する | 検査セッション |
 | 6 | `approve-samples` | 型の見本を承認する | ユーザー |
 | 6 | `approve-terms` | 語彙表を承認する | ユーザー |
+| 6 | `freeze-terms` | 語彙表を凍結し、見本を手本として渡す | 設計セッション |
 | 7 | `handover-check` | 引き継ぎの検査を受ける | PM |
 | 7 | `make-chapter-brief` | 章の作業票を作る | 機械 |
 | 7 | `assign-chapters` | 章を執筆のセッションに割り振る | PM |
 | 7 | `write-chapter-slides` | 章のスライド仕様を書く | 執筆のセッション |
 | 7 | `check-chapter-machine` | 章のスライド仕様を機械で検査する | 機械 |
 | 7 | `inspect-chapter` | 章のスライド仕様を検査する | 検査セッション |
+| 7 | `inspect-unsupported-sentences` | 裏付けのない文がないかを検査する | 検査セッション |
 | 7 | `read-back-slides` | スライドの文だけを読んで意味を書き直す | 検査セッション |
 | 7 | `rule-on-restatements` | 言い直しのスライドを統合するか残すかを決める | 設計セッション |
 | 7 | `build-chapter` | 章を実物に差し替えてビルドする | 機械 |
