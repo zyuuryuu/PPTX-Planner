@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(/restrict-test/secret.yaml)",
+      "Edit(/.claude/settings.json)"
+    ]
+  }
+}
