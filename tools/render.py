@@ -120,6 +120,15 @@ def _wrap(text, size, maxw, bold=False):
                 lines.append(cur[:k].rstrip())
                 cur = cur[k:] + t
                 continue
+            kata = lambda ch: '\u30a0' <= ch <= '\u30ff'
+            if kata(cur[-1]) and kata(t[0]):    # カタカナの語の途中では切らず、語の前で切る
+                k = len(cur)
+                while k > 0 and kata(cur[k - 1]):
+                    k -= 1
+                if k > 0 and tw(cur[k:] + t, size, bold) <= maxw:
+                    lines.append(cur[:k].rstrip())
+                    cur = cur[k:] + t
+                    continue
             if cur[-1] in NO_END and len(cur) > 1:   # 行末に置けない字は次の行へ送る
                 lines.append(cur[:-1])
                 cur = cur[-1] + t
@@ -450,6 +459,18 @@ def r_statement(ctx):
     hl = b.get('highlight')
     text = b.get('text')
     q = b.get('quote_of')
+    if b.get('value') is not None:     # 値を大きく示す(1つの数値を述べる言い切り)
+        v, vl, unit = ctx.value(b['value'], 'value')
+        big = f'{vl}{fmt_unit(unit)}{b.get("bound", "")}' if v is not None else '[値?]'
+        em = 'border:5px solid #111827;padding:10px 28px;' if hl in ('value', 'text') else 'padding:10px 0;'
+        lab = f'<div data-role="body" style="font-size:30px;margin-top:6px">{E(ctx.text(text))}</div>' if text else ''
+        main = (f'<div style="display:inline-block;{em}"><div data-role="body" style="font-size:96px;font-weight:bold;line-height:1.1">{E(big)}</div>{lab}</div>')
+        cav = f'<div data-role="body" style="margin-top:30px;font-size:26px;color:{TEXT2}">{E(ctx.text(b["caveat"]))}</div>' if b.get('caveat') else ''
+        if hl == 'caveat':
+            cav = f'<div data-role="body" style="margin-top:30px;display:inline-block;border:5px solid #111827;padding:14px 26px;font-size:28px;font-weight:bold">{E(ctx.text(b["caveat"]))}</div>'
+        if hl not in ('value', 'text', 'caveat', None):
+            ctx.diag('unrendered', f'highlight「{hl}」は value、text、caveat で書く', 'error', 'highlight')
+        return main + f'<div>{cav}</div>'
     if q:
         f = ctx.fact(q, 'quote_of')
         if text is None and f is not None:
@@ -1368,7 +1389,7 @@ FIGURE_TYPES = set(RENDERERS) - {'statement'}
 
 CSS = f"""
 *{{box-sizing:border-box;margin:0;padding:0}}
-body{{width:{W}px;height:{H}px;background:#fff;font-family:{FONT_FAMILY};color:{INK};position:relative;overflow:hidden}}
+body{{width:{W}px;height:{H}px;background:#fff;font-family:{FONT_FAMILY};color:{INK};position:relative;overflow:hidden;word-break:auto-phrase}}
 .top{{position:absolute;left:{MX}px;top:26px;width:{CW}px}}
 .h{{font-size:32px;font-weight:bold;line-height:1.3}}
 .src{{font-size:22px;color:{TEXT2};line-height:1.35;margin-top:6px}}
@@ -1384,7 +1405,7 @@ body{{width:{W}px;height:{H}px;background:#fff;font-family:{FONT_FAMILY};color:{
 
 def page(title_html, body_html, takeaway=None, mins=None):
     tk = f'<div class="tk fit" data-role="takeaway" data-name="takeaway">{E(takeaway)}</div>' if takeaway else ''
-    return (f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
+    return (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
             f'<div class="top">{title_html}{body_html}</div>{tk}</body></html>')
 
 
@@ -1501,7 +1522,7 @@ def simple_page(kicker, title, lines_html, ctx_id):
     body = (f'<div class="center" style="top:150px"><div data-role="body" style="font-size:26px;color:{TEXT2}">{E(kicker)}</div>'
             f'<div class="fit" data-role="headline" data-name="title" style="font-size:44px;font-weight:bold;line-height:1.3;margin-top:10px;max-height:120px">{E(title)}</div>'
             f'{lines_html}</div>')
-    return (f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>{body}</body></html>'), ctx
+    return (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>{body}</body></html>'), ctx
 
 
 def render_toc(deck):
@@ -1511,7 +1532,7 @@ def render_toc(deck):
     if any(s.get('chapter') == 'appendix' for s in deck.storyline):
         rows += f'<li style="margin:8px 0"><span style="display:inline-block;width:110px;color:{TEXT2}">付録</span></li>'
     rows += f'<li style="margin:8px 0"><span style="display:inline-block;width:110px;color:{TEXT2}">出典</span>出典の一覧</li>'
-    html_ = (f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
+    html_ = (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
              f'<div class="top"><div class="h" data-role="headline">目次</div>'
              f'<ul class="fit" data-role="body" data-name="目次" style="list-style:none;font-size:28px;margin-top:40px;line-height:1.5;max-height:{BAND_TOP - 140}px">{rows}</ul></div></body></html>')
     return html_, Ctx(deck, 'toc', None)
@@ -1578,7 +1599,7 @@ def render_sources(deck, order):
         sid = f'sources-{k}'
         li = ''.join(f'<li style="margin-bottom:6px">{E(t)}</li>' for t in items)
         ttl = '出典の一覧' + (f'({k}/{len(pages)})' if len(pages) > 1 else '')
-        html_ = (f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
+        html_ = (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
                  f'<div class="top"><div class="h" data-role="headline">{ttl}</div>'
                  f'<ul class="fit" data-role="source" data-name="出典" style="list-style:none;font-size:{FS}px;line-height:1.4;margin-top:20px;max-height:{limit + 4}px">{li}</ul></div></body></html>')
         out.append((sid, html_, Ctx(deck, sid, None)))
@@ -1678,7 +1699,7 @@ def main():
         secs += (f'<section id="{E(sid)}"><div class="cap">{k}. {E(sid)}({E(kind)}){badge}</div>'
                  f'<iframe src="slides/{E(sid)}.html" width="{W}" height="{H}" loading="lazy"></iframe>{notes}</section>')
     (out / 'deck.html').write_text(
-        '<!doctype html><html><head><meta charset="utf-8"><title>deck</title><style>'
+        '<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>deck</title><style>'
         f'body{{background:#e5e7eb;font-family:{FONT_FAMILY};margin:20px}}section{{margin:0 auto 28px;width:{W}px}}'
         'iframe{border:1px solid #9ca3af;background:#fff;display:block}.cap{font-size:14px;color:#374151;margin:4px 0}'
         '.bad{color:#b91c1c;font-weight:bold}.notes{font-size:14px;color:#374151;margin-top:4px;white-space:pre-wrap}'

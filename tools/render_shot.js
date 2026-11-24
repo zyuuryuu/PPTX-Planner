@@ -36,6 +36,37 @@ const CHECK = (min) => {
     if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1)
       out.push({ kind: 'overflow', severity: 'error', target: el.dataset.name || name(el), message: '枠に収まらない' });
   }
+  // 2b. 語の途中での折り返し(HTML の文。語の区切りは Intl.Segmenter で判定する)
+  const seg = new Intl.Segmenter('ja', { granularity: 'word' });
+  const inWord = (s, i) => { let p = 0; for (const x of seg.segment(s)) { if (i > p && i < p + x.segment.length && x.isWordLike) return x.segment; p += x.segment.length; } return null; };
+  for (const el of document.querySelectorAll('[data-role]')) {
+    if (el.closest('svg') || el.closest('.ph')) continue;   // 仮置きの枠は対象外
+    const tn = [...el.childNodes].filter((n) => n.nodeType === 3);
+    for (const n of tn) {
+      const s = n.textContent; let prevTop = null;
+      for (let i = 0; i < s.length; i++) {
+        if (!s[i].trim()) continue;
+        const rg = document.createRange(); rg.setStart(n, i); rg.setEnd(n, i + 1);
+        const rc = rg.getClientRects()[0]; if (!rc) continue;
+        if (prevTop !== null && rc.top > prevTop + 4) {
+          const w = inWord(s, i);
+          if (w) out.push({ kind: 'overflow', severity: 'warning', target: el.dataset.role, message: `語の途中で折り返した: 「${w}」(${s.slice(Math.max(0, i - 6), i)}|${s.slice(i, i + 6)})` });
+        }
+        prevTop = rc.top;
+      }
+    }
+  }
+  // SVG: 同じ枠の中の続く行の境目
+  const byBox = {};
+  for (const t of document.querySelectorAll('text[data-in]')) (byBox[t.dataset.in] = byBox[t.dataset.in] || []).push(t.textContent);
+  for (const [box, lines] of Object.entries(byBox)) {
+    for (let k = 1; k < lines.length; k++) {
+      const asc = /[A-Za-z0-9]$/.test(lines[k - 1]) && /^[A-Za-z0-9]/.test(lines[k]);
+      const s = lines[k - 1] + (asc ? ' ' : '') + lines[k], i = lines[k - 1].length + (asc ? 1 : 0);
+      const w = inWord(s, i);
+      if (w) out.push({ kind: 'overflow', severity: 'warning', target: box, message: `語の途中で折り返した: 「${w}」(${lines[k - 1].slice(-6)}|${lines[k].slice(0, 6)})` });
+    }
+  }
   // 3. 上の領域(見出しから図の下の文まで)が、結論の帯や右端を越えない
   for (const el of document.querySelectorAll('.top *')) {
     const b = r(el);
