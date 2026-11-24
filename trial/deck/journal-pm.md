@@ -18,3 +18,4 @@
 - 03:36Z 執筆の子セッションを3つ起こした(すべて claude-opus-5-5): ch3 session_01LpWHd2UfjbFvamrmEHXk12、ch2 session_01LpWHd4P3wuqFUvq3qSUj8K、ch4 session_01LpWHd4Wzgiecu46rYkU9tV。1分後に get_session で3つとも RUNNING、起動の失敗なしを確かめた。待ち始め 03:36Z。
 - 受け入れの機械的な確かめのスクリプト `work/accept.py` を書いた(見出し、型、sources の範囲、見本の一致、その章の診断のエラーと警告、差分のファイル)。
 - 気づいた点: 子セッションの道具の一覧(get_session の turn_handoff.tools)に send_message が見えない。報告が届かない場合は、コミットと get_session で状態を知る。
+- 設計セッションの回答のメッセージを受けた(内容は D013 と同じ)。注意点: ch1-s2 を statement に変えたのは依頼者が工程5で同意した見せ方からの変更で、依頼者に示す必要がある(進行役への最終の報告に入れる)。
