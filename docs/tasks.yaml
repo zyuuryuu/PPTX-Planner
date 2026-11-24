@@ -2,6 +2,7 @@
 # 作業は、1つの担当が、決まった入力から決まった成果物を作る、ひとまとまりの仕事である。
 # 正本は工程の文書である。食い違う場合は、工程の文書に従って、この表を直す。
 # 道具 tools/tasks_table.py が、この表を確かめ、作業の一覧を文書に書き出す。
+# 道具 tools/build_skills.py が、この表からスキルを作る。道具 tools/work_order.py が、作業票を出す。
 #
 # 項目:
 #   id          変わらない短い英語の名前
@@ -9,7 +10,8 @@
 #   name        日本語の名前
 #   role        担当。user(ユーザー) / designer(設計セッション) / pm(PM) / collector(収集セッション) /
 #               writer(執筆のセッション) / inspector(検査セッション) / reader(読み手の役のセッション) / machine(機械)
-#   skill       担当のスキルの名前。機械とユーザーの作業は null
+#   notes       作業を行う条件と、未決定の点の覚え書き(open-items.md)。スキルと作業票に写す
+#   skill       手順を持つスキルの名前。下の skills にある名前で書く。機械とユーザーの作業は null
 #   command     機械の作業だけに書く。今ある道具で実行できる場合は、そのコマンド。なければ null
 #   inputs      読む成果物のファイル名。項目まで絞る場合は「ファイル#項目」の形で書く。
 #               ファイル名が決まっていないものは、名前を「」で囲んで書く
@@ -23,21 +25,138 @@
 #   checks      担当が自分で満たす、または判定する検査のID(checks.yaml)
 #   next        次に行う作業の id。分かれる場合と、順序が決まっていない場合は並べる
 #   start、end  始点の作業に start: true、終点の作業に end: true を書く
-# 「#」で始まる行は、作業を行う条件と、未決定の点の覚え書きである(open-items.md)。
 # 合格条件、開始の条件、終了の条件の見出しは sections に書かない。条件は checks のIDで渡す。
 
-count: 111
+
+# 担当ごとの項目。
+#   rules   スキルの「守ること」に写す見出し。「文書#見出し」の形で書く
+#   report  報告の書式を定めた見出し。作業票が指す
+roles:
+  designer:
+    rules:
+      - 'organization.md#設計セッション'
+      - 'organization.md#ユーザーとのやり取り'
+      - 'principles.md#原則'
+      - 'rework.md#原則'
+  pm:
+    rules:
+      - 'organization.md#PM'
+      - 'organization.md#子セッション'
+      - 'organization.md#合格が無効になったスライド'
+      - 'principles.md#原則'
+      - 'rework.md#原則'
+      - 'rework.md#検査と記録を守る'
+  collector:
+    rules:
+      - 'organization.md#セッションの分離'
+      - 'principles.md#原則'
+      - 'rework.md#原則'
+    report:
+      - 'stages/01-exploration.md#調査依頼'
+  writer:
+    rules:
+      - 'organization.md#セッションの分離'
+      - 'organization.md#上流の問題の戻し方'
+      - 'organization.md#完了の報告'
+      - 'principles.md#原則'
+      - 'rework.md#原則'
+      - 'rework.md#検査と記録を守る'
+    report:
+      - 'organization.md#完了の報告'
+  inspector:
+    rules:
+      - 'organization.md#セッションの分離'
+      - 'rework.md#原則'
+      - 'rework.md#検査と記録を守る'
+    report:
+      - 'rework.md#記録'
+      - 'rework.md#不合格のときの手順'
+  reader:
+    rules:
+      - 'organization.md#セッションの分離'
+    report:
+      - 'stages/08-integration.md#通読'
+
+# スキル。設計セッションとPMは工程ごと、ほかは担当ごとに1つ持つ。
+#   name         スキルの名前。小文字とハイフンで書く
+#   role         担当
+#   stages       扱う工程。複数の工程で行う作業の手順は、最初の工程のスキルが持つ
+#   description  いつ使うか。スキルの説明に写す
+skills:
+  - name: deck-design-0
+    role: designer
+    stages: [0]
+    description: スライド資料の工程0(依頼の確定)で、設計セッションが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-design-1
+    role: designer
+    stages: [1]
+    description: スライド資料の工程1(探索)で、設計セッションが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-design-2
+    role: designer
+    stages: [2]
+    description: スライド資料の工程2(主張の整理)で、設計セッションが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-design-3
+    role: designer
+    stages: [3]
+    description: スライド資料の工程3(章立て設計)で、設計セッションが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-design-4
+    role: designer
+    stages: [4]
+    description: スライド資料の工程4(ストーリーライン)で、設計セッションが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-design-5
+    role: designer
+    stages: [5]
+    description: スライド資料の工程5(立証設計)で、設計セッションが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-design-6
+    role: designer
+    stages: [6]
+    description: スライド資料の工程6(表現設計)で、設計セッションが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-design-production
+    role: designer
+    stages: [7, 8, 9]
+    description: スライド資料の工程7から9で、設計セッションが行う作業(裁定、語の審査、要約の用意、指摘と規則の整理、反応の記録)の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-pm-7
+    role: pm
+    stages: [7]
+    description: スライド資料の工程7(スライド仕様)で、PMが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-pm-8
+    role: pm
+    stages: [8]
+    description: スライド資料の工程8(全体検査)で、PMが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-pm-9
+    role: pm
+    stages: [9]
+    description: スライド資料の工程9(仕上げ)で、PMが行う作業の手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-collect
+    role: collector
+    stages: [1]
+    description: スライド資料の収集セッションが、事実、画像の素材、仕組みの定義を集める手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-write
+    role: writer
+    stages: [7]
+    description: スライド資料の執筆のセッションが、章のスライド仕様を書く手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-inspect
+    role: inspector
+    stages: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    description: スライド資料の検査セッションが、成果物を検査する手順。作業票の1行目がこの名前のときに使う。
+  - name: deck-read
+    role: reader
+    stages: [7, 8]
+    description: スライド資料の読み手の役のセッションが、ビルドした実物を通読する手順。作業票の1行目がこの名前のときに使う。
+
+count: 114
 tasks:
 
 # ---- 工程0
 
-# inputs: ユーザーの最初の依頼文と手元の資料を読む。ファイル名は未決定である
-# outputs: この資料に固有の受け入れの条件の置き場は未決定である
 - id: draft-brief
   stage: 0
   name: ブリーフを書く
+  notes:
+    - 'inputs: ユーザーの最初の依頼文と手元の資料を読む。ファイル名は未決定である'
+    - 'outputs: この資料に固有の受け入れの条件の置き場は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-0
   inputs: []
   outputs: [00-brief.md]
   sections:
@@ -64,12 +183,13 @@ tasks:
   next: [create-style]
   start: true
 
-# inputs: 資料の型の定義と個人の表現規約も読む。どちらもファイル名は未決定である
 - id: create-style
   stage: 0
   name: 資料の表現規約を作る
+  notes:
+    - 'inputs: 資料の型の定義と個人の表現規約も読む。どちらもファイル名は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-0
   inputs: [00-brief.md]
   outputs: [style.yaml]
   sections:
@@ -98,12 +218,13 @@ tasks:
   checks: [K00-01, K00-02, K00-07, K00-08]
   next: [inspect-brief]
 
-# checks: K00-06 の判定者はユーザー。検査セッションは、判定の材料になる要約を書く。要約の置き場は未決定である
 - id: inspect-brief
   stage: 0
   name: ブリーフを検査する
+  notes:
+    - 'checks: K00-06 の判定者はユーザー。検査セッションは、判定の材料になる要約を書く。要約の置き場は未決定である'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [00-brief.md]
   restricted: true
   restricted_by: [K00-06]
@@ -118,10 +239,11 @@ tasks:
   checks: [K00-03, K00-04, K00-05, K00-06]
   next: [approve-brief]
 
-# outputs: 承認はGitのタグとして残す(rework.md#記録)。タグを付ける者は未決定である
 - id: approve-brief
   stage: 0
   name: ブリーフを承認する
+  notes:
+    - 'outputs: 承認はGitのタグとして残す(rework.md#記録)。タグを付ける担当はPMである。設計の時期にはPMを置かないため、工程0から6でタグを付ける作業は未決定である'
   role: user
   skill: null
   inputs: [00-brief.md]
@@ -138,7 +260,7 @@ tasks:
   stage: 1
   name: 仮説の一覧を書く
   role: designer
-  skill: planner-designer
+  skill: deck-design-1
   inputs: [00-brief.md]
   outputs: [01-hypotheses.yaml]
   sections:
@@ -156,7 +278,7 @@ tasks:
   stage: 1
   name: 探索の計画を立てる
   role: designer
-  skill: planner-designer
+  skill: deck-design-1
   inputs: [00-brief.md, 01-hypotheses.yaml]
   outputs: [01-plan.yaml]
   sections:
@@ -193,7 +315,7 @@ tasks:
   stage: 1
   name: 探索の計画を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [00-brief.md, 01-plan.yaml]
   outputs: [checks/]
   sections: []
@@ -220,13 +342,14 @@ tasks:
   checks: [K01-05]
   next: [request-research]
 
-# outputs: 調査依頼は、Issueとして出す。Issueの置き場は未決定である
-# next: 事実、画像の素材、仕組みの定義の収集の順序は未決定である。並べて書いた
 - id: request-research
   stage: 1
   name: 調査依頼を出す
+  notes:
+    - 'outputs: 調査依頼は、Issueとして出す。Issueの置き場は未決定である'
+    - 'next: 事実、画像の素材、仕組みの定義の収集の順序は未決定である。並べて書いた'
   role: designer
-  skill: planner-designer
+  skill: deck-design-1
   inputs: [01-plan.yaml]
   outputs: []
   sections:
@@ -238,12 +361,13 @@ tasks:
   checks: [K01-15]
   next: [collect-facts, collect-images, extract-model, gather-user-knowledge]
 
-# 聞いた内容と、提出を受けた資料を、収集セッションに渡す形は未決定である
 - id: gather-user-knowledge
   stage: 1
   name: ユーザーの知識を取り込む
+  notes:
+    - '聞いた内容と、提出を受けた資料を、収集セッションに渡す形は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-1
   inputs: []
   outputs: []
   sections:
@@ -253,12 +377,13 @@ tasks:
   checks: []
   next: [collect-facts]
 
-# checks: K01-11 は `metric` を語彙表の語で書くことを求める。工程1の時点で語彙表に語を登録する手順は未決定である
 - id: collect-facts
   stage: 1
   name: 事実を集める
+  notes:
+    - 'checks: K01-11 は `metric` を語彙表の語で書くことを求める。工程1の時点で語彙表に語を登録する手順は未決定である'
   role: collector
-  skill: planner-collector
+  skill: deck-collect
   inputs: ['「調査依頼」', '「外部の資料」', '「ユーザーが提出した資料」']
   restricted: true
   restricted_by: ['organization.md#セッションの分離']
@@ -274,12 +399,13 @@ tasks:
   checks: [K01-06, K01-07, K01-08, K01-09, K01-10, K01-11, K01-12, K01-13]
   next: [record-stance]
 
-# 画像を使う資料だけで行う
 - id: collect-images
   stage: 1
   name: 画像の素材を登録する
+  notes:
+    - '画像を使う資料だけで行う'
   role: collector
-  skill: planner-collector
+  skill: deck-collect
   inputs: ['「調査依頼」', '「外部の資料」', '「ユーザーが提供した画像」']
   restricted: true
   restricted_by: ['organization.md#セッションの分離']
@@ -293,12 +419,13 @@ tasks:
   checks: [K01-19, K01-20, K01-21, K01-22, K01-23]
   next: [check-sources-machine]
 
-# 実在の仕組みを写す図を使う資料だけで行う
 - id: extract-model
   stage: 1
   name: 仕組みの定義を抜き出す
+  notes:
+    - '実在の仕組みを写す図を使う資料だけで行う'
   role: collector
-  skill: planner-collector
+  skill: deck-collect
   inputs: ['「調査依頼」', '「外部の資料」', 01-sources.yaml]
   restricted: true
   restricted_by: ['organization.md#セッションの分離']
@@ -319,7 +446,7 @@ tasks:
   stage: 1
   name: 事実ごとに仮説への立場を書く
   role: designer
-  skill: planner-designer
+  skill: deck-design-1
   inputs: [01-sources.yaml, 01-hypotheses.yaml]
   outputs: [01-sources.yaml]
   sections:
@@ -329,12 +456,13 @@ tasks:
   checks: [K01-16]
   next: [judge-exploration-end]
 
-# outputs: K01-12 で `superseded_by` を決めるのは設計セッション。素材台帳に書き込む者は未決定である
 - id: judge-exploration-end
   stage: 1
   name: 探索の終了を判断する
+  notes:
+    - 'outputs: K01-12 で `superseded_by` を決めるのは設計セッション。素材台帳に書き込む者は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-1
   inputs: [01-plan.yaml, 01-sources.yaml]
   outputs: [01-plan.yaml, decisions.md]
   sections:
@@ -347,10 +475,11 @@ tasks:
   checks: [K01-12, K01-14, K01-18]
   next: [request-research, decide-exploration-limits, check-sources-machine]
 
-# `answered` にならなかった問いが残って終えた場合だけ行う
 - id: decide-exploration-limits
   stage: 1
   name: 探索の限界の扱いを決める
+  notes:
+    - '`answered` にならなかった問いが残って終えた場合だけ行う'
   role: user
   skill: null
   inputs: [01-plan.yaml]
@@ -377,17 +506,18 @@ tasks:
   checks: [K01-06, K01-07, K01-09, K01-11, K01-12, K01-13, K01-14, K01-16, K01-18, K01-19, K01-23, K01-24, K01-28]
   next: [inspect-sources, inspect-images, inspect-model, extract-model-independently]
 
-# inputs: 出典と、調査依頼の文面も読む。ファイル名は未決定である
-# checks: K01-15(調査依頼の文面)を検査する時点は未決定である。台帳の小見出しが素材台帳であることから、ここに入れた
-# outputs: `verified` を書き込む者は未決定である
 - id: inspect-sources
   stage: 1
   name: 素材台帳の事実を出典と突き合わせる
+  notes:
+    - 'inputs: 出典と、調査依頼の文面も読む。ファイル名は未決定である'
+    - 'checks: K01-15(調査依頼の文面)を検査する時点は未決定である。台帳の小見出しが素材台帳であることから、ここに入れた'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [01-sources.yaml]
-  outputs: [checks/]
-  sections: []
+  outputs: [checks/, 01-sources.yaml]
+  sections:
+    - 'stages/01-exploration.md#検証済みの印'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -396,6 +526,7 @@ tasks:
     - 'rework.md#検査と記録を守る'
     - 'checks.md#重大な検査'
     - 'writing.md#削ってよいものと、削ってはいけないもの'
+    - 'stages/01-exploration.md#素材台帳 `01-sources.yaml`'
   checks: [K01-08, K01-10, K01-15]
   next: [answer-questions]
 
@@ -403,10 +534,11 @@ tasks:
   stage: 1
   name: 画像の素材を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [00-brief.md, 01-sources.yaml, assets/]
-  outputs: [checks/]
-  sections: []
+  outputs: [checks/, 01-sources.yaml]
+  sections:
+    - 'stages/01-exploration.md#検証済みの印'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -414,6 +546,7 @@ tasks:
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
     - 'checks.md#重大な検査'
+    - 'stages/01-exploration.md#画像の素材'
   checks: [K01-20, K01-21, K01-22]
   next: [answer-questions]
 
@@ -421,7 +554,7 @@ tasks:
   stage: 1
   name: 仕組みの定義を出典と突き合わせる
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [01-model.yaml, 01-sources.yaml]
   outputs: [checks/]
   sections: []
@@ -437,13 +570,14 @@ tasks:
   checks: [K01-25, K01-26, K01-27]
   next: [approve-model]
 
-# 資料の中心になる図に使う範囲だけで行う。手順は検査の条件の文だけにある
-# 差分を出す者は未決定である
 - id: extract-model-independently
   stage: 1
   name: 同じ出典から、仕組みの定義を独立に抜き出す
+  notes:
+    - '資料の中心になる図に使う範囲だけで行う。手順は検査の条件の文だけにある'
+    - '差分を出す者は未決定である'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: ['「出典」']
   restricted: true
   restricted_by: [K01-29]
@@ -459,10 +593,11 @@ tasks:
   checks: [K01-29]
   next: [approve-model]
 
-# inputs: 定義の全体を図にしたものを見る(K01-30)。図を作る者とファイル名は未決定である
 - id: approve-model
   stage: 1
   name: 仕組みの定義を承認する
+  notes:
+    - 'inputs: 定義の全体を図にしたものを見る(K01-30)。図を作る者とファイル名は未決定である'
   role: user
   skill: null
   inputs: [01-model.yaml]
@@ -478,7 +613,7 @@ tasks:
   stage: 2
   name: 問いごとの答えを書く
   role: designer
-  skill: planner-designer
+  skill: deck-design-2
   inputs: [01-plan.yaml, 01-sources.yaml, 01-hypotheses.yaml]
   outputs: [02-answers.yaml]
   sections:
@@ -495,10 +630,11 @@ tasks:
   checks: [K02-01, K02-02, K02-03, K02-04, K02-05]
   next: [tally-contradicting-facts]
 
-# outputs: 一覧の置き場は未決定である
 - id: tally-contradicting-facts
   stage: 2
   name: 仮説ごとに否定する事実を数える
+  notes:
+    - 'outputs: 一覧の置き場は未決定である'
   role: machine
   skill: null
   command: null
@@ -514,7 +650,7 @@ tasks:
   stage: 2
   name: 根の答えを仮説の一覧と比べる
   role: designer
-  skill: planner-designer
+  skill: deck-design-2
   inputs: [01-hypotheses.yaml, 02-answers.yaml]
   outputs: []
   sections:
@@ -537,12 +673,13 @@ tasks:
   checks: []
   next: [write-claims]
 
-# `objections` は、検査セッションが組み立てた反論(K02-19)を受けて書く。inspect-claims の後に、この作業に戻る
 - id: write-claims
   stage: 2
   name: 主張の骨子を書く
+  notes:
+    - '`objections` は、検査セッションが組み立てた反論(K02-19)を受けて書く。inspect-claims の後に、この作業に戻る'
   role: designer
-  skill: planner-designer
+  skill: deck-design-2
   inputs: [00-brief.md, 01-plan.yaml, 01-hypotheses.yaml, 01-sources.yaml, 02-answers.yaml, style.yaml]
   outputs: [02-claims.yaml, decisions.md]
   sections:
@@ -565,11 +702,12 @@ tasks:
 
 # ---- 工程2から4
 
-# 工程2から4のそれぞれの中で行う時点は未決定である
-# outputs: 抜き出した語の一覧の置き場は未決定である
 - id: extract-terms
   stage: [2, 3, 4]
   name: 題と要点から語を抜き出す
+  notes:
+    - '工程2から4のそれぞれの中で行う時点は未決定である'
+    - 'outputs: 抜き出した語の一覧の置き場は未決定である'
   role: machine
   skill: null
   command: null
@@ -585,7 +723,7 @@ tasks:
   stage: [2, 3, 4]
   name: 語を語彙表に登録する
   role: designer
-  skill: planner-designer
+  skill: deck-design-2
   inputs: [02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml]
   outputs: [terms.yaml]
   sections:
@@ -601,10 +739,11 @@ tasks:
   checks: []
   next: [confirm-terms]
 
-# next: その工程の機械の検査に進む
 - id: confirm-terms
   stage: [2, 3, 4]
   name: 対象を指す語の一覧を確認する
+  notes:
+    - 'next: その工程の機械の検査に進む'
   role: user
   skill: null
   inputs: [terms.yaml]
@@ -637,7 +776,7 @@ tasks:
   stage: 2
   name: 問いごとの答えと主張の骨子を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [01-plan.yaml, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml]
   outputs: [checks/]
   sections: []
@@ -653,12 +792,13 @@ tasks:
   checks: [K02-03, K02-04, K02-08, K02-09, K02-11, K02-15, K02-16, K02-19, K02-22]
   next: [write-claims, approve-claims]
 
-# 仮説の一覧を読まない。手順は検査の条件の文だけにある
 - id: derive-answer-independently
   stage: 2
   name: ブリーフの問いと素材台帳だけから答えを書く
+  notes:
+    - '仮説の一覧を読まない。手順は検査の条件の文だけにある'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: ['00-brief.md#答えるべき問い', 01-sources.yaml]
   restricted: true
   restricted_by: [K02-18]
@@ -673,12 +813,13 @@ tasks:
   checks: [K02-18]
   next: [approve-claims]
 
-# 手順は検査の条件の文だけにある
 - id: read-summary-alone
   stage: 2
   name: 要約の文だけを読んで結論と理由を述べる
+  notes:
+    - '手順は検査の条件の文だけにある'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: ['02-claims.yaml#summary']
   restricted: true
   outputs: [checks/]
@@ -692,10 +833,11 @@ tasks:
   checks: [K02-23]
   next: [approve-claims]
 
-# 証言だけに頼る主張(K02-14)と、独立した導出との違い(K02-18)を示される
 - id: approve-claims
   stage: 2
   name: 主張の骨子を承認する
+  notes:
+    - '証言だけに頼る主張(K02-14)と、独立した導出との違い(K02-18)を示される'
   role: user
   skill: null
   inputs: [02-claims.yaml]
@@ -711,7 +853,7 @@ tasks:
   stage: 3
   name: 章構成を書く
   role: designer
-  skill: planner-designer
+  skill: deck-design-3
   inputs: [00-brief.md, 02-answers.yaml, 02-claims.yaml, style.yaml]
   outputs: [03-chapters.yaml, decisions.md]
   sections:
@@ -758,7 +900,7 @@ tasks:
   stage: 3
   name: 章構成を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [00-brief.md, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
   outputs: [checks/]
   sections: []
@@ -775,10 +917,11 @@ tasks:
   checks: [K03-07, K03-08, K03-09, K03-15, K03-16, K03-17, K03-18, K03-19, K03-20]
   next: [approve-chapters]
 
-# outputs: 確認用の資料のファイル名は未決定である
 - id: build-toc-deck
   stage: 3
   name: 目次と章扉の資料をビルドする
+  notes:
+    - 'outputs: 確認用の資料のファイル名は未決定である'
   role: machine
   skill: null
   command: 'python3 tools/build.py <資料のディレクトリ> --level toc'
@@ -811,7 +954,7 @@ tasks:
   stage: 4
   name: スライドの題と要点を書く
   role: designer
-  skill: planner-designer
+  skill: deck-design-4
   inputs: [00-brief.md, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, style.yaml]
   outputs: [04-storyline.yaml]
   sections:
@@ -843,7 +986,7 @@ tasks:
   stage: 4
   name: 章の前提と到達点を書く
   role: designer
-  skill: planner-designer
+  skill: deck-design-4
   inputs: [00-brief.md, 02-claims.yaml, 04-storyline.yaml]
   outputs: [04-chapter-states.yaml, decisions.md]
   sections:
@@ -854,12 +997,13 @@ tasks:
   checks: [K04-26, K04-27, K04-28]
   next: [write-scenarios]
 
-# `04-scenarios.yaml` の書式は未決定である
 - id: write-scenarios
   stage: 4
   name: テストの場面と期待する結果を書く
+  notes:
+    - '`04-scenarios.yaml` の書式は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-4
   inputs: [00-brief.md, 02-claims.yaml, 04-storyline.yaml, 04-chapter-states.yaml]
   outputs: [04-scenarios.yaml]
   sections:
@@ -872,10 +1016,11 @@ tasks:
   checks: [K04-29]
   next: [extract-terms]
 
-# K04-17 と K04-18 では、機械が候補を挙げ、検査セッションが判定する
 - id: check-storyline-machine
   stage: 4
   name: ストーリーライン、章の前提と到達点、テストの場面を機械で検査する
+  notes:
+    - 'K04-17 と K04-18 では、機械が候補を挙げ、検査セッションが判定する'
   role: machine
   skill: null
   command: 'python3 tools/check.py <資料のディレクトリ> --stage 4'
@@ -893,7 +1038,7 @@ tasks:
   stage: 4
   name: スライドの題と要点を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [00-brief.md, 01-sources.yaml, 02-answers.yaml, 03-chapters.yaml, 04-storyline.yaml]
   outputs: [checks/]
   sections: []
@@ -911,10 +1056,11 @@ tasks:
   checks: [K04-08, K04-17, K04-18, K04-19, K04-20, K04-21, K04-22, K04-23, K04-24, K04-25]
   next: [approve-storyline]
 
-# outputs: 確認用の資料のファイル名は未決定である
 - id: build-skeleton-deck
   stage: 4
   name: 骨組みの資料をビルドする
+  notes:
+    - 'outputs: 確認用の資料のファイル名は未決定である'
   role: machine
   skill: null
   command: 'python3 tools/build.py <資料のディレクトリ> --level skeleton'
@@ -947,7 +1093,7 @@ tasks:
   stage: 5
   name: スライドごとの立証の設計を書く
   role: designer
-  skill: planner-designer
+  skill: deck-design-5
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, style.yaml]
   outputs: [05-proof.yaml]
   sections:
@@ -993,7 +1139,7 @@ tasks:
   stage: 5
   name: 立証の設計を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml]
   outputs: [checks/]
   sections: []
@@ -1012,13 +1158,14 @@ tasks:
   checks: [K05-05, K05-12, K05-13, K05-14, K05-15]
   next: [approve-proof]
 
-# 要点を読まない。手順は検査の条件の文だけにある
-# 元の要点と比べる者は未決定である
 - id: restore-point-from-proof
   stage: 5
   name: 立証の設計だけから要点を書く
+  notes:
+    - '要点を読まない。手順は検査の条件の文だけにある'
+    - '元の要点と比べる者は未決定である'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: ['05-proof.yaml#show', '05-proof.yaml#focus', '05-proof.yaml#facts', '05-proof.yaml#view']
   restricted: true
   outputs: [checks/]
@@ -1032,10 +1179,11 @@ tasks:
   checks: [K05-16]
   next: [approve-proof]
 
-# outputs: 確認用の資料のファイル名は未決定である
 - id: build-placeholder-deck
   stage: 5
   name: 仮置きの資料をビルドする
+  notes:
+    - 'outputs: 確認用の資料のファイル名は未決定である'
   role: machine
   skill: null
   command: 'python3 tools/build.py <資料のディレクトリ> --level placeholder'
@@ -1048,10 +1196,11 @@ tasks:
   checks: [K05-17]
   next: [approve-proof]
 
-# 警告(K05-09、K05-10、表現の偏り)を直すか受け入れるかを、ここで決める(rework.md#警告)
 - id: approve-proof
   stage: 5
   name: 見せ方を承認する
+  notes:
+    - '警告(K05-09、K05-10、表現の偏り)を直すか受け入れるかを、ここで決める(rework.md#警告)'
   role: user
   skill: null
   inputs: [build/]
@@ -1064,12 +1213,13 @@ tasks:
 
 # ---- 工程6
 
-# inputs: 型の定義も読む。ファイル名は未決定である
 - id: map-patterns
   stage: 6
   name: 主張の種類ごとに型を選ぶ
+  notes:
+    - 'inputs: 型の定義も読む。ファイル名は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-6
   inputs: [05-proof.yaml, style.yaml]
   outputs: [06-patterns.yaml]
   sections:
@@ -1093,12 +1243,13 @@ tasks:
   checks: [K06-01, K06-02, K06-03, K06-04, K06-05, K06-06]
   next: [set-common-rules, design-proof]
 
-# inputs: テンプレートも読む。ファイル名は未決定である
 - id: set-common-rules
   stage: 6
   name: 要点の位置と資料に共通の規則を決める
+  notes:
+    - 'inputs: テンプレートも読む。ファイル名は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-6
   inputs: [01-model.yaml, 06-patterns.yaml, style.yaml]
   outputs: [style.yaml]
   sections:
@@ -1115,12 +1266,13 @@ tasks:
   checks: [K06-07, K06-08, K06-09]
   next: [write-samples]
 
-# checks: 見本のスライド仕様に、工程7の検査(K07、KX)を工程6で当てるかどうかは未決定である
 - id: write-samples
   stage: 6
   name: 型の見本のスライド仕様を書く
+  notes:
+    - 'checks: 見本のスライド仕様に、工程7の検査(K07、KX)を工程6で当てるかどうかは未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-6
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml, 06-patterns.yaml, style.yaml, terms.yaml]
   outputs: [06-samples/]
   sections:
@@ -1139,10 +1291,11 @@ tasks:
   checks: [K06-10, K06-11, K06-12, K06-13, K06-14, K06-15, K06-16]
   next: [build-samples]
 
-# outputs: 見本の画像のファイル名は未決定である
 - id: build-samples
   stage: 6
   name: 型の見本をビルドする
+  notes:
+    - 'outputs: 見本の画像のファイル名は未決定である'
   role: machine
   skill: null
   command: 'python3 tools/render.py <資料のディレクトリ>'
@@ -1160,7 +1313,7 @@ tasks:
   stage: 6
   name: 語彙表の重なりの候補を挙げる
   role: designer
-  skill: planner-designer
+  skill: deck-design-6
   inputs: [terms.yaml]
   outputs: [terms.yaml]
   sections:
@@ -1192,7 +1345,7 @@ tasks:
   stage: 6
   name: 見本の画像だけから関係を読み取る
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: ['build/#見本の画像']
   restricted: true
   outputs: [checks/]
@@ -1212,7 +1365,7 @@ tasks:
   stage: 6
   name: 型の見本を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [build/, 05-proof.yaml, 06-samples/, style.yaml]
   outputs: [checks/]
   sections: []
@@ -1227,10 +1380,11 @@ tasks:
   checks: [K06-13, K06-14, K06-15]
   next: [approve-samples, approve-terms]
 
-# K06-06 は、描画の実装が型の一覧を返せない場合だけ、ユーザーが確かめる
 - id: approve-samples
   stage: 6
   name: 型の見本を承認する
+  notes:
+    - 'K06-06 は、描画の実装が型の一覧を返せない場合だけ、ユーザーが確かめる'
   role: user
   skill: null
   inputs: [build/]
@@ -1241,10 +1395,11 @@ tasks:
   checks: [K06-06, K06-16]
   next: [freeze-terms]
 
-# 型の見本の承認とあわせて行う
 - id: approve-terms
   stage: 6
   name: 語彙表を承認する
+  notes:
+    - '型の見本の承認とあわせて行う'
   role: user
   skill: null
   inputs: [terms.yaml]
@@ -1259,7 +1414,7 @@ tasks:
   stage: 6
   name: 語彙表を凍結し、見本を手本として渡す
   role: designer
-  skill: planner-designer
+  skill: deck-design-6
   inputs: [terms.yaml, 06-samples/]
   outputs: [terms.yaml]
   sections:
@@ -1271,12 +1426,13 @@ tasks:
 
 # ---- 工程7
 
-# 新しいセッションの説明を、設計セッションの意図と比べる者は未決定である
 - id: handover-check
   stage: 7
   name: 引き継ぎの検査を受ける
+  notes:
+    - '新しいセッションの説明を、設計セッションの意図と比べる者は未決定である'
   role: pm
-  skill: planner-pm
+  skill: deck-pm-7
   inputs: [00-brief.md, 01-hypotheses.yaml, 01-plan.yaml, 01-sources.yaml, 01-model.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, 05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml, decisions.md]
   restricted: true
   restricted_by: ['organization.md#引き継ぎの検査']
@@ -1288,10 +1444,11 @@ tasks:
   checks: [K07-01]
   next: [make-chapter-brief]
 
-# outputs: 章の作業票のファイル名は未決定である
 - id: make-chapter-brief
   stage: 7
   name: 章の作業票を作る
+  notes:
+    - 'outputs: 章の作業票のファイル名は未決定である'
   role: machine
   skill: null
   command: null
@@ -1308,7 +1465,7 @@ tasks:
   stage: 7
   name: 章を執筆のセッションに割り振る
   role: pm
-  skill: planner-pm
+  skill: deck-pm-7
   inputs: [status.yaml, 03-chapters.yaml, 06-samples/]
   outputs: [07-slides/]
   sections:
@@ -1321,12 +1478,13 @@ tasks:
   checks: []
   next: [write-chapter-slides]
 
-# 章の作業票のファイル名は未決定である
 - id: write-chapter-slides
   stage: 7
   name: 章のスライド仕様を書く
+  notes:
+    - '章の作業票のファイル名は未決定である'
   role: writer
-  skill: planner-writer
+  skill: deck-write
   inputs: ['「章の作業票」', 06-samples/]
   restricted: true
   restricted_by: ['organization.md#章の作業票', 'organization.md#セッションの分離']
@@ -1360,10 +1518,11 @@ tasks:
   checks: [K07-02, K07-03, K07-04, K07-05, K07-06, K07-07, K07-08, K07-09, K07-10, K07-11, K07-12, K07-13, K07-14, K07-15, K07-16, K07-18, K07-21, K07-22, K07-23, K07-24, K07-25, K07-26, K07-27, K07-28, K07-30, K07-31, K07-32, K07-33, K07-34, K07-35, K07-36, K07-37, K07-38, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
   next: [check-chapter-machine, check-term-application]
 
-# 執筆のセッションが書き終えたときと、PMが受け入れるときの2回実行する(checks.md#検査の実行)
 - id: check-chapter-machine
   stage: 7
   name: 章のスライド仕様を機械で検査する
+  notes:
+    - '執筆のセッションが書き終えたときと、PMが受け入れるときの2回実行する(checks.md#検査の実行)'
   role: machine
   skill: null
   command: null
@@ -1381,7 +1540,7 @@ tasks:
   stage: 7
   name: 章のスライド仕様を検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [00-brief.md, 01-sources.yaml, 04-storyline.yaml, 05-proof.yaml, 07-slides/, terms.yaml]
   outputs: [checks/]
   sections: []
@@ -1403,7 +1562,7 @@ tasks:
   stage: 7
   name: 裏付けのない文がないかを検査する
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [07-slides/, '01-sources.yaml#そのスライドが使う事実']
   restricted: true
   restricted_by: ['writing.md#検査セッションが判断するもの']
@@ -1419,12 +1578,13 @@ tasks:
   checks: [K07-13]
   next: [accept-chapter]
 
-# 経緯を知らない検査セッションが行う。書き直した文を素材台帳の事実と比べる者は未決定である
 - id: read-back-slides
   stage: 7
   name: スライドの文だけを読んで意味を書き直す
+  notes:
+    - '経緯を知らない検査セッションが行う。書き直した文を素材台帳の事実と比べる者は未決定である'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: ['07-slides/#スライドの文']
   restricted: true
   outputs: [checks/]
@@ -1439,12 +1599,13 @@ tasks:
   checks: [K07-15]
   next: [accept-chapter]
 
-# outputs: 判断の置き場は未決定である
 - id: rule-on-restatements
   stage: 7
   name: 言い直しのスライドを統合するか残すかを決める
+  notes:
+    - 'outputs: 判断の置き場は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-production
   inputs: [07-slides/, checks/, 04-storyline.yaml]
   outputs: []
   sections:
@@ -1471,12 +1632,13 @@ tasks:
   checks: [K07-17, K07-19, K07-20, K07-40, K07-41, K07-42]
   next: [inspect-chapter-images, tally-chapter-phrases, read-chapter-as-reader]
 
-# 画像の型のスライドがある章だけで行う
 - id: inspect-chapter-images
   stage: 7
   name: 描いた結果の画像を検査する
+  notes:
+    - '画像の型のスライドがある章だけで行う'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [build/, 01-sources.yaml, 07-slides/]
   outputs: [checks/]
   sections: []
@@ -1503,12 +1665,13 @@ tasks:
   checks: [K07-39]
   next: [decide-phrase-fix, accept-chapter]
 
-# 集計が資料の表現規約の目安を超えた場合だけ行う
 - id: decide-phrase-fix
   stage: 7
   name: 言い回しの反復の直し方を決める
+  notes:
+    - '集計が資料の表現規約の目安を超えた場合だけ行う'
   role: designer
-  skill: planner-designer
+  skill: deck-design-production
   inputs: [07-slides/, checks/, style.yaml]
   outputs: []
   sections:
@@ -1517,13 +1680,14 @@ tasks:
   checks: [K07-39]
   next: [write-chapter-slides]
 
-# 入口の状態は、前の章が未完成の場合だけ渡す
-# K07-42 は重大度が高のエラーがないことを求める。章の受け入れの時点で重大度を決める者は未決定である
 - id: read-chapter-as-reader
   stage: 7
   name: 章を主な読み手として通読する
+  notes:
+    - '入口の状態は、前の章が未完成の場合だけ渡す'
+    - 'K07-42 は重大度が高のエラーがないことを求める。章の受け入れの時点で重大度を決める者は未決定である'
   role: reader
-  skill: planner-reader
+  skill: deck-read
   inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '04-chapter-states.yaml#entry']
   restricted: true
   restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
@@ -1540,7 +1704,7 @@ tasks:
   stage: 7
   name: 章を受け入れる
   role: pm
-  skill: planner-pm
+  skill: deck-pm-7
   inputs: [status.yaml, checks/, runs/, 04-chapter-states.yaml]
   outputs: [status.yaml]
   sections:
@@ -1561,10 +1725,11 @@ tasks:
   checks: [K07-42]
   next: [write-chapter-slides, coordinate-integration, coordinate-regression]
 
-# 執筆のセッションが語の登録を申請したときに行う。設計の時期に語を足すときも、同じ手順による
 - id: check-term-application
   stage: 7
   name: 語の登録の申請を機械で確かめる
+  notes:
+    - '執筆のセッションが語の登録を申請したときに行う。設計の時期に語を足すときも、同じ手順による'
   role: machine
   skill: null
   command: null
@@ -1576,12 +1741,13 @@ tasks:
   checks: []
   next: [review-term-application, write-chapter-slides]
 
-# 申請を1件ずつ順に審査する
 - id: review-term-application
   stage: 7
   name: 語の登録の申請を審査する
+  notes:
+    - '申請を1件ずつ順に審査する'
   role: designer
-  skill: planner-designer
+  skill: deck-design-production
   inputs: [terms.yaml, 02-claims.yaml, 01-model.yaml]
   outputs: [terms.yaml]
   sections:
@@ -1595,10 +1761,11 @@ tasks:
   checks: []
   next: [decide-term-registration, write-chapter-slides]
 
-# 結果が「登録する」「設計に戻す」の場合と、申請したセッションが異を唱えた場合に行う
 - id: decide-term-registration
   stage: 7
   name: 語を登録するかを決める
+  notes:
+    - '結果が「登録する」「設計に戻す」の場合と、申請したセッションが異を唱えた場合に行う'
   role: user
   skill: null
   inputs: [terms.yaml]
@@ -1615,7 +1782,7 @@ tasks:
   stage: 8
   name: 結合テストを進める
   role: pm
-  skill: planner-pm
+  skill: deck-pm-8
   inputs: [status.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, runs/]
   outputs: []
   sections:
@@ -1634,12 +1801,13 @@ tasks:
   checks: []
   next: [prepare-summary]
 
-# outputs: 要約のスライドの仕様のファイル名は未決定である
 - id: prepare-summary
   stage: 8
   name: 要約のスライドを用意する
+  notes:
+    - 'outputs: 要約のスライドの仕様のファイル名は未決定である'
   role: designer
-  skill: planner-designer
+  skill: deck-design-production
   inputs: [02-claims.yaml, 03-chapters.yaml, style.yaml]
   outputs: []
   sections:
@@ -1686,12 +1854,13 @@ tasks:
   checks: [K08-01, K08-02, K08-03, K08-08]
   next: [inspect-summary-evidence, extract-titles-and-points, run-scenarios]
 
-# 要約に根拠を添える場合だけ行う
 - id: inspect-summary-evidence
   stage: 8
   name: 要約に添えた根拠を検査する
+  notes:
+    - '要約に根拠を添える場合だけ行う'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [02-claims.yaml]
   outputs: [checks/]
   sections:
@@ -1719,12 +1888,13 @@ tasks:
   checks: []
   next: [run-scenarios]
 
-# 期待する結果を読まない。題と要点の一覧は、「題と要点だけ」の場面だけで渡す
 - id: run-scenarios
   stage: 8
   name: 全ての場面を通しで読む
+  notes:
+    - '期待する結果を読まない。題と要点の一覧は、「題と要点だけ」の場面だけで渡す'
   role: reader
-  skill: planner-reader
+  skill: deck-read
   inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '「題と要点の一覧」']
   restricted: true
   restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
@@ -1753,12 +1923,13 @@ tasks:
   checks: []
   next: [file-defects]
 
-# outputs: Issue。置き場は未決定である
 - id: file-defects
   stage: 8
   name: エラーを1件ずつIssueにする
+  notes:
+    - 'outputs: Issue。置き場は未決定である'
   role: pm
-  skill: planner-pm
+  skill: deck-pm-8
   inputs: [runs/]
   outputs: []
   sections:
@@ -1768,13 +1939,14 @@ tasks:
   checks: []
   next: [rule-on-defects]
 
-# inputs: Issueと、引用された箇所の成果物を読む
-# next: 修正は、混入した工程の作業に戻す。ここには章の執筆だけを書いた
 - id: rule-on-defects
   stage: 8
   name: エラーの候補を裁定する
+  notes:
+    - 'inputs: Issueと、引用された箇所の成果物を読む'
+    - 'next: 修正は、混入した工程の作業に戻す。ここには章の執筆だけを書いた'
   role: designer
-  skill: planner-designer
+  skill: deck-design-production
   inputs: [runs/]
   outputs: []
   sections:
@@ -1793,10 +1965,11 @@ tasks:
   checks: [K08-11, K08-12]
   next: [confirm-dismissed-defects, write-chapter-slides, coordinate-regression, check-coverage]
 
-# 原因が設計の成果物にあると見られる指摘を、設計セッションがエラーでないと裁いた場合だけ行う
 - id: confirm-dismissed-defects
   stage: 8
   name: 設計セッションが退けた指摘を確かめる
+  notes:
+    - '原因が設計の成果物にあると見られる指摘を、設計セッションがエラーでないと裁いた場合だけ行う'
   role: user
   skill: null
   inputs: []
@@ -1811,7 +1984,7 @@ tasks:
   stage: 8
   name: 回帰テストを進める
   role: pm
-  skill: planner-pm
+  skill: deck-pm-8
   inputs: [status.yaml, runs/]
   outputs: []
   sections:
@@ -1824,12 +1997,13 @@ tasks:
   checks: []
   next: [run-regression]
 
-# 期待する結果と、前回の指摘を読まない。変わった章の入口の状態を、保存済みの状態から渡す
 - id: run-regression
   stage: 8
   name: 直した章から先を再び通しで読む
+  notes:
+    - '期待する結果と、前回の指摘を読まない。変わった章の入口の状態を、保存済みの状態から渡す'
   role: reader
-  skill: planner-reader
+  skill: deck-read
   inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, 'runs/#章の終わりの状態', '「題と要点の一覧」']
   restricted: true
   restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
@@ -1844,13 +2018,14 @@ tasks:
   checks: [K08-09, K08-10]
   next: [tally-integration-errors]
 
-# ユーザーから指摘を受けたときに行う
-# next: 修正は、直す成果物の作業に戻す(rework.md)。ここには章の執筆だけを書いた。直した後は、回帰テストを通る
 - id: add-past-feedback-scenario
   stage: 8
   name: ユーザーの指摘を「過去の指摘」の場面に加える
+  notes:
+    - 'ユーザーから指摘を受けたときに行う'
+    - 'next: 修正は、直す成果物の作業に戻す(rework.md)。ここには章の執筆だけを書いた。直した後は、回帰テストを通る'
   role: designer
-  skill: planner-designer
+  skill: deck-design-production
   inputs: [04-scenarios.yaml]
   outputs: [04-scenarios.yaml]
   sections:
@@ -1877,10 +2052,11 @@ tasks:
   checks: [K08-09, K08-10, K08-11, K08-13]
   next: [decide-medium-errors]
 
-# 手順は検査の条件の文だけにある
 - id: decide-medium-errors
   stage: 8
   name: 重大度が中のエラーを受け入れるかを決める
+  notes:
+    - '手順は検査の条件の文だけにある'
   role: user
   skill: null
   inputs: []
@@ -1896,7 +2072,7 @@ tasks:
   stage: 9
   name: 受け入れテストを進める
   role: pm
-  skill: planner-pm
+  skill: deck-pm-9
   inputs: [status.yaml, 09-report.md]
   outputs: []
   sections:
@@ -1933,12 +2109,13 @@ tasks:
   checks: [K09-01, K09-02, K09-03, K09-04, K09-05, K09-06, K09-07, K09-08, K09-09, K09-10]
   next: [inspect-final-images, make-inspection-report]
 
-# 画像を使う資料だけで行う
 - id: inspect-final-images
   stage: 9
   name: 最終の出力の画像の写り込みを検査する
+  notes:
+    - '画像を使う資料だけで行う'
   role: inspector
-  skill: planner-inspector
+  skill: deck-inspect
   inputs: [build/deck.pptx, 00-brief.md]
   outputs: [checks/]
   sections: []
@@ -1952,10 +2129,11 @@ tasks:
   checks: [K09-02]
   next: [make-inspection-report]
 
-# inputs: Issueも読む
 - id: make-inspection-report
   stage: 9
   name: 検査の報告を作る
+  notes:
+    - 'inputs: Issueも読む'
   role: machine
   skill: null
   command: null
@@ -1967,12 +2145,30 @@ tasks:
   references:
     - 'rework.md#警告'
   checks: [K09-11, K08-13]
+  next: [pick-samples]
+
+- id: pick-samples
+  stage: 9
+  name: 抜き取りの対象を乱数で選ぶ
+  notes:
+    - '抜き取りの枚数は未決定である'
+    - 'outputs: 選んだスライドの一覧の置き場は未決定である'
+  role: machine
+  skill: null
+  command: null
+  inputs: [build/deck.pptx]
+  outputs: []
+  sections: []
+  references:
+    - 'stages/09-finish.md#3. 抜き取りで確かめる'
+  checks: []
   next: [sample-check]
 
-# スライドを無作為に選ぶ者と、結果を集計の記録に書く者は未決定である
 - id: sample-check
   stage: 9
   name: 抜き取りで中身と出典を見比べる
+  notes:
+    - '対象のスライドは、機械が乱数で選ぶ(pick-samples)。結果を集計の記録に書く者は未決定である'
   role: user
   skill: null
   inputs: [build/deck.pptx, 01-sources.yaml]
@@ -1983,10 +2179,11 @@ tasks:
   checks: [K09-12]
   next: [walk-through]
 
-# 気づいた点は、通し終えた後に feedback.md の手順で扱う。指摘を整理する担当は未決定である
 - id: walk-through
   stage: 9
   name: 実際に使う形で1回通す
+  notes:
+    - '気づいた点は、通し終えた後に feedback.md の手順で扱う。指摘は、設計セッションが整理する(sort-feedback)'
   role: user
   skill: null
   inputs: [build/deck.pptx, 09-report.md]
@@ -1997,10 +2194,11 @@ tasks:
   checks: [K09-13]
   next: [check-real-environment]
 
-# 結果の記録の置き場は未決定である
 - id: check-real-environment
   stage: 9
   name: 実際の環境で確かめる
+  notes:
+    - '結果の記録の置き場は未決定である'
   role: user
   skill: null
   inputs: [build/deck.pptx]
@@ -2011,10 +2209,11 @@ tasks:
   checks: [K09-14]
   next: [approve-final]
 
-# 直す必要がある場合は、該当する工程に戻し、工程8の回帰テストの後に工程9に戻る
 - id: approve-final
   stage: 9
   name: 受け入れの問いに答え、資料を承認する
+  notes:
+    - '直す必要がある場合は、該当する工程に戻し、工程8の回帰テストの後に工程9に戻る'
   role: user
   skill: null
   inputs: [build/deck.pptx, 09-report.md, 00-brief.md]
@@ -2024,14 +2223,15 @@ tasks:
     - 'stages/00-brief.md#受け入れの問い'
   references: []
   checks: [K09-15, K09-16]
-  next: [hand-over, add-past-feedback-scenario]
+  next: [hand-over, sort-feedback]
 
-# outputs: 承認の記録(Gitのタグ)
 - id: hand-over
   stage: 9
   name: 承認した版にタグを付けて引き渡す
+  notes:
+    - 'outputs: 承認の記録(Gitのタグ)'
   role: pm
-  skill: planner-pm
+  skill: deck-pm-9
   inputs: []
   outputs: []
   sections:
@@ -2041,12 +2241,13 @@ tasks:
   checks: []
   next: [record-reactions, tally-metrics]
 
-# outputs: Issueとして記録する(feedback.md#記録)
 - id: record-reactions
   stage: 9
   name: 発表の後の反応を記録する
+  notes:
+    - 'outputs: Issueとして記録する(feedback.md#記録)'
   role: designer
-  skill: planner-designer
+  skill: deck-design-production
   inputs: []
   outputs: []
   sections:
@@ -2058,10 +2259,11 @@ tasks:
   next: []
   end: true
 
-# inputs: Issueも読む
 - id: tally-metrics
   stage: 9
   name: 集計の記録を作る
+  notes:
+    - 'inputs: Issueも読む'
   role: machine
   skill: null
   command: null
@@ -2076,3 +2278,49 @@ tasks:
   checks: [K09-12]
   next: []
   end: true
+
+- id: sort-feedback
+  stage: 9
+  name: 指摘を整理し、反映先の範囲を提案する
+  notes:
+    - 'ユーザーから指摘を受けたときに行う。工程9の通しで気づいた点は、通し終えた後にまとめて扱う'
+    - 'inputs: 指摘と、人が直したPPTXを読む。ファイル名は未決定である'
+    - 'outputs: 指摘は、1件ずつIssueとして記録する。Issueの置き場は未決定である'
+    - 'next: 修正は、直す成果物の作業に戻す(rework.md)。ここには、過去の指摘の場面に加える作業と、規則を足す作業だけを書いた'
+  role: designer
+  skill: deck-design-production
+  inputs: []
+  outputs: []
+  sections:
+    - 'feedback.md#フィードバック'
+    - 'feedback.md#入口'
+    - 'feedback.md#反映先の範囲'
+    - 'feedback.md#記録'
+    - 'feedback.md#再現できない手直し'
+  references:
+    - 'feedback.md#修正の流れ'
+    - 'rework.md#直す成果物と、無効になる範囲'
+    - 'organization.md#ユーザーとのやり取り'
+  checks: []
+  next: [add-past-feedback-scenario, revise-rules]
+
+- id: revise-rules
+  stage: 9
+  name: 規則を足し、既存の規則と整理する
+  notes:
+    - '反映先の範囲が表現規約の規則である指摘について行う。行う時点は未決定である'
+    - '引き渡しの後の書き戻し(stages/09-finish.md#9. 集計する)も、この手順で行う'
+    - 'next: 違反になったスライドの修正は、直す成果物の作業に戻す(rework.md)。ここには章の執筆だけを書いた'
+  role: designer
+  skill: deck-design-production
+  inputs: [style.yaml, 07-slides/]
+  outputs: [style.yaml]
+  sections:
+    - 'style-rules.md#規則の追加と整理'
+  references:
+    - 'style-rules.md#規約の構成'
+    - 'checks.md#守らせる方法の強さ'
+    - 'rework.md#直す成果物と、無効になる範囲'
+  checks: []
+  next: [write-chapter-slides]
+

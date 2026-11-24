@@ -9,7 +9,8 @@
 
 文書の中の、次の2行の間を書き換える。
 
-  <!-- tasks:begin -->
+  <!-- tasks:begin -->          作業の一覧
+  <!-- tasks:begin skills -->   スキルの一覧
   <!-- tasks:end -->
 
 begin と end の組が崩れている文書が1つでもあれば、何も書かずにエラーで終わる。
@@ -25,7 +26,8 @@ sections と references は「文書#見出し」の形で書く。見出しは�
       直下が、検査の台帳から作る区間だけの見出し(合格条件、開始の条件、終了の条件)
   - 見出しの直下に「担当: 〇〇。」の行がある場合は、その見出しを sections に持つ作業の担当が、それと合う。
   - 台帳の検査が、判定者ごとに、その判定者が担当である作業の checks にある。
-  - 担当と skill が、決めた一覧にある。
+  - 担当が、決めた一覧にある。skill が、工程表の skills にある、その担当と工程のスキルである。
+  - 工程表の skills と roles の書式が正しい。roles の rules と report の見出しが実在する。
   - next が実在する作業を指す。どこからも来ない作業は start: true、次がない作業は end: true である。
   - restricted: true の作業の inputs が、「ファイル#項目」の形で項目まで絞られている。
     まるごとのファイルを渡す場合は、そう定めた箇所(検査のID、または「文書#見出し」)が restricted_by にある。
@@ -49,21 +51,13 @@ ROLES = {
     "pm": "PM",
     "machine": "機械",
 }
-SKILLS = {
-    "user": None,
-    "designer": "planner-designer",
-    "collector": "planner-collector",
-    "writer": "planner-writer",
-    "inspector": "planner-inspector",
-    "reader": "planner-reader",
-    "pm": "planner-pm",
-    "machine": None,
-}
+NO_SKILL = ("user", "machine")
+SKILL_NAME = re.compile(r"[a-z][a-z0-9]*(-[a-z0-9]+)*")
 REQUIRED = ("id", "stage", "name", "role", "skill", "inputs", "outputs", "sections", "references", "checks", "next")
-OPTIONAL = ("command", "restricted", "restricted_by", "start", "end")
+OPTIONAL = ("notes", "command", "restricted", "restricted_by", "start", "end")
 LISTS = ("inputs", "outputs", "sections", "references", "checks", "next")
 PREAMBLE = "前文"
-BEGIN = "<!-- tasks:begin -->"
+BEGIN = re.compile(r"^<!-- tasks:begin(?: (.+?))? -->$")
 END = "<!-- tasks:end -->"
 NOTICE = "<!-- この区間は tools/tasks_table.py が tasks.yaml から作る。直接は直さない -->"
 HEADING = re.compile(r"^(#{1,6}) (.+?)\s*$")
@@ -167,24 +161,115 @@ class Docs:
         return sum(doc.sizes[n] for n in numbers)
 
 
-def load(path):
+class Plan:
+    """工程表。作業(tasks)、スキル(skills)、担当ごとの項目(roles)を持つ。"""
+
+    def __init__(self, tasks, skills, roles):
+        self.tasks, self.skills, self.roles = tasks, skills, roles
+        self.by_id = {t.get("id"): t for t in tasks}
+
+    def skill_for(self, role, stage):
+        """担当と工程から、スキルを返す。なければ None。"""
+        for s in self.skills:
+            if s.get("role") == role and stage in as_list(s.get("stages", [])):
+                return s
+        return None
+
+    def skill_of(self, task):
+        """作業の手順を持つスキルの名前。複数の工程で行う作業は、最初の工程のスキルが持つ。"""
+        if task.get("role") in NO_SKILL:
+            return None
+        found = self.skill_for(task.get("role"), as_list(task.get("stage", [None]))[0])
+        return found["name"] if found else None
+
+    def tasks_of(self, skill):
+        """スキルが扱う作業を、(作業, 手順を持つか)の組で、工程表の順に返す。"""
+        out = []
+        for t in self.tasks:
+            if t["role"] == skill["role"] and set(as_list(t["stage"])) & set(skill["stages"]):
+                out.append((t, t["skill"] == skill["name"]))
+        return out
+
+
+def load_plan(path):
+    """工程表を読み、(工程表, 誤りの一覧)を返す。"""
     with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if not isinstance(data, dict) or not isinstance(data.get("tasks"), list):
-        return [], ["工程表に count と tasks がない"]
+        return Plan([], [], {}), ["工程表に count と tasks がない"]
     tasks, errors = data["tasks"], []
     if data.get("count") != len(tasks):
         errors.append(f"count が {data.get('count')} で、作業は {len(tasks)} 件ある")
-    return tasks, errors
+    skills, roles = data.get("skills"), data.get("roles")
+    if not isinstance(skills, list) or not isinstance(roles, dict):
+        return Plan(tasks, [], {}), errors + ["工程表に skills と roles がない"]
+    return Plan(tasks, skills, roles), errors
+
+
+def load(path):
+    plan, errors = load_plan(path)
+    return plan.tasks, errors
+
+
+def check_skills(plan, docs):
+    """skills と roles の誤りを挙げる。"""
+    errors, seen = [], set()
+    for s in plan.skills:
+        name = str(s.get("name", "(nameなし)")) if isinstance(s, dict) else "(書式が違う)"
+        if not isinstance(s, dict) or set(s) != {"name", "role", "stages", "description"}:
+            errors.append(f"skills の {name}: 項目は name、role、stages、description である")
+            continue
+        if not SKILL_NAME.fullmatch(name) or len(name) > 64:
+            errors.append(f"skills の {name}: name が小文字とハイフンの形でない。または64字を超える")
+        if name in seen:
+            errors.append(f"skills の {name}: name が重なっている")
+        seen.add(name)
+        if s["role"] not in ROLES or s["role"] in NO_SKILL:
+            errors.append(f"skills の {name}: スキルを持てない担当 {s['role']}")
+        stages = s["stages"]
+        if not isinstance(stages, list) or not stages or any(not isinstance(n, int) or not 0 <= n <= 9 for n in stages):
+            errors.append(f"skills の {name}: stages が0から9の番号の一覧でない")
+        text = s["description"]
+        if not isinstance(text, str) or not text.strip() or "\n" in text or len(text) > 200 or set(text) & set("<>"):
+            errors.append(f"skills の {name}: description は、1行で、200字までで、< と > を使わずに書く")
+    if errors:
+        return errors
+    pairs = {}
+    for s in plan.skills:
+        for stage in s["stages"]:
+            if (s["role"], stage) in pairs:
+                errors.append(f"skills の {s['name']}: 担当と工程が {pairs[(s['role'], stage)]} と重なっている")
+            pairs[(s["role"], stage)] = s["name"]
+    for role, entry in plan.roles.items():
+        if role not in ROLES or role in NO_SKILL:
+            errors.append(f"roles の {role}: スキルを持てない担当である")
+        if not isinstance(entry, dict) or not set(entry) <= {"rules", "report"} or not entry.get("rules"):
+            errors.append(f"roles の {role}: 項目は rules と report で、rules は必ず書く")
+            continue
+        for key in ("rules", "report"):
+            refs = entry.get(key, [])
+            if not isinstance(refs, list) or any(not isinstance(x, str) for x in refs):
+                errors.append(f"roles の {role}: {key} が文字列の一覧でない")
+                continue
+            for ref in refs:
+                if "#" not in ref or isinstance(docs.resolve(ref)[1], str):
+                    errors.append(f"roles の {role}: {key} の {ref}: 実在する「文書#見出し」でない")
+    for s in plan.skills:
+        if s["role"] not in plan.roles:
+            errors.append(f"skills の {s['name']}: roles に担当 {s['role']} がない")
+    return errors
 
 
 def is_stage_doc(path):
     return path.startswith("stages/")
 
 
-def check(tasks, docs, ledger):
+def check(plan, docs, ledger):
     """工程表の誤りを挙げる。"""
-    errors, seen = [], set()
+    tasks = plan.tasks
+    errors, seen = check_skills(plan, docs), set()
+    if errors:
+        return errors
     for t in tasks:
         tid = str(t.get("id", "(idなし)"))
         for key in REQUIRED:
@@ -206,8 +291,12 @@ def check(tasks, docs, ledger):
         role = t.get("role")
         if role not in ROLES:
             errors.append(f"{tid}: 知らない担当 {role}")
-        elif t.get("skill") != SKILLS[role]:
-            errors.append(f"{tid}: skill が {t.get('skill')} で、担当 {role} のスキルは {SKILLS[role]} である")
+        elif t.get("skill") != plan.skill_of(t):
+            errors.append(f"{tid}: skill が {t.get('skill')} で、担当 {role} の、この工程のスキルは {plan.skill_of(t)} である")
+        elif role not in NO_SKILL:
+            for stage in stages:
+                if plan.skill_for(role, stage) is None:
+                    errors.append(f"{tid}: 担当 {role} の工程{stage}のスキルが skills にない")
         if role == "machine":
             if "command" not in t:
                 errors.append(f"{tid}: 機械の作業に command がない")
@@ -215,7 +304,7 @@ def check(tasks, docs, ledger):
                 errors.append(f"{tid}: command がコマンドの文でも null でもない")
         elif "command" in t:
             errors.append(f"{tid}: command は機械の作業だけに書く")
-        for key in LISTS + ("restricted_by",):
+        for key in LISTS + ("restricted_by", "notes"):
             if not isinstance(t.get(key, []), list) or any(not isinstance(x, str) for x in t.get(key, [])):
                 errors.append(f"{tid}: {key} が文字列の一覧でない")
         for key in ("restricted", "start", "end"):
@@ -365,13 +454,25 @@ def stats(tasks, docs):
     print(f"  計: {len(everything)}件、{sum(everything):,}、{max(everything):,}、{int(statistics.median(everything)):,}")
 
 
+def stage_text(stages):
+    stages = as_list(stages)
+    return str(stages[0]) if len(stages) == 1 else f"{stages[0]}〜{stages[-1]}"
+
+
 def table(tasks):
     """工程ごとの作業の一覧を、Markdown の行の一覧で返す。"""
     out = ["| 工程 | 作業 | 名前 | 担当 |", "|---|---|---|---|"]
     for t in tasks:
-        stages = as_list(t["stage"])
-        stage = str(stages[0]) if len(stages) == 1 else f"{stages[0]}〜{stages[-1]}"
-        out.append(f"| {stage} | `{t['id']}` | {t['name']} | {ROLES[t['role']]} |")
+        out.append(f"| {stage_text(t['stage'])} | `{t['id']}` | {t['name']} | {ROLES[t['role']]} |")
+    return out
+
+
+def skills_table(plan):
+    """スキルの一覧を、Markdown の行の一覧で返す。作業の数は、手順を持つ作業の数である。"""
+    out = ["| スキル | 担当 | 工程 | 作業の数 |", "|---|---|---|---|"]
+    for s in plan.skills:
+        count = sum(1 for t in plan.tasks if t["skill"] == s["name"])
+        out.append(f"| `{s['name']}` | {ROLES[s['role']]} | {stage_text(s['stages'])} | {count} |")
     return out
 
 
@@ -387,7 +488,7 @@ def outside(lines, path):
     kept, inside = [], False
     for number, text in enumerate(lines, 1):
         text = text.strip()
-        if text == BEGIN:
+        if BEGIN.match(text):
             if inside:
                 raise ValueError(f"{path}:{number}: end の前に次の begin がある")
             inside = True
@@ -404,16 +505,21 @@ def outside(lines, path):
     return kept
 
 
-def rebuild(path, body):
-    """文書を読み、区間を作り直した全文と、元の全文を返す。区間がなければ None。"""
+def rebuild(path, bodies):
+    """文書を読み、区間を作り直した全文と、元の全文を返す。区間がなければ None。
+
+    bodies は、区間の名前(名前のない区間は None)から、中身の行の一覧への対応。"""
     with open(path, encoding="utf-8") as f:
         lines = f.read().split("\n")
     before = outside(lines, path)
     out, skipping, found = [], False, False
     for text in lines:
-        if text.strip() == BEGIN:
+        begin = BEGIN.match(text.strip())
+        if begin:
+            if begin.group(1) not in bodies:
+                raise ValueError(f"{path}: 知らない区間の名前 {begin.group(1)}")
             found, skipping = True, True
-            out += [text, NOTICE, ""] + body + [""]
+            out += [text, NOTICE, ""] + bodies[begin.group(1)] + [""]
         elif text.strip() == END:
             skipping = False
             out.append(text)
@@ -434,11 +540,12 @@ def main():
     args = parser.parse_args()
     root = os.path.normpath(args.docs)
 
-    tasks, errors = load(os.path.join(root, "tasks.yaml"))
+    plan, errors = load_plan(os.path.join(root, "tasks.yaml"))
+    tasks = plan.tasks
     if not errors:
         with open(os.path.join(root, "checks.yaml"), encoding="utf-8") as f:
             ledger = {e["id"]: as_list(e["judge"]) for e in yaml.safe_load(f)["checks"]}
-        errors = check(tasks, Docs(root), ledger)
+        errors = check(plan, Docs(root), ledger)
     if errors:
         print("工程表に誤りがある:", *errors, sep="\n  ")
         return 1
@@ -450,9 +557,10 @@ def main():
         return 0
 
     stale, broken, found = {}, [], False
+    bodies = {None: table(tasks), "skills": skills_table(plan)}
     for path in documents(root):
         try:
-            result = rebuild(path, table(tasks))
+            result = rebuild(path, bodies)
         except ValueError as error:
             broken.append(str(error))
             continue
