@@ -1,0 +1,1794 @@
+# 検査の台帳。項目の説明は checks.md にある。
+# 工程の文書の合格条件は、tools/checks_table.py がこの台帳から作る。
+
+# ---- 工程0
+
+- id: K00-01
+  stage: 0
+  target: "ブリーフ: 全ての項目の状態"
+  check: "全ての項目が、確定または未定である。推定のまま残る項目がない"
+  judge: machine
+
+- id: K00-02
+  stage: 0
+  target: "ブリーフ: 主な読み手、目的、答えるべき問いの状態"
+  check: "主な読み手、目的、答えるべき問いが確定である。この3つは未定を認めない"
+  judge: machine
+
+- id: K00-03
+  stage: 0
+  target: "ブリーフ: 答えるべき問い"
+  check: "答えるべき問いが1つである"
+  judge: inspector
+
+- id: K00-04
+  stage: 0
+  target: "ブリーフ: 答えるべき問い"
+  check: "答えるべき問いの、答えの形が決まっている。はいかいいえ、どれを選ぶか、どれだけか、どうやるか、のいずれかである"
+  judge: inspector
+
+- id: K00-05
+  stage: 0
+  target: "ブリーフ: 答えるべき問い、目的"
+  check: "答えるべき問いの答えが、目的に書いた行動につながる"
+  judge: inspector
+
+- id: K00-06
+  stage: 0
+  target: "ブリーフ: 全体"
+  check: "検査セッションがブリーフだけを読んで、「誰に、何のために、何の問いに答える資料か」を要約する。その要約が自分の意図と合っている"
+  judge: user
+
+- id: K00-07
+  stage: 0
+  target: "資料の表現規約"
+  check: "資料の表現規約 `style.yaml` があり、資料の型の定義の `limits` と個人の表現規約を写している"
+  judge: machine
+
+- id: K00-08
+  stage: 0
+  target: "ブリーフ: 外に出せない情報"
+  check: "「外に出せない情報」が確定である。画像を使う資料では、未定を認めない"
+  judge: machine
+
+- id: K00-09
+  stage: 0
+  target: "ブリーフ: 全体"
+  check: "ブリーフの内容に同意する"
+  judge: user
+
+# ---- 工程1
+
+- id: K01-01
+  stage: 1
+  group: "探索の計画"
+  target: "探索の計画: `axis`、`evidence_type`、`priority`"
+  check: "全ての枝分かれに `axis` がある。全ての末端の問いに `evidence_type` と `priority` がある"
+  judge: machine
+
+- id: K01-02
+  stage: 1
+  group: "探索の計画"
+  target: "探索の計画: 観点の問い"
+  check: "資料の型の定義が定める観点が、全て問いに含まれる"
+  judge: machine
+
+- id: K01-03
+  stage: 1
+  group: "探索の計画"
+  target: "探索の計画: 枝分かれ"
+  check: "枝分かれが、分類の軸の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K01-04
+  stage: 1
+  group: "探索の計画"
+  target: "探索の計画: 末端の問い"
+  check: "末端の問いが全て答えられたら、ブリーフの問いに答えられる"
+  judge: inspector
+
+- id: K01-05
+  stage: 1
+  group: "探索の計画"
+  target: "探索の計画: 全体"
+  check: "計画の内容に同意する"
+  judge: user
+
+- id: K01-06
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `fact` の `source`、`locator`、`quote`"
+  check: "全ての `fact` に `source`、`locator`、`quote` がある"
+  judge: machine
+
+- id: K01-07
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `derived` の計算式"
+  check: "全ての `derived` の計算式が、元の事実の値から再計算して一致する"
+  judge: machine
+
+- id: K01-08
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `fact` の `quote`"
+  check: "`fact` の `quote` が出典に実在する。`quote` の切り取り方が、出典の前後にある条件、範囲、主体を落としていない。落としている場合は、`quote` を広げる"
+  judge: inspector
+  critical: true
+  note: "確認できないものは `verified: false` のまま残す。"
+
+- id: K01-09
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `fact` の `value`、`unit`"
+  check: "`fact` の `value` と `unit` が、`quote` の中の数値と単位に一致する"
+  judge: machine
+  judge_text: "機械。表記を正規化して照合する"
+
+- id: K01-10
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `fact` の `statement`、`qualifiers`"
+  check: "`fact` の `statement` が、`quote` の述べていることと合う。`qualifiers` が、`quote` にある条件、範囲、数量の幅、不確かさを漏れなく挙げている"
+  judge: inspector
+  critical: true
+
+- id: K01-11
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `metric`"
+  check: "数値を持つ全ての事実に `metric` があり、語彙表の語である"
+  judge: machine
+
+- id: K01-12
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: 同じ `metric` の事実"
+  check: "同じ `metric` を持つ事実どうしで、時点と範囲が同じなのに値が違うものを挙げる。使わない事実に `superseded_by` を書くか、該当する問いの結果を `disputed` とする"
+  judge: [machine, designer]
+  judge_text: "機械が挙げ、設計セッションが決める"
+
+- id: K01-13
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `testimony` の `source`"
+  check: "全ての `testimony` に、誰の、何に基づく証言かの記録がある"
+  judge: machine
+
+- id: K01-14
+  stage: 1
+  group: "素材台帳"
+  target: "探索の計画: `result`"
+  check: "探索の計画の全ての末端の問いに `result` がある"
+  judge: machine
+
+- id: K01-15
+  stage: 1
+  group: "素材台帳"
+  target: "調査依頼: 文面"
+  check: "調査依頼の文面が、仮説や結論を含まない"
+  judge: inspector
+
+- id: K01-16
+  stage: 1
+  group: "素材台帳"
+  target: "素材台帳: `stance`"
+  check: "画像の素材を除く全ての事実に、全ての仮説に対する `stance` がある"
+  judge: machine
+
+- id: K01-17
+  stage: 1
+  group: "素材台帳"
+  target: "仮説の一覧"
+  check: "仮説の一覧に、対立する仮説が1つ以上ある"
+  judge: machine
+
+- id: K01-18
+  stage: 1
+  group: "素材台帳"
+  target: "探索の計画: `result`"
+  check: "終了の判断の条件のいずれかを満たす"
+  judge: machine
+  defined_in: stages/01-exploration.md#終了の判断
+
+- id: K01-19
+  stage: 1
+  group: "画像の素材(`verified: true` にする条件)"
+  target: "画像の素材: `source`、`version`、`captured_at`"
+  check: "`source`、`version` または `captured_at` がある"
+  judge: machine
+
+- id: K01-20
+  stage: 1
+  group: "画像の素材(`verified: true` にする条件)"
+  target: "画像の素材: `file`、`statement`"
+  check: "画像が `statement` の通りのものを写している"
+  judge: inspector
+
+- id: K01-21
+  stage: 1
+  group: "画像の素材(`verified: true` にする条件)"
+  target: "画像の素材: `regions` の `box`、`label`"
+  check: "`regions` の全てについて、位置が `label` の対象を囲んでいる。位置の出どころによらず確かめる"
+  judge: inspector
+
+- id: K01-22
+  stage: 1
+  group: "画像の素材(`verified: true` にする条件)"
+  target: "画像の素材: 画像"
+  check: "写り込みの検査を通る。検査セッションには、ブリーフの「外に出せない情報」を渡す。個人の名前、顧客の情報、認証の情報、社外に出せない名称が、隠されずに写っていない"
+  judge: inspector
+  critical: true
+  note: "例外を認めない。"
+
+- id: K01-23
+  stage: 1
+  group: "画像の素材(`verified: true` にする条件)"
+  target: "画像の素材: 引用した図の `source`"
+  check: "引用した図では、引用元の表記に必要な情報がある"
+  judge: machine
+
+- id: K01-24
+  stage: 1
+  group: "仕組みの定義(実在の仕組みを写す図を使う資料)"
+  target: "仕組みの定義: 要素、つながり、場面の `evidence`"
+  check: "全ての要素、つながり、場面に、`verified: true` の事実が紐づく"
+  judge: machine
+  defined_in: model.md
+
+- id: K01-25
+  stage: 1
+  group: "仕組みの定義(実在の仕組みを写す図を使う資料)"
+  target: "仕組みの定義: 要素"
+  check: "要素の1件ごとに、その要素が出典にあり、名前と種類が出典の記述と合う"
+  judge: inspector
+  critical: true
+  defined_in: model.md#抜き出し
+
+- id: K01-26
+  stage: 1
+  group: "仕組みの定義(実在の仕組みを写す図を使う資料)"
+  target: "仕組みの定義: つながり"
+  check: "つながりの1件ごとに、向きと条件が出典の記述と合う"
+  judge: inspector
+  critical: true
+  defined_in: model.md#抜き出し
+
+- id: K01-27
+  stage: 1
+  group: "仕組みの定義(実在の仕組みを写す図を使う資料)"
+  target: "仕組みの定義: 場面"
+  check: "場面の1件ごとに、順序が出典の記述と合う"
+  judge: inspector
+  critical: true
+  defined_in: model.md#抜き出し
+
+- id: K01-28
+  stage: 1
+  group: "仕組みの定義(実在の仕組みを写す図を使う資料)"
+  target: "仕組みの定義: `summarizes`"
+  check: "`summarizes` のあるつながりが、元のつながりを順にたどったものになっている"
+  judge: machine
+  defined_in: model.md#抜き出し
+
+- id: K01-29
+  stage: 1
+  group: "仕組みの定義(実在の仕組みを写す図を使う資料)"
+  target: "仕組みの定義: 資料の中心になる図に使う範囲"
+  check: "資料の中心になる図に使う範囲は、別のセッションが同じ出典から独立に抜き出し、差分を出す。一方にしかない要素とつながりを、ユーザーが確認する"
+  judge: [inspector, user]
+  defined_in: model.md
+
+- id: K01-30
+  stage: 1
+  group: "仕組みの定義(実在の仕組みを写す図を使う資料)"
+  target: "仕組みの定義: 全体"
+  check: "定義の全体を図にしたものを見て、内容に同意する。証言に基づく箇所と `unknown` の箇所には印を付けて示す"
+  judge: user
+  defined_in: model.md
+
+# ---- 工程2
+
+- id: K02-01
+  stage: 2
+  group: "問いごとの答え"
+  target: "問いごとの答え: 全ての問い"
+  check: "探索の計画の全ての問いに答えがある"
+  judge: machine
+
+- id: K02-02
+  stage: 2
+  group: "問いごとの答え"
+  target: "問いごとの答え: 末端の問いの `evidence`"
+  check: "末端の問いの答えに、`verified: true` の事実が紐づく。答えが「分からない」の場合を除く"
+  judge: machine
+
+- id: K02-03
+  stage: 2
+  group: "問いごとの答え"
+  target: "問いごとの答え: 親の問いの `answer`、`from`、`assumes`"
+  check: "親の問いの答えが、子の問いの答えと `assumes` から導ける"
+  judge: inspector
+
+- id: K02-04
+  stage: 2
+  group: "問いごとの答え"
+  target: "問いごとの答え: `answer`"
+  check: "問いごとの答えが、根拠の事実の限定(`qualifiers`)を落としていない"
+  judge: inspector
+  critical: true
+
+- id: K02-05
+  stage: 2
+  group: "問いごとの答え"
+  target: "問いごとの答え: `answer` の中の数値"
+  check: "問いごとの答えの中の数値が、根拠の事実の値と一致する"
+  judge: machine
+
+- id: K02-06
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 主張の `question`"
+  check: "全ての主張が、問いの木の同じ階層の問いに対応する"
+  judge: machine
+
+- id: K02-07
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 主張の数"
+  check: "主張の数が、資料の表現規約が定める上限以下である"
+  judge: machine
+
+- id: K02-08
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `answer`、主張"
+  check: "`answer` と各主張が、否定の検査と具体性の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K02-09
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `axis`"
+  check: "主張の分け方が、分類の軸の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K02-10
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 主張の `evidence`"
+  check: "全ての主張に、`verified: true` の事実が1件以上紐づく"
+  judge: machine
+
+- id: K02-11
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 主張の文"
+  check: "各主張が、根拠の事実の限定を落としていない"
+  judge: inspector
+  critical: true
+
+- id: K02-12
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 主張の中の数値"
+  check: "主張の中の数値が、根拠の事実の値と一致する"
+  judge: machine
+
+- id: K02-13
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 主張の `evidence`"
+  check: "1つの `origin` だけに頼る主張がない。ある場合は、そのことを主張に明記する"
+  judge: machine
+
+- id: K02-14
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 主張の `evidence`"
+  check: "`testimony` だけに頼る主張を、承認の際にユーザーに示す"
+  judge: machine
+
+- id: K02-15
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `disputed` の問いに関わる主張"
+  check: "探索の結果が `disputed` の問いに関わる主張が、見解が割れていることを述べている"
+  judge: inspector
+
+- id: K02-16
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: 探索の限界に関わる主張"
+  check: "探索の限界として残った問いに関わる主張が、その限界を述べている"
+  judge: inspector
+
+- id: K02-17
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `contradictions`"
+  check: "採った仮説を否定する事実(`stance` が `contradicts`)の全てが、`contradictions` にある"
+  judge: machine
+
+- id: K02-18
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `answer`"
+  check: "独立した導出: 仮説の一覧を読んでいない検査セッションに、ブリーフの問いと素材台帳だけを渡して答えを書かせる。`answer` と食い違う場合は、違いをユーザーに示す"
+  judge: inspector
+
+- id: K02-19
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `objections`"
+  check: "反論の検査: 検査セッションが、素材台帳を使って `answer` への最も強い反論を組み立てる。その反論が `objections` にある"
+  judge: inspector
+  note: "本編で答えるか、付録に回すかは、工程3で決める。"
+
+- id: K02-20
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `summary`"
+  check: "`summary` が1文である。字数が、資料の表現規約が定める上限以下である"
+  judge: machine
+
+- id: K02-21
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `summary` の中の数値"
+  check: "`summary` の中の数値が、主張と事実の値と一致する"
+  judge: machine
+
+- id: K02-22
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `summary`"
+  check: "`summary` が、`answer` と主張より強いこと、広いことを述べていない。主張の限定を落としていない"
+  judge: inspector
+  critical: true
+
+- id: K02-23
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `summary`"
+  check: "`summary` だけを読んだ検査セッションが、結論とその理由を述べられる"
+  judge: inspector
+
+- id: K02-24
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `answer`"
+  check: "`answer` がブリーフの問いに答えている"
+  judge: user
+
+- id: K02-25
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `answer`、`summary`、主張"
+  check: "`answer`、`summary`、各主張が、[文章の書き方](writing.md)の機械で測る検査と、[使う語彙](terms.md)の検査を通る。新しい語は、語彙表に登録されている"
+  judge: machine
+
+- id: K02-26
+  stage: 2
+  group: "主張の骨子"
+  target: "主張の骨子: `summary`"
+  check: "`summary` の文面に同意する"
+  judge: user
+
+# ---- 工程3
+
+- id: K03-01
+  stage: 3
+  target: "章構成: `claims`"
+  check: "全ての主張が、いずれかの本論の章に割り当てられている"
+  judge: machine
+
+- id: K03-02
+  stage: 3
+  target: "章構成: `claims`"
+  check: "本論の章の全てに `claims` がある。導入と結びの章には `claims` がない"
+  judge: machine
+
+- id: K03-03
+  stage: 3
+  target: "章構成: `omitted`"
+  check: "`omitted` の全てに、行き先と理由がある"
+  judge: machine
+
+- id: K03-04
+  stage: 3
+  target: "章構成: 章と節の題、問い、要点"
+  check: "全ての章に、題、問い、要点、1つ以上の節がある。全ての節に、題と要点がある。節が1つだけの章の節は、章の要点を引いている"
+  judge: machine
+
+- id: K03-05
+  stage: 3
+  target: "章構成: 節の `from`"
+  check: "本論の章のうち、割り当てた主張の問いに子の問いがある章では、全ての節に `from` がある。その答えは、主張の問いの下にある。子の問いがない章の節は、章の要点を引いている"
+  judge: machine
+
+- id: K03-06
+  stage: 3
+  target: "章構成: 章と節の要点の中の数値"
+  check: "章の要点の中の数値が、割り当てた主張の数値と一致する。節の要点の中の数値が、`from` の答えの数値と一致する"
+  judge: machine
+  judge_text: "機械。単位と表記を正規化して照合する"
+
+- id: K03-07
+  stage: 3
+  target: "章構成: 章の `question`、`point`"
+  check: "章の問いに、章の要点が答えている"
+  judge: inspector
+
+- id: K03-08
+  stage: 3
+  target: "章構成: 章の `point`、`qualifiers`"
+  check: "章の要点が、割り当てた主張より強いこと、広いことを述べていない。`qualifiers` と合わせて、主張の限定を落としていない"
+  judge: inspector
+  critical: true
+
+- id: K03-09
+  stage: 3
+  target: "章構成: 節の `point`、`qualifiers`"
+  check: "節の要点が、`from` の答えより強いこと、広いことを述べていない。`qualifiers` と合わせて、答えの限定を落としていない"
+  judge: inspector
+  critical: true
+
+- id: K03-10
+  stage: 3
+  target: "章構成: `contradictions`"
+  check: "主張の骨子の `contradictions` のうち、扱いが反駁または条件付きのものの全てに、どの章で触れるかが決まっている"
+  judge: machine
+
+- id: K03-11
+  stage: 3
+  target: "章構成: 章と節の題と要点"
+  check: "章と節の題と要点が、[文章の書き方](writing.md)の機械で測る検査と、[使う語彙](terms.md)の検査を通る"
+  judge: machine
+
+- id: K03-12
+  stage: 3
+  target: "章構成: `objections`"
+  check: "主張の骨子の全ての反論が、`objections` にある"
+  judge: machine
+
+- id: K03-13
+  stage: 3
+  target: "章構成: `slides`"
+  check: "枚数の合計がブリーフの制約に収まる"
+  judge: machine
+
+- id: K03-14
+  stage: 3
+  target: "章構成: `slides_reason`"
+  check: "全ての章に `slides_reason` がある"
+  judge: machine
+
+- id: K03-15
+  stage: 3
+  target: "章構成: 結びの章の要点"
+  check: "結びの章の要点が、読み手に求めることを、誰が、何を、いつまでにするかの形で述べている。決まっていない項目は、未定として記録する"
+  judge: inspector
+
+- id: K03-16
+  stage: 3
+  target: "章構成: `order.conclusion`"
+  check: "`order.conclusion` が、ブリーフの読み手の立場と上の表に合う。合わない場合は、理由が設計の判断の記録にある"
+  judge: inspector
+  defined_in: stages/03-chapters.md#1-結論の位置を決める
+
+- id: K03-17
+  stage: 3
+  target: "章構成: 章と節の題と要点"
+  check: "[題と要点の通読](checks.md)の1段目と2段目を通る"
+  judge: inspector
+
+- id: K03-18
+  stage: 3
+  target: "章構成: 章と節の要点"
+  check: "章と節の要点が、否定の検査と具体性の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K03-19
+  stage: 3
+  target: "章構成: 章と節"
+  check: "全ての章と節が除去の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K03-20
+  stage: 3
+  target: "章構成: 章と節の分け方"
+  check: "章の分け方と、章ごとの節の分け方が、分類の軸の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K03-21
+  stage: 3
+  target: "目次と章扉の資料"
+  check: "目次と章扉の資料を見て、章構成に同意する"
+  judge: user
+
+# ---- 工程4
+
+- id: K04-01
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `title`"
+  check: "全てのスライドに、題がある"
+  judge: machine
+
+- id: K04-02
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `provenance`、`evidence`"
+  check: "資料の型の定義の `annotation` が出どころの区別を求める資料では、全てのスライドに `provenance` がある。`cited` とした、要点を持つスライドに、`evidence` がある"
+  judge: machine
+
+- id: K04-03
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `point`、`point_from`、`role`"
+  check: "全てのスライドが、要点を書く、節の要点を引く、要点を持たずに役割を書く、のいずれか1つの形である"
+  judge: machine
+
+- id: K04-04
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `section`"
+  check: "本編の全てのスライドが、章構成にある節に入っている。章構成の全ての節に、スライドが1枚以上ある"
+  judge: machine
+
+- id: K04-05
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: 節の項の数"
+  check: "節の項の数が、資料の表現規約の `section_max_slides` 以下である"
+  judge: machine
+
+- id: K04-06
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `point_from`"
+  check: "節の要点を載せるスライドが、[語彙と区分](vocabulary.md)の表の通りである。節の要点を引くスライドは、節の最後のスライドだけである"
+  judge: machine
+
+- id: K04-07
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `required`"
+  check: "資料の型の定義の `required_slides` の全てに、`required` でそれを参照するスライドがある"
+  judge: machine
+
+- id: K04-08
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: 必ず置くスライドの書き方"
+  check: "書き方(`form`)の定めがあるスライドは、その通りに書かれている"
+  judge: inspector
+
+- id: K04-09
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: 章ごとの枚数"
+  check: "章ごとの枚数が、章構成の配分以下である。自動で作るスライドの枚数は、別に数えてユーザーに示す"
+  judge: machine
+
+- id: K04-10
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `appendix_of`"
+  check: "付録の全てのスライドに `appendix_of` がある"
+  judge: machine
+
+- id: K04-11
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `from`、`objection`"
+  check: "章構成で付録に回すとした答えの全てに、`from` でそれを参照する付録のスライドがある。章構成の `objections` の全てに、`objection` でそれを参照するスライドが、決めた置き場(本編または付録)にある"
+  judge: machine
+
+- id: K04-12
+  stage: 4
+  group: "構造"
+  target: "ストーリーライン: `contradiction`、`evidence`"
+  check: "章構成の `contradictions` の全てに、`contradiction` でそれを参照するスライドが、章構成が決めた章にある。そのスライドの `evidence` が、その事実を含む"
+  judge: machine
+
+- id: K04-13
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: `question`"
+  check: "要点を持つスライドに、問いが1つある"
+  judge: machine
+
+- id: K04-14
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: `from`、`evidence`"
+  check: "本論の章の、要点を持つ全てのスライドに、`from` と `evidence` がある"
+  judge: machine
+
+- id: K04-15
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 題と要点"
+  check: "題と要点が、[文章の書き方](writing.md)の機械で測る検査と、[使う語彙](terms.md)の検査を通る。新しい語は、語彙表に登録されている"
+  judge: machine
+
+- id: K04-16
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 要点の中の数値"
+  check: "要点の中の数値が、そのスライドの `evidence` の事実の値と一致する"
+  judge: machine
+  judge_text: "機械。単位と表記を正規化して照合する"
+
+- id: K04-17
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 要点"
+  check: "要点が、2つの主張をつないでいない。機械が「また」「および」などの接続を含む要点を挙げ、検査セッションが判定する"
+  judge: [machine, inspector]
+
+- id: K04-18
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 要点どうし"
+  check: "要点どうしが矛盾していない。同じ事実、同じ対象を扱う要点の組を機械が挙げ、検査セッションが確かめる"
+  judge: inspector
+
+- id: K04-19
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: `point`、`qualifiers`"
+  check: "要点が、`qualifiers` と合わせて、根拠の事実の限定を落としていない"
+  judge: inspector
+  critical: true
+
+- id: K04-20
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: `question`、`point`"
+  check: "要点が、そのスライドの問いに答えている"
+  judge: inspector
+
+- id: K04-21
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: `title`"
+  check: "題が、そのスライドの話題を示している。要点の言い換えになっていない"
+  judge: inspector
+
+- id: K04-22
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 題と要点"
+  check: "[題と要点の通読](checks.md)の3段目を通る"
+  judge: inspector
+
+- id: K04-23
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 要点どうし"
+  check: "同じことを述べる要点が複数ない"
+  judge: inspector
+
+- id: K04-24
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 要点"
+  check: "全ての要点が、否定の検査と具体性の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K04-25
+  stage: 4
+  group: "題と要点"
+  target: "ストーリーライン: 本編のスライド"
+  check: "本編の全てのスライドが除去の検査を通る。通らないスライドは、付録に回すか捨てる"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K04-26
+  stage: 4
+  group: "章の前提と到達点、テストの場面"
+  target: "章の前提と到達点: `entry`、`exit`"
+  check: "全ての章の入口の状態が、それより前の章の出口の状態で満たされている"
+  judge: machine
+
+- id: K04-27
+  stage: 4
+  group: "章の前提と到達点、テストの場面"
+  target: "章の前提と到達点: 最後の章の `exit`"
+  check: "最後の章の出口で、残る疑問がない"
+  judge: machine
+
+- id: K04-28
+  stage: 4
+  group: "章の前提と到達点、テストの場面"
+  target: "章の前提と到達点: `concerns_answered`"
+  check: "ブリーフの読み手の懸念の全てが、いずれかの章の到達点にあるか、答えないと決めた記録がある"
+  judge: machine
+
+- id: K04-29
+  stage: 4
+  group: "章の前提と到達点、テストの場面"
+  target: "テストの場面: 期待する結果"
+  check: "[工程8](stages/08-integration.md)が定める全ての場面に、期待する結果が書かれている。該当しない場面は、該当しないと記録する"
+  judge: machine
+
+- id: K04-30
+  stage: 4
+  group: "承認"
+  target: "骨組みの資料"
+  check: "骨組みの資料を見て、章ごとに、題、要点、出どころに同意する"
+  judge: user
+
+# ---- 工程5
+
+- id: K05-01
+  stage: 5
+  target: "立証の設計: `relation`"
+  check: "`relation` が[主張の種類の語彙](vocabulary.md)にある"
+  judge: machine
+
+- id: K05-02
+  stage: 5
+  target: "立証の設計: `facts`"
+  check: "`facts` が全て素材台帳にあり、`verified: true` で、`superseded_by` が空である。画像の素材も `facts` に含める"
+  judge: machine
+
+- id: K05-03
+  stage: 5
+  target: "立証の設計: `facts`"
+  check: "`facts` が、ストーリーラインの `evidence` を全て含む"
+  judge: machine
+
+- id: K05-04
+  stage: 5
+  target: "立証の設計: `real`、`view`"
+  check: "`real` が true のスライドに `view` があり、その要素、つながり、場面が全て仕組みの定義にある"
+  judge: machine
+  note: "主張の種類の区分は問わない。"
+
+- id: K05-05
+  stage: 5
+  target: "立証の設計: `real`"
+  check: "`real` の申告が正しい。図が実在のものを写しているのに、false としていない"
+  judge: inspector
+  critical: true
+
+- id: K05-06
+  stage: 5
+  target: "立証の設計: `view`"
+  check: "題または要点が「全体」を述べるスライドの `view` が、該当する種類の要素を全て含む"
+  judge: machine
+
+- id: K05-07
+  stage: 5
+  target: "立証の設計: `show`、`focus`"
+  check: "全てのスライドの `show` が空でない。役割が演習の問題であるスライドを除き、`focus` が空でない"
+  judge: machine
+
+- id: K05-08
+  stage: 5
+  target: "立証の設計: 「言い切り」「並列の列挙」の理由"
+  check: "「言い切り」と「並列の列挙」のスライドに、ほかの種類に当てはまらない理由がある"
+  judge: machine
+
+- id: K05-09
+  stage: 5
+  target: "立証の設計: `facts`"
+  check: "同じ事実を複数のスライドが使う場合は、警告とする"
+  judge: machine
+  note: "意図した再掲かどうかは、工程5の承認のときに、警告の扱いとして決める。"
+
+- id: K05-10
+  stage: 5
+  target: "立証の設計: `view` の要素"
+  check: "やり取りや状態の遷移の図に出る要素が、構成または要素の関係の図のいずれかにも出る。出ない場合は警告とする"
+  judge: machine
+
+- id: K05-11
+  stage: 5
+  target: "立証の設計: `holds`"
+  check: "全てのスライドに `holds` の項目がある。項目の間に関係がないスライド(並列の列挙、言い切り)では、空とする"
+  judge: machine
+
+- id: K05-12
+  stage: 5
+  target: "立証の設計: `holds`"
+  check: "`holds` の申告が正しい。[形が伝える意味](visual-grammar.md)が含意ごとに定める問いで確かめる"
+  judge: inspector
+  defined_in: visual-grammar.md#a-と-b-含意の照合
+
+- id: K05-13
+  stage: 5
+  target: "立証の設計: `relation`"
+  check: "主張の種類が、要点の述べていることと合う。要点のないスライドでは、見せる中身と合う"
+  judge: inspector
+
+- id: K05-14
+  stage: 5
+  target: "立証の設計: `show`、`focus`"
+  check: "スライド内の要素が除去の検査を通る。`show` が、`focus` に関係しない要素を含まない"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K05-15
+  stage: 5
+  target: "立証の設計: `axis`"
+  check: "項目をまとめるスライドが、分類の軸の検査を通る"
+  judge: inspector
+  defined_in: checks.md#意味の検査
+
+- id: K05-16
+  stage: 5
+  target: "立証の設計: `show`、`focus`、`facts`、`view`"
+  check: "要点の復元: 検査セッションに要点を隠して `show`、`focus`、`facts`、`view` だけを見せ、要点を書かせる。元の要点と意味が一致する。対象は、要点を持つスライドとする"
+  judge: inspector
+
+- id: K05-17
+  stage: 5
+  target: "仮置きの資料"
+  check: "仮置きの資料を見て、見せ方に同意する"
+  judge: user
+
+# ---- 工程6
+
+- id: K06-01
+  stage: 6
+  group: "対応表"
+  target: "表現の対応表: 行"
+  check: "立証設計に現れる全ての主張の種類、量の区分、土台の組が、対応表にある"
+  judge: machine
+
+- id: K06-02
+  stage: 6
+  group: "対応表"
+  target: "表現の対応表: 主な型"
+  check: "主な型(`size` が `any` または `within`)が、同じ土台の中で、複数の主張の種類に使われていない"
+  judge: machine
+  note: "収容量を超えた場合の型は、複数の種類での共用を認める。"
+  defined_in: visual-grammar.md#c-一貫性
+
+- id: K06-03
+  stage: 6
+  group: "対応表"
+  target: "表現の対応表: 型の `implies`、`expresses` と、立証の設計の `holds`"
+  check: "全てのスライドについて、型の `implies` がスライドの `holds` に含まれる。`holds` が空でない場合は、その主な関係が型の `expresses` に含まれる"
+  judge: machine
+  note: "`emphasized` は項目の間の関係ではないため、照合の対象から外す。"
+  defined_in: visual-grammar.md#a-と-b-含意の照合
+
+- id: K06-04
+  stage: 6
+  group: "対応表"
+  target: "表現の対応表と、立証の設計の `axis`"
+  check: "型の `implies` に、まとまりや分割を伝える含意(`grouped`、`partition`)がある場合は、そのスライドの立証の設計の `axis` が空でない"
+  judge: machine
+
+- id: K06-05
+  stage: 6
+  group: "対応表"
+  target: "表現の対応表: `size: over` の行"
+  check: "`size: over` の行に対応する全てのスライドに、中身を見直しても収容量を超える理由がある"
+  judge: machine
+
+- id: K06-06
+  stage: 6
+  group: "対応表"
+  target: "表現の対応表: 型"
+  check: "全ての型が、選んだ描画の実装とテンプレートで実現できる。実現できない型は、代わりの型を選ぶか、描画の実装への要望として記録する"
+  judge: [machine, user]
+  judge_text: "機械。型の一覧を返せない実装ではユーザー"
+
+- id: K06-07
+  stage: 6
+  group: "共通の規則"
+  target: "資料の表現規約: `point_position`"
+  check: "資料で使う全ての型に、要点の位置が1つ決まっている。位置は、認める3つのいずれかである"
+  judge: machine
+
+- id: K06-08
+  stage: 6
+  group: "共通の規則"
+  target: "資料の表現規約: 資料に共通の規則"
+  check: "成果物の表の全ての規則が、資料の表現規約にある"
+  judge: machine
+
+- id: K06-09
+  stage: 6
+  group: "共通の規則"
+  target: "資料の表現規約: 色の割り当て"
+  check: "複数の図に出る対象の全てに、色が割り当てられている"
+  judge: machine
+  defined_in: visual-grammar.md#c-一貫性
+
+- id: K06-10
+  stage: 6
+  group: "見本"
+  target: "型の見本: 全ての型"
+  check: "資料で使う全ての型に、見本がある"
+  judge: machine
+
+- id: K06-11
+  stage: 6
+  group: "見本"
+  target: "型の見本: 描画上の診断"
+  check: "見本の描画上の診断が0件である。文字の大きさが下限以上である。色の差と、1枚で使う色相の数が、基準を満たす"
+  judge: machine
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K06-12
+  stage: 6
+  group: "見本"
+  target: "型の見本: 画像"
+  check: "形からの読み取り: 検査セッションに見本の画像だけを見せ、項目の間に読み取れる関係を含意の語彙で答えさせる。答えが型の `implies` と合う"
+  judge: inspector
+  defined_in: visual-grammar.md#形からの読み取り
+
+- id: K06-13
+  stage: 6
+  group: "見本"
+  target: "型の見本: 画像"
+  check: "見本の画像で最初に目が行く場所が、立証設計の `focus` と合う"
+  judge: inspector
+  defined_in: visual-grammar.md#e-注目
+
+- id: K06-14
+  stage: 6
+  group: "見本"
+  target: "型の見本: 画像"
+  check: "見本の画像に、消しても情報が失われない要素がない"
+  judge: inspector
+  defined_in: visual-grammar.md#g-飾り
+
+- id: K06-15
+  stage: 6
+  group: "見本"
+  target: "型の見本: 要点の位置"
+  check: "見本で、要点が決めた位置にある。同じ文が、1枚の中に2回出ていない"
+  judge: inspector
+
+- id: K06-16
+  stage: 6
+  group: "見本"
+  target: "型の見本"
+  check: "見本を見て、型の選び方と見た目に同意する"
+  judge: user
+
+- id: K06-17
+  stage: 6
+  group: "語彙表"
+  target: "語彙表: 候補へのユーザーの判断"
+  check: "同じ概念を指していそうな語と、2つの意味で使われていそうな語の候補の全てに、ユーザーの判断が記録されている"
+  judge: machine
+
+- id: K06-18
+  stage: 6
+  group: "語彙表"
+  target: "語彙表: `defined_in`、`no_definition`"
+  check: "対象を指す語の全てに、`defined_in` か、定義が要らない理由がある"
+  judge: machine
+  defined_in: terms.md
+
+- id: K06-19
+  stage: 6
+  group: "語彙表"
+  target: "語彙表: `banned`"
+  check: "対象を指す語の全てについて、同じ対象を指しうる別の語を挙げ、`banned` に入れるかどうかを決めている"
+  judge: machine
+
+- id: K06-20
+  stage: 6
+  group: "語彙表"
+  target: "語彙表: 全体"
+  check: "語彙表の内容に同意する"
+  judge: user
+
+# ---- 工程7
+
+- id: K07-01
+  stage: 7
+  group: "開始の条件"
+  target: "設計の成果物の全体"
+  check: "引き継ぎの検査に通っている"
+  judge: designer
+  defined_in: organization.md#引き継ぎの検査
+
+- id: K07-02
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: `title`、`point`、`point_from`、`role`、`qualifiers`、`provenance`"
+  check: "`title`、`point`、`point_from`、`role`、`qualifiers`、`provenance` が、ストーリーラインと一致する"
+  judge: machine
+
+- id: K07-03
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: `body.type`"
+  check: "`body.type` が、表現の対応表が定める型と一致する"
+  judge: machine
+  defined_in: visual-grammar.md#c-一貫性
+
+- id: K07-04
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: `sources`"
+  check: "`sources` が立証設計の `facts` に含まれる"
+  judge: machine
+
+- id: K07-05
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: `sources`、中身の文"
+  check: "ストーリーラインで `contradiction` を持つスライドの `sources` が、その事実を含み、中身の文がその事実を述べている"
+  judge: [machine, inspector]
+
+- id: K07-06
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: 図の要素、つながり、場面"
+  check: "立証設計の `real` が true のスライドが、立証設計の `view` にある要素、つながり、場面だけを使う"
+  judge: machine
+
+- id: K07-07
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: `highlight`"
+  check: "図や表を載せるスライドに、強調する要素(`highlight`)の指定がある"
+  judge: machine
+
+- id: K07-08
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: `highlight`"
+  check: "強調が、1枚に1か所までである。数え方は[形が伝える意味](visual-grammar.md)による"
+  judge: machine
+  defined_in: visual-grammar.md#e-注目
+
+- id: K07-09
+  stage: 7
+  group: "上流との一致"
+  target: "スライド仕様: `highlight`"
+  check: "強調する要素が、立証設計の注目させる点に対応する"
+  judge: inspector
+  defined_in: visual-grammar.md#e-注目
+
+- id: K07-10
+  stage: 7
+  group: "上流との一致"
+  target: "章のブランチ: 変更したファイル"
+  check: "章のブランチが、その章のスライド仕様以外のファイルを変えていない"
+  judge: machine
+
+- id: K07-11
+  stage: 7
+  group: "事実"
+  target: "スライド仕様: `text`、`body.data`、`notes` の数値"
+  check: "`text`、`body.data`、`notes` に、事実のIDによらない数値がない"
+  judge: machine
+
+- id: K07-12
+  stage: 7
+  group: "事実"
+  target: "スライド仕様: `point` の数値"
+  check: "`point` の数値が、`sources` の事実の値と一致する"
+  judge: machine
+  judge_text: "機械。単位と表記を正規化して照合する"
+
+- id: K07-13
+  stage: 7
+  group: "事実"
+  target: "スライド仕様: 全ての文"
+  check: "裏付けのない文がない"
+  judge: inspector
+  critical: true
+  defined_in: writing.md#検査セッションが判断するもの
+
+- id: K07-14
+  stage: 7
+  group: "事実"
+  target: "スライド仕様: 全ての文、`qualifiers`"
+  check: "限定の残存の検査を通る"
+  judge: inspector
+  critical: true
+  defined_in: writing.md#検査セッションが判断するもの
+
+- id: K07-15
+  stage: 7
+  group: "事実"
+  target: "スライド仕様: 仕組みの記述のスライドと、`qualifiers` を持つ事実を使うスライドの文"
+  check: "読み戻しの検査を通る。対象のスライドに限る"
+  judge: inspector
+  defined_in: writing.md#検査セッションが判断するもの
+
+- id: K07-16
+  stage: 7
+  group: "画像"
+  target: "スライド仕様: 参照する `regions`"
+  check: "画像の型のスライドが参照する `regions` が、全て画像の素材にある"
+  judge: machine
+
+- id: K07-17
+  stage: 7
+  group: "画像"
+  target: "描いた結果の画像: `estimated` の位置に付けた注釈"
+  check: "位置の出どころが `estimated` の `regions` に付けた注釈について、描いた印の周辺を切り出した画像を見て、印が `label` の対象を指している"
+  judge: inspector
+
+- id: K07-18
+  stage: 7
+  group: "画像"
+  target: "スライド仕様: 注釈の印と説明"
+  check: "注釈の印と説明が、指す対象に重なっていない"
+  judge: machine
+  judge_text: "機械。`regions` の位置から判定する"
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K07-19
+  stage: 7
+  group: "画像"
+  target: "描いた結果の画像: 画像の型ごとの最初の1枚"
+  check: "画像の型ごとに、最初に描いたスライド1枚について、描いた結果の画像を見て、印と引き出しの線が `regions` の位置に合っていることを確かめる。描画の実装による位置のずれを拾うためである"
+  judge: inspector
+
+- id: K07-20
+  stage: 7
+  group: "画像"
+  target: "描いた結果の画像: 画像の中の文字"
+  check: "画像の中で読ませる文字が、載せた大きさで読める"
+  judge: inspector
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K07-21
+  stage: 7
+  group: "文"
+  target: "スライド仕様: 読み手に見せる文"
+  check: "[文章の書き方](writing.md)の機械で測る検査を通る"
+  judge: machine
+
+- id: K07-22
+  stage: 7
+  group: "文"
+  target: "スライド仕様: 読み手に見せる文"
+  check: "[使う語彙](terms.md)の検査を通る"
+  judge: machine
+
+- id: K07-23
+  stage: 7
+  group: "文"
+  target: "スライド仕様: 型の項目ごとの字数"
+  check: "型の項目ごとの収容量に収まる"
+  judge: machine
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K07-24
+  stage: 7
+  group: "文"
+  target: "スライド仕様: `{}` で囲んだ参照"
+  check: "`{}` で囲んだ参照が、全て、実在する事実かスライドを指す"
+  judge: machine
+
+- id: K07-25
+  stage: 7
+  group: "文"
+  target: "スライド仕様: 全ての文"
+  check: "削る検査、重複の検査、主体の検査を通る"
+  judge: inspector
+  defined_in: writing.md#検査セッションが判断するもの
+
+- id: K07-26
+  stage: 7
+  group: "文"
+  target: "スライド仕様: 中身(型のデータと説明)"
+  check: "言い直しの検査で挙がったスライドの全てに、前後のスライドに統合するか、残すかの判断がある"
+  judge: [inspector, designer]
+  judge_text: "検査セッションが挙げ、設計セッションが決める"
+  note: "統合する場合は、工程4に戻す。"
+  defined_in: writing.md#検査セッションが判断するもの
+
+- id: K07-27
+  stage: 7
+  group: "文"
+  target: "スライド仕様: 説明の文"
+  check: "ブリーフに「読み手が既に知っている」と書かれた内容の説明を含まない"
+  judge: inspector
+
+- id: K07-28
+  stage: 7
+  group: "文"
+  target: "スライド仕様: 型のデータ"
+  check: "型の `implies` が成り立つ中身になっている。立証設計の `holds` と食い違う中身を書いていない"
+  judge: inspector
+
+- id: K07-29
+  stage: 7
+  group: "文"
+  target: "語彙表: `defined_in`、`no_definition`"
+  check: "`defined_in` が示すスライドが、その語を実際に説明している。定義が要らない理由が、ブリーフの読み手の水準に合っている"
+  judge: inspector
+  defined_in: terms.md
+
+- id: K07-30
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: 図や表のデータの対象、色"
+  check: "複数のスライドに出る対象が、資料の表現規約の色の割り当ての通りに、同じ色と同じ名前で指定されている。図や表のデータは、対象を語彙表または仕組みの定義のIDで参照する"
+  judge: machine
+  defined_in: visual-grammar.md#c-一貫性
+
+- id: K07-31
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: 色"
+  check: "色の割り当てのある色を、別の対象に使っていない。強調の色を、対象の色に使っていない"
+  judge: machine
+  defined_in: visual-grammar.md#c-一貫性
+
+- id: K07-32
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: グラフの軸の範囲"
+  check: "並べて比べる、同じ種類の量を表す複数のグラフが、同じ軸の範囲を使う"
+  judge: machine
+  defined_in: visual-grammar.md#f-量の歪み
+
+- id: K07-33
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: グラフの軸、構成比"
+  check: "棒グラフの量の軸が0から始まる。軸を2本持つグラフに理由がある。構成比の合計が100%になる"
+  judge: machine
+  defined_in: visual-grammar.md#f-量の歪み
+
+- id: K07-34
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: グラフの型"
+  check: "立体のグラフを使わない"
+  judge: machine
+  judge_text: "機械。型の定義に置かない"
+  defined_in: visual-grammar.md#f-量の歪み
+
+- id: K07-35
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: 構成比のグラフ"
+  check: "構成比を円で表すのは、項目が少ない場合に限る。項目の数の上限は型の収容量で定める"
+  judge: machine
+  defined_in: visual-grammar.md#f-量の歪み
+
+- id: K07-36
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: アイコン"
+  check: "アイコンが、仕組みの定義の要素に対応するものだけである"
+  judge: machine
+  defined_in: visual-grammar.md#g-飾り
+
+- id: K07-37
+  stage: 7
+  group: "図と表([形が伝える意味](visual-grammar.md)の検査)"
+  target: "スライド仕様: 図の要素とつながりの数"
+  check: "図の要素とつながりの数が型の収容量を超える場合は、警告とする"
+  judge: machine
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K07-38
+  stage: 7
+  group: "状態"
+  target: "スライド仕様: `status`"
+  check: "保留のスライドの全てに、Issueの番号がある"
+  judge: machine
+
+- id: K07-39
+  stage: 7
+  group: "章の受け入れ"
+  target: "スライド仕様: 受け入れ済みの章を含む、言い回しと文型"
+  check: "受け入れ済みの章とあわせて、同じ言い回しと同じ文型の出現回数を集計する。資料の表現規約の目安を超えた場合は、設計セッションが直し方を決め、章の執筆のセッションに渡す"
+  judge: machine
+  judge_text: "機械が集計する"
+
+- id: K07-40
+  stage: 7
+  group: "章の受け入れ"
+  target: "描画上の診断: 診断の項目"
+  check: "描画上の診断に、文字と背景の色の差、隣り合う色の差、1枚で使う色相の数を含める"
+  judge: machine
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K07-41
+  stage: 7
+  group: "章の受け入れ"
+  target: "章をビルドした実物: 描画上の診断"
+  check: "その章をビルドし、描画上の診断(文字のあふれ、要素の重なり、描かれなかった内容、文字の大きさの下限)が0件である"
+  judge: machine
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K07-42
+  stage: 7
+  group: "章の受け入れ"
+  target: "章をビルドした実物: 主な読み手の通読"
+  check: "骨組みの資料の該当する章を実物に差し替え、主な読み手の通読をその章について実行する。前の章が未完成の場合は、入口の状態を章の前提と到達点から与える。重大度が高のエラーがなく、章の出口の状態が到達点と合う"
+  judge: reader
+  defined_in: stages/08-integration.md#実行の方法
+
+# ---- 工程8
+
+- id: K08-01
+  stage: 8
+  group: "開始の条件"
+  target: "全ての成果物: 機械的な検査のコマンド"
+  check: "機械的な検査のコマンドが通る。コミット前の検査は飛ばされうるため、ここで再実行する"
+  judge: machine
+  defined_in: checks.md#検査の実行
+
+- id: K08-02
+  stage: 8
+  group: "開始の条件"
+  target: "スライド仕様: `status`"
+  check: "保留のスライドが0件である"
+  judge: machine
+
+- id: K08-03
+  stage: 8
+  group: "開始の条件"
+  target: "状態の記録: 無効の成果物"
+  check: "合格が無効になった成果物が0件である。スライドのほか、立証の設計、章の前提と到達点、型の見本を含む"
+  judge: machine
+  defined_in: rework.md#上流が変わったとき
+
+- id: K08-04
+  stage: 8
+  group: "開始の条件"
+  target: "ビルドした実物: 描画上の診断"
+  check: "ビルドが成功し、描画上の診断が0件である"
+  judge: machine
+
+- id: K08-05
+  stage: 8
+  group: "開始の条件"
+  target: "ビルドした実物: 枚数、題、要点"
+  check: "枚数、題、要点が、ストーリーライン、および自動で作るスライドと一致する"
+  judge: machine
+
+- id: K08-06
+  stage: 8
+  group: "開始の条件"
+  target: "ビルドした実物: 語の初出"
+  check: "語が、語彙表の `defined_in` が示すスライドより前に使われていない"
+  judge: machine
+  defined_in: terms.md
+
+- id: K08-07
+  stage: 8
+  group: "開始の条件"
+  target: "要約、章のまとめ、節のまとめ: 文"
+  check: "要約、章のまとめ、節のまとめの文が、元にした承認済みの文と一致する"
+  judge: machine
+
+- id: K08-08
+  stage: 8
+  group: "開始の条件"
+  target: "要約: 添えた根拠"
+  check: "要約に根拠を添える場合は、各行に元にした主張があり、数値が一致し、元の主張より強い言い方になっていない"
+  judge: [machine, inspector]
+
+- id: K08-09
+  stage: 8
+  group: "終了の条件"
+  target: "実行の記録: 場面"
+  check: "全ての場面を実行している"
+  judge: machine
+  defined_in: stages/08-integration.md#テストの場面
+
+- id: K08-10
+  stage: 8
+  group: "終了の条件"
+  target: "実行の記録: つなぎ目"
+  check: "網羅の確認で、通っていないつなぎ目がない"
+  judge: machine
+  defined_in: stages/08-integration.md#網羅の確認
+
+- id: K08-11
+  stage: 8
+  group: "終了の条件"
+  target: "Issue: 重大度が高のエラー"
+  check: "重大度が高のエラーが0件である"
+  judge: machine
+  judge_text: "機械。Issueの状態"
+
+- id: K08-12
+  stage: 8
+  group: "終了の条件"
+  target: "Issue: 重大度が中のエラー"
+  check: "重大度が中のエラーは、直すか、ユーザーが受け入れると決めている"
+  judge: user
+
+- id: K08-13
+  stage: 8
+  group: "終了の条件"
+  target: "検査の報告: 重大度が低のエラー、受け入れたエラー"
+  check: "重大度が低のエラーと、受け入れたエラーは、工程9の検査の報告に載せる"
+  judge: machine
+
+# ---- 工程9
+
+- id: K09-01
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 描画上の診断"
+  check: "描画上の診断(文字のあふれ、要素の重なり、描かれなかった内容、文字の大きさの下限、色の差、色相の数、禁則と不自然な改行)が0件である"
+  judge: machine
+  defined_in: visual-grammar.md#d-知覚の限界
+
+- id: K09-02
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 画像"
+  check: "最終の出力に載っている全ての画像について、写り込みの検査をもう一度行う。ブリーフの「外に出せない情報」を渡す"
+  judge: inspector
+  critical: true
+
+- id: K09-03
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 枚数、題、要点"
+  check: "スライドの枚数、題、要点が、ストーリーライン、および自動で作るスライドと一致する"
+  judge: machine
+
+- id: K09-04
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 目次、ページ番号、他のスライドへの言及"
+  check: "目次、ページ番号、他のスライドへの言及が、全て解決している"
+  judge: machine
+
+- id: K09-05
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 抜き出した文字の中の数値"
+  check: "出力から抜き出した文字の中の数値が、全て素材台帳の値と一致する"
+  judge: machine
+
+- id: K09-06
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 出典の一覧"
+  check: "出典の一覧が、使った事実を全て含む"
+  judge: machine
+
+- id: K09-07
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 抜き出した文字"
+  check: "出力から抜き出した文字に、内部のIDがない"
+  judge: machine
+  defined_in: writing.md#内部のid
+
+- id: K09-08
+  stage: 9
+  group: "出力"
+  target: "最終の出力: ノート"
+  check: "配布する資料のノートが空である。口頭の資料のノートに、内部向けの記述(Issueの番号、作業の覚え書き)がない"
+  judge: machine
+
+- id: K09-09
+  stage: 9
+  group: "出力"
+  target: "最終の出力: 付帯情報"
+  check: "ファイルの作成者などの付帯情報が、表現規約の定めの通りである"
+  judge: machine
+
+- id: K09-10
+  stage: 9
+  group: "警告(合否にしない)"
+  target: "最終の出力: ノートの字数"
+  check: "口頭の資料で、ノートの字数から見積もった発表時間が、ブリーフの制約を超える"
+  judge: machine
+
+- id: K09-11
+  stage: 9
+  group: "受け入れ"
+  target: "検査の報告: 項目"
+  check: "検査の報告に、作り方の2の表の全ての項目が載っている"
+  judge: machine
+  defined_in: stages/09-finish.md#2-検査の報告を作る
+
+- id: K09-12
+  stage: 9
+  group: "受け入れ"
+  target: "集計の記録: 抜き取りの結果"
+  check: "抜き取りを行い、結果を記録している。誤りが見つかった場合は、重大な検査のやり直しを終えている"
+  judge: [user, machine]
+
+- id: K09-13
+  stage: 9
+  group: "受け入れ"
+  target: "ユーザーの通し"
+  check: "ユーザーが、実際に使う形で1回通している"
+  judge: user
+
+- id: K09-14
+  stage: 9
+  group: "受け入れ"
+  target: "実際の環境で確かめる項目の記録"
+  check: "実際の環境で確かめる項目の全てに、結果か、該当しないの記録がある"
+  judge: user
+  defined_in: stages/09-finish.md#5-実際の環境で確かめる
+
+- id: K09-15
+  stage: 9
+  group: "受け入れ"
+  target: "受け入れの問いへの答え"
+  check: "受け入れの問いの全てに、ユーザーが答えている"
+  judge: user
+  defined_in: stages/00-brief.md#受け入れの問い
+
+- id: K09-16
+  stage: 9
+  group: "受け入れ"
+  target: "ユーザーの承認"
+  check: "残っている問題を承知のうえで出せると、ユーザーが答えている"
+  judge: user
+
+# ---- 複数の工程で使う検査
+
+- id: KX-01
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "1文の字数が、項目の種類ごとに定める上限以下である"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-02
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "1文の読点の数が、上限以下である"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-03
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "「の」の連続と、同じ助詞の重なりが、連続する回数の上限以下である"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-04
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "漢字の連なりが、連続する字数の上限以下である"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-05
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "辞書にある冗長な言い回しを含まない"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-06
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "辞書にある、中身のない形容と強調を含まない"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-07
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "辞書にある書き出しの決まり文句(「一言で言うと」「結論から言うと」「要するに」「端的に言えば」など)を含まない"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-08
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "辞書にある、LLMに多い語を含まない"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-09
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "ぼかし(「など」「等」「といった」)の数が、上限以下である"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-10
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "「また」「さらに」「加えて」で始まる文の割合が、上限以下である"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-11
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "近い位置での同じ語の繰り返しの回数が、上限以下である"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-12
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "です・ます調と、である調が混在していない"
+  judge: machine
+  defined_in: writing.md#機械で測るもの
+
+- id: KX-13
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "題"
+  check: "題が名詞で終わる。句点がない。字数が上限以下である"
+  judge: machine
+  defined_in: writing.md#項目ごとの書き方
+
+- id: KX-14
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "要点"
+  check: "要点が1文である。文末が「がわかる」「について」「すべき」でない。字数が、2行に収まる上限以下である"
+  judge: machine
+  defined_in: writing.md#項目ごとの書き方
+
+- id: KX-15
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "読み手に見せる文に、内部のIDがない。IDの書式に合う文字列が、`{}` で囲んだ参照のほかにない"
+  judge: machine
+  defined_in: writing.md#内部のid
+
+- id: KX-16
+  stage: [2, 3, 4, 7]
+  group: "文の機械の検査"
+  target: "読み手に見せる文"
+  check: "全角の数字と英字、半角の括弧と句読点、「表記」の決まりに合わない句点がない"
+  judge: machine
+  defined_in: writing.md#表記
+
+- id: KX-17
+  stage: [2, 3, 4, 7]
+  group: "語彙の検査"
+  target: "読み手に見せる文: 名詞と動作を指す語"
+  check: "全ての文から、名詞と動作を指す語を機械的に抜き出し、語彙表、`allowed` と照合する。扱いは、上の「厳しさの段階」の表による"
+  judge: machine
+  defined_in: terms.md#厳しさの段階
+
+- id: KX-18
+  stage: [2, 3, 4, 7]
+  group: "語彙の検査"
+  target: "読み手に見せる文"
+  check: "`banned` の語を含まない"
+  judge: machine
+  defined_in: terms.md#厳しさの段階
+
+- id: KX-19
+  stage: [2, 3, 4, 7]
+  group: "語彙の検査"
+  target: "読み手に見せる文: 語の表記"
+  check: "表記の揺れ(長音の有無、送り仮名、全角と半角)を、正規化して語彙表と照合する"
+  judge: machine
+  defined_in: terms.md
