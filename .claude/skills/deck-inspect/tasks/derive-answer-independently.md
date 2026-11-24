@@ -12,13 +12,16 @@
 
 ## 入力
 
-- `work/views/derive-answer-independently/00-brief.md`(写し。`00-brief.md` の「答えるべき問い」だけ)
-- `work/views/derive-answer-independently/01-sources.yaml`(写し。`01-sources.yaml` から「stance」を除いたもの)
+- `restricted/derive-answer-independently/views/00-brief.md`(写し。`00-brief.md` の「答えるべき問い」だけ)
+- `restricted/derive-answer-independently/views/01-sources.yaml`(写し。`01-sources.yaml` から「stance」を除いたもの)
 
 ## 読まないもの
 
 入力に挙げたもの以外を読まない。このファイルと、スキルの「守ること」は読む。正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。
-`work/views/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。
+`restricted/derive-answer-independently/views/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。
+資料のディレクトリは、設定が読み取りを拒否している。元のファイルを、Gitの履歴からも、スクリプトからも読まない。
+読めないファイルに当たったら、回避しない。作業票の入力で足りないと報告して終える。
+人の許可を待つ表示が出る命令を使わない。人が見ていないので、表示が出ると止まる。ファイルの読み書きには、シェルの命令ではなく、ファイルを読む道具と書く道具を使う。
 
 ## 手順
 
@@ -45,6 +48,8 @@
 ## 成果物
 
 - `work/answers/derive-answer-independently.yaml`
+
+成果物は、`restricted/derive-answer-independently/results/` の下に、上の名前のまま書く。手順が示す置き場も、その下に読み替える。資料のディレクトリには書かない。
 
 ## 検査
 

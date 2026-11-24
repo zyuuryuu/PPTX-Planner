@@ -13,14 +13,17 @@
 
 ## 入力
 
-- `work/views/read-chapter-as-reader/00-brief.md`(写し。`00-brief.md` の「主な読み手」「読み手が既に知っていること」「読み手の立場と懸念」だけ)
-- `build/`
-- `work/views/read-chapter-as-reader/04-chapter-states.yaml`(写し。`04-chapter-states.yaml` の「entry」だけ)
+- `restricted/read-chapter-as-reader/views/00-brief.md`(写し。`00-brief.md` の「主な読み手」「読み手が既に知っていること」「読み手の立場と懸念」だけ)
+- `restricted/read-chapter-as-reader/views/build/`(写し。`build/` のまるごと)
+- `restricted/read-chapter-as-reader/views/04-chapter-states.yaml`(写し。`04-chapter-states.yaml` の「entry」だけ)
 
 ## 読まないもの
 
 入力に挙げたもの以外を読まない。このファイルと、スキルの「守ること」は読む。正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。
-`work/views/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。
+`restricted/read-chapter-as-reader/views/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。
+資料のディレクトリは、設定が読み取りを拒否している。元のファイルを、Gitの履歴からも、スクリプトからも読まない。
+読めないファイルに当たったら、回避しない。作業票の入力で足りないと報告して終える。
+人の許可を待つ表示が出る命令を使わない。人が見ていないので、表示が出ると止まる。ファイルの読み書きには、シェルの命令ではなく、ファイルを読む道具と書く道具を使う。
 
 ファイルをまるごと渡す入力は、次の定めによる。
 
@@ -128,6 +131,8 @@ findings:
 ## 成果物
 
 - `runs/`(書式は、このファイルの「実行の記録」に定める)
+
+成果物は、`restricted/read-chapter-as-reader/results/` の下に、上の名前のまま書く。手順が示す置き場も、その下に読み替える。資料のディレクトリには書かない。
 
 ### 実行の記録(`docs/stages/08-integration.md`)
 

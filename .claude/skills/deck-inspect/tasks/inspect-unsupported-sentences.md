@@ -8,13 +8,16 @@
 
 ## 入力
 
-- `07-slides/`
-- `work/views/inspect-unsupported-sentences/01-sources.yaml`(写し。`01-sources.yaml` の「そのスライドが使う事実」だけ)
+- `restricted/inspect-unsupported-sentences/views/07-slides/`(写し。`07-slides/` のまるごと)
+- `restricted/inspect-unsupported-sentences/views/01-sources.yaml`(写し。`01-sources.yaml` の「そのスライドが使う事実」だけ)
 
 ## 読まないもの
 
 入力に挙げたもの以外を読まない。このファイルと、スキルの「守ること」は読む。正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。
-`work/views/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。
+`restricted/inspect-unsupported-sentences/views/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。
+資料のディレクトリは、設定が読み取りを拒否している。元のファイルを、Gitの履歴からも、スクリプトからも読まない。
+読めないファイルに当たったら、回避しない。作業票の入力で足りないと報告して終える。
+人の許可を待つ表示が出る命令を使わない。人が見ていないので、表示が出ると止まる。ファイルの読み書きには、シェルの命令ではなく、ファイルを読む道具と書く道具を使う。
 
 ファイルをまるごと渡す入力は、次の定めによる。
 
@@ -82,6 +85,8 @@
 ## 成果物
 
 - `checks/`(書式は、このファイルの「検査の記録」に定める)
+
+成果物は、`restricted/inspect-unsupported-sentences/results/` の下に、上の名前のまま書く。手順が示す置き場も、その下に読み替える。資料のディレクトリには書かない。
 
 ### 検査の記録(`docs/rework.md`)
 

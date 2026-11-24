@@ -18,7 +18,9 @@
 references は、文面を写さず、場所だけを挙げる。リンクの先は、スキルの置き場から届く形に直す。
 
 入力に制限のある作業(restricted)は、正本の文書を開かずに済む形にする。
-  - 項目まで絞った入力は、機械が作る写し(work/views/<作業のid>/)を指す。写しは tools/work_order.py が作る。
+  - 入力は、機械が作る写し(restricted/<作業のid>/views/)を指す。写しは tools/work_order.py が作る。
+  - 成果物は、restricted/<作業のid>/results/ の下に書かせる。子セッションは、資料のディレクトリを読めないブランチで動く。
+    設計セッションとPMが自分で行う作業は、この扱いをしない。項目まで絞った入力だけを、写しにする。
   - references、検査の定義(defined_in)、制限の定め(restricted_by)、報告の書式が指す見出しの文面を、作業のファイルに写す。
   - 写した文面のリンクは、先を消して、文字だけにする。
 
@@ -221,7 +223,20 @@ def places(refs):
     return out
 
 
-VIEW_DIR = "work/views"   # 写しの置き場。資料のディレクトリから
+HANDOFF_DIR = "restricted"   # 入力を限る作業の、写しと結果の置き場。リポジトリの根から。決まりは docs/organization.md にある
+
+
+def via_branch(task):
+    """短い命のブランチから起こす子セッションの作業か。入力を限る作業のうち、設計セッションとPMが自分で行うものを除く。"""
+    return bool(task.get("restricted") and task["role"] not in PER_STAGE)
+
+
+def views_dir(task):
+    return f"{HANDOFF_DIR}/{task['id']}/views"
+
+
+def results_dir(task):
+    return f"{HANDOFF_DIR}/{task['id']}/results"
 
 
 def grouped_inputs(task):
@@ -236,16 +251,19 @@ def grouped_inputs(task):
 
 
 def has_view(task, name, items):
-    """この入力を、写しで渡すか。入力を限る作業の、項目まで絞った入力が当たる。"""
-    return bool(task.get("restricted") and items and not name.startswith("「"))
+    """この入力を、写しで渡すか。入力を限る作業の、ファイル名が決まっている入力が当たる。
+    設計セッションとPMが自分で行う作業では、項目まで絞った入力だけが当たる。"""
+    return bool(task.get("restricted") and not name.startswith("「") and (items or via_branch(task)))
 
 
 def view_path(task, name):
-    return f"{VIEW_DIR}/{task['id']}/{name}"
+    return f"{views_dir(task)}/{name}"
 
 
 def item_text(items):
     """項目の一覧を、読む者に向けて書く。"""
+    if not items:
+        return "のまるごと"
     names = "".join(f"「{i.lstrip('-')}」" for i in items)
     return f"から{names}を除いたもの" if items[0].startswith("-") else f"の{names}だけ"
 
@@ -253,7 +271,8 @@ def item_text(items):
 def input_text(task, name, items):
     """入力の1件を、読む者に向けて書く。"""
     if name.startswith("「"):
-        return f"{name}(ファイル名は決まっていない)" + (item_text(items) if items else "")
+        text = f"{name}(ファイル名は決まっていない)" + (item_text(items) if items else "")
+        return text + (f"。起こす側が、複製を `{views_dir(task)}/` に置く" if via_branch(task) else "")
     if has_view(task, name, items):
         return f"`{view_path(task, name)}`(写し。`{name}` {item_text(items)})"
     return f"`{name}`" + (" " + item_text(items) if items else "")
@@ -269,7 +288,25 @@ def view_notice(task):
     """写しで渡す入力がある作業に添える文。"""
     if not any(has_view(task, name, items) for name, items in grouped_inputs(task)):
         return []
-    return [f"`{VIEW_DIR}/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。"]
+    return [f"`{views_dir(task)}/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。"]
+
+
+def branch_notice(task):
+    """短い命のブランチで行う作業に添える、読み方の決まり。"""
+    if not via_branch(task):
+        return []
+    return ["資料のディレクトリは、設定が読み取りを拒否している。元のファイルを、Gitの履歴からも、スクリプトからも読まない。",
+            "読めないファイルに当たったら、回避しない。作業票の入力で足りないと報告して終える。",
+            "人の許可を待つ表示が出る命令を使わない。人が見ていないので、表示が出ると止まる。"
+            "ファイルの読み書きには、シェルの命令ではなく、ファイルを読む道具と書く道具を使う。"]
+
+
+def results_notice(task):
+    """短い命のブランチで行う作業に添える、成果物の置き場の決まり。"""
+    if not via_branch(task):
+        return []
+    return [f"成果物は、`{results_dir(task)}/` の下に、上の名前のまま書く。手順が示す置き場も、その下に読み替える。"
+            "資料のディレクトリには書かない。"]
 
 
 def output_formats(plan, task):
@@ -362,7 +399,7 @@ class Page:
         if not self.restricted:
             return ["この作業だけの制限はない。「守ること」に従う。"]
         out = ["入力に挙げたもの以外を読まない。このファイルと、スキルの「守ること」は読む。"
-               "正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。"] + view_notice(task)
+               "正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。"] + view_notice(task) + branch_notice(task)
         by = task.get("restricted_by", [])
         if by:
             out += ["", "ファイルをまるごと渡す入力は、次の定めによる。"]
@@ -408,6 +445,8 @@ class Page:
         for ref in task["sections"]:
             out += self.copy(ref, "###")
         out += ["## 成果物", ""] + output_lines(src.plan, task, lambda ref: f"このファイルの「{ref.partition('#')[2]}」") + [""]
+        if results_notice(task):
+            out += results_notice(task) + [""]
         for ref in output_formats(src.plan, task):
             out += self.copy(ref, "###")
         out += ["## 検査", ""] + self.checks("###") + [""]
