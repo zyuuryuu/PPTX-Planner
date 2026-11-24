@@ -1,0 +1,156 @@
+# 検査の結果: 工程7、付録(ap)、2回目(再検査)
+check: スライドの文の重大な検査(工程7)。裏付けのない文、限定の残存。再検査
+target:
+  file: trial/deck/07-slides/ap.yaml
+  slide: ap-s2
+  branch: claude/trial-soc
+  commit: 0f9fab4(ap.yaml の最新。執筆の直しは 5a514b9 と 0f9fab4)
+  scope: >-
+    前回(7-ap-1.yaml)の不合格3件(takeaway、body.caveat、notes-10)が解消したか。
+    直した箇所(takeaway、caveat、notes の直した文)で新しい問題が生じていないか。
+    直していない文(body.text、notes-1、notes-2、notes-4〜notes-9)は判定の対象外。
+judge: claude-opus-5-5(検査セッション。モデルの識別子は設定値。実際に応答したモデルとは異なりうる)
+materials:
+  - trial/deck/checks/7-ap-1.yaml(前回の不合格3件)
+  - git show 5a514b9、0f9fab4(執筆の直し)
+  - trial/deck/work/ap.md(ストーリーラインの ap-s2 の新しい source、立証の設計の show、F508、F509、F510 の全文)
+  - trial/deck/decisions.md の D015、D016、D017
+  - docs/writing.md の「裏付けのない文」「限定の残存」
+method: >-
+  裏付けは、文ごとに、F508、F509、F510 の statement、quote、qualifiers、metric だけで裏付けられるかを見た。
+  出典は開いていない(照合を依頼されていないため)。
+  限定は、直した文が事実の qualifiers を落として事実より強い主張になっていないかを見たうえで、
+  前回スライド全体で残っていた qualifiers が、直した後も残っているかを照合した。
+  依頼に従い、出典の行(見出しの下に描かれる)にある限定は残っているとみなした。
+
+summary:
+  previous_failures: {resolved: 3, unresolved: 0}
+  changed_sentences: 5
+  support: {pass: 5, fail: 0, undetermined: 0}
+  qualifiers: {pass: 5, fail: 0, undetermined: 0}
+  main_finding: >-
+    前回の3件は解消した。但し書きと結論1行は、3つの調査が「何を測っていないか」を言い切る形をやめ、
+    スライドに示した結果そのもの(操作の数、引き継ぐと答えた割合、証言)が誤りの割合ではない、と述べる形になった。
+    これは各事実の quote と metric の性質、および qualifiers で裏付けられる。
+    調査ごとに測っていない誤りは、新しい出典の行が F508、F509、F510 の qualifiers のとおりに書き分けている。
+    直した箇所に新しい不合格、判定できないはない。
+
+previous_findings:
+  - id: takeaway
+    previous: 近い調査が示すのは、調べる操作の数、自己申告、証言までである
+    now: 近い調査が示したのは、調べる操作の数、引き継ぐと答えた割合、上げる圧力の証言である
+    resolved: true
+    reason: >-
+      前回の問題は「までである」が、3つの調査がそれ以上のこと(誤りの割合)を示していないと言い切っていた点。
+      直した文は、示したものを列挙するだけで、測っていないものについて述べていない。
+  - id: body.caveat
+    previous: どれも、上げるのが遅れる誤りや上げすぎる誤りの割合は測っていない
+    now: どの結果も、誤りが起きた割合ではない
+    resolved: true
+    reason: >-
+      前回の問題は「どれも」が、3つの調査の全てについて、2種類の誤りの両方を測っていないと述べていた点。
+      直した文の主語は「調査」ではなく、スライドに示した「結果」で、それぞれが誤りの割合ではないと述べる。
+      調査がほかに何を測ったかには触れていない。
+  - id: notes-10
+    previous: 強調するのは下の枠で、どの調査も誤りの割合は測っていない、という点である。
+    now: 強調するのは下の枠で、上の結果はどれも誤りが起きた割合ではない、という点である。どの調査が、どちらの誤りを測っていないかは、出典の行で示している。
+    resolved: true
+    reason: caveat と同じ直し方で、「調査」から「上の結果」に主語を移した。2文目は出典の行への案内で、出典の行の内容と合う(下の notes-10b)。
+
+source_line:
+  # 判定の対象ではない(設計セッションの変更)。限定が残る場所として照合した
+  text: Kerstenら(2025年)、Moosmannら(2026年)は上げるのが遅れる誤りを、Alahmadiら(USENIX Security 2022)は上げすぎる誤りの割合を測っていない
+  matches_facts: >-
+    F508 の qualifiers「上げるのが遅れる誤りを直接測った結果ではない」、F509 の qualifiers「実際のエスカレーション遅れの測定ではない」、
+    F510 の qualifiers「上げ過ぎの割合は未測定」と合う。前回の指摘の suggestion の例と同じ範囲で、残りの組み合わせには触れていない。
+
+slide_level_qualifiers:
+  # 直した後も、スライドが使う事実の qualifiers がスライドのどこかに残っているか
+  F508:
+    - {qualifier: 商用SOCと協力したthink-aloud実験, kept_in: "notes-3(直した文)「商用SOCと協力した think-aloud(…)実験」"}
+    - {qualifier: 分析者は5人(400件の調査), kept_in: "notes-3(直した文)「…解析者(出典の語で Tier-1)5人が400件を調べた」"}
+    - {qualifier: 「可能性が高い(more likely)」という推論の記述, kept_in: "notes-4(変更なし)"}
+    - {qualifier: 上げるのが遅れる誤りを直接測った結果ではない, kept_in: "notes-5(変更なし)、出典の行「Kerstenら(2025年)…は上げるのが遅れる誤りを…測っていない」。caveat は前回この限定を広げて述べていたが、今は「誤りが起きた割合ではない」で、限定を落としてはいない"}
+  F509:
+    - {qualifier: SOC分析者12人, kept_in: "body.text-2、notes-6(変更なし)"}
+    - {qualifier: 事前の質問票での自己申告, kept_in: "body.text-2「事前調査」「答えた」、notes-6(変更なし)。takeaway(直した文)も「引き継ぐと答えた割合」で自己申告であることを残している"}
+    - {qualifier: 実際のエスカレーション遅れの測定ではない, kept_in: "notes-7(変更なし)、出典の行"}
+    - {qualifier: 一般化を主張しない研究, kept_in: "notes-7(変更なし)"}
+  F510:
+    - {qualifier: MSSP(外部委託のSOC)の分析者の証言(参加者A1, A2, D6, E7), kept_in: "body.text-3、notes-8(変更なし)。takeaway(直した文)も「証言」"}
+    - {qualifier: 実務者21人の質的調査, kept_in: "notes-8(変更なし)"}
+    - {qualifier: 上げ過ぎの割合は未測定, kept_in: "notes-9(変更なし)、出典の行「Alahmadiら(USENIX Security 2022)は上げすぎる誤りの割合を測っていない」"}
+  result: 全て残っている
+
+sentences:
+  - id: takeaway
+    text: 近い調査が示したのは、調べる操作の数、引き継ぐと答えた割合、上げる圧力の証言である
+    facts: [F508, F509, F510]
+    support:
+      verdict: 合格
+      reason: >-
+        「調べる操作の数」は F508 の quote「require more actions on average to investigate」、
+        「引き継ぐと答えた割合」は F509 の metric「不確かなときにチケットを作って引き継ぐと答えた分析者の割合」と quote「Only 33% stated that they would create a ticket and pass the case on」、
+        「上げる圧力の証言」は F510 の statement と quote「pressure on the analysts to raise every possible suspicious alarm」、qualifiers「証言」で裏付けられる。
+        前回の「までである」の言い切りはなくなった。
+      note: >-
+        参考(判定に影響しない): 「示したのは…である」は、各調査の示したものの全てではなく、このスライドが取り上げた結果を指すと読んだ
+        (F509 は 92%、71% も示しており、ノート6文目に書かれている)。
+    qualifiers:
+      verdict: 合格
+      reason: 「答えた割合」で自己申告、「証言」で質的な証言であることを残し、事実より強い水準で述べていない。
+
+  - id: body.caveat
+    text: どの結果も、誤りが起きた割合ではない
+    facts: [F508, F509, F510]
+    support:
+      verdict: 合格
+      reason: >-
+        「どの結果も」は body.text の3つの結果(操作の数の平均の差、引き継ぐと答えた割合、圧力の証言)を指す。
+        F508 の結果は操作の数の比較(quote)で、qualifiers「上げるのが遅れる誤りを直接測った結果ではない」。
+        F509 の結果は不確かなときの行動の自己申告の割合(metric)で、qualifiers「実際のエスカレーション遅れの測定ではない」。
+        F510 の結果は証言(qualifiers)で、「上げ過ぎの割合は未測定」。
+        どれも、その結果の性質(数え方)から誤りが起きた割合ではないことが事実の本文で分かる。
+        調査がほかに何を測ったか、測っていないかは述べておらず、前回の裏付けの問題は生じていない。
+    qualifiers:
+      verdict: 合格
+      reason: 事実の限定を落として主張を強めていない。調査ごとの限定は出典の行と notes-5、notes-7、notes-9 にある。
+
+  - id: notes-3
+    text: Kerstenらは、商用SOCと協力した think-aloud(考えを声に出しながら作業してもらう)実験で、一次解析を担う解析者(出典の語で Tier-1)5人が400件を調べた様子を記録した(F508)。
+    facts: [F508]
+    support:
+      verdict: 合格
+      reason: >-
+        5a514b9 で「一次解析を担う解析者(出典の語で Tier-1)」が加わった。Tier-1 は F508 の statement「Tier-1分析者の現地実験」と source の題名にある。
+        「一次解析を担う」は Tier-1 の語の説明で、括弧で出典の語であることを示している。前回 think-aloud の括弧の説明を語の説明として扱ったのと同じ扱いとした。
+        5、400 は qualifiers にあり、同じ文に (F508) がある(D016)。それ以外は前回合格の文から変わっていない。
+      note: >-
+        参考: Tier-1 を「一次解析を担う」と言い換えることの正しさは事実に書かれていない(出典を開いていない)。
+        語の説明として読める範囲と判断したが、厳密に確かめるなら出典の Tier-1 の定義との照合が要る。
+    qualifiers:
+      verdict: 合格
+      reason: 前回の参考の指摘(Tier-1 の限定がない)に応え、F508 の statement の Tier-1 を残した。qualifiers(think-aloud、5人、400件)は全て残っている。
+
+  - id: notes-10a
+    text: 強調するのは下の枠で、上の結果はどれも誤りが起きた割合ではない、という点である。
+    facts: [F508, F509, F510]
+    support:
+      verdict: 合格
+      reason: caveat と同じ内容で、caveat の理由と同じく裏付けられる。「上の結果」は本文の3つの結果を指す。
+    qualifiers:
+      verdict: 合格
+      reason: 事実の限定を落としていない。
+
+  - id: notes-10b
+    text: どの調査が、どちらの誤りを測っていないかは、出典の行で示している。
+    facts: []
+    support:
+      verdict: 合格
+      reason: >-
+        スライドの構成への案内で、事実の主張を含まない。案内先の出典の行(ストーリーラインの ap-s2 の source)は、
+        調査ごとに測っていない誤りを書き分けており、F508、F509、F510 の qualifiers と合う(source_line を参照)。
+        立証の設計の show「前の2件は上げるのが遅れる誤りを、後の1件は上げすぎる誤りの割合を測っていないことを、調査ごとに示す」とも合う。
+    qualifiers:
+      verdict: 合格
+      reason: 事実を使っていない。
