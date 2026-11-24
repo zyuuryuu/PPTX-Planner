@@ -21,6 +21,7 @@
 依存: Python 3 の標準ライブラリと PyYAML。
 """
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -214,6 +215,13 @@ DECISIONS = "decisions.md"
 DECK_TYPE_FILE = "definitions/deck-type.yaml"
 PATTERN_DEFS_FILE = "definitions/patterns.yaml"
 
+# 描画の結果(tools/render.py の出力)の置き場。None なら <資料のディレクトリ>/build。--build で変える。
+BUILD_DIR = None
+DIAGNOSTICS = "diagnostics.json"
+# 描画が読む成果物。描画上の診断が今の成果物のものかを、要約値で確かめる(tools/render.py の inputs_hash と同じ計算)。
+RENDER_INPUT_FILES = [BRIEF, STYLE, TERMS, SOURCES, MODEL, CHAPTERS, STORY, PROOF, PATTERNS]
+RENDER_INPUT_DIRS = ["definitions", "06-samples", "07-slides"]
+
 # 成果物ごとの、作る工程と最上位の型。
 ARTIFACTS = {
     BRIEF: (0, None), STYLE: (0, dict),
@@ -291,6 +299,57 @@ class Deck:
     def text(self, name):
         path = self.root / name
         return path.read_text(encoding="utf-8") if path.is_file() else None
+
+    # -- 描画の結果
+
+    def inputs_hash(self):
+        if "inputs_hash" not in self._data:
+            files = [self.root / n for n in RENDER_INPUT_FILES]
+            for sub in RENDER_INPUT_DIRS:
+                files += sorted((self.root / sub).glob("*.yaml")) if (self.root / sub).is_dir() else []
+            h = hashlib.sha1()
+            for f in files:
+                if f.is_file():
+                    h.update(f.relative_to(self.root).as_posix().encode("utf-8") + b"\0" + f.read_bytes() + b"\0")
+            self._data["inputs_hash"] = h.hexdigest()
+        return self._data["inputs_hash"]
+
+    def diagnostics(self, sub=None):
+        """描画上の診断(tools/render.py が書く diagnostics.json)。(全体, スライドのID -> 1件, 表示する置き場, 読めない理由) を返す。"""
+        key = "diagnostics/" + (sub or "")
+        if key not in self._data:
+            base = Path(BUILD_DIR) if BUILD_DIR else self.root / "build"
+            path = (base / sub if sub else base) / DIAGNOSTICS
+            shown = "build/" + (sub + "/" if sub else "") + DIAGNOSTICS
+            doc, problem = None, None
+            how = "python3 tools/render.py <資料のディレクトリ>" + (" --samples" if sub == "samples" else "")
+            if not path.is_file():
+                problem = f"描画の結果がない。先に描く({how})"
+            else:
+                try:
+                    doc = json.loads(path.read_text(encoding="utf-8"))
+                except ValueError:
+                    doc = None
+                if not isinstance(doc, dict) or not isinstance(doc.get("slides"), list):
+                    doc, problem = None, f"描画上の診断を読めない。描き直す({how})"
+            slides = {e.get("id"): e for e in (doc or {}).get("slides", []) if isinstance(e, dict)}
+            self._data[key] = (doc, slides, shown, problem)
+        return self._data[key]
+
+    def diagnosed(self, R, sub, sid):
+        """スライド1枚の描画上の診断。ない場合と、今の成果物より古い場合は、不合格を書いて None を返す。"""
+        doc, slides, shown, problem = self.diagnostics(sub)
+        if problem:
+            R.ng(sid, shown, problem)
+            return None
+        e = slides.get(sid)
+        if e is None:
+            R.ng(sid, shown, "このスライドの描画上の診断がない。描き直す")
+            return None
+        if e.get("inputs_hash") != self.inputs_hash():
+            R.ng(sid, shown, "描画の結果が、今の成果物より古い。描き直す")
+            return None
+        return e
 
     # -- ブリーフ
 
@@ -809,10 +868,8 @@ TODO = {
     "K04-17": (R_VALUE, "接続の語の一覧が「など」で終わり、定まらない"),
     "K05-06": (R_AMBIG, "「該当する種類の要素」を決める定めがない"),
     "K06-05": (R_FORMAT, "収容量を超える理由の置き場がない。収容量の値も未確定"),
-    "K06-06": (R_RENDER, "描画の実装が返す型の一覧が要る"),
     "K06-08": (R_FORMAT, "資料に共通の規則を style.yaml に書く項目の名前がない"),
     "K06-09": (R_FORMAT, "色の割り当ての書式と、図に出る対象の引き方がない"),
-    "K06-11": (R_RENDER, "見本の描画上の診断が要る"),
     "K06-17": (R_FORMAT, "候補とユーザーの判断の記録の置き場がない"),
     "K06-19": (R_FORMAT, "banned に入れるかを決めた記録の置き場がない"),
     "K07-10": (R_EXTERNAL, "章のブランチと、比べる元の版の指定が要る"),
@@ -826,10 +883,7 @@ TODO = {
     "K07-36": (R_FORMAT, "アイコンを書く項目がない"),
     "K07-37": (R_VALUE, "型の収容量の値が未確定"),
     "K07-39": (R_VALUE, "言い回しと文型の数え方と、目安の値が未確定"),
-    "K07-40": (R_RENDER, "描画上の診断が要る"),
-    "K07-41": (R_RENDER, "章をビルドした実物の診断が要る"),
     "K07-42": (R_EXTERNAL, "重大度はIssueにある。到達点のうち語のほかの項目を、実行の記録と照合する方法がない"),
-    "K08-04": (R_RENDER, "ビルドした実物の診断が要る"),
     "K08-05": (R_RENDER, "ビルドした実物から抜き出した枚数、題、要点が要る"),
     "K08-06": (R_RENDER, "ビルドした実物の中の語の並びが要る"),
     "K08-07": (R_FORMAT, "要約のスライドの仕様のファイル名がない。章のまとめと節のまとめは、ビルドが組み立てる"),
@@ -1802,6 +1856,87 @@ def k07_refs(d, r):
                   "実在する事実もスライドも指さない参照がある: " + "、".join(dangling))
 
 
+# ---------------------------------------------------------------- 描画の結果を読む検査(工程6、7、8)
+# 描画上の診断は、tools/render.py が build/diagnostics.json(見本は build/samples/diagnostics.json)に書く。
+
+# K07-41 の条件の文が挙げる診断(文字のあふれ、要素の重なり、描かれなかった内容、文字の大きさの下限)に当たる種類。
+# 題が1行に収まらない、要点が2行を超える、は、文字のあふれに含める。
+DIAG_KINDS_BUILD = {"overflow", "title-lines", "point-lines", "overlap", "unrendered", "font-too-small"}
+DIAG_MEASURES = {"text-contrast": "text_contrast_min", "adjacent-contrast": "adjacent_contrast_min", "hue-count": "hues"}
+
+
+def diag_quote(entries):
+    return "、".join(f"{x.get('kind')}: {short(x.get('message'), 40)}" for x in entries[:3]) + (f" ほか{len(entries) - 3}件" if len(entries) > 3 else "")
+
+
+@check("K06-06", "K06-11", needs=[PATTERNS],
+       partial={"K06-06": "描ける型の一覧は、tools/render.py が診断に書いたものを使う。テンプレートで実現できるかは見ない",
+                "K06-11": "色の差と色相の数の基準は、道具が決めた値による(tools/patterns-data.md)。重大度がエラーの診断を数える"})
+def k06_render(d, r):
+    R6, R11 = r.of("K06-06", PATTERNS), r.of("K06-11", SAMPLES)
+    doc, _, shown, problem = d.diagnostics("samples")
+    used = sorted({t.get("pattern") for t in d.table if t.get("pattern")})
+    for p in used:
+        if problem:
+            R6.ng(p, shown, problem)
+        else:
+            can = as_list(doc.get("patterns"))
+            R6.judge(p in can, p, f"描ける型: {can}", "描画の実装が描けない型である。代わりの型を選ぶか、描画の実装への要望として記録する")
+    for name, specs in d.load_dir(SAMPLES).items():
+        for s in specs:
+            sid = s.get("id")
+            e = d.diagnosed(R11, "samples", sid)
+            if e is None:
+                continue
+            bad = [x for x in as_list(e.get("diagnostics")) if isinstance(x, dict) and x.get("severity") == "error"]
+            R11.judge(not bad, sid, f"描画上の診断 {len(bad)}件" + (": " + diag_quote(bad) if bad else ""), "見本の描画上の診断がある")
+
+
+@check("K07-40", "K07-41", needs=[STORY])
+def k07_render(d, r):
+    specs = d.slide_specs()
+    doc, slides, shown, problem = d.diagnostics()
+    file_of = {}
+    for name, s in specs:
+        file_of.setdefault(d.story_by_id.get(s.get("id"), {}).get("chapter"), name)
+    targets = [(name, s.get("id")) for name, s in specs]
+    # 章扉、節のまとめ、章のまとめも、その章をビルドした実物に含める
+    targets += [(file_of[e.get("chapter")], sid) for sid, e in slides.items()
+                if e.get("kind") not in ("本編", "付録") and e.get("chapter") in file_of]
+    for name, sid in targets:
+        R40, R41 = r.of("K07-40", name), r.of("K07-41", name)
+        e = d.diagnosed(R41, None, sid)
+        if e is None:
+            R40.ng(sid, shown, problem or "このスライドの描画上の診断がない、または古い")
+            continue
+        colors = e.get("colors") if isinstance(e.get("colors"), dict) else {}
+        missing = [m for m, key in DIAG_MEASURES.items() if m not in as_list(doc.get("measures")) or key not in colors]
+        R40.judge(not missing, sid, "診断の項目: " + "、".join(f"{k}={colors.get(v)}" for k, v in DIAG_MEASURES.items()),
+                  "描画上の診断に含まれない項目がある: " + "、".join(missing))
+        bad = [x for x in as_list(e.get("diagnostics")) if isinstance(x, dict) and x.get("kind") in DIAG_KINDS_BUILD]
+        R41.judge(not bad, sid, f"描画上の診断 {len(bad)}件" + (": " + diag_quote(bad) if bad else ""), "描画上の診断がある")
+
+
+@check("K08-04", needs=[STORY])
+def k08_04(d, r):
+    R = r.of("K08-04", "build/")
+    doc, slides, shown, problem = d.diagnostics()
+    if problem:
+        return R.ng(None, shown, problem)
+    R.judge(doc.get("level") == "full" and doc.get("count") == len(slides), None, f"level: {doc.get('level')}、{len(slides)}枚(全体 {doc.get('count')}枚)",
+            "全スライドをビルドした結果でない。全体を描き直す")
+    for s in d.story:
+        sid = s.get("id")
+        e = d.diagnosed(R, None, sid)
+        if e is not None and e.get("mode") != "spec":
+            R.ng(sid, f"mode: {e.get('mode')}", "スライド仕様から描いていない(仮置き、または骨組み)")
+    for sid, e in slides.items():
+        if sid not in d.story_by_id and e.get("inputs_hash") != d.inputs_hash():
+            R.ng(sid, shown, "描画の結果が、今の成果物より古い。描き直す")
+        bad = [x for x in as_list(e.get("diagnostics")) if isinstance(x, dict) and x.get("severity") == "error"]
+        R.judge(not bad, sid, f"描画上の診断 {len(bad)}件" + (": " + diag_quote(bad) if bad else ""), "描画上の診断がある")
+
+
 # ---------------------------------------------------------------- 工程8
 
 @check("K08-01", partial="工程0から7の、実装した機械の検査を再実行する。実装していない検査は実行しない")
@@ -2665,6 +2800,7 @@ def main(argv=None):
     ap.add_argument("--task", help="工程表の機械の作業の id")
     ap.add_argument("--id", dest="cid", help="検査のID")
     ap.add_argument("--chapter", help="工程7の検査を、この章のスライドに限る")
+    ap.add_argument("--build", help="描画の結果(tools/render.py の出力)の置き場。既定は <資料のディレクトリ>/build")
     ap.add_argument("--write", action="store_true", help="検査の記録と状態の記録を書く")
     ap.add_argument("--allow-uncommitted", action="store_true", help="コミットしていない変更があっても記録を書く。commit は null になる")
     ap.add_argument("--coverage", action="store_true", help="台帳の機械の検査の、実装の状況を出す")
@@ -2675,6 +2811,9 @@ def main(argv=None):
 
     if args.coverage:
         return print_coverage()
+    if args.build:
+        global BUILD_DIR
+        BUILD_DIR = args.build
     if not args.deck:
         ap.error("資料のディレクトリがない")
     if not Path(args.deck).is_dir():

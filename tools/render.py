@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
-"""スライド仕様(YAML)からスライドを描く。
+"""スライド仕様(YAML)からスライドを描く。確認用の資料(目次と章扉、骨組み、仮置き)も、同じ枠で描く。
 
-使い方: python tools/render.py <資料のディレクトリ> [--only ID ...] [--no-png]
+使い方:
+  python3 tools/render.py <資料のディレクトリ> [--pdf] [--only ID ...] [--chapter 章のID] [--no-png] [--out 出力先]
+  python3 tools/render.py <資料のディレクトリ> --samples      型の見本(06-samples/)だけを描く
+  python3 tools/render.py <資料のディレクトリ> --level toc|skeleton|placeholder   確認用の資料(tools/build.py と同じ)
+  python3 tools/render.py --patterns                          描ける型の一覧を出す
 
-読むもの: 03-chapters.yaml、04-storyline.yaml(順序、見出し、出典の行)、02-claims.yaml と 01-plan.yaml(章扉の問い)、
-01-sources.yaml(事実の値)、01-model.yaml と terms.yaml(仕組みの定義の名前)、05-proof.yaml(仮置き)、style.yaml(色と文字の下限)、
-06-samples/*.yaml(見本の仕様。1ファイル1枚)、07-slides/*.yaml(章ごとの仕様。スライドの配列。同じIDなら見本より優先)。
+読むもの: 00-brief.md と definitions/deck-type.yaml(資料の型。限定と出どころの置き場)、style.yaml(要点の位置、上限、色、文字の下限)、
+03-chapters.yaml(章、節、題、問い、要点)、04-storyline.yaml(題、要点、役割、限定、出どころ、順序)、01-sources.yaml(事実の値、出典)、
+01-model.yaml(仕組みの定義)、05-proof.yaml(仮置き)、06-patterns.yaml、definitions/patterns.yaml(型の定義)、
+06-samples/*.yaml と 07-slides/*.yaml(スライド仕様。同じIDなら 07-slides が優先)。
 
-出すもの(<資料のディレクトリ>/build/): slides/<ID>.html、slides/<ID>.png、deck.html、diagnostics.json。
-診断(文字のあふれ、文字の大きさの下限、要素の重なり、描けなかった内容)は標準出力にも出す。
+出すもの(既定は <資料のディレクトリ>/build/): slides/<番号>-<ID>.html と .png、deck.html(1つのファイルで全スライド)、
+deck.pdf(--pdf)、diagnostics.json(描画上の診断。tools/check.py が読む)。
 文字を下限より小さくしない。収まらない内容は、スライドを分けずに診断として報告する。
 型ごとの書式と収容量は tools/patterns-data.md に書く。
 """
 import argparse
+import base64
+import hashlib
 import html
 import json
 import math
@@ -22,24 +29,44 @@ import sys
 from pathlib import Path
 
 import yaml
-from PIL import ImageFont
 
-_SID = re.compile(r'\b((?:ch\d+|ap)-)(s\d+)\b')
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import check as C   # noqa: E402  資料の型、型の定義、語彙は、check.py と同じ読み方で正本から読む
 
 
 def E(s):
-    """HTML に書く文字。スライドのID(ch3-s11)はハイフンの後で折り返さないよう、語をつなぐ記号(U+2060)を入れる"""
-    return _SID.sub('\\1\u2060\\2', html.escape(str(s)))
+    return html.escape(str(s))
+
+
 W, H = 1280, 720
 MX = 48                 # 左右の余白
 CW = W - 2 * MX         # 中身の幅 1184
-BAND_TOP = 648          # 結論1行の帯の上端
+TOP, BOTTOM = 28, 16    # 上下の余白
+TITLE_FS, TITLE_LH = 36, 1.25      # 題
+POINT_FS, POINT_LH = 27, 1.4       # 要点(題の直下、中身の下)
+POINT_BODY_FS = 34                 # 要点(中身そのもの)
+KICKER_FS = 20                     # 題の行の右端の小さな札(章のまとめ、節のまとめ)
+FOOT_FS, FOOT_LH = 19, 1.4         # 脚注(限定、出どころ、出典)とページ番号
+FOOT_MIN = 60                      # 脚注の領域の高さの下限(2行分)。要点と中身の位置を、脚注の有無で動かさない
+GAP_MAIN = 20                      # 題と要点の下から、中身までの間
+GAP_BELOW = 12                     # 中身から、中身の下の要点までの間
 INK = '#111827'
 GRAY_LINE = '#9CA3AF'
 TEXT2 = '#374151'
+TEXT3 = '#4B5563'
 PART = '#E5E7EB'
+EM_FILL = '#374151'                               # 強調する面(色の割り当てがない対象)
+GRAYS = ['#D1D5DB', '#9CA3AF', '#F3F4F6', '#6B7280']   # 強調しない面(色の割り当てがない対象)
 FONT_FAMILY = "'IPAPGothic','IPAGothic',sans-serif"
-HERE = Path(__file__).resolve().parent
+MAX_HUES_DEFAULT = 4
+TEXT_CONTRAST_MIN, TEXT_CONTRAST_MIN_LARGE = 4.5, 3.0   # 文字と背景の色の差の下限(コントラスト比)
+ADJACENT_CONTRAST_MIN = 1.3                             # 隣り合う面の色の差の下限(コントラスト比)
+FONT_MIN_DEFAULT = {'title': '24pt', 'point': '18pt', 'body': '18pt', 'figure_text': '16pt', 'note': '14pt', 'footnote': '14pt'}
+LEVELS = {'toc': '目次と章扉', 'skeleton': '骨組み', 'placeholder': '仮置き', 'full': '全スライド', 'samples': '型の見本'}
+INPUT_FILES = ['00-brief.md', 'style.yaml', 'terms.yaml', '01-sources.yaml', '01-model.yaml', '03-chapters.yaml',
+               '04-storyline.yaml', '05-proof.yaml', '06-patterns.yaml']
+INPUT_DIRS = ['definitions', '06-samples', '07-slides']
 
 # ---------------------------------------------------------------- 文字の計測と折り返し
 
@@ -60,6 +87,7 @@ def tw(text, size, bold=False):
     """文字列の幅(px)。描画と同じフォントで測る。太字は合成されるため少し広く見積もる。"""
     global _FONT
     if _FONT is None:
+        from PIL import ImageFont
         _FONT = ImageFont.truetype(_font_path(), 100)
     return _FONT.getlength(text) * size / 100 * (1.03 if bold else 1.0)
 
@@ -264,49 +292,113 @@ def strip_gloss(name):
     return out.strip()
 
 
+def inputs_hash(root):
+    """描画が読む成果物の要約値。tools/check.py が、診断が今の成果物のものかを確かめるのに使う(同じ計算を check.py も持つ)。"""
+    root = Path(root)
+    files = [root / n for n in INPUT_FILES]
+    for d in INPUT_DIRS:
+        files += sorted((root / d).glob('*.yaml')) if (root / d).is_dir() else []
+    h = hashlib.sha1()
+    for f in files:
+        if f.is_file():
+            h.update(f.relative_to(root).as_posix().encode('utf-8') + b'\0' + f.read_bytes() + b'\0')
+    return h.hexdigest()
+
+
+def pattern_names():
+    """型の識別子 → 日本語の名前(docs/patterns.md の表)"""
+    out = {}
+    for r in C.md_table('patterns.md', '付属する型の候補'):
+        ids = C.ticks(r.get('識別子', ''))
+        if ids:
+            out[ids[0]] = r.get('型', ids[0])
+    return out
+
+
+def role_names():
+    """要点のないスライドの役割の識別子 → 日本語の名前(docs/vocabulary.md の表)"""
+    return {t: r.get('役割', t) for r in C.md_table('vocabulary.md', '要点のないスライド') for t in C.ticks(r.get('識別子', ''))}
+
+
+PROVENANCE = {   # 出どころの値 → (印の文字, 意味)。意味は docs/stages/04-storyline.md と docs/deck-types.md による
+    'cited': ('出典', '出典のある事実'),
+    'proposal': ('案', '案'),
+    'practice': ('運用', '今の運用'),
+}
+NEEDS = {
+    'toc': ['03-chapters.yaml'],
+    'skeleton': ['03-chapters.yaml', '04-storyline.yaml', '01-sources.yaml'],
+    'placeholder': ['03-chapters.yaml', '04-storyline.yaml', '01-sources.yaml', '05-proof.yaml'],
+    'full': ['03-chapters.yaml', '04-storyline.yaml', '01-sources.yaml'],
+    'samples': ['01-sources.yaml'],
+}
+
+
 class Deck:
-    def __init__(self, root):
+    def __init__(self, root, level='full'):
         self.root = root
-        st = load_yaml(root / 'style.yaml') or {}
+        self.level = level
+        for n in NEEDS[level]:
+            if not (root / n).is_file():
+                sys.exit(f'描けない: {root / n} がない({LEVELS[level]}の資料に要る)')
+        ld = lambda n: load_yaml(root / n, required=False)
+        self.c = C.Deck(root)
+        st = ld('style.yaml') or {}
+        self.style = st
         common = st.get('common') or {}
-        fm = common.get('font_min') or {}
+        fm = dict(FONT_MIN_DEFAULT)
+        fm.update(common.get('font_min') or {})
         self.min = {
-            'headline': pt2px(fm.get('headline', '24pt')), 'source': pt2px(fm.get('source_line', '16pt')),
-            'body': pt2px(fm.get('body', '18pt')), 'takeaway': pt2px(fm.get('body', '18pt')),
-            'figure': pt2px(fm.get('figure_text', '16pt')), 'note': pt2px(fm.get('note', '14pt')),
+            'title': pt2px(fm['title']), 'point': pt2px(fm['point']), 'body': pt2px(fm['body']),
+            'figure': pt2px(fm['figure_text']), 'note': pt2px(fm['note']), 'footnote': pt2px(fm['footnote']),
         }
         self.colors = common.get('colors') or {}
-        self.max_hues = common.get('max_hues_per_slide')
-        self.chapters_doc = load_yaml(root / '03-chapters.yaml') or {}
-        self.chapters = [c for c in self.chapters_doc.get('chapters') or [] if isinstance(c, dict)]
-        self.storyline = [s for s in load_yaml(root / '04-storyline.yaml') or [] if isinstance(s, dict)]
+        self.max_hues = common.get('max_hues_per_slide') or MAX_HUES_DEFAULT
+        self.point_position = st.get('point_position') if isinstance(st.get('point_position'), dict) else {}
+        lim = st.get('limits') if isinstance(st.get('limits'), dict) else {}
+        self.summary_min = lim.get('section_summary_min_slides') if isinstance(lim.get('section_summary_min_slides'), int) else None
+        # 限定と出どころの置き場(資料の型の定義の annotation)
+        dt = self.c.deck_type or {}
+        ann = dt.get('annotation') if isinstance(dt.get('annotation'), dict) else None
+        self.annotation_known = ann is not None
+        ann = ann or {}
+        self.ann_q = ann.get('qualifiers') if ann.get('qualifiers') in ('footnote', 'notes') else 'footnote'
+        self.ann_p = ann.get('provenance') if ann.get('provenance') in ('footnote', 'notes', 'mark', 'none') else 'none'
+        self.pattern_defs = self.c.pattern_defs
+        self.pattern_names = pattern_names()
+        self.role_names = role_names()
+        self.chapters_doc = ld('03-chapters.yaml') or {}
+        self.chapters = [c for c in self.chapters_doc.get('chapters') or [] if isinstance(c, dict) and c.get('id')]
+        self.sections = {s['id']: (ch, s) for ch in self.chapters for s in ch.get('sections') or [] if isinstance(s, dict) and s.get('id')}
+        self.storyline = [s for s in ld('04-storyline.yaml') or [] if isinstance(s, dict) and s.get('id')]
         self.S = {s['id']: s for s in self.storyline}
-        self.facts = {f['id']: f for f in load_yaml(root / '01-sources.yaml') or [] if isinstance(f, dict) and 'id' in f}
-        model = load_yaml(root / '01-model.yaml', required=False) or {}
+        self.facts = {f['id']: f for f in ld('01-sources.yaml') or [] if isinstance(f, dict) and 'id' in f}
+        model = ld('01-model.yaml') or {}
         self.el = {e['id']: e for e in model.get('elements') or []}
         self.rel = {r['id']: r for r in model.get('relations') or []}
         self.scn = {s['id']: s for s in model.get('scenarios') or []}
-        terms = load_yaml(root / 'terms.yaml', required=False) or {}
+        terms = ld('terms.yaml') or {}
         self.model_labels = terms.get('model_labels') or {}
-        claims = load_yaml(root / '02-claims.yaml', required=False) or {}
-        self.claims = {c['id']: c for c in claims.get('claims') or []}
-        self.plan = {q['id']: q for q in load_yaml(root / '01-plan.yaml', required=False) or [] if isinstance(q, dict)}
-        proof = load_yaml(root / '05-proof.yaml', required=False) or []
+        proof = ld('05-proof.yaml') or []
         self.proof = {p.get('id'): p for p in proof if isinstance(p, dict)}
-        pats = load_yaml(root / '06-patterns.yaml', required=False) or []
-        self.pattern_of = {(p['relation'], p.get('base', 'none')): p['pattern'] for p in pats if isinstance(p, dict)}
-        # スライド仕様: 見本 → 章ごと(後のものが優先)
-        self.specs, self.spec_file = {}, {}
-        for f in sorted((root / '06-samples').glob('*.yaml')):
-            d = load_yaml(f)
-            if isinstance(d, dict) and d.get('id'):
-                self.specs[d['id']] = d
-                self.spec_file[d['id']] = f.relative_to(root).as_posix()
-        for f in sorted((root / '07-slides').glob('*.yaml')) if (root / '07-slides').is_dir() else []:
-            for d in load_yaml(f) or []:
-                if isinstance(d, dict) and d.get('id'):
-                    self.specs[d['id']] = d
-                    self.spec_file[d['id']] = f.relative_to(root).as_posix()
+        self.table = [p for p in ld('06-patterns.yaml') or [] if isinstance(p, dict)]
+        # スライド仕様: 見本 → 章ごと(後のものが優先)。ファイルは、スライド仕様の並び、または1枚
+        self.specs, self.spec_file, self.sample_ids = {}, {}, []
+        for sub, sample in (('06-samples', True), ('07-slides', False)):
+            if level in ('toc', 'skeleton', 'placeholder') or (level == 'samples' and not sample):
+                continue
+            for f in sorted((root / sub).glob('*.yaml')) if (root / sub).is_dir() else []:
+                d = load_yaml(f)
+                for spec in d if isinstance(d, list) else [d]:
+                    if isinstance(spec, dict) and spec.get('id'):
+                        self.specs[spec['id']] = spec
+                        self.spec_file[spec['id']] = f.relative_to(root).as_posix()
+                        if sample and spec['id'] not in self.sample_ids:
+                            self.sample_ids.append(spec['id'])
+        self.all_ids = self.c.all_ids() | set(self.specs)
+        self.page_of = {}     # スライドのID → ページ番号(描く順が決まった後に入る)
+
+    # -- 仕組みの定義と色
 
     def name(self, eid, labels=None):
         if labels and eid in labels:
@@ -324,27 +416,117 @@ class Deck:
         base = re.sub(r'[(（].*?[)）]', '', str(name)).strip()
         return self.colors.get(str(name)) or self.colors.get(base)
 
+    # -- 章、節、スライド
+
+    def section_point(self, sec_id):
+        """節の要点と限定。節が1つだけの章の節は、章の要点を引く(point_from: chapter)"""
+        ch, sec = self.sections.get(sec_id, (None, None))
+        if sec is None:
+            return None, []
+        if sec.get('point_from') == 'chapter' or (not sec.get('point') and len(ch.get('sections') or []) == 1):
+            return ch.get('point'), list(ch.get('qualifiers') or [])
+        return sec.get('point'), list(sec.get('qualifiers') or [])
+
+    def section_slides(self, sec_id):
+        return [s for s in self.storyline if s.get('section') == sec_id and s.get('chapter') != 'appendix']
+
+    def needs_section_summary(self, sec_id):
+        """節のまとめを置くか(docs/vocabulary.md の表: 項の数が境目の枚数以上)"""
+        return self.summary_min is not None and len(self.section_slides(sec_id)) >= self.summary_min
+
+    def view(self, sid):
+        """スライドの題、要点、役割、限定、出どころ。ストーリーラインを正とし、ない場合(見本だけの場合)はスライド仕様から取る"""
+        s = self.S.get(sid) or self.specs.get(sid) or {}
+        v = {'title': s.get('title'), 'role': s.get('role'), 'qualifiers': list(s.get('qualifiers') or []),
+             'provenance': s.get('provenance'), 'point': None, 'point_kind': None, 'chapter': s.get('chapter'), 'section': s.get('section')}
+        if isinstance(s.get('point'), str) and s['point'].strip():
+            v['point'], v['point_kind'] = s['point'], 'own'
+        elif s.get('point_from') == 'section':
+            sec = s.get('section') or (self.S.get(sid) or {}).get('section')
+            p, q = self.section_point(sec)
+            v['point'], v['point_kind'] = p, 'section'
+            v['qualifiers'] = v['qualifiers'] + [x for x in q if x not in v['qualifiers']]
+        return v
+
+    def pattern_for(self, sid):
+        """立証の設計と表現の対応表から決まる型。量の区分で分かれる場合は決めない"""
+        p = self.proof.get(sid) or {}
+        rows = [t for t in self.table if t.get('relation') == p.get('relation') and (t.get('base') or 'none') == (p.get('base') or 'none')]
+        pats = {t.get('pattern') for t in rows}
+        return pats.pop() if len(pats) == 1 else None
+
+    def position(self, ptype):
+        """型の要点の位置。資料の表現規約 → 規約の default → 型の定義の既定 → 題の直下"""
+        pp = self.point_position
+        v = pp.get(ptype) or pp.get('default') or (self.pattern_defs.get(ptype) or {}).get('point_position') or 'below-title'
+        return v if v in ('below-title', 'below-body', 'body') else 'below-title'
+
+    def source_names(self, fids, seen=None):
+        """事実の出典の名前。導出した事実(derived)は、式(formula)の中の事実の出典をたどる"""
+        seen = seen if seen is not None else set()
+        out = []
+        for fid in fids:
+            f = self.facts.get(fid)
+            if not f or fid in seen:
+                continue
+            seen.add(fid)
+            names = [strip_gloss(str(f['source']))] if f.get('source') else self.source_names(re.findall(r'\b[FA]\d+\b', str(f.get('formula') or '')), seen)
+            out += [n for n in names if n and n not in out]
+        return out
+
 
 # ---------------------------------------------------------------- 1枚の文脈
+
+def merged_body(spec):
+    """型のデータ。body.data が項目の集まりなら、body の直下の項目に重ねる(body.data を優先)。並びなら、data のまま渡す"""
+    body = dict((spec or {}).get('body') or {})
+    data = body.get('data')
+    if isinstance(data, dict):
+        body.pop('data')
+        body.update(data)
+    return body
+
+
+def count_highlight(body):
+    """強調の指定の数。数え方は docs/visual-grammar.md の「E: 注目」(highlight の指定を数える)"""
+    n = 0
+    if isinstance(body, dict):
+        for k, v in body.items():
+            if k == 'highlight' and v not in (None, [], ''):
+                n += len(v) if isinstance(v, list) else 1
+            else:
+                n += count_highlight(v)
+    elif isinstance(body, list):
+        n += sum(count_highlight(v) for v in body)
+    return n
+
 
 class Ctx:
     def __init__(self, deck, sid, spec):
         self.deck, self.sid, self.spec = deck, sid, spec or {}
-        self.body = (spec or {}).get('body') or {}
+        self.body = merged_body(spec)
         self.diags = []
         self.wraps = []
         self.colors_used = set()
+        self.adjacent = []        # 隣り合う面の色の組
+        self.ems = set()          # 強調を付けた要素
         self.avail_h = 400
+        self.center = True        # 中身を、領域の中央に置くか
+        self.point_in_body = None # 要点を中身として描く位置のときの、要点の文
+        self.mode, self.type, self.notes, self.point = None, None, '', None
 
     def diag(self, kind, message, severity='error', target=None):
         self.diags.append({'slide': self.sid, 'kind': kind, 'severity': severity, 'target': target, 'message': message})
+
+    def em(self, key):
+        self.ems.add(str(key))
 
     def wrap(self, text, size, width, bold=False, what=None):
         lines, broke = wrap(text, size, width, bold)
         if len(lines) > 1:
             self.wraps.append({'target': what or str(text)[:20], 'lines': lines})
         if broke:
-            self.diag('overflow', f'語の途中で改行した: 「{text}」', 'warning', what)
+            self.diag('word-break', f'語の途中で改行した: 「{text}」', 'warning', what)
         return lines
 
     def color(self, name):
@@ -360,38 +542,73 @@ class Ctx:
         self.diag('unrendered', f'色の割り当てにない名前「{key}」を色に指定した。黒で描いた', 'error', target)
         return INK
 
+    def fills(self, labels, hl, distinct=True):
+        """面の色。色の割り当てがあればその色。なければ灰色で、強調する面だけを濃くする。
+        distinct: 面を凡例で見分ける型(円グラフ)では、灰色の段階を面ごとに変える。段階の数を超えたら、描き分けられないと診断に出す"""
+        out, k = [], 0
+        for lab in labels:
+            c = self.color(lab)
+            if not c:
+                if lab == hl:
+                    c = EM_FILL
+                else:
+                    c = GRAYS[k % len(GRAYS)] if distinct else GRAYS[0]
+                    k += 1
+            out.append(c)
+        if distinct and k > len(GRAYS):
+            self.diag('unrendered', f'色の割り当てのない面が {k} あり、灰色の段階({len(GRAYS)}つ)で描き分けられない', 'error', 'data')
+        return out
+
     def fact(self, fid, target):
         f = self.deck.facts.get(fid)
         if f is None:
             self.diag('unrendered', f'事実 {fid} が素材台帳にない', 'error', target)
-        elif fid not in (self.spec.get('sources') or []):
-            self.diag('unrendered', f'事実 {fid} が、このスライドの sources にない', 'warning', target)
+        elif self.spec and fid not in (self.spec.get('sources') or []):
+            self.diag('reference', f'事実 {fid} が、このスライドの sources にない', 'warning', target)
         return f
 
     def text(self, s, target='text'):
-        """{F001}(値と単位)、{F001:value}、{F001:unit}、{F001:metric} を素材台帳の値に置き換える"""
+        """{F001}(値と単位)、{F001:value}、{F001:unit}、{F001:metric} を素材台帳の値に、{ch2-s1} をそのスライドの題に置き換える"""
         def rep(m):
-            fid, field = m.group(1), m.group(2) or ''
-            f = self.fact(fid, target)
+            ref, field = m.group(1), m.group(2) or ''
+            if ref in self.deck.S or (ref in self.deck.specs and not re.fullmatch(r'[FA]\d+', ref)):
+                title = (self.deck.S.get(ref) or self.deck.specs.get(ref) or {}).get('title')
+                if not title:
+                    self.diag('unrendered', f'参照したスライド {ref} に題がない', 'error', target)
+                    return '(題のないスライド)'
+                return str(title)
+            if not re.fullmatch(r'F\d+', ref):
+                self.diag('unrendered', f'参照 {{{ref}}} の先が、事実にもスライドにもない', 'error', target)
+                return '(参照先なし)'
+            f = self.fact(ref, target)
             if f is None:
-                return f'[{fid}?]'
+                return '(参照先なし)'
             if field == 'value' or field == '':
                 if f.get('value') is None:
-                    self.diag('unrendered', f'事実 {fid} に value がない', 'error', target)
-                    return f'[{fid}?]'
+                    self.diag('unrendered', f'事実 {ref} に value がない', 'error', target)
+                    return '(値なし)'
                 v = fmt_num(f['value'])
                 return v if field == 'value' else v + fmt_unit(f.get('unit'))
-            if field in ('unit', 'metric'):
-                return str(f.get(field) or '')
-            self.diag('unrendered', f'参照の書式 {{{fid}:{field}}} が分からない', 'error', target)
-            return f'[{fid}?]'
-        return re.sub(r'\{(F\d+)(?::(\w+))?\}', rep, str(s))
+            if field == 'unit':
+                return str(f.get('unit') or '')
+            if field == 'metric':
+                return self.term(f.get('metric'))
+            self.diag('unrendered', f'参照の書式 {{{ref}:{field}}} が分からない', 'error', target)
+            return '(参照先なし)'
+        return re.sub(r'\{([A-Za-z][\w.-]*)(?::(\w+))?\}', rep, str(s))
+
+    def term(self, tid):
+        """語彙表のIDを、語に置き換える"""
+        for t in (self.deck.c.terms or []):
+            if t.get('id') == tid:
+                return str(t.get('term') or '')
+        return '' if tid is None else str(tid)
 
     def value(self, v, target):
         """数値の参照: F207(事実の value)、または {fact: F207, as: 27, round: 0}。as の数は事実の本文にあること"""
         if isinstance(v, str) and re.fullmatch(r'F\d+', v):
             f = self.fact(v, target)
-            if f is None or not isinstance(f.get('value'), (int, float)):
+            if f is None or isinstance(f.get('value'), bool) or not isinstance(f.get('value'), (int, float)):
                 if f is not None:
                     self.diag('unrendered', f'事実 {v} の value が数でない', 'error', target)
                 return None, '', ''
@@ -419,36 +636,6 @@ class Ctx:
         return None, '', ''
 
 
-_IDS = re.compile(r'\{F\d+(?::\w+)?\}|\b(?:F|D|Q|C|H|P|A)\d+(?:\.\d+)*\b|\b(?:ch\d+|ap)-s\d+\b|\b[A-Z]-[\w-]+')
-_DOCNO = re.compile(r'[A-Za-z][A-Za-z.]*[ .]?\d[\w.-]*|\d+(?:-\d+)+')
-_COUNT = re.compile(r'(?:(?<=演習)|(?<=第))\d+|\d+(?=つ|項目|行|枚|章|段|番目|問)|\d+対\d+|1人(?=で)|1件(?=について|につき|ごと|ずつ)')
-_NUM = re.compile(r'(?<![A-Za-z0-9_.])\d[\d,]*(?:\.\d+)?')
-
-
-def check_numbers(ctx, field, s):
-    """D016: text と notes に直接書いた数値は、同じ文で参照した事実の本文(statement、quote、qualifiers、metric、value)にあること。
-    合わなければ警告に出す。"""
-    for sent in re.split(r'(?<=[。\n])', str(s)):
-        refs = set(re.findall(r'\b(F\d+)\b', sent))
-        bare = _IDS.sub(' ', sent)
-        bare = _DOCNO.sub(' ', bare)       # 文書や版の番号(SP 800-61、Rev.3、Tier 1、M-22-01 など)は数値として扱わない
-        bare = _COUNT.sub(' ', bare)       # 数え方の語(2つ、3つ目、4項目)は数値として扱わない
-        nums = _NUM.findall(bare)
-        if not nums:
-            continue
-        hay = ''
-        for fid in refs:
-            f = ctx.deck.facts.get(fid) or {}
-            hay += ' ' + ' '.join(str(f.get(k) or '') for k in ('statement', 'quote', 'metric', 'value')) + ' ' + ' '.join(map(str, f.get('qualifiers') or []))
-        hay = hay.replace(',', '')
-        for n in nums:
-            k = n.replace(',', '')
-            if not refs:
-                ctx.diag('number', f'{field} の数値「{n}」の文に、事実の参照がない(D016): 「{sent.strip()[:40]}」', 'warning', field)
-            elif not re.search(r'(?<![\d.])' + re.escape(k) + r'(?![\d])', hay):
-                ctx.diag('number', f'{field} の数値「{n}」が、同じ文で参照した事実({", ".join(sorted(refs))})の本文にない(D016)', 'warning', field)
-
-
 def fmt_num(v):
     if isinstance(v, bool):
         return str(v)
@@ -471,12 +658,28 @@ def parse_index(h, name):
     return int(m.group(1)) if m else None
 
 
+def is_gray(c):
+    r, g, b = (int(c[i:i + 2], 16) for i in (1, 3, 5))
+    return max(r, g, b) - min(r, g, b) < 40
+
+
+def contrast(a, b):
+    def lum(c):
+        v = [int(c[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+        v = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in v]
+        return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]
+    la, lb = sorted([lum(a), lum(b)], reverse=True)
+    return (la + 0.05) / (lb + 0.05)
+
+
 # ---------------------------------------------------------------- 型ごとの描画
-# どの関数も (図の HTML, 図の下に置く文の HTML) を返す。収まらないときは診断を出し、文字は縮めない。
+# どの関数も、中身の HTML を返す。要点、題、限定、出どころは描かない(枠が描く)。
+# 収まらないときは診断を出し、文字は縮めない。強調を付けたら ctx.em() で知らせる。
 
 FIG = 22      # 図の中の文字(16pt の下限 21.3px の上)
 NOTE = 19     # 図の注記(14pt の下限 18.7px の上)
 BODY = 24     # 本文(18pt の下限 24px)
+EMB = f'5px solid {INK}'   # 強調の枠
 
 
 def check_height(ctx, h, what='図'):
@@ -490,85 +693,95 @@ def check_width(ctx, w, what='図', limit=CW):
 
 
 def r_statement(ctx):
+    """言い切り。要点の位置が「中身そのもの」なら、要点の文を中身として大きく描く(枠は、要点を別の行に描かない)。
+    value があれば、値を大きく示し、text を値の説明として添える。"""
     b = ctx.body
     hl = b.get('highlight')
-    text = b.get('text')
-    q = b.get('quote_of')
-    if b.get('value') is not None:     # 値を大きく示す(1つの数値を述べる言い切り)
+    point = ctx.point_in_body          # 要点の文(位置が body のとき)。なければ None
+    out = ''
+    allowed = {None, 'point', 'text', 'caveat'} | ({'value'} if b.get('value') is not None else set())
+    if hl not in allowed:
+        ctx.diag('unrendered', f'highlight「{hl}」は {"、".join(sorted(x for x in allowed if x))} で書く', 'error', 'highlight')
+    if b.get('value') is not None:     # 値を大きく示す
         v, vl, unit = ctx.value(b['value'], 'value')
-        big = f'{vl}{fmt_unit(unit)}{b.get("bound", "")}' if v is not None else '[値?]'
-        em = 'border:5px solid #111827;padding:10px 28px;' if hl in ('value', 'text') else 'padding:10px 0;'
-        lab = f'<div data-role="body" style="font-size:30px;margin-top:6px">{E(ctx.text(text))}</div>' if text else ''
-        main = (f'<div style="display:inline-block;{em}"><div data-role="body" style="font-size:96px;font-weight:bold;line-height:1.1">{E(big)}</div>{lab}</div>')
-        cav = f'<div data-role="body" style="margin-top:30px;font-size:26px;color:{TEXT2}">{E(ctx.text(b["caveat"]))}</div>' if b.get('caveat') else ''
-        if hl == 'caveat':
-            cav = f'<div data-role="body" style="margin-top:30px;display:inline-block;border:5px solid #111827;padding:14px 26px;font-size:28px;font-weight:bold">{E(ctx.text(b["caveat"]))}</div>'
-        if hl not in ('value', 'text', 'caveat', None):
-            ctx.diag('unrendered', f'highlight「{hl}」は value、text、caveat で書く', 'error', 'highlight')
-        return main + f'<div>{cav}</div>'
-    if q:
-        f = ctx.fact(q, 'quote_of')
-        if text is None and f is not None:
-            text = f.get('quote')
-    if not text:
-        ctx.diag('unrendered', 'statement に text がない', 'error', 'text')
-        text = ''
-    text = ctx.text(text)
-    em = 'border:5px solid #111827;' if hl == 'text' else ''
-    if q:
-        attr = f'<div data-role="figure" style="font-size:{FIG}px;color:#4B5563;margin-top:10px">{E(ctx.text(b["attribution"]))}</div>' if b.get('attribution') else ''
-        main = (f'<div data-role="body" style="{em}border-left:8px solid #9CA3AF;padding:18px 28px;font-size:28px;line-height:1.6;background:#F9FAFB">'
-                f'「{E(text)}」{attr}</div>')
-    else:
-        main = f'<div data-role="body" style="{em}padding:14px 22px;font-size:32px;font-weight:bold;line-height:1.5;display:inline-block">{E(text)}</div>'
-    cav = ''
+        big = f'{vl}{fmt_unit(unit)}{b.get("bound", "")}' if v is not None else '(値なし)'
+        em = f'border:{EMB};padding:10px 28px;' if hl == 'value' else 'padding:10px 0;'
+        if hl == 'value':
+            ctx.em('value')
+        lab = f'<div data-role="body" style="font-size:26px;margin-top:4px;color:{TEXT2}">{E(ctx.text(b["text"], "data.text"))}</div>' if b.get('text') else ''
+        out += (f'<div style="display:inline-block;{em}"><div data-role="body" style="font-size:96px;font-weight:bold;line-height:1.1">{E(big)}</div>{lab}</div>')
+    elif b.get('quote_of'):            # 引用
+        f = ctx.fact(b['quote_of'], 'quote_of')
+        q = b.get('text') or (f or {}).get('quote')
+        if not q:
+            ctx.diag('unrendered', '引用する文(text、または事実の quote)がない', 'error', 'quote_of')
+        attr = f'<div data-role="figure" style="font-size:{FIG}px;color:{TEXT3};margin-top:10px">{E(ctx.text(b["attribution"]))}</div>' if b.get('attribution') else ''
+        em = f'border:{EMB};' if hl == 'text' else ''
+        if hl == 'text':
+            ctx.em('text')
+        out += (f'<div data-role="body" style="{em}border-left:8px solid {GRAY_LINE};padding:16px 26px;font-size:28px;line-height:1.6">'
+                f'「{E(ctx.text(q or ""))}」{attr}</div>')
+    elif b.get('text') and not point:  # 要点を中身に描かないスライドでは、text を言い切る文として描く
+        em = f'border:{EMB};padding:12px 22px;' if hl == 'text' else ''
+        if hl == 'text':
+            ctx.em('text')
+        out += f'<div data-role="body" style="{em}font-size:{POINT_BODY_FS}px;font-weight:bold;line-height:1.45;display:inline-block">{E(ctx.text(b["text"], "data.text"))}</div>'
+    elif b.get('text') and point:
+        ctx.diag('unrendered', 'data.text を描かなかった。要点を中身として描くスライドでは、text は value の説明にだけ使う', 'error', 'data.text')
+    if point:
+        em = f'border:{EMB};padding:10px 22px;' if hl == 'point' else ''
+        if hl == 'point':
+            ctx.em('point')
+        mt = 'margin-top:26px;' if out else ''
+        out += (f'<div class="point pt-body" data-role="point" style="{mt}{em}font-size:{POINT_BODY_FS}px;font-weight:bold;line-height:1.45">{E(point)}</div>')
+    elif not out:
+        ctx.diag('unrendered', 'statement に描く中身がない(要点も、value も、text もない)', 'error', 'body')
     if b.get('caveat'):
         if hl == 'caveat':
-            cav = f'<div data-role="body" style="margin-top:34px;display:inline-block;border:5px solid #111827;padding:14px 26px;font-size:28px;font-weight:bold">{E(ctx.text(b["caveat"]))}</div>'
+            ctx.em('caveat')
+            out += f'<div><div data-role="body" style="margin-top:24px;display:inline-block;border:{EMB};padding:10px 22px;font-size:{BODY}px;font-weight:bold">{E(ctx.text(b["caveat"]))}</div></div>'
         else:
-            cav = f'<div data-role="body" style="margin-top:30px;font-size:26px;color:{TEXT2}">{E(ctx.text(b["caveat"]))}</div>'
-    if hl not in ('text', 'caveat', None):
-        ctx.diag('unrendered', f'highlight「{hl}」は text か caveat で書く', 'error', 'highlight')
-    return main + cav
-
-
-def tag(mark, ctx):
-    if not mark:
-        return ''
-    key = {'案': '案の印', '運用': 'このSOCの運用の印'}.get(mark)
-    if key is None:
-        ctx.diag('unrendered', f'mark「{mark}」は 案 か 運用 で書く', 'error', 'mark')
-        return ''
-    c = ctx.color_key(key, 'mark')
-    return f'<span class="tag" data-role="note" style="background:{c}">{E(mark)}</span>'
+            out += f'<div data-role="body" style="margin-top:22px;font-size:{BODY}px;color:{TEXT2}">{E(ctx.text(b["caveat"]))}</div>'
+    ctx.center = True
+    return f'<div style="width:{CW}px">{out}</div>'
 
 
 def r_plain_list(ctx):
+    """箇条書き。枠なしの縦の並び"""
     b = ctx.body
     items = b.get('items') or []
     if not items:
         ctx.diag('unrendered', 'plain-list に items がない', 'error', 'items')
     hl = b.get('highlight')
     hi = parse_index(hl, 'items')
-    out = tag(b.get('mark'), ctx)
+    out = ''
     if b.get('title'):
-        st = 'border:5px solid #111827;padding:4px 14px;font-weight:bold' if hl == 'title' else 'font-weight:bold;padding:4px 0'
+        st = f'border:{EMB};padding:4px 14px;font-weight:bold' if hl == 'title' else 'font-weight:bold;padding:4px 0'
+        if hl == 'title':
+            ctx.em('title')
         out += f'<span data-role="body" style="display:inline-block;{st};font-size:26px;vertical-align:middle">{E(ctx.text(b["title"]))}</span>'
     elif hl == 'title':
         ctx.diag('unrendered', 'highlight が title だが title がない', 'error', 'highlight')
+    if hl and hl != 'title' and hi is None:
+        ctx.diag('unrendered', f'highlight「{hl}」は title か items[番号] で書く', 'error', 'highlight')
     lis = ''
     for i, it in enumerate(items):
         t = it.get('text') if isinstance(it, dict) else it
         sub = it.get('sub') if isinstance(it, dict) else None
-        st = 'border:5px solid #111827;padding:0 10px;font-weight:bold;display:inline-block' if hi == i else ''
-        s = f'<li><span style="{st}">・{E(ctx.text(t))}</span>'
+        st = f'border:{EMB};padding:0 10px;font-weight:bold;display:inline-block' if hi == i else ''
+        if hi == i:
+            ctx.em(f'items[{i}]')
+        s = f'<li style="padding-left:1.1em;text-indent:-1.1em"><span style="{st}">・{E(ctx.text(t, f"items[{i}]"))}</span>'
         if sub:
-            s += '<ul style="list-style:none;padding-left:40px;font-size:24px;line-height:1.5;color:#374151">' + ''.join(f'<li>{E(ctx.text(x))}</li>' for x in sub) + '</ul>'
+            s += (f'<ul style="list-style:none;padding-left:40px;text-indent:0;font-size:{BODY}px;line-height:1.5;color:{TEXT2}">'
+                  + ''.join(f'<li>{E(ctx.text(x))}</li>' for x in sub) + '</ul>')
         lis += s + '</li>'
     if hi is not None and hi >= len(items):
         ctx.diag('unrendered', f'highlight {hl} に当たる項目がない', 'error', 'highlight')
-    out += f'<ul data-role="body" style="margin-top:18px;list-style:none;font-size:28px;line-height:1.75;padding-left:24px">{lis}</ul>'
-    return out
+    mt = 'margin-top:14px;' if b.get('title') else ''
+    out += f'<ul data-role="body" style="{mt}list-style:none;font-size:28px;line-height:1.7">{lis}</ul>'
+    ctx.center = False
+    return f'<div style="width:{CW}px">{out}</div>'
 
 
 def paras(ctx, desc, where):
@@ -596,6 +809,8 @@ def r_step_flow(ctx):
     hi = parse_index(b.get('highlight'), 'steps')
     if b.get('highlight') and hi is None:
         ctx.diag('unrendered', f'highlight「{b.get("highlight")}」は steps[番号] で書く', 'error', 'highlight')
+    if hi is not None:
+        ctx.em(f'steps[{hi}]')
     start = b.get('numbering', 1)
     labels = [s.get('next') for s in steps[:-1]]
     gap = max([70] + [tw(l, FIG) + 24 for l in labels if l])
@@ -654,6 +869,8 @@ def r_cause_chain(ctx):
     hi = parse_index(b.get('highlight'), 'chain')
     if b.get('highlight') and hi is None:
         ctx.diag('unrendered', f'highlight「{b.get("highlight")}」は chain[番号] で書く', 'error', 'highlight')
+    if hi is not None:
+        ctx.em(f'chain[{hi}]')
     gap = max(100, tw(b.get('link', 'ので'), FIG) + 40)
     bw = (CW - (n - 1) * gap) / n
     if bw < 160:
@@ -696,64 +913,287 @@ def r_cause_chain(ctx):
     return out
 
 
+def _rows(ctx, data):
+    """数量の型のデータ: {label, value, bound} の並び → (label, 値, 値の表記, 単位, bound)"""
+    rows = []
+    for i, d in enumerate(data):
+        if not isinstance(d, dict):
+            ctx.diag('unrendered', f'data[{i}] が {{label, value}} の形でない', 'error', f'data[{i}]')
+            continue
+        v, label, unit = ctx.value(d.get('value'), f'data[{i}]')
+        rows.append((ctx.text(d.get('label', ''), f'data[{i}].label'), v, label, unit, str(d.get('bound', '') or '')))
+    return rows
+
+
 def r_pie_chart(ctx):
     b = ctx.body
     data = b.get('data') or []
-    if not data:
-        ctx.diag('unrendered', 'pie-chart に data がない', 'error', 'data')
+    if not isinstance(data, list) or not data:
+        ctx.diag('unrendered', 'pie-chart に data(項目の並び)がない', 'error', 'data')
         return ''
     hl = b.get('highlight')
-    rows = []
-    for i, d in enumerate(data):
-        v, label, unit = ctx.value(d.get('value'), f'data[{i}]')
-        rows.append((str(d.get('label', '')), v, label, unit, d.get('bound', '')))
+    rows = _rows(ctx, data)
     vals = [r[1] or 0 for r in rows]
     total = sum(vals)
-    if rows and all(r[3] == '%' for r in rows) and not (95 <= total <= 105):
-        ctx.diag('unrendered', f'構成比の合計が {total:g}% で、100% にならない', 'error', 'data')
-    if hl and hl not in [r[0] for r in rows]:
+    if rows and all(r[3] == '%' for r in rows) and not (99.5 <= total <= 100.5):
+        ctx.diag('data', f'構成比の合計が {total:g}% で、100% にならない', 'error', 'data')
+    labels = [r[0] for r in rows]
+    if hl and hl not in labels:
         ctx.diag('unrendered', f'highlight「{hl}」に当たる label がない', 'error', 'highlight')
-    LFS, PITCH = 26, 66
-    leg_h = len(rows) * PITCH
-    r = max(120, min(165, (ctx.avail_h - 20) / 2))
+    elif hl:
+        ctx.em(hl)
+    cols = ctx.fills(labels, hl)
+    n = len(rows)
+    ctx.adjacent += [(cols[i], cols[(i + 1) % n]) for i in range(n if n > 2 else n - 1)]
+    LFS, PITCH = 26, 62
+    leg_h = n * PITCH
+    r = max(120, min(180, (ctx.avail_h - 16) / 2))
     sv = Svg(ctx)
-    cx, cy = r + 25, r + 25
+    cx, cy = r + 6, max(r + 6, leg_h / 2)
     ang = -90.0
-    fallback = ['#9CA3AF', '#6B7280', '#4B5563', '#D1D5DB']
-    cols = []
-    for i, (lab, v, *_rest) in enumerate(rows):
-        c = ctx.color(lab)
-        if not c:
-            c = fallback[i % len(fallback)]
-            ctx.diag('unrendered', f'「{lab}」に色の割り当てがない。灰色で描いた', 'warning', f'data[{i}]')
-        cols.append(c)
     for i, (lab, v, *_rest) in enumerate(rows):
         if not v or total <= 0:
             continue
         sweep = v / total * 360
         a1, a2 = math.radians(ang), math.radians(ang + sweep)
         x1, y1, x2, y2 = cx + r * math.cos(a1), cy + r * math.sin(a1), cx + r * math.cos(a2), cy + r * math.sin(a2)
-        em = lab == hl
         large = 1 if sweep > 180 else 0
         if sweep >= 359.9:
             sv.raw(f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{cols[i]}"/>')
         else:
-            sv.raw(f'<path d="M{cx},{cy} L{x1:.1f},{y1:.1f} A{r},{r} 0 {large} 1 {x2:.1f},{y2:.1f} z" fill="{cols[i]}" stroke="{INK if em else "#fff"}" stroke-width="{6 if em else 2}"/>')
+            sv.raw(f'<path d="M{cx:.1f},{cy:.1f} L{x1:.1f},{y1:.1f} A{r:.1f},{r:.1f} 0 {large} 1 {x2:.1f},{y2:.1f} z" fill="{cols[i]}" stroke="#fff" stroke-width="2"/>')
         ang += sweep
-    sv.ext(cx + r, cy + r)
-    lx = 2 * r + 80
+    sv.raw(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" fill="none" stroke="{GRAY_LINE}" stroke-width="1.5"/>')
+    ang = -90.0
+    for i, (lab, v, *_rest) in enumerate(rows):   # 強調する面は、太い線で囲む
+        sweep = (v or 0) / total * 360 if total > 0 else 0
+        if lab == hl and 0 < sweep < 359.9:
+            a1, a2 = math.radians(ang), math.radians(ang + sweep)
+            x1, y1, x2, y2 = cx + r * math.cos(a1), cy + r * math.sin(a1), cx + r * math.cos(a2), cy + r * math.sin(a2)
+            sv.raw(f'<path d="M{cx:.1f},{cy:.1f} L{x1:.1f},{y1:.1f} A{r:.1f},{r:.1f} 0 {1 if sweep > 180 else 0} 1 {x2:.1f},{y2:.1f} z" fill="none" stroke="{INK}" stroke-width="5" stroke-linejoin="round"/>')
+        ang += sweep
+    sv.ext(cx + r + 6, cy + r + 6)
+    lx = 2 * r + 76
+    ly0 = cy - leg_h / 2
     for i, (lab, v, vl, unit, bound) in enumerate(rows):
         em = lab == hl
-        y = 50 + i * PITCH
+        y = ly0 + i * PITCH + (PITCH - 34) / 2
         thin = v is not None and total > 0 and v / total * 360 < 1.5
         t = f'{lab} {vl}{fmt_unit(unit)}{bound}' + ('(細すぎて円に出ない)' if thin else '')
-        sv.raw(f'<rect x="{lx}" y="{y}" width="34" height="34" fill="{cols[i]}"/>')
+        sv.raw(f'<rect x="{lx}" y="{y:.1f}" width="34" height="34" fill="{cols[i]}" stroke="{INK if em else GRAY_LINE}" stroke-width="{3 if em else 1}"/>')
         sv.text(lx + 48, y + 27, t, LFS, bold=em, name=f'data[{i}]')
         if lx + 48 + tw(t, LFS, em) > CW:
             ctx.diag('overflow', f'凡例「{t}」が右端を越える', 'error', f'data[{i}]')
-    h = max(2 * r + 50, 50 + leg_h)
+    h = max(2 * r + 12, leg_h)
     check_height(ctx, h)
-    return sv.svg(CW, h)
+    return sv.svg(None, h)
+
+
+def r_bar_chart(ctx):
+    """棒グラフ。横の棒を上から並べる。量の軸は0から始める"""
+    b = ctx.body
+    data = b.get('data') or []
+    if not isinstance(data, list) or not data:
+        ctx.diag('unrendered', 'bar-chart に data(項目の並び)がない', 'error', 'data')
+        return ''
+    hl = b.get('highlight')
+    rows = [r for r in _rows(ctx, data)]
+    labels = [r[0] for r in rows]
+    if hl and hl not in labels:
+        ctx.diag('unrendered', f'highlight「{hl}」に当たる label がない', 'error', 'highlight')
+    elif hl:
+        ctx.em(hl)
+    if len({r[3] for r in rows if r[1] is not None}) > 1:
+        ctx.diag('data', '単位の違う値を、1つの軸に並べている: ' + '、'.join(sorted({r[3] or '(単位なし)' for r in rows})), 'error', 'data')
+    if any(r[1] is not None and r[1] < 0 for r in rows):
+        ctx.diag('unrendered', '負の値は描けない', 'error', 'data')
+    cols = ctx.fills(labels, hl, distinct=False)
+    ctx.adjacent += [(cols[i], cols[i + 1]) for i in range(len(cols) - 1) if cols[i] != cols[i + 1]]
+    LFS, BH, PITCH, LMAX = 26, 44, 72, 340
+    lab_lines = [ctx.wrap(lab, LFS, LMAX, lab == hl, f'data[{i}].label') for i, lab in enumerate(labels)]
+    lw = max(maxw(l, LFS, True) for l in lab_lines)
+    vtexts = [f'{vl}{fmt_unit(unit)}{bound}' if v is not None else '(値なし)' for _, v, vl, unit, bound in rows]
+    vw = max(tw(t, LFS, True) for t in vtexts) + 14
+    x0 = lw + 18
+    bmax = min(760, CW - x0 - vw)
+    top = 8
+    vmax = max([r[1] or 0 for r in rows] + [0])
+    sv = Svg(ctx)
+    for i, (lab, v, *_rest) in enumerate(rows):
+        em = lab == hl
+        y = top + i * PITCH + (PITCH - BH) / 2
+        w = max(2, (v or 0) / vmax * bmax) if vmax > 0 else 2
+        if len(lab_lines[i]) > 2:
+            ctx.diag('overflow', f'項目の名前「{lab}」が2行に収まらない', 'error', f'data[{i}].label')
+        sv.lines(0, y + BH / 2, lab_lines[i], LFS, INK, em, anchor='end', x=lw)
+        sv.rect(x0, y, w, BH, fill=cols[i], stroke=INK if em and cols[i] != EM_FILL else 'none', sw=5 if em and cols[i] != EM_FILL else 0, rx=0, name=f'data[{i}]')
+        sv.text(x0 + w + 12, y + BH / 2 + LFS * 0.35, vtexts[i], LFS, bold=em, name=f'data[{i}].value')
+    h = top + len(rows) * PITCH + 8
+    sv.line([(x0, top), (x0, h - 4)], arrow=False, w=2, color=TEXT2)   # 量の軸(0)
+    check_width(ctx, sv.w)
+    check_height(ctx, h)
+    return sv.svg(None, h)
+
+
+def r_before_after(ctx):
+    """前後の対比。前を左、後を右に置き、矢印でつなぐ"""
+    b = ctx.body
+    hl = b.get('highlight')
+    if hl not in (None, 'before', 'after'):
+        ctx.diag('unrendered', f'highlight「{hl}」は before か after で書く', 'error', 'highlight')
+    elif hl:
+        ctx.em(hl)
+    BW, GAP, LFS, VFS, TFS = 430, 150, 24, 72, 28
+    sides = []
+    for key in ('before', 'after'):
+        d = b.get(key)
+        if not isinstance(d, dict):
+            ctx.diag('unrendered', f'before-after に {key} がない', 'error', key)
+            d = {}
+        lab = ctx.wrap(ctx.text(d.get('label', ''), f'{key}.label'), LFS, BW - 48, False, f'{key}.label')
+        if d.get('value') is not None:
+            v, vl, unit = ctx.value(d['value'], f'{key}.value')
+            big = f'{vl}{fmt_unit(unit)}{d.get("bound", "") or ""}' if v is not None else '(値なし)'
+            if tw(big, VFS, True) > BW - 40:
+                ctx.diag('overflow', f'{key} の値「{big}」が枠の幅に収まらない', 'error', f'{key}.value')
+            body, bh, fs = [big], VFS * 1.15, VFS
+        else:
+            body = ctx.wrap(ctx.text(d.get('text', ''), f'{key}.text'), TFS, BW - 48, True, f'{key}.text') if d.get('text') else []
+            if not body:
+                ctx.diag('unrendered', f'{key} に value も text もない', 'error', key)
+            bh, fs = len(body) * TFS * 1.35, TFS
+        sides.append((key, lab, body, bh, fs))
+    hbox = max(30 + len(lab) * LFS * 1.3 + 16 + bh + 30 for _, lab, _, bh, _ in sides)
+    sv = Svg(ctx)
+    for k, (key, lab, body, bh, fs) in enumerate(sides):
+        x = k * (BW + GAP)
+        em = hl == key
+        rid = sv.rect(x, 4, BW, hbox, fill='#fff', stroke=INK if em else GRAY_LINE, sw=5 if em else 2, name=key)
+        yy = 4 + 30
+        for l in lab:
+            sv.text(x + BW / 2, yy + LFS * 0.85, l, LFS, 'middle', TEXT2, False, inside=rid)
+            yy += LFS * 1.3
+        rest = 4 + hbox - 30 - yy - 16
+        cy = yy + 16 + rest / 2
+        sv.lines(x + BW / 2, cy, body, fs, INK, True, inside=rid, lh=1.35 if fs == TFS else 1.15)
+    sv.line([(BW + 16, 4 + hbox / 2), (BW + GAP - 18, 4 + hbox / 2)], w=6)
+    h = hbox + 10
+    check_height(ctx, h)
+    return sv.svg(None, h)
+
+
+def _image_data(ctx, f):
+    """画像の素材を、埋め込む形(data URI)と大きさで返す"""
+    path = ctx.deck.root / str(f.get('file') or '')
+    if not f.get('file') or not path.is_file():
+        ctx.diag('unrendered', f'画像の素材のファイル {f.get("file")} がない', 'error', 'asset')
+        return None, 0, 0
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            iw, ih = im.size
+    except Exception as e:
+        ctx.diag('unrendered', f'画像の素材 {f.get("file")} を読めない: {type(e).__name__}', 'error', 'asset')
+        return None, 0, 0
+    mime = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml'}.get(path.suffix.lower(), 'image/png')
+    return f'data:{mime};base64,' + base64.b64encode(path.read_bytes()).decode('ascii'), iw, ih
+
+
+def r_annotated_image_steps(ctx):
+    """注釈つきの画像(番号の印)。画像の素材を、crop の範囲が入るように切り抜き、regions の位置に番号の印を置く。
+    番号は場面の順から決める。説明(captions)は、画像の右に番号の順で並べる"""
+    b, dk = ctx.body, ctx.deck
+    f = dk.facts.get(b.get('asset'))
+    if f is None or f.get('kind') != 'image':
+        ctx.diag('unrendered', f'画像の素材 {b.get("asset")} が素材台帳にない', 'error', 'asset')
+        return ''
+    if ctx.spec and b.get('asset') not in (ctx.spec.get('sources') or []):
+        ctx.diag('reference', f'画像の素材 {b.get("asset")} が、このスライドの sources にない', 'warning', 'asset')
+    regions = {r['id']: r for r in f.get('regions') or [] if isinstance(r, dict) and r.get('id')}
+    captions = b.get('captions') or {}
+    for rid in list(captions) + list(b.get('crop') or []):
+        if rid not in regions:
+            ctx.diag('unrendered', f'範囲 {rid} が、画像の素材の regions にない', 'error', str(rid))
+    # 番号の順: 場面のつながりが指す要素の順。場面がなければ、captions に書いた順
+    order = [r for r in captions if r in regions]
+    if b.get('scenario') is not None:
+        sc = dk.scn.get(b.get('scenario'))
+        if sc is None:
+            ctx.diag('unrendered', f'場面 {b.get("scenario")} が仕組みの定義にない', 'error', 'scenario')
+        else:
+            seq = []
+            for rel_id in sc.get('steps') or []:
+                rel = dk.rel.get(rel_id) or {}
+                for rid, r in regions.items():
+                    if r.get('element') and r.get('element') in (rel.get('to'), rel.get('from')) and rid in captions and rid not in seq:
+                        seq.append(rid)
+            for rid in order:
+                if rid not in seq:
+                    ctx.diag('unrendered', f'範囲 {rid} の要素が場面のつながりになく、番号を決められない', 'error', str(rid))
+            order = seq
+    uri, iw, ih = _image_data(ctx, f)
+    # 切り抜く範囲(画像に対する割合)
+    crop = [regions[r]['box'] for r in b.get('crop') or [] if r in regions and isinstance(regions[r].get('box'), list)]
+    if crop:
+        mx, my = 0.06, 0.08
+        cx0 = max(0.0, min(c[0] for c in crop) - mx)
+        cy0 = max(0.0, min(c[1] for c in crop) - my)
+        cx1 = min(1.0, max(c[0] + c[2] for c in crop) + mx)
+        cy1 = min(1.0, max(c[1] + c[3] for c in crop) + my)
+    else:
+        cx0, cy0, cx1, cy1 = 0.0, 0.0, 1.0, 1.0
+    iw, ih = iw or 16, ih or 9
+    pw, ph = (cx1 - cx0) * iw, (cy1 - cy0) * ih          # 切り抜いた範囲(画像のピクセル)
+    MAXW, PAD = 640, 26                                   # PAD: 画像の外に印を置くための余白
+    scale = min(MAXW / pw, max(120, ctx.avail_h - 2 * PAD) / ph)
+    dw, dh = pw * scale, ph * scale
+    if scale > 1.0 and uri:
+        ctx.diag('image-scale', f'画像を {scale:.1f} 倍に拡大して描いた(元の画像 {iw}x{ih}px)', 'info', 'asset')
+    sv = Svg(ctx)
+    ox, oy = PAD, PAD
+    if uri:
+        sv.raw(f'<svg x="{ox}" y="{oy}" width="{dw:.1f}" height="{dh:.1f}" viewBox="{cx0 * iw:.2f} {cy0 * ih:.2f} {pw:.2f} {ph:.2f}" preserveAspectRatio="none">'
+               f'<image href="{uri}" width="{iw}" height="{ih}"/></svg>')
+    sv.raw(f'<rect x="{ox}" y="{oy}" width="{dw:.1f}" height="{dh:.1f}" fill="{"none" if uri else PART}" stroke="{GRAY_LINE}" stroke-width="1"/>')
+    sv.ext(ox + dw + PAD, oy + dh + PAD)
+    R = 17
+    placed = []
+    for n, rid in enumerate(order, 1):
+        bx, by, bw_, bh_ = regions[rid]['box']
+        x, y = ox + (bx - cx0) * iw * scale, oy + (by - cy0) * ih * scale
+        w, h = bw_ * iw * scale, bh_ * ih * scale
+        sv.raw(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" fill="none" stroke="{INK}" stroke-width="3" data-name="{E(rid)}"/>')
+        # 印は、指す範囲の外に置く(左、上、右、下の順に、画像の枠とほかの印に重ならない場所を探す)
+        cands = [(x - R - 5, y + R), (x + R, y - R - 5), (x + w + R + 5, y + R), (x + R, y + h + R + 5)]
+        ok = [(px, py) for px, py in cands if R <= px <= ox + dw + PAD - R and R <= py <= oy + dh + PAD - R
+              and all(math.hypot(px - qx, py - qy) > 2 * R + 2 for qx, qy in placed)]
+        if not ok:
+            ctx.diag('overlap', f'範囲 {rid} の印を、指す対象に重ならない場所に置けない', 'error', str(rid))
+            ok = [cands[0]]
+        px, py = ok[0]
+        placed.append((px, py))
+        cid = sv.nid('c')
+        sv.raw(f'<circle id="{cid}" cx="{px:.1f}" cy="{py:.1f}" r="{R}" fill="{INK}"/>')
+        sv.text(px, py + FIG * 0.35, str(n), FIG, 'middle', '#ffffff', True, inside=cid)
+    # 説明: 画像の右に、番号の順で並べる
+    tx = ox + dw + PAD + 30
+    twid = CW - tx - 46
+    if twid < 240:
+        ctx.diag('overflow', f'説明を置く幅が {twid:.0f}px しかない', 'error', 'captions')
+        twid = 240
+    yy = oy
+    for n, rid in enumerate(order, 1):
+        lines = ctx.wrap(ctx.text(captions.get(rid, ''), f'captions.{rid}'), BODY, twid, False, f'captions.{rid}')
+        cid = sv.nid('c')
+        sv.raw(f'<circle id="{cid}" cx="{tx + R:.1f}" cy="{yy + R:.1f}" r="{R}" fill="{INK}"/>')
+        sv.text(tx + R, yy + R + FIG * 0.35, str(n), FIG, 'middle', '#ffffff', True, inside=cid)
+        for k, l in enumerate(lines):
+            sv.text(tx + 2 * R + 12, yy + R + BODY * 0.35 + k * BODY * 1.4, l, BODY, role='body')
+        yy += max(2 * R, len(lines) * BODY * 1.4) + 18
+    h = max(oy + dh + PAD, yy)
+    check_width(ctx, sv.w)
+    check_height(ctx, h)
+    return sv.svg(None, h)
 
 
 def r_table(ctx):
@@ -769,6 +1209,9 @@ def r_table(ctx):
     hcell = (int(m.group(1)), int(m.group(2))) if m else None
     if hl and hc is None and hr is None and hcell is None:
         ctx.diag('unrendered', f'highlight「{hl}」は columns[番号]、rows[番号]、cells[行][列] で書く', 'error', 'highlight')
+    if hl:
+        ctx.em(hl)
+    ctx.center = False
     names = [c.get('name') if isinstance(c, dict) else c for c in cols]
     aligns = []
     for j, c in enumerate(cols):
@@ -778,7 +1221,7 @@ def r_table(ctx):
         aligns.append(a)
     td = 'padding:12px;border-bottom:1px solid #D1D5DB'
     BK = '5px solid #111827'
-    out = f'<table data-role="body" style="border-collapse:collapse;font-size:{BODY}px;width:{CW - 34}px"><tr style="background:#F3F4F6">'
+    out = f'<table data-role="body" style="border-collapse:collapse;font-size:{BODY}px;width:{CW}px"><tr style="background:#F3F4F6">'
     for j, nm in enumerate(names):
         em = f';border:{BK};border-bottom:none' if hc == j else ''
         out += f'<th style="text-align:{aligns[j]};{td}{em}">{E(ctx.text(nm))}</th>'
@@ -826,6 +1269,8 @@ def r_tree(ctx):
     walk(b.get('children'), 1, 0)
     if hl and sum(1 for n in nodes if n[1] == hl) != 1:
         ctx.diag('unrendered', f'highlight「{hl}」に当たる節がない、または同じ名前の節が複数ある', 'error', 'highlight')
+    if hl:
+        ctx.em(hl)
     depth = max(n[0] for n in nodes)
     colw = []
     for d in range(depth + 1):
@@ -878,7 +1323,7 @@ def r_tree(ctx):
         ah = 50 + len(lines) * FS * 1.3 + 14
         ay = max(top, nodes[0][3] - ah / 2)
         mark = a.get('mark')
-        col = ctx.color_key('案の印', 'aside') if mark == '案' else GRAY_LINE
+        col = TEXT3 if mark else GRAY_LINE
         rid = sv.rect(ax, ay, aw, ah, fill='#fff', stroke=col, sw=2, rx=8, dash='8 6', name='aside')
         if mark:
             sv.text(ax + 14, ay + 28, mark, NOTE, color=col, bold=True, role='note', inside=rid)
@@ -887,7 +1332,7 @@ def r_tree(ctx):
         used_w = ax + aw
     check_width(ctx, used_w)
     check_height(ctx, sv.h + 4)
-    return sv.svg(CW)
+    return sv.svg()
 
 
 # ---------------------------------------------------------------- 流れ図(仕組みの定義の場面から)
@@ -935,6 +1380,8 @@ def r_flowchart(ctx):
     hlv = b.get('highlight')
     hl_ids = set(hlv.get('ids') or []) if isinstance(hlv, dict) else ({hlv} if hlv else set())
     hl_label = hlv.get('label') if isinstance(hlv, dict) else None
+    if hl_ids:
+        ctx.em('highlight')
     for h in hl_ids:
         if h not in dk.rel and h not in dk.el:
             ctx.diag('unrendered', f'highlight の {h} が仕組みの定義にない', 'error', 'highlight')
@@ -1054,7 +1501,7 @@ def r_flowchart(ctx):
             r = c['r']
             prop = r['id'] in proposals
             em = r['id'] in hl_ids and len(hl_ids) == 1
-            did = sv.diamond(cx, yc, c['w'], c['h'], name=r['id'], stroke=INK if em else (dk.colors.get('案の印') if prop else '#6B7280'),
+            did = sv.diamond(cx, yc, c['w'], c['h'], name=r['id'], stroke=INK if em else (dk.colors.get('案の印', '#6B7280') if prop else '#6B7280'),
                              sw=5 if em else 2, dash='8 6' if prop else None)
             sv.lines(cx, yc, c['lines'], FS, inside=did)
             dec_ids.append((r['id'], cx, c))
@@ -1113,7 +1560,7 @@ def r_flowchart(ctx):
         if len(group) != len(hl_ids):
             ctx.diag('unrendered', 'highlight の ids に、分かれ目でないものがある', 'error', 'highlight')
     check_height(ctx, sv.h + 4)
-    return sv.svg(CW)
+    return sv.svg()
 
 
 # ---------------------------------------------------------------- 構成図、要素の関係(graphviz で配置)
@@ -1227,6 +1674,8 @@ def graph_figure(ctx, kind):
     hg = parse_index(hl, 'groups')
     if hl and hg is None and hl not in els and hl not in [r['id'] for r in R]:
         ctx.diag('unrendered', f'highlight「{hl}」に当たる要素、つながり、groups[番号] がない', 'error', 'highlight')
+    if hl:
+        ctx.em(hl)
     FS = FIG
     LH = FS * 1.25
     # 入れ子(contain): 構成図では、含む側を枠にする
@@ -1277,7 +1726,7 @@ def graph_figure(ctx, kind):
     ingroup = {e: gi for gi, g in enumerate(gsets) for e in g}
     cross = any(ingroup.get(x['t']) != ingroup.get(x['h']) for x in edges)
     if cross and groups:
-        ctx.diag('unrendered', 'groups をまたぐつながりがある。groups ごとの横並びにせず、1つの図として置いた', 'warning', 'groups')
+        ctx.diag('layout', 'groups をまたぐつながりがある。groups ごとの横並びにせず、1つの図として置いた', 'warning', 'groups')
     units = []
     if groups and not cross:
         for gi, g in enumerate(gsets):
@@ -1426,7 +1875,7 @@ def graph_figure(ctx, kind):
             iy += h + 20
     check_width(ctx, sv.w)
     check_height(ctx, sv.h + 4)
-    return sv.svg(CW)
+    return sv.svg()
 
 
 def r_er(ctx):
@@ -1436,220 +1885,387 @@ def r_er(ctx):
 def r_arch(ctx):
     return graph_figure(ctx, 'architecture')
 
-
 RENDERERS = {
     'statement': r_statement, 'plain-list': r_plain_list, 'step-flow': r_step_flow, 'cause-chain': r_cause_chain,
-    'pie-chart': r_pie_chart, 'table': r_table, 'tree': r_tree, 'flowchart': r_flowchart,
-    'er-diagram': r_er, 'architecture-diagram': r_arch,
+    'pie-chart': r_pie_chart, 'bar-chart': r_bar_chart, 'before-after': r_before_after, 'table': r_table, 'tree': r_tree,
+    'flowchart': r_flowchart, 'er-diagram': r_er, 'architecture-diagram': r_arch,
+    'annotated-image-steps': r_annotated_image_steps,
 }
-FIGURE_TYPES = set(RENDERERS) - {'statement'}
 
 
-# ---------------------------------------------------------------- ページ
+# ---------------------------------------------------------------- 枠(題、要点、中身、脚注)
 
 CSS = f"""
-*{{box-sizing:border-box;margin:0;padding:0}}
-body{{width:{W}px;height:{H}px;background:#fff;font-family:{FONT_FAMILY};color:{INK};position:relative;overflow:hidden;word-break:auto-phrase}}
-.top{{position:absolute;left:{MX}px;top:26px;width:{CW}px}}
-.h{{font-size:32px;font-weight:bold;line-height:1.3}}
-.src{{font-size:22px;color:{TEXT2};line-height:1.35;margin-top:6px}}
-.fig{{margin-top:22px}}
-.after{{margin-top:20px;font-size:{BODY}px;color:{TEXT2};line-height:1.45}}
-.tk{{position:absolute;left:0;bottom:0;width:{W}px;height:{H - BAND_TOP}px;background:#F3F4F6;font-size:26px;padding:20px {MX}px;border-top:2px solid #D1D5DB;white-space:nowrap;overflow:hidden}}
-.tag{{display:inline-block;font-size:19px;padding:2px 10px;border-radius:12px;color:#fff;margin-right:8px;vertical-align:middle}}
-.ph{{border:2px dashed #9CA3AF;padding:18px 22px;font-size:24px;line-height:1.5;color:#4B5563}}
-.ph b{{color:#111827}}
-.center{{position:absolute;left:{MX}px;width:{CW}px}}
+.slide{{box-sizing:border-box;width:{W}px;height:{H}px;background:#fff;font-family:{FONT_FAMILY};color:{INK};position:relative;overflow:hidden;
+word-break:auto-phrase;display:flex;flex-direction:column;padding:{TOP}px {MX}px {BOTTOM}px;text-align:left}}
+.slide *{{box-sizing:border-box;margin:0;padding:0}}
+.slide .head{{flex:none}}
+.slide .kicker{{flex:none;font-size:{KICKER_FS}px;line-height:1.3;color:{TEXT3};margin-top:12px;white-space:nowrap}}
+.slide .trow{{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}}
+.slide .title{{flex:1;min-width:0;font-size:{TITLE_FS}px;font-weight:bold;line-height:{TITLE_LH}}}
+.slide .mark{{flex:none;font-size:{NOTE}px;line-height:1.3;padding:3px 12px;border:2px solid {TEXT2};border-radius:14px;margin-top:7px;white-space:nowrap}}
+.slide .mark.proposal{{border-style:dashed}}
+.slide .mark.practice{{border-style:double;border-width:4px;padding:1px 10px}}
+.slide .point{{font-size:{POINT_FS}px;font-weight:bold;line-height:{POINT_LH}}}
+.slide .head .point{{margin-top:8px}}
+.slide .wk{{font-size:{NOTE}px;font-weight:normal;color:{TEXT3};border:1px dashed {GRAY_LINE};padding:1px 8px;margin-right:10px;white-space:nowrap;vertical-align:middle}}
+.slide .main{{flex:1 1 0;min-height:0;margin-top:{GAP_MAIN}px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}}
+.slide .main.mid{{align-items:center;justify-content:center}}
+.slide .after{{align-self:stretch;margin-top:18px;font-size:{BODY}px;color:{TEXT2};line-height:1.45}}
+.slide .below{{flex:none;margin-top:{GAP_BELOW}px}}
+.slide .foot{{flex:none;min-height:{FOOT_MIN}px;margin-top:10px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}}
+.slide .fn{{flex:1;font-size:{FOOT_FS}px;line-height:{FOOT_LH};color:{TEXT3};border-top:1px solid #D1D5DB;padding-top:6px}}
+.slide .fn span{{margin-right:28px}}
+.slide .pg{{flex:none;margin-left:auto;font-size:{FOOT_FS}px;line-height:{FOOT_LH};color:{TEXT3};min-width:40px;text-align:right}}
+.slide .ph{{align-self:stretch;border:2px dashed {GRAY_LINE};padding:18px 22px;font-size:{BODY}px;line-height:1.55;color:{TEXT2}}}
+.slide .ph b{{color:{INK}}}
+.slide .plain{{align-self:stretch;list-style:none;font-size:{BODY}px;line-height:1.45}}
+.slide .plain li{{padding-left:1.1em;text-indent:-1.1em;margin-bottom:5px}}
+.slide .cover{{align-self:stretch}}
+.slide .cover .title{{font-size:48px;line-height:1.3;margin-top:6px}}
 """
 
 
-def page(title_html, body_html, takeaway=None, mins=None):
-    tk = f'<div class="tk fit" data-role="takeaway" data-name="takeaway">{E(takeaway)}</div>' if takeaway else ''
-    return (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
-            f'<div class="top">{title_html}{body_html}</div>{tk}</body></html>')
+def foot_html(items, page):
+    fn = ''
+    if items:
+        fn = '<div class="fn" data-role="footnote">' + ''.join(f'<span>{E(k)}: {E(v)}</span> ' for k, v in items) + '</div>'
+    pg = f'<div class="pg" data-role="footnote">{page}</div>' if page else ''
+    return f'<div class="foot">{fn}{pg}</div>'
 
 
-def head_html(headline, source):
-    s = f'<div class="h" data-role="headline">{E(headline)}</div>'
-    if source:
-        s += f'<div class="src" data-role="source">出典: {E(source)}</div>'
-    return s
+def foot_text(items):
+    return ' '.join(f'{k}: {v}' for k, v in items)
 
 
-def top_height(headline, source, mark):
-    hl = len(wrap(headline, 32, CW, True)[0])
-    sl = len(wrap('出典: ' + source, 22, CW)[0]) if source else 0
-    return 26 + hl * 32 * 1.3 + (6 + sl * 22 * 1.35 if source else 0) + 22 + (34 if mark else 0)
+def est_lines(text, fs, width, bold=False):
+    return len(wrap(str(text), fs, width, bold, balance=False)[0]) if text else 0
 
 
-def render_content(deck, sid):
-    """本編と付録のスライド1枚。仕様がなければ、立証設計から仮置きを描く。"""
-    s = deck.S[sid]
+def avail_height(title, point, pos, foot_items, kicker=None, after=None, mark=False, label=None):
+    """中身に使える高さの見積もり。行の数は、同じフォントで測って見積もる。実際の配置はブラウザが決め、診断で確かめる"""
+    h = H - TOP - BOTTOM - GAP_MAIN
+    side = (90 if mark else 0) + (tw(kicker, KICKER_FS) + 16 if kicker else 0)
+    h -= TITLE_FS * TITLE_LH * max(1, est_lines(title, TITLE_FS, CW - side, True))
+    if point and pos in ('below-title', 'below-body'):
+        n = est_lines(point, POINT_FS, CW - (tw(label, NOTE) + 30 if label else 0), True)
+        h -= POINT_FS * POINT_LH * n + (8 if pos == 'below-title' else GAP_BELOW)
+    elif label and not point:
+        h -= POINT_FS * POINT_LH + 8
+    fn = est_lines(foot_text(foot_items), FOOT_FS, CW - 64 - 28 * max(0, len(foot_items) - 1)) if foot_items else 0
+    h -= 10 + max(FOOT_MIN, 7 + fn * FOOT_FS * FOOT_LH)
+    if after:
+        h -= 18 + BODY * 1.45 * est_lines(after, BODY, CW)
+    return h
+
+
+def frame(sid, title, main, *, kicker=None, point=None, pos='below-title', foot=(), page=None, mark=None, label=None,
+          mid=False, after=None, cover=False):
+    """スライド1枚の HTML。上から、題、要点(題の直下の場合)、中身、要点(中身の下の場合)、脚注。
+    要点は1か所にだけ描く。pos が body の要点は、中身の側が描く。要点がなければ、要点の場所を空けない。
+    label は、確認用の資料だけに出す小さな札(節の要点、要点なし)。"""
+    lab = f'<span class="wk" data-role="note">{E(label)}</span>' if label else ''
+    pt = f'<div class="point" data-role="point">{E(point)}</div>' if point else ''
+    head = ''
+    if not cover:
+        mk = ''
+        if mark:
+            mk = f'<span class="mark {E(mark)}" data-role="note">{E(PROVENANCE[mark][0])}</span>'
+        if kicker:      # 題の位置を動かさないよう、札は題の行の右端に置く
+            mk = f'<span class="kicker" data-role="note">{E(kicker)}</span>' + mk
+        head = f'<div class="head"><div class="trow"><div class="title" data-role="title">{E(title)}</div>{mk}</div>'
+        if point and pos == 'below-title':
+            head += f'<div class="point" data-role="point">{lab}<span>{E(point)}</span></div>' if lab else pt
+        elif lab and not point:
+            head += f'<div class="point">{lab}</div>'
+        head += '</div>'
+    below = ''
+    if point and pos == 'below-body':
+        below = (f'<div class="point below" data-role="point">{lab}<span>{E(point)}</span></div>' if lab
+                 else f'<div class="point below" data-role="point">{E(point)}</div>')
+    aft = f'<div class="after" data-role="body">{E(after)}</div>' if after else ''
+    return (f'<div class="slide" data-sid="{html.escape(sid, quote=True)}">{head}'
+            f'<div class="main{" mid" if mid else ""}">{main}{aft}</div>{below}{foot_html(list(foot), page)}</div>')
+
+
+def standalone(fragment):
+    return (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>html,body{{margin:0;padding:0;background:#fff}}{CSS}</style></head>'
+            f'<body>{fragment}</body></html>')
+
+
+# ---------------------------------------------------------------- 本編と付録のスライド
+
+def relation_names():
+    return {t: r.get('種類', t) for r in C.md_table('vocabulary.md', '主張の種類の語彙') for t in C.ticks(r.get('識別子', ''))}
+
+
+def annotations(deck, ctx, v, fids):
+    """限定、出どころ、出典を、資料の型の定義の annotation が定める置き場に分ける。(脚注の項目, 印, ノートに足す行) を返す"""
+    foot, mark, notes = [], None, []
+    if v['qualifiers']:
+        q = '、'.join(map(str, v['qualifiers']))
+        (foot if deck.ann_q == 'footnote' else notes).append(('限定', q))
+    prov = v.get('provenance')
+    if prov and deck.ann_p != 'none':
+        if prov not in PROVENANCE:
+            ctx.diag('unrendered', f'出どころ「{prov}」は cited、proposal、practice で書く', 'error', 'provenance')
+        elif deck.ann_p == 'mark':
+            mark = prov
+        else:
+            (foot if deck.ann_p == 'footnote' else notes).append(('出どころ', PROVENANCE[prov][1]))
+    names = deck.source_names(fids)
+    if names:
+        foot.append(('出典', '、'.join(names)))
+    return foot, mark, notes
+
+
+def render_content(deck, sid, page):
+    """本編と付録のスライド1枚。スライド仕様がある場合は型で描く。ない場合と保留の場合は、立証の設計から仮置きを、
+    それもない場合は骨組み(題、要点、根拠の事実)を描く。"""
+    v = deck.view(sid)
     spec = deck.specs.get(sid)
     ctx = Ctx(deck, sid, spec)
-    src = s.get('source') or ''
+    s = deck.S.get(sid) or {}
     blocked = spec is not None and spec.get('status') == 'blocked'
-    if spec is None or blocked:   # 仕様がない、または保留: 立証設計から仮置きを描く
-        p = deck.proof.get(sid) or {}
-        pat = deck.pattern_of.get((p.get('relation'), p.get('base', 'none')))
+    proof = deck.proof.get(sid) if deck.level != 'skeleton' else None
+    mode = 'spec' if spec is not None and not blocked else 'placeholder' if proof else 'skeleton'
+    ctx.mode = mode
+    working = deck.level in ('skeleton', 'placeholder')
+    title = v['title']
+    if not title:
+        ctx.diag('unrendered', '題がない', 'error', 'title')
+        title = '(題なし)'
+    ptype = ((spec or {}).get('body') or {}).get('type') if mode == 'spec' else deck.pattern_for(sid) if proof else None
+    point = v['point']
+    if v['point_kind'] == 'section' and not point:
+        ctx.diag('unrendered', '節の要点を引くスライドだが、節の要点が章構成にない', 'error', 'point')
+    pos = deck.position(ptype) if point else None
+    fids = (spec or {}).get('sources') if mode == 'spec' else (proof or {}).get('facts') or s.get('evidence')
+    foot, mark, note_lines = annotations(deck, ctx, v, fids or [])
+    label = None
+    if working:
+        label = '節の要点' if v['point_kind'] == 'section' else None
+        if not point:
+            label = '要点なし(役割: ' + deck.role_names.get(v['role'], str(v['role'] or '未記入')) + ')'
+    after = None
+    if mode == 'spec' and spec.get('text'):
+        after = ctx.text(spec['text'], 'text')
+    ctx.avail_h = avail_height(title, point, pos, foot, after=after, mark=bool(mark), label=label)
+    ctx.point_in_body = point if pos == 'body' else None
+    ctx.type = ptype
+    if mode == 'spec':
+        fn = RENDERERS.get(ptype)
+        if fn is None:
+            ctx.diag('unrendered', f'型 {ptype} の描画がない(描ける型: {", ".join(sorted(RENDERERS))})', 'error', 'body.type')
+            fig = f'<div class="ph" data-role="body">この型は描けない</div>'
+        else:
+            try:
+                fig = fn(ctx)
+            except Exception as e:    # 描画の失敗も診断として出し、ほかのスライドは続ける
+                ctx.diag('unrendered', f'描画に失敗した: {type(e).__name__}: {e}', 'error', 'body')
+                fig = '<div class="ph" data-role="body">描画に失敗した</div>'
+        n = max(count_highlight(spec.get('body')), len(ctx.ems))
+        if n >= 2:
+            ctx.diag('emphasis', f'強調が1枚に {n} か所ある(1か所まで)', 'error', 'highlight')
+    else:
+        ctx.center = False
         if blocked:
             ctx.diag('placeholder', f'保留のスライド({spec.get("issue") or "Issue の番号なし"})。仮置きを描いた', 'info')
+        elif deck.level == 'full':
+            ctx.diag('placeholder', 'スライド仕様がない。' + ('仮置きを描いた' if mode == 'placeholder' else '骨組みを描いた'), 'info')
+        if mode == 'placeholder':
+            rel = proof.get('relation')
+            what = deck.pattern_names.get(ptype) or relation_names().get(rel) or str(rel)
+            bits = [f'<b>仮置き: ここに{E(what)}</b>']
+            if proof.get('show'):
+                bits.append(f'見せるもの: {E(proof["show"])}')
+            if proof.get('focus'):
+                bits.append(f'注目させる点: {E(proof["focus"])}')
+            fig = f'<div class="ph" data-role="body">{"<br>".join(bits)}</div>'
         else:
-            ctx.diag('placeholder', 'スライド仕様がない。仮置きを描いた', 'info')
-        bits = []
-        if pat or p.get('relation'):
-            bits.append(f'<b>型</b>: {E(str(pat or "未定"))}(主張の種類 {E(str(p.get("relation")))})')
-        if p.get('show'):
-            bits.append(f'<b>見せるもの</b>: {E(p["show"])}')
-        if p.get('focus'):
-            bits.append(f'<b>注目させる点</b>: {E(p["focus"])}')
-        body = f'<div class="fig"><div class="ph fit" data-role="body" data-name="仮置き" style="max-height:{BAND_TOP - 16 - top_height(s["headline"], src, None):.0f}px">{"<br>".join(bits) or "(立証設計がない)"}</div></div>'
-        return page(head_html(s['headline'], src), body), ctx
-    b = spec.get('body') or {}
-    t = b.get('type')
-    if spec.get('headline') != s.get('headline'):
-        ctx.diag('unrendered', 'スライド仕様の headline がストーリーラインと違う。ストーリーラインの見出しで描いた', 'warning', 'headline')
-    p = deck.proof.get(sid) or {}
-    want = deck.pattern_of.get((p.get('relation'), p.get('base', 'none')))
-    if want and t != want:
-        ctx.diag('unrendered', f'body.type {t} が表現の対応表の型 {want} と違う', 'warning', 'body.type')
-    if not spec.get('takeaway') and s.get('chapter') != 'appendix':
-        ctx.diag('unrendered', '結論1行(takeaway)がない', 'error', 'takeaway')
-    for fld in ('text', 'notes'):
-        if spec.get(fld):
-            check_numbers(ctx, fld, spec[fld])
-    mark = b.get('mark') if t != 'plain-list' else None
-    text_after = spec.get('text')
-    after_h = 0
-    if text_after:
-        after_h = 20 + len(wrap(ctx.text(text_after), BODY, CW)[0]) * BODY * 1.45
-    ctx.avail_h = BAND_TOP - 16 - top_height(s['headline'], src, mark) - after_h
-    fn = RENDERERS.get(t)
-    if fn is None:
-        ctx.diag('unrendered', f'型 {t} の描画がない(描ける型: {", ".join(sorted(RENDERERS))})', 'error', 'body.type')
-        fig = f'<div class="ph" data-role="body">型 {E(str(t))} は描けない</div>'
-    else:
-        try:
-            fig = fn(ctx)
-        except Exception as e:    # 描画の失敗も診断として出し、ほかのスライドは続ける
-            ctx.diag('unrendered', f'描画に失敗した: {type(e).__name__}: {e}', 'error', 'body')
-            fig = f'<div class="ph" data-role="body">描画に失敗した</div>'
-    if t in FIGURE_TYPES and not b.get('highlight'):
-        ctx.diag('unrendered', '強調する要素(highlight)の指定がない', 'warning', 'highlight')
-    pre = tag(mark, ctx) if mark else ''
-    after = f'<div class="after" data-role="body">{E(ctx.text(text_after))}</div>' if text_after else ''
-    if deck.max_hues:
-        hues = {c for c in ctx.colors_used if not is_gray(c)}
-        if len(hues) > deck.max_hues:
-            ctx.diag('hue-count', f'1枚で使う色相が {len(hues)} で、上限 {deck.max_hues} を越える', 'error')
-    for c in ctx.colors_used:
-        if contrast(c, '#ffffff') < 3.0 and c in [v for k, v in deck.colors.items() if k in ('閉じる', '調べる', '上げる', '誤検知', '案の印')]:
-            ctx.diag('contrast', f'色 {c} の文字と白地の色の差が小さい({contrast(c, "#ffffff"):.1f})', 'warning')
-    return page(head_html(s['headline'], src), f'<div class="fig">{pre}{fig}</div>{after}', spec.get('takeaway'), deck.min), ctx
+            sts = []
+            for fid in s.get('evidence') or []:
+                f = deck.facts.get(fid)
+                if f is None:
+                    ctx.diag('unrendered', f'根拠の事実 {fid} が素材台帳にない', 'error', 'evidence')
+                else:
+                    sts.append(str(f.get('statement') or ''))
+            fig = ''
+            if sts:
+                fig = (f'<div data-role="note" style="font-size:{NOTE}px;color:{TEXT3};margin-bottom:6px">根拠の事実</div>'
+                       '<ul class="plain" data-role="body" style="font-size:24px">' + ''.join(f'<li>・{E(x)}</li>' for x in sts) + '</ul>')
+    if ctx.point_in_body and not getattr(ctx, 'point_drawn', False) and not (mode == 'spec' and ptype == 'statement'):
+        # 要点を中身として描く位置だが、型が要点を描かない場合は、中身の先頭に1回だけ描く
+        fig = (f'<div class="point pt-body" data-role="point" style="align-self:stretch;font-size:{POINT_BODY_FS}px;line-height:1.45;margin-bottom:22px">'
+               f'{E(point)}</div>') + fig
+    if len({c for c in ctx.colors_used if not is_gray(c)}) > deck.max_hues:
+        ctx.diag('hue-count', f'1枚で使う色相が {len({c for c in ctx.colors_used if not is_gray(c)})} で、上限 {deck.max_hues} を越える', 'error')
+    for a, b in ctx.adjacent:
+        if a != b and contrast(a, b) < ADJACENT_CONTRAST_MIN:
+            ctx.diag('adjacent-contrast', f'隣り合う面の色 {a} と {b} の差が小さい(コントラスト比 {contrast(a, b):.2f}、下限 {ADJACENT_CONTRAST_MIN})', 'error')
+    notes = []
+    if mode == 'spec' and spec.get('notes'):
+        notes.append(Ctx(deck, sid, spec).text(spec['notes'], 'notes'))
+    notes += [f'{k}: {t}' for k, t in note_lines]
+    ctx.notes = '\n'.join(notes)
+    ctx.point = point
+    frag = frame(sid, title, fig, point=point, pos=pos or 'below-title', foot=foot, page=page, mark=mark, label=label,
+                 mid=ctx.center and mode == 'spec', after=after)
+    return frag, ctx
 
 
-def is_gray(c):
-    r, g, b = (int(c[i:i + 2], 16) for i in (1, 3, 5))
-    return max(r, g, b) - min(r, g, b) < 40
+# ---------------------------------------------------------------- 自動で作るスライド(導出と半導出)
+
+def auto_ctx(deck, sid):
+    ctx = Ctx(deck, sid, None)
+    ctx.mode, ctx.notes, ctx.point, ctx.type = 'auto', '', None, None
+    return ctx
 
 
-def contrast(a, b):
-    def lum(c):
-        v = [int(c[i:i + 2], 16) / 255 for i in (1, 3, 5)]
-        v = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in v]
-        return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]
-    la, lb = sorted([lum(a), lum(b)], reverse=True)
-    return (la + 0.05) / (lb + 0.05)
+def union(*lists):
+    out = []
+    for l in lists:
+        out += [x for x in l or [] if x not in out]
+    return out
 
 
-# ---------------------------------------------------------------- 導出と半導出のスライド
-
-def chapter_questions(deck, ch):
-    """章で答える問い: 章構成の cover_question(D013)があればそれ。なければ章の主張の question、
-    主張のない章は章のスライドの from の問い"""
-    cq = ch.get('cover_question')
-    if cq:
-        return [(None, q) for q in (cq if isinstance(cq, list) else [cq])]
-    qs = [deck.claims[c]['question'] for c in ch.get('claims') or [] if c in deck.claims and deck.claims[c].get('question')]
-    if not qs:
-        for s in deck.storyline:
-            if s.get('chapter') == ch['id']:
-                for q in s.get('from') or []:
-                    if q not in qs:
-                        qs.append(q)
-    return [(q, deck.plan[q]['question']) for q in qs if q in deck.plan]
+def qual_foot(deck, ctx, quals):
+    """自動で作るスライドの限定。載せる要点の限定を、置き場(脚注かノート)にまとめる"""
+    if not quals:
+        return []
+    item = ('限定', '、'.join(map(str, quals)))
+    if deck.ann_q == 'footnote':
+        return [item]
+    ctx.notes = f'{item[0]}: {item[1]}'
+    return []
 
 
-def simple_page(kicker, title, lines_html, ctx_id):
-    ctx = Ctx(None, ctx_id, None)
-    body = (f'<div class="center" style="top:150px"><div data-role="body" style="font-size:26px;color:{TEXT2}">{E(kicker)}</div>'
-            f'<div class="fit" data-role="headline" data-name="title" style="font-size:44px;font-weight:bold;line-height:1.3;margin-top:10px;max-height:120px">{E(title)}</div>'
-            f'{lines_html}</div>')
-    return (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>{body}</body></html>'), ctx
-
-
-def render_toc(deck):
-    rows = ''
+def render_toc(deck, page):
+    """目次。章と節の題を載せる"""
+    ctx = auto_ctx(deck, 'toc')
+    blocks, est = [], 0
     for i, ch in enumerate(deck.chapters, 1):
-        rows += f'<li style="margin:8px 0"><span style="display:inline-block;width:110px;color:{TEXT2}">第{i}章</span>{E(ch.get("title", ""))}</li>'
-    if any(s.get('chapter') == 'appendix' for s in deck.storyline):
-        rows += f'<li style="margin:8px 0"><span style="display:inline-block;width:110px;color:{TEXT2}">付録</span></li>'
-    rows += f'<li style="margin:8px 0"><span style="display:inline-block;width:110px;color:{TEXT2}">出典</span>出典の一覧</li>'
-    html_ = (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
-             f'<div class="top"><div class="h" data-role="headline">目次</div>'
-             f'<ul class="fit" data-role="body" data-name="目次" style="list-style:none;font-size:28px;margin-top:40px;line-height:1.5;max-height:{BAND_TOP - 140}px">{rows}</ul></div></body></html>')
-    return html_, Ctx(deck, 'toc', None)
+        rows = f'<div data-role="body" style="font-size:26px;font-weight:bold;line-height:1.5"><span style="display:inline-block;width:64px">{i}</span>{E(ch.get("title", ""))}</div>'
+        est += 39 + 10
+        for j, sec in enumerate([s for s in ch.get('sections') or [] if isinstance(s, dict)], 1):
+            rows += f'<div data-role="body" style="font-size:{BODY}px;line-height:1.45;padding-left:64px"><span style="display:inline-block;width:64px;color:{TEXT3}">{i}.{j}</span>{E(sec.get("title", ""))}</div>'
+            est += 35
+        blocks.append(f'<div style="break-inside:avoid;margin-bottom:10px">{rows}</div>')
+    for name in (['付録'] if any(s.get('chapter') == 'appendix' for s in deck.storyline) else []) + (['出典の一覧'] if deck.storyline else []):
+        blocks.append(f'<div data-role="body" style="break-inside:avoid;font-size:26px;font-weight:bold;line-height:1.5;margin-bottom:10px;padding-left:64px">{name}</div>')
+        est += 49
+    avail = avail_height('目次', None, None, [])
+    cols = 'column-count:2;column-gap:48px;' if est > avail else ''
+    main = f'<div style="align-self:stretch;{cols}">{"".join(blocks)}</div>'
+    return frame('toc', '目次', main, page=page), ctx
 
 
-def render_cover(deck, i, ch):
-    qs = chapter_questions(deck, ch)
-    ctx = Ctx(deck, f'{ch["id"]}-cover', None)
-    if not qs:
-        ctx.diag('unrendered', f'章 {ch["id"]} で答える問いが上流の成果物にない(主張も、スライドの from もない)。章の題だけを載せた', 'warning')
-    ql = ''.join(f'<li data-role="body" style="margin-top:12px">{E(t)}</li>' for _, t in qs)
-    lines = (f'<div data-role="body" style="margin-top:56px;font-size:24px;color:{TEXT2}">この章で答える問い</div>'
-             f'<ul class="fit" data-name="問い" style="list-style:none;font-size:30px;line-height:1.45;max-height:300px;border-left:6px solid #D1D5DB;padding-left:22px;margin-top:8px">{ql}</ul>') if qs else ''
-    h, _ = simple_page(f'第{i}章', ch.get('title', ''), lines, ctx.sid)
-    return h, ctx
+def render_cover(deck, i, ch, page, detail):
+    """章扉。章の題と、その章で答える問い。目次と章扉の資料(detail)では、章の要点と、節の題と要点も載せる"""
+    sid = f'{ch["id"]}-cover'
+    ctx = auto_ctx(deck, sid)
+    q = ch.get('question')
+    if not q:
+        ctx.diag('unrendered', 'この章で答える問い(章構成の question)がない', 'error', 'question')
+    body = (f'<div class="cover"><div data-role="body" style="font-size:26px;color:{TEXT3}">第{i}章</div>'
+            f'<div class="title" data-role="title">{E(ch.get("title") or "(題なし)")}</div>')
+    if q:
+        body += (f'<div data-role="note" style="font-size:{KICKER_FS}px;color:{TEXT3};margin-top:{30 if detail else 52}px">この章で答える問い</div>'
+                 f'<div data-role="body" style="font-size:30px;line-height:1.45;margin-top:4px">{E(q)}</div>')
+    foot = []
+    if detail:
+        quals = list(ch.get('qualifiers') or [])
+        if ch.get('point'):
+            body += (f'<div data-role="note" style="font-size:{KICKER_FS}px;color:{TEXT3};margin-top:20px">章の要点</div>'
+                     f'<div class="point" data-role="point" style="margin-top:4px">{E(ch["point"])}</div>')
+            ctx.point = ch['point']
+        else:
+            ctx.diag('unrendered', '章の要点がない', 'error', 'point')
+        secs = [s for s in ch.get('sections') or [] if isinstance(s, dict)]
+        if secs:
+            body += f'<div data-role="note" style="font-size:{KICKER_FS}px;color:{TEXT3};margin-top:20px">節の題と要点</div>'
+        for j, sec in enumerate(secs, 1):
+            p, sq = deck.section_point(sec.get('id'))
+            same = sec.get('point_from') == 'chapter' or p == ch.get('point')
+            quals = union(quals, [] if same else sq)
+            ptxt = '(章の要点を引く)' if same else (p or '(要点なし)')
+            body += (f'<div data-role="body" style="font-size:{BODY}px;line-height:1.45;margin-top:8px;display:flex;gap:18px">'
+                     f'<span style="flex:none;color:{TEXT3}">{i}.{j}</span><span><b>{E(sec.get("title", ""))}</b><br>{E(ptxt)}</span></div>')
+        foot = qual_foot(deck, ctx, quals)
+    body += '</div>'
+    frag = frame(sid, '', body, foot=foot, page=page, cover=True, mid=not detail)
+    return frag, ctx
 
 
-def render_summary(deck, i, ch):
-    ctx = Ctx(deck, f'{ch["id"]}-summary', None)
-    lines = (f'<div class="fit" data-role="body" data-name="章の主張" style="margin-top:48px;font-size:32px;line-height:1.55;max-height:330px">{E(ch.get("message", ""))}</div>')
-    h, _ = simple_page(f'第{i}章のまとめ', ch.get('title', ''), lines, ctx.sid)
-    return h, ctx
+def render_list_slide(deck, sid, kicker, title, point, items, quals, page):
+    """まとめのスライド。承認済みの文(要点)を、そのまま並べる。新しい文を書かない"""
+    ctx = auto_ctx(deck, sid)
+    if not point:
+        ctx.diag('unrendered', 'まとめに載せる要点がない', 'error', 'point')
+    foot = qual_foot(deck, ctx, quals)
+    main = '<ul class="plain" data-role="body">' + ''.join(f'<li>・{E(x)}</li>' for x in items) + '</ul>' if items else ''
+    ctx.point = point
+    return frame(sid, title or '(題なし)', main, kicker=kicker, point=point, pos='below-title', foot=foot, page=page), ctx
 
 
-def render_appendix_cover():
-    h, ctx = simple_page('付録', '付録', '', 'appendix-cover')
-    return h, ctx
+def render_section_summary(deck, sec_id, page):
+    """節のまとめ。節の要点と、節内のスライドの要点を順に並べる"""
+    ch, sec = deck.sections[sec_id]
+    p, q = deck.section_point(sec_id)
+    slides = [s for s in deck.section_slides(sec_id) if isinstance(s.get('point'), str) and s['point'].strip()]
+    quals = union(q, *[s.get('qualifiers') for s in slides])
+    return render_list_slide(deck, f'{sec_id}-summary', '節のまとめ', sec.get('title'), p, [s['point'] for s in slides], quals, page)
 
 
-def source_entries(deck, order):
+def render_chapter_summary(deck, i, ch, page):
+    """章のまとめ。章の要点と、その章の節の要点を順に並べる"""
+    pts, quals = [], list(ch.get('qualifiers') or [])
+    for sec in ch.get('sections') or []:
+        p, q = deck.section_point(sec.get('id'))
+        if p and p != ch.get('point'):
+            pts.append(p)
+            quals = union(quals, q)
+    return render_list_slide(deck, f'{ch["id"]}-summary', f'第{i}章のまとめ', ch.get('title'), ch.get('point'), pts, quals, page)
+
+
+def render_appendix_cover(deck, page):
+    ctx = auto_ctx(deck, 'appendix-cover')
+    body = '<div class="cover"><div class="title" data-role="title">付録</div></div>'
+    return frame('appendix-cover', '', body, page=page, cover=True, mid=True), ctx
+
+
+def render_marks(deck, page):
+    """出どころの印の説明。印を使う資料(annotation の provenance が mark)に、冒頭の1枚として置く"""
+    ctx = auto_ctx(deck, 'marks')
+    rows = ''.join(f'<div style="display:flex;align-items:center;gap:22px;margin-bottom:22px"><span class="mark {k}" data-role="note" style="margin-top:0">{E(m)}</span>'
+                   f'<span data-role="body" style="font-size:28px">{E(mean)}</span></div>' for k, (m, mean) in PROVENANCE.items())
+    return frame('marks', '出どころの印', f'<div>{rows}</div>', page=page), ctx
+
+
+def source_entries(deck, seq):
+    """出典の名前 → 使ったスライドのページ番号"""
     used = {}
-    for sid in order:
+    for it in seq:
+        if it['kind'] not in ('本編', '付録'):
+            continue
+        sid = it['id']
         spec = deck.specs.get(sid)
-        fids = (spec or {}).get('sources') or deck.S.get(sid, {}).get('evidence') or []
-        for fid in fids:
-            f = deck.facts.get(fid)
-            if not f:
-                continue
-            key = strip_gloss(str(f.get('source') or '')) or '(出典の記録なし)'
-            used.setdefault(key, [])
-            if sid not in used[key]:
-                used[key].append(sid)
+        blocked = spec is not None and spec.get('status') == 'blocked'
+        fids = (spec.get('sources') if spec is not None and not blocked else None) or (deck.proof.get(sid) or {}).get('facts') or deck.S.get(sid, {}).get('evidence') or []
+        for name in deck.source_names(fids):
+            used.setdefault(name, [])
+            if it['no'] not in used[name]:
+                used[name].append(it['no'])
     return list(used.items())
 
 
-def render_sources(deck, order):
-    """出典の一覧。1枚に収まらない分は、続きの1枚に送る(導出のスライドのため、枚数は中身で決まる)"""
-    entries = source_entries(deck, order)
+def source_pages(deck, seq):
+    """出典の一覧を、1枚に収まる分ごとに分ける"""
+    limit = avail_height('出典の一覧', None, None, [])
     pages, cur, h = [], [], 0
-    limit = BAND_TOP - 26 - 42 - 30
-    FS = 22   # 出典の行と同じ下限(16pt)を当てる
-    for name, sids in entries:
-        t = f'{name}(使ったスライド: {", ".join(sids)})'
-        eh = len(wrap(t, FS, CW - 20)[0]) * FS * 1.4 + 6
+    for name, nos in source_entries(deck, seq):
+        t = f'{name}({"、".join(map(str, nos))}ページ)'
+        eh = est_lines(t, BODY, CW) * BODY * 1.45 + 8
         if cur and h + eh > limit:
             pages.append(cur)
             cur, h = [], 0
@@ -1657,130 +2273,236 @@ def render_sources(deck, order):
         h += eh
     if cur:
         pages.append(cur)
-    out = []
-    for k, items in enumerate(pages, 1):
-        sid = f'sources-{k}'
-        li = ''.join(f'<li style="margin-bottom:6px">{E(t)}</li>' for t in items)
-        ttl = '出典の一覧' + (f'({k}/{len(pages)})' if len(pages) > 1 else '')
-        html_ = (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>{CSS}</style></head><body>'
-                 f'<div class="top"><div class="h" data-role="headline">{ttl}</div>'
-                 f'<ul class="fit" data-role="source" data-name="出典" style="list-style:none;font-size:{FS}px;line-height:1.4;margin-top:20px;max-height:{limit + 4}px">{li}</ul></div></body></html>')
-        out.append((sid, html_, Ctx(deck, sid, None)))
-    return out
+    return pages
+
+
+def render_sources(deck, k, total, items, page):
+    sid = f'sources-{k}'
+    ctx = auto_ctx(deck, sid)
+    li = ''.join(f'<li style="margin-bottom:8px">{E(t)}</li>' for t in items)
+    ttl = '出典の一覧' + (f'({k}/{total})' if total > 1 else '')
+    main = f'<ul data-role="body" style="align-self:stretch;list-style:none;font-size:{BODY}px;line-height:1.45">{li}</ul>'
+    return frame(sid, ttl, main, page=page), ctx
 
 
 # ---------------------------------------------------------------- 全体
 
 def deck_order(deck):
-    """(ID, 区分, 描く関数) の一覧。章の順、章の中はストーリーラインの順。付録は最後"""
-    seq = [('toc', '目次', lambda: render_toc(deck))]
+    """描く順の一覧。1件は {id, kind, chapter, fn}。章の中は、章扉、節ごとのスライド(節のまとめは節の最後)、章のまとめの順。
+    付録と出典の一覧は最後。"""
+    seq = []
+    add = lambda sid, kind, ch, fn: seq.append({'id': sid, 'kind': kind, 'chapter': ch, 'fn': fn})
+    if deck.level == 'samples':
+        for sid in deck.sample_ids:
+            add(sid, '見本', (deck.S.get(sid) or {}).get('chapter'), lambda page, sid=sid: render_content(deck, sid, page))
+        return seq
+    detail = deck.level == 'toc'
+    add('toc', '目次', None, lambda page: render_toc(deck, page))
+    if not detail and deck.ann_p == 'mark':
+        add('marks', '出どころの印の説明', None, lambda page: render_marks(deck, page))
     for i, ch in enumerate(deck.chapters, 1):
-        sl = [s['id'] for s in deck.storyline if s.get('chapter') == ch['id']]
-        seq.append((f'{ch["id"]}-cover', '章扉', lambda i=i, ch=ch: render_cover(deck, i, ch)))
-        for sid in sl:
-            seq.append((sid, '本編', lambda sid=sid: render_content(deck, sid)))
-        # 章のまとめ: 章構成の枚数に、扉と中身のほかに1枚の余地があるときだけ置く(例外 D010 の ch1 は余地がない)
-        if (ch.get('slides') or 0) >= len(sl) + 2:
-            seq.append((f'{ch["id"]}-summary', '章のまとめ', lambda i=i, ch=ch: render_summary(deck, i, ch)))
-    app = [s['id'] for s in deck.storyline if s.get('chapter') == 'appendix']
-    if app:
-        seq.append(('appendix-cover', '付録の扉', render_appendix_cover))
-        for sid in app:
-            seq.append((sid, '付録', lambda sid=sid: render_content(deck, sid)))
+        cid = ch['id']
+        add(f'{cid}-cover', '章扉', cid, lambda page, i=i, ch=ch: render_cover(deck, i, ch, page, detail))
+        if detail:
+            continue
+        mine = [s for s in deck.storyline if s.get('chapter') == cid]
+        secs = [s for s in ch.get('sections') or [] if isinstance(s, dict) and s.get('id')]
+        done = set()
+        for sec in secs:
+            for s in mine:
+                if s.get('section') == sec['id']:
+                    add(s['id'], '本編', cid, lambda page, sid=s['id']: render_content(deck, sid, page))
+                    done.add(s['id'])
+            if deck.needs_section_summary(sec['id']):
+                add(f'{sec["id"]}-summary', '節のまとめ', cid, lambda page, sec=sec: render_section_summary(deck, sec['id'], page))
+        for s in mine:
+            if s['id'] not in done:   # 節が章構成にないスライド
+                add(s['id'], '本編', cid, lambda page, sid=s['id']: render_content(deck, sid, page))
+        if len(secs) > 1:             # 節が1つだけの章には、章のまとめを置かない
+            add(f'{cid}-summary', '章のまとめ', cid, lambda page, i=i, ch=ch: render_chapter_summary(deck, i, ch, page))
+    if detail:
+        return seq
     known = {c['id'] for c in deck.chapters} | {'appendix'}
     for s in deck.storyline:
         if s.get('chapter') not in known:
-            seq.append((s['id'], '本編', lambda sid=s['id']: render_content(deck, sid)))
+            add(s['id'], '本編', s.get('chapter'), lambda page, sid=s['id']: render_content(deck, sid, page))
+    app = [s['id'] for s in deck.storyline if s.get('chapter') == 'appendix']
+    if app:
+        add('appendix-cover', '付録の扉', 'appendix', lambda page: render_appendix_cover(deck, page))
+        for sid in app:
+            add(sid, '付録', 'appendix', lambda page, sid=sid: render_content(deck, sid, page))
+    for n, it in enumerate(seq, 1):
+        it['no'] = n
+    pages = source_pages(deck, seq)
+    for k, items in enumerate(pages, 1):
+        add(f'sources-{k}', '出典の一覧', None, lambda page, k=k, items=items: render_sources(deck, k, len(pages), items, page))
     return seq
 
 
-def main():
+def visible_text(fragment):
+    return html.unescape(re.sub(r'<[^>]+>', '\n', fragment))
+
+
+def scan_text(deck, ctx, fragment):
+    """読み手に見える文に、内部のIDと、置き換えていない参照が残っていないか。要点の文が2回出ていないか"""
+    text = visible_text(fragment)
+    for m in set(re.findall(r'\{[^{}\n]*\}', text)):
+        ctx.diag('internal-id', f'置き換えていない参照が残っている: {m}', 'error')
+    for i in sorted(deck.all_ids):
+        if len(i) >= 2 and re.search(r'(?<![A-Za-z0-9_-])' + re.escape(i) + r'(?![A-Za-z0-9_-])', text):
+            ctx.diag('internal-id', f'内部のID {i} が、読み手に見える文に出ている', 'error')
+    p = getattr(ctx, 'point', None)
+    if p and ctx.mode != 'skeleton' and text.count(str(p)) >= 2:   # 骨組みでは、根拠の事実の文が要点と同じになりうる
+        ctx.diag('duplicate', '要点の文が、1枚の中に2回出ている', 'error', 'point')
+
+
+DECK_CSS = f"""
+html,body{{margin:0;padding:0}}
+body{{background:#e5e7eb;font-family:{FONT_FAMILY}}}
+section{{width:{W}px;margin:0 auto;padding:14px 0 14px}}
+.cap{{font-size:14px;color:#374151;margin:0 0 4px}}
+.frame{{border:1px solid #9ca3af;width:{W}px;height:{H}px;box-sizing:content-box;background:#fff}}
+.notes{{font-size:14px;color:#374151;margin-top:4px;white-space:pre-wrap}}
+.bad{{color:#b91c1c;font-weight:bold}}
+@page{{size:{W}px {H}px;margin:0}}
+@media print{{
+ body{{background:#fff}}
+ section{{padding:0;margin:0;break-after:page;page-break-after:always;height:{H}px;overflow:hidden}}
+ .cap,.notes{{display:none}}
+ .frame{{border:none}}
+}}
+"""
+
+
+def main(argv=None, level=None):
     ap = argparse.ArgumentParser(description='スライド仕様からスライドを描く')
-    ap.add_argument('deck')
-    ap.add_argument('--only', nargs='*', help='このIDのスライドだけを描く(deck.html は全体で作り直す)')
+    ap.add_argument('deck', nargs='?', help='資料のディレクトリ')
+    ap.add_argument('--level', choices=['toc', 'skeleton', 'placeholder', 'full'], default=level or 'full',
+                    help='toc(目次と章扉) / skeleton(骨組み) / placeholder(仮置き) / full(全スライド。既定)')
+    ap.add_argument('--samples', action='store_true', help='型の見本(06-samples/)だけを描く')
+    ap.add_argument('--pdf', action='store_true', help='全スライドを1つの PDF(deck.pdf)にまとめて出す')
+    ap.add_argument('--only', nargs='*', help='このIDのスライドだけを描き直す(deck.html は全体で作り直す)')
+    ap.add_argument('--chapter', help='この章のスライドだけを描き直す。付録は appendix')
     ap.add_argument('--no-png', action='store_true', help='PNG を撮らない(診断は取る)')
-    a = ap.parse_args()
+    ap.add_argument('--out', help='出力先。既定は <資料のディレクトリ>/build(確認用の資料と見本は、その下の toc、skeleton、placeholder、samples)')
+    ap.add_argument('--show-ids', action='store_true', help='deck.html の見出しに、スライドのIDと診断の件数を出す(作業用。スライドの中には出さない)')
+    ap.add_argument('--patterns', action='store_true', help='描ける型の一覧を出して終わる')
+    a = ap.parse_args(argv)
+    if a.patterns:
+        print('\n'.join(sorted(RENDERERS)))
+        return 0
+    if not a.deck:
+        ap.error('資料のディレクトリが要る')
     root = Path(a.deck).resolve()
-    deck = Deck(root)
-    out = root / 'build'
+    if not root.is_dir():
+        sys.exit(f'資料のディレクトリがない: {root}')
+    lv = 'samples' if a.samples else a.level
+    deck = Deck(root, lv)
+    out = Path(a.out).resolve() if a.out else (root / 'build' if lv == 'full' else root / 'build' / lv)
     sd = out / 'slides'
     sd.mkdir(parents=True, exist_ok=True)
     seq = deck_order(deck)
-    content_ids = [sid for sid, kind, _ in seq if kind in ('本編', '付録')]
+    for n, it in enumerate(seq, 1):
+        it['no'] = n
+        deck.page_of[it['id']] = n
     for sid in deck.specs:
-        if sid not in deck.S:
+        if sid not in deck.S and lv != 'samples':
             print(f'警告: スライド仕様 {sid}({deck.spec_file[sid]})がストーリーラインにない。描かない', file=sys.stderr)
-    rendered = []   # (id, kind, ctx)
-    slides = []
-    for sid, kind, fn in seq:
-        h, ctx = fn()
-        slides.append((sid, kind))
-        if a.only and sid not in a.only:
-            continue
-        (sd / f'{sid}.html').write_text(h, encoding='utf-8')
-        rendered.append((sid, kind, ctx))
-    for sid, h, ctx in render_sources(deck, content_ids):
-        slides.append((sid, '出典の一覧'))
-        if a.only and sid not in a.only:
-            continue
-        (sd / f'{sid}.html').write_text(h, encoding='utf-8')
-        rendered.append((sid, '出典の一覧', ctx))
-    # ブラウザで診断を取り、PNG を撮る
-    jobs = [{'id': sid, 'html': str(sd / f'{sid}.html'), 'png': None if a.no_png else str(sd / f'{sid}.png'), 'min': deck.min}
-            for sid, _, _ in rendered]
+    selected = lambda it: (not a.only or it['id'] in a.only) and (not a.chapter or it['chapter'] == a.chapter)
+    partial = bool(a.only or a.chapter)
+    if not partial:
+        for old in list(sd.glob('*.html')) + list(sd.glob('*.png')):
+            old.unlink()
+    digest = inputs_hash(root)
+    rendered = []
+    for it in seq:
+        frag, ctx = it['fn'](it['no'])
+        scan_text(deck, ctx, frag)
+        it['frag'], it['ctx'] = frag, ctx
+        it['file'] = f'{it["no"]:02d}-{it["id"]}'
+        if selected(it):
+            (sd / f'{it["file"]}.html').write_text(standalone(frag), encoding='utf-8')
+            rendered.append(it)
+    # deck.html: 1つのファイルに全スライドを入れる(スライドごとのファイルを読み込まない)
+    dpath = out / 'diagnostics.json'
+    old = {}
+    if partial and dpath.is_file():
+        try:
+            old = {d['id']: d for d in json.loads(dpath.read_text(encoding='utf-8')).get('slides', [])}
+        except (ValueError, KeyError, TypeError):
+            old = {}
+    # ブラウザで診断を取り、PNG を撮り、PDF を作る
+    jobs = {'min': deck.min, 'contrast': [TEXT_CONTRAST_MIN, TEXT_CONTRAST_MIN_LARGE],
+            'slides': [{'id': it['id'], 'html': str(sd / f'{it["file"]}.html'), 'png': None if a.no_png else str(sd / f'{it["file"]}.png')} for it in rendered],
+            'pdf': None}
+    secs = ''
+    for it in seq:
+        cap = f'{it["no"]} / {len(seq)} ・ {E(it["kind"])}' + (f' ・ {E(it["id"])}' if a.show_ids else '')
+        notes = f'<div class="notes">ノート: {E(it["ctx"].notes)}</div>' if getattr(it['ctx'], 'notes', '') else ''
+        secs += (f'<section id="s{it["no"]}"><div class="cap">{cap}<!--badge:{html.escape(it["id"], quote=True)}--></div>'
+                 f'<div class="frame">{it["frag"]}</div>{notes}</section>')
+    name = root.name
+    deck_html = (f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>{E(name)}({LEVELS[lv]})</title>'
+                 f'<style>{DECK_CSS}{CSS}</style></head><body>{secs}</body></html>')
+    hpath = out / 'deck.html'
+    hpath.write_text(re.sub(r'<!--badge:[^>]*-->', '', deck_html), encoding='utf-8')
+    if a.pdf:
+        jobs['pdf'] = {'html': str(hpath), 'out': str(out / 'deck.pdf'), 'width': W, 'height': H}
     jf, rf = out / '.jobs.json', out / '.results.json'
     jf.write_text(json.dumps(jobs, ensure_ascii=False), encoding='utf-8')
     res = subprocess.run(['node', str(HERE / 'render_shot.js'), str(jf), str(rf)], capture_output=True, text=True)
     if res.returncode != 0:
-        sys.exit('描けない: ブラウザでの描画に失敗した\n' + res.stderr[-2000:])
+        sys.exit('描けない: ブラウザ(Playwright の Chromium)での描画に失敗した\n' + res.stderr[-2000:])
     browser = json.loads(rf.read_text(encoding='utf-8'))
     jf.unlink()
     rf.unlink()
     # 診断をまとめる
-    old = {}
-    dpath = out / 'diagnostics.json'
-    if a.only and dpath.is_file():
-        old = {d['id']: d for d in json.loads(dpath.read_text(encoding='utf-8')).get('slides', [])}
-    per = dict(old)
-    for sid, kind, ctx in rendered:
-        ds = list(ctx.diags)
-        for d in browser.get(sid, []):
-            ds.append({'slide': sid, **d})
-        per[sid] = {'id': sid, 'kind': kind, 'spec': deck.spec_file.get(sid), 'type': ((deck.specs.get(sid) or {}).get('body') or {}).get('type'),
-                    'diagnostics': ds, 'wraps': ctx.wraps}
-    ordered = [per[sid] for sid, _ in slides if sid in per]
+    per = {}
+    for it in seq:
+        sid, ctx = it['id'], it['ctx']
+        if it not in rendered:
+            if sid in old:
+                per[sid] = dict(old[sid], no=it['no'])
+            continue
+        br = browser.get(sid) or {}
+        ds = list(ctx.diags) + [{'slide': sid, **d} for d in br.get('diagnostics', [])]
+        hues = sorted({c for c in ctx.colors_used if not is_gray(c)})
+        adj = [round(contrast(x, y), 2) for x, y in ctx.adjacent if x != y]
+        per[sid] = {
+            'id': sid, 'no': it['no'], 'kind': it['kind'], 'chapter': it['chapter'], 'mode': getattr(ctx, 'mode', None),
+            'spec': deck.spec_file.get(sid), 'type': getattr(ctx, 'type', None), 'file': f'slides/{it["file"]}',
+            'title': br.get('titles', []), 'point': br.get('points', []),
+            'colors': {'text_contrast_min': br.get('text_contrast_min'), 'adjacent_contrast_min': min(adj) if adj else None, 'hues': len(hues)},
+            'emphasis': sorted(ctx.ems), 'notes': getattr(ctx, 'notes', ''), 'inputs_hash': digest,
+            'diagnostics': ds, 'wraps': ctx.wraps,
+        }
+    ordered = [per[it['id']] for it in seq if it['id'] in per]
     allds = [d for s in ordered for d in s['diagnostics']]
     summary = {k: sum(1 for d in allds if d['severity'] == k) for k in ('error', 'warning', 'info')}
-    dpath.write_text(json.dumps({'summary': summary, 'slides': ordered}, ensure_ascii=False, indent=1), encoding='utf-8')
-    # deck.html
-    secs = ''
-    for k, (sid, kind) in enumerate(slides, 1):
-        spec = deck.specs.get(sid) or {}
-        notes = ''
-        if spec.get('notes'):   # ノートの {F...} も素材台帳の値に置き換える(参照の診断は出さない)
-            nt = re.sub(r'\[(F\d+)\?\]', r'\1', Ctx(deck, sid, spec).text(spec['notes']))   # 値のない事実は ID のまま
-            notes = f'<div class="notes">ノート: {E(nt)}</div>'
-        nd = len([d for d in per.get(sid, {}).get('diagnostics', []) if d['severity'] == 'error'])
-        badge = f' <span class="bad">診断 {nd}件</span>' if nd else ''
-        aid = html.escape(sid, quote=True)   # 属性(ID、リンク)には語をつなぐ記号を入れない
-        secs += (f'<section id="{aid}"><div class="cap">{k}. {E(sid)}({E(kind)}){badge}</div>'
-                 f'<iframe src="slides/{aid}.html" width="{W}" height="{H}" loading="lazy"></iframe>{notes}</section>')
-    (out / 'deck.html').write_text(
-        '<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>deck</title><style>'
-        f'body{{background:#e5e7eb;font-family:{FONT_FAMILY};margin:20px}}section{{margin:0 auto 28px;width:{W}px}}'
-        'iframe{border:1px solid #9ca3af;background:#fff;display:block}.cap{font-size:14px;color:#374151;margin:4px 0}'
-        '.bad{color:#b91c1c;font-weight:bold}.notes{font-size:14px;color:#374151;margin-top:4px;white-space:pre-wrap}'
-        f'</style></head><body>{secs}</body></html>', encoding='utf-8')
+    dpath.write_text(json.dumps({
+        'tool': 'tools/render.py', 'level': lv, 'inputs_hash': digest, 'count': len(seq),
+        'measures': ['text-contrast', 'adjacent-contrast', 'hue-count'], 'patterns': sorted(RENDERERS),
+        'pdf': 'deck.pdf' if a.pdf else None, 'summary': summary, 'slides': ordered}, ensure_ascii=False, indent=1), encoding='utf-8')
+    if a.show_ids:
+        def badge(m):
+            n = len([d for d in per.get(html.unescape(m.group(1)), {}).get('diagnostics', []) if d['severity'] == 'error'])
+            return f' <span class="bad">診断 {n}件</span>' if n else ''
+        hpath.write_text(re.sub(r'<!--badge:([^>]*)-->', badge, deck_html), encoding='utf-8')
     # 標準出力
-    print(f'描いた: {len(rendered)} 枚(全体 {len(slides)} 枚) → {out}')
+    kinds = {}
+    for it in seq:
+        kinds[it['kind']] = kinds.get(it['kind'], 0) + 1
+    print(f'{LEVELS[lv]}: 描いた {len(rendered)} 枚(全体 {len(seq)} 枚: ' + '、'.join(f'{k} {n}' for k, n in kinds.items()) + f') → {out}')
     for s in ordered:
         for d in s['diagnostics']:
-            if d['severity'] == 'info' and s['kind'] not in ('本編', '付録'):
+            if d['severity'] == 'info' and lv != 'full':
                 continue
             tgt = f' [{d["target"]}]' if d.get('target') else ''
-            print(f'{d["severity"]:7s} {s["id"]:14s} {d["kind"]:16s}{tgt} {d["message"]}')
-    ph = sum(1 for d in allds if d['kind'] == 'placeholder')
-    print(f'診断: エラー {summary["error"]}、警告 {summary["warning"]}、情報 {summary["info"]}(うち仮置き {ph} 枚)')
+            print(f'{d["severity"]:7s} {s["no"]:3d} {s["id"]:16s} {d["kind"]:16s}{tgt} {d["message"]}')
+    print(f'診断: エラー {summary["error"]}、警告 {summary["warning"]}、情報 {summary["info"]}')
+    print(hpath)
+    if a.pdf:
+        print(out / 'deck.pdf')
     return 1 if summary['error'] else 0
 
 

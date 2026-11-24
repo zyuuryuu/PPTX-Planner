@@ -1036,7 +1036,7 @@ tasks:
     - 'outputs: 確認用の資料のファイル名は未決定である'
   role: machine
   skill: null
-  command: 'python3 tools/build.py <資料のディレクトリ> --level toc'
+  command: 'python3 tools/build.py <資料のディレクトリ> --level toc --pdf'
   inputs: [03-chapters.yaml]
   outputs: [build/]
   sections:
@@ -1176,7 +1176,7 @@ tasks:
     - 'outputs: 確認用の資料のファイル名は未決定である'
   role: machine
   skill: null
-  command: 'python3 tools/build.py <資料のディレクトリ> --level skeleton'
+  command: 'python3 tools/build.py <資料のディレクトリ> --level skeleton --pdf'
   inputs: [01-sources.yaml, 03-chapters.yaml, 04-storyline.yaml]
   outputs: [build/]
   sections:
@@ -1322,7 +1322,7 @@ tasks:
     - 'outputs: 確認用の資料のファイル名は未決定である'
   role: machine
   skill: null
-  command: 'python3 tools/build.py <資料のディレクトリ> --level placeholder'
+  command: 'python3 tools/build.py <資料のディレクトリ> --level placeholder --pdf'
   inputs: [04-storyline.yaml, 05-proof.yaml]
   outputs: [build/]
   sections:
@@ -1434,7 +1434,7 @@ tasks:
     - 'outputs: 見本の画像のファイル名は未決定である'
   role: machine
   skill: null
-  command: 'python3 tools/render.py <資料のディレクトリ>'
+  command: 'python3 tools/render.py <資料のディレクトリ> --samples ; python3 tools/check.py <資料のディレクトリ> --task build-samples --write'
   inputs: [06-samples/, 06-patterns.yaml, style.yaml]
   outputs: [build/]
   sections:
@@ -1858,7 +1858,7 @@ tasks:
   name: 章を実物に差し替えてビルドする
   role: machine
   skill: null
-  command: 'python3 tools/render.py <資料のディレクトリ>'
+  command: 'python3 tools/render.py <資料のディレクトリ> --chapter <章のID> ; python3 tools/check.py <資料のディレクトリ> --task build-chapter --chapter <章のID> --write'
   inputs: [07-slides/, style.yaml]
   outputs: [build/]
   sections: []
@@ -2068,7 +2068,7 @@ tasks:
   name: 全ての章を結合してビルドする
   role: machine
   skill: null
-  command: null
+  command: 'python3 tools/render.py <資料のディレクトリ> --pdf ; python3 tools/check.py <資料のディレクトリ> --task build-full-deck --write'
   inputs: [02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 07-slides/, style.yaml, terms.yaml]
   outputs: [build/]
   sections:

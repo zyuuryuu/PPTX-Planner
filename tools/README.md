@@ -9,15 +9,15 @@
 | `selftest.py` | 道具の自己確認。見本が検査に通り、壊した版が、その検査のIDで不合格になることを確かめる |
 | `fixtures/mini/` | 見本の資料。2章、4節、本編9枚と付録3枚。工程0から7の成果物が、今の定義の書式で揃う |
 | `fixtures/breaks.yaml` | 見本を壊す差分の一覧。検査のIDごとに1つある |
-| `build.py` | 確認用の資料(目次と章扉、骨組み、仮置き)のビルドの最小版。古い書式(`headline`)のままである |
-| `render.py` | スライド仕様から、型ごとの描画の関数でスライドを描く。古い書式のままである。書式と収容量は [patterns-data.md](patterns-data.md) |
-| `render_shot.js` | `render.py` の補助。Playwright の Chromium で診断を取り、PNG を撮る |
+| `render.py` | スライド仕様から、型ごとの描画の関数でスライドを描く。自動で作るスライド(目次、章扉、まとめ、出典の一覧)も作る。HTML、PNG、PDF と、描画上の診断を出す。書式と収容量は [patterns-data.md](patterns-data.md) |
+| `build.py` | 確認用の資料(目次と章扉、骨組み、仮置き)をビルドする。描くのは `render.py` である |
+| `render_shot.js` | `render.py` の補助。Playwright の Chromium で診断を取り、PNG を撮り、PDF を作る |
 | `checks_table.py` | 検査の台帳(`docs/checks.yaml`)から、文書の合格条件を作る。使い方は [docs/README.md](../docs/README.md) |
 | `tasks_table.py` | 工程表(`docs/tasks.yaml`)を確かめ、作業の一覧を文書に書き出す。使い方は [docs/README.md](../docs/README.md) |
 | `build_skills.py` | 工程表、工程の文書、検査の台帳から、スキル(`.claude/skills/`)を作る。使い方は [docs/README.md](../docs/README.md) |
 | `work_order.py` | 工程表から、作業1件の作業票を出す。入力を限る作業の写しを作り、起こす側の手順を出す。使い方は [docs/README.md](../docs/README.md) |
 
-依存: Python 3、PyYAML。`build.py` は python-pptx も使う(`pip install python-pptx`)。`render.py` の依存は [patterns-data.md](patterns-data.md) にある。
+依存: Python 3、PyYAML。`render.py` と `build.py` は、加えて Pillow、Node.js と Playwright(Chromium)、フォント IPAPGothic を使う。構成図とER図には graphviz(`dot`)も要る。`selftest.py` は、描画の確かめのために `render.py` を実行する。
 
 ## check.py
 
@@ -36,6 +36,7 @@ python3 tools/check.py --records <資料のディレクトリ>           検査�
 | `--task <id>` | 工程表の機械の作業の `checks` のうち、判定者に機械を含むもの |
 | `--id <ID>` | 検査1件。束ねる項目(`K02-25` など)を指定すると、指す検査を実行する。`--stage` を添えると、`KX` をその工程の文だけに当てる |
 | `--chapter <章のID>` | 工程7の検査を、その章のスライドに限る。付録は `appendix` |
+| `--build <置き場>` | 描画の結果(`render.py` の出力)の置き場。既定は `<資料のディレクトリ>/build` |
 | `--write` | 結果を検査の記録に書き、状態の記録を更新する。`--task` か `--stage` と使う |
 | `--json` | 結果をJSONで出す |
 | `-v` | 合格の行も出す |
@@ -76,6 +77,15 @@ python3 tools/check.py --records <資料のディレクトリ>           検査�
 | 検査の記録(`checks/`) | ファイル名が「作業のid--対象--回.yaml」である。作業が工程表にある。`task`、`target`、`commit`、`round`、`results` がある。`task` と `round` がファイル名と合う。機械の作業の記録は `model` を持たず、ほかの記録は持つ。行の `check` が台帳にあり、その作業の `checks` にある。`verdict` が `pass` か `fail` である。全ての行に `quote` がある。不合格の行に `reason` がある |
 | 実行の記録(`runs/`) | ファイル名が「場面の識別子--回.yaml」である。場面が[工程8](../docs/stages/08-integration.md)の識別子である。`scenario`、`commit`、`round`、`steps` がある。`steps` の行に `slide` と `understood` がある。`findings` の行に `slide`、`note` があり、`kind` がエラーの種類の識別子である |
 
+### 描画の結果を読む検査
+
+`K06-06`、`K06-11`、`K07-40`、`K07-41`、`K08-04` は、`render.py` が書いた描画上の診断(`build/diagnostics.json`。見本は `build/samples/diagnostics.json`)を読む。検査の前に、`render.py` で描く。
+
+- 診断がない場合は、不合格にする。
+- 診断は、描画が読んだ成果物の要約値を持つ。診断を取った後に成果物が変わっていれば、不合格にする。
+- 何を不合格にするかは、[patterns-data.md](patterns-data.md)の「diagnostics.json」にある。
+- `--stage 6`、`--stage 7` は、これらの検査を含む。描いていない資料では、不合格になる。
+
 ### 実装の状況
 
 `--coverage` が、工程ごとの数と、検査ごとの状況を出す。今の数は次の通り。
@@ -88,18 +98,18 @@ python3 tools/check.py --records <資料のディレクトリ>           検査�
 | 3 章立て設計 | 10 | 10 | 0 | 0 |
 | 4 ストーリーライン | 19 | 18 | 2 | 1 |
 | 5 立証設計 | 10 | 9 | 1 | 1 |
-| 6 表現設計 | 14 | 7 | 2 | 7 |
-| 7 スライド仕様 | 27 | 13 | 6 | 14 |
-| 8 全体検査 | 12 | 4 | 2 | 8 |
+| 6 表現設計 | 14 | 9 | 4 | 5 |
+| 7 スライド仕様 | 27 | 15 | 6 | 12 |
+| 8 全体検査 | 12 | 5 | 2 | 7 |
 | 9 仕上げ | 11 | 0 | 0 | 11 |
 | 複数の工程 | 19 | 9 | 8 | 10 |
-| 計 | 154 | 97 | 24 | 57 |
+| 計 | 154 | 102 | 26 | 52 |
 
 「一部だけ」は、条件の一部しか機械で確かめられない検査である。何を見て、何を見ないかは、`--coverage` が検査ごとに出す。未実装の理由は、次の分類で出す。
 
 | 分類 | 内容 |
 |---|---|
-| 描画の結果が要る | ビルドした実物、描画上の診断、最終の出力が要る。描画の道具を直すときに実装する |
+| 描画の結果が要る | ビルドした実物から抜き出した文字、印を置いた位置、最終の出力(PPTX)が要る。描画の道具は、まだ出していない |
 | 書式や置き場が未定義 | 判定に要る項目の名前、ファイル名、書式が docs にない |
 | 上限や辞書が未確定 | 上限の値、辞書、収容量の値が決まっていない |
 | 形態素解析が要る | 語の切り分けや品詞の見分けが要る。標準ライブラリだけではできない |
@@ -136,9 +146,9 @@ python3 tools/check.py --records <資料のディレクトリ>           検査�
 | 3 | `03-chapters.yaml` |
 | 4 | `04-storyline.yaml`、`04-chapter-states.yaml`、`04-scenarios.yaml`、`decisions.md`(あれば) |
 | 5 | `05-proof.yaml` |
-| 6 | `06-patterns.yaml`、`06-samples/`、`definitions/patterns.yaml`(あれば) |
-| 7 | `07-slides/` |
-| 8 | `status.yaml`、`runs/` |
+| 6 | `06-patterns.yaml`、`06-samples/`、`definitions/patterns.yaml`(あれば)、`build/samples/diagnostics.json`(描画上の診断) |
+| 7 | `07-slides/`、`build/diagnostics.json`(描画上の診断) |
+| 8 | `status.yaml`、`runs/`、`build/diagnostics.json` |
 
 主張の種類、含意の語彙、要点のないスライドの役割、要点の位置、場面とエラーの種類の識別子、ブリーフの項目、付属する資料の型の定義、付属する型の候補は、実行のたびに docs の文書の表から読む。道具の中に写しを持たない。
 
@@ -258,6 +268,9 @@ python3 tools/selftest.py --list                   壊し方の一覧を出す
 - 書式と参照の確かめ、記録の書式の確かめが、壊した版で誤りを出す。
 - 実装した検査と未実装の理由の表が、台帳と合う。実装した検査のうち、壊した版がないものを一覧で出す。
 - `status.py` の4つの命令が、決まりの通りに書き、拒む。
+- `render.py` と `build.py` が、見本を描画上の診断(エラー)なしで描く。自動で作るスライドの枚数、題と要点が1か所ずつであること、内部のIDが出ていないこと、1つの HTML と PDF が出ることを確かめる。描画の結果を読む検査が、描いていない版、描いた後に変えた版、診断のある版で不合格になる。
+
+見本の検査は、一時の置き場に描いた結果で行う。見本のディレクトリには書かない。描画の確かめには、Node.js と Playwright の Chromium が要る。描画の結果を読む検査の壊し方は、描く手順が要るため、`fixtures/breaks.yaml` ではなく `selftest.py` の中に置いた。
 
 検査を足すときは、`check.py` に `@check("ID")` の関数を足し、未実装の表(`TODO`)から消し、`fixtures/breaks.yaml` に壊し方を足す。
 
@@ -277,31 +290,42 @@ python3 tools/selftest.py --list                   壊し方の一覧を出す
 | 実在の仕組みを写すスライド | `ap-s3`。画像の素材 `A001` と、仕組みの定義の場面 |
 | 記録の見本 | `checks/inspect-sources--all--1.yaml`、`runs/main-reader--1.yaml` |
 
-スライド仕様の `body` は、[工程7](../docs/stages/07-slide-spec.md)の例に従い、型のデータを `body.data` に置いた。`render.py` は、データを `body` の直下に読む(patterns-data.md)。`bar-chart` と `before-after` のデータの形は、見本のために決めた。描画の道具を直すときに決め直す。
+スライド仕様の `body` は、[工程7](../docs/stages/07-slide-spec.md)の例に従い、型のデータを `body.data` に置いた。`render.py` は、この形で読む。型ごとのデータの形は、[patterns-data.md](patterns-data.md)にある。
 
-## build.py
+## render.py と build.py
 
 ```
-python tools/build.py <資料のディレクトリ> --level toc|skeleton|placeholder [--font フォント名]
+python3 tools/render.py <資料のディレクトリ> [--pdf] [--chapter <章のID>] [--only <ID> ...] [--no-png] [--out <出力先>] [--show-ids]
+python3 tools/render.py <資料のディレクトリ> --samples
+python3 tools/build.py  <資料のディレクトリ> --level toc|skeleton|placeholder [--pdf] [--no-png] [--out <出力先>]
+python3 tools/render.py --patterns
 ```
 
-| `--level` | 読む成果物 | 載るもの |
-|---|---|---|
-| `toc` | `03-chapters.yaml` | 目次と、章扉(章の題と `message`) |
-| `skeleton` | 加えて `04-storyline.yaml`、`01-sources.yaml` | 章扉と、各スライドの見出し、根拠の事実の `statement` |
-| `placeholder` | 加えて `05-proof.yaml` | 各スライドに、主張の種類、見せるもの、注目させる点を仮置きとして足す |
+| 命令 | 読む成果物 | 描くもの | 既定の出力先 |
+|---|---|---|---|
+| `build.py --level toc` | `03-chapters.yaml` | 目次と章扉。章扉に、章の要点と、節の題と要点も載せる | `build/toc/` |
+| `build.py --level skeleton` | 加えて `04-storyline.yaml`、`01-sources.yaml` | 各スライドの題、要点(要点のないスライドでは役割)、根拠の事実の `statement`。目次、章扉、節のまとめ、章のまとめ、出典の一覧 | `build/skeleton/` |
+| `build.py --level placeholder` | 加えて `05-proof.yaml` | 骨組みの根拠の事実の代わりに、図の型の仮置き | `build/placeholder/` |
+| `render.py --samples` | `06-samples/` と、その上流 | 型の見本のスライドだけ | `build/samples/` |
+| `render.py` | `07-slides/` と、その上流 | 全スライド。スライド仕様がないスライドと保留のスライドは、仮置きか骨組みで描く | `build/` |
 
-`<資料のディレクトリ>/build/` に、次の2つを出す。前の出力は上書きする。
+出力先に、次を出す。全体を描くときは、前の出力を上書きする。
 
-- `deck.pptx`: 白地のスライド。見出しが上、本文がその下。左下に、通し番号、スライドのID、区分を小さく出す。
-- `deck.html`: 同じ内容を、1スライド1区画で縦に並べた1ファイル。PowerPointなしで読むためのもの。
+| ファイル | 内容 |
+|---|---|
+| `deck.html` | 全スライドを1つのファイルに入れたもの。ほかのファイルを読み込まない。スライドの下に、ノートを出す |
+| `deck.pdf` | `--pdf` を付けたとき。1スライド1ページ。人に渡す形である |
+| `slides/<番号>-<ID>.png`、`.html` | スライドごとの画像と HTML。`--no-png` で画像を省く |
+| `diagnostics.json` | 描画上の診断。`check.py` が読む |
 
-付録のスライドは、最後に「付録」の扉を置いて並べる。章扉のIDは `<章のID>-cover` とする。章のまとめと要約のスライドは作らない。
-
-フォントは、`fc-list` でこの環境にある日本語のフォントを探して指定する。見つからなければ `Yu Gothic` とする。開く側の環境に合わせる場合は、`--font` で指定する(例: `--font "Yu Gothic"`)。pptx では、日本語の文字に使うフォント(`a:ea`)にも同じ名前を指定している。
+- 限定と出どころの置き場は、ブリーフで選んだ資料の型の定義の `annotation` から決める。資料用の定義は `definitions/deck-type.yaml` に置く(`check.py` と同じ読み方)。
+- `--chapter` と `--only` は、指定したスライドだけを描き直し、診断を取り直す。`deck.html` と `deck.pdf` は、全体で作り直す。ほかのスライドの診断は、前の結果を残す。
+- 終了コードは、描画上の診断にエラーがあれば1。
+- 枠、自動で作るスライド、型ごとのデータの書式、収容量、診断の種類は、[patterns-data.md](patterns-data.md)にある。
 
 次は実装していない。
 
-- 型ごとの描画。
+- PPTX の出力(工程9の最終の出力)。前の `build.py` が出していた確認用の PPTX もやめた。人に渡す形は PDF である。
+- 表紙と要約のスライド。章と節の現在地の表示。docs に定めがない([未検証の前提と未決定の事項](../docs/open-items.md))。
 - 人の手直しを守る仕組み(出力の要約値の記録と照合。[不合格と修正の手順](../docs/rework.md))。
-- 成果物の検査。ビルドの前に `check.py` を実行する。参照先のない事実は、「(素材台帳にない)」と表示する。
+- 成果物の検査。描く前に `check.py` を実行する。描画の道具は、描けなかった内容を診断に出すが、成果物の合否は見ない。
