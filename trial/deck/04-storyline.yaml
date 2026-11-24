@@ -1,0 +1,383 @@
+# スライド見出しの一覧(工程4)。章扉と章のまとめは書かない(章構成から決まる)。
+# 演習(ch5)のアラートは全て架空。
+- id: ch1-s1
+  chapter: ch1
+  section: null
+  question: この講義で何ができるようになるのか
+  headline: 届いたアラートを、閉じる・調べる・上げるのどれにするか、根拠とともに1人で決められるようになる
+  from:
+  - Q0
+- id: ch1-s2
+  chapter: ch1
+  section: null
+  question: なぜアラートを3つに分けるのか
+  headline: 1つのSOCのネットワークの検知の実測では、侵害に至らなかった攻撃の試みが27%以上あり、誤検知でも想定内の検知でもなかった
+  from:
+  - Q1.1.3
+  evidence:
+  - F207
+- id: ch2-s1
+  chapter: ch2
+  section: null
+  question: アラートとは何か
+  headline: アラートは、検知の仕組みが探しているものを見つけたときに出す知らせで、本物の攻撃とは限らない
+  from:
+  - Q1.1
+  evidence:
+  - F709
+  - F619
+  - F207
+- id: ch2-s2
+  chapter: ch2
+  section: null
+  question: SIEMは何を根拠にアラートを出すのか
+  headline: SIEMは複数のログ源のイベントを相関させて重要なイベントを特定し、相関の最も一般的な形は、時刻やIPアドレスなどの記録値を照合するルールである
+  from:
+  - Q1.1.1
+  evidence:
+  - F100
+  - F101
+- id: ch2-s3
+  chapter: ch2
+  section: null
+  question: EDRは何を根拠にアラートを出すのか
+  headline: EDRは端末の振る舞いの記録を継続して集め、製品の例では、脅威を検知するとアラートを作る
+  from:
+  - Q1.1.1
+  evidence:
+  - F615
+  - F618
+  - F619
+- id: ch2-s4
+  chapter: ch2
+  section: null
+  question: アラートを確かめるには、どのログを見ればよいのか
+  headline: ログの種類ごとに分かることが違い、認証サーバのログは、通常、認証の試行ごとの接続元、ユーザー名、成否、日時を記録する
+  from:
+  - Q1.2
+  evidence:
+  - F108
+  - F110
+  - F107
+  - F111
+- id: ch2-s5
+  chapter: ch2
+  section: null
+  question: 攻撃の手口の分類(ATT&CK)は何に使うのか
+  headline: ATT&CKは、攻撃者の目的(戦術)と方法(技術)の知識ベースで、防御側が検知の分析を作る助けになりうる
+  from:
+  - Q1.3
+  evidence:
+  - F114
+  - F116
+  - F125
+  - F119
+- id: ch2-s6
+  chapter: ch2
+  section: null
+  question: 届くアラートのうち、本物の攻撃はどれだけあるのか
+  headline: 1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは0.01%で、攻撃の試みが27%以上、想定内の検知が49%以上だった
+  from:
+  - Q1.1.3
+  evidence:
+  - F207
+- id: ch2-s7
+  chapter: ch2
+  section: null
+  question: 届くアラートの8割は誤検知ではないのか
+  headline: 誤検知の割合は定義と数え方で割れ、調べた範囲で8割に近い値は、ベンダーの調査で解析者がアラートの83%を誤検知と答えた自己申告だけである
+  from:
+  - Q1.1.3
+  evidence:
+  - F204
+  - F220
+  objection:
+    claim: C1
+    index: 0
+- id: ch2-s8
+  chapter: ch2
+  section: null
+  question: 誤検知はなぜ起きるのか
+  headline: NISTは、ネットワーク型の検知の弱いシグネチャや、異常検知型での学習期間に観測されなかった保守作業を、誤検知(出典の言い方)の原因に挙げる
+  from:
+  - Q1.1.4
+  evidence:
+  - F208
+  - F210
+  - F214
+- id: ch2-s9
+  chapter: ch2
+  section: null
+  question: 想定内の検知はなぜ起きるのか
+  headline: 1つのSOCの実測では、定期的な内部の脆弱性スキャンや、外部のベンダーによるペネトレーションテストなど、業務上正当な活動が想定内の検知を起こしていた
+  from:
+  - Q1.1.4
+  evidence:
+  - F215
+  - F221
+  - F216
+  - F217
+- id: ch3-s1
+  chapter: ch3
+  section: null
+  question: 1件のアラートは何から確かめるのか
+  headline: 何から確かめるかは出典で食い違い、NIST SP 800-61 Rev.3は、インシデントの報告について、インシデントが起きたかの確認を深刻度の見積もりより前に置く
+  from:
+  - Q2.2
+  evidence:
+  - F303
+  - F312
+- id: ch3-s2
+  chapter: ch3
+  section: null
+  question: 閉じる・調べる・上げるの線は、どこに決められているのか
+  headline: 閉じる・調べる・上げるの線は調べた公的な文書になく、この講義の基準は公開資料の材料から組み立てた案である
+  from:
+  - Q3
+  evidence:
+  - F600
+  - F610
+  objection:
+    claim: C3
+    index: 0
+- id: ch3-s3
+  chapter: ch3
+  section: null
+  question: この講義では、どの順で確かめるのか
+  headline: この講義は案として、まずアラートの根拠とログで3つに分け、次に影響の大きさで優先度を付ける
+  from:
+  - Q2
+  evidence:
+  - F303
+  - F305
+- id: ch3-s4
+  chapter: ch3
+  section: null
+  question: アラートの根拠は、どう確かめるのか
+  headline: 製品の例(Microsoft Sentinel)では、分析ルールが集めたデータに問い合わせ、探しているものを見つけるとアラートを生成し、アラートは関わる利用者や端末を含む
+  from:
+  - Q1.1.1
+  evidence:
+  - F709
+  - F710
+- id: ch3-s5
+  chapter: ch3
+  section: null
+  question: 誤検知として閉じてよいのは、どんなときか
+  headline: 案として、検知の条件かデータの誤りで出たと根拠をもって言えるときだけ、誤検知として閉じる
+  from:
+  - Q3.1.1
+  evidence:
+  - F605
+  - F609
+  - F220
+- id: ch3-s6
+  chapter: ch3
+  section: null
+  question: 想定内の検知として閉じてよいのは、どんなときか
+  headline: このSOCでは、新人が想定内の検知として閉じてよいのは、リーダーが事前に一覧にした想定内の活動に当てはまるものだけである
+  from:
+  - Q3.1
+  evidence:
+  - F002
+  - F220
+  - F215
+  objection:
+    claim: C1
+    index: 1
+- id: ch3-s7
+  chapter: ch3
+  section: null
+  question: 優先度は何で付けるのか
+  headline: NIST SP 800-61 Rev.3は、優先度付けや上げる判断を、資産の重要度、機能とデータへの影響、観測された活動の段階などの要因に基づかせるよう推奨する
+  from:
+  - Q2.1
+  - Q3.3.1
+  evidence:
+  - F610
+  - F305
+- id: ch3-s8
+  chapter: ch3
+  section: null
+  question: SIEMが付けた深刻度をそのまま使ってよいのか
+  headline: 訓練事業者の解説は、SIEMが自動で付ける深刻度は人の判断の入力であって代わりではないとする
+  from:
+  - Q2.1
+  evidence:
+  - F306
+- id: ch3-s9
+  chapter: ch3
+  section: null
+  question: 閉じるときに何を残すのか
+  headline: 訓練事業者の解説は、閉じた全てのアラートに、発火した内容、調べたこと、見つかった証拠、下した判断を記録するとする
+  from:
+  - Q3.1.2
+  evidence:
+  - F318
+- id: ch3-s10
+  chapter: ch3
+  section: null
+  question: 間違って閉じたら、取り返しがつかないのではないか
+  headline: このSOCでは、新人が閉じたアラートは後で見直される
+  from:
+  - Q3.1
+  evidence:
+  - F004
+  - F318
+  objection:
+    claim: C3
+    index: 3
+- id: ch3-s11
+  chapter: ch3
+  section: null
+  question: どこまで調べたら上げてよいのか
+  headline: 調べた公的な文書に持ち時間の目安はなく、実務者向けの解説の1件は、一次解析で12〜20分が一般的とし、その時間で決められなければ要約を付けて上げるとする
+  from:
+  - Q3.2
+  evidence:
+  - F403
+- id: ch3-s12
+  chapter: ch3
+  section: null
+  question: どんなときに上げるのか
+  headline: 実務者向けの資料は、重要な資産での疑い、複数のホストにまたがる横展開の証拠、持ち時間の中で判定できないこと、守備範囲を超えることを、上げる条件に挙げる
+  from:
+  - Q3.3.1
+  evidence:
+  - F406
+  - F407
+- id: ch3-s13
+  chapter: ch3
+  section: null
+  question: 迷ったときは、どうするのか
+  headline: 迷ったときは上げる。有志の手順書も、判断に迷うときは上げる側に倒すとする
+  from:
+  - Q3.3.1
+  evidence:
+  - F405
+  - F401
+  objection:
+    claim: C3
+    index: 1
+- id: ch3-s14
+  chapter: ch3
+  section: null
+  question: 攻撃の試みは、閉じてよいのか
+  headline: このSOCでは、配属から最初の3か月は、侵害に至らなかった攻撃の試みも全て上げる
+  from:
+  - Q3.3
+  evidence:
+  - F003
+  - F207
+  objection:
+    claim: C3
+    index: 2
+- id: ch3-s15
+  chapter: ch3
+  section: null
+  question: 上げるときに何を添えるのか
+  headline: 実務者向けの資料は、アラートの出どころとID、調べた経過、集めた証拠、現時点の判定の仮説、次に勧める手順を添えるとする
+  from:
+  - Q3.3.3
+  evidence:
+  - F413
+  - F414
+- id: ch4-s1
+  chapter: ch4
+  section: null
+  question: 本物の攻撃のアラートが見過ごされた事案はあるのか
+  headline: 2013年のTargetの侵害では、検知製品が緊急のアラートを出したが対応がなかったと、米上院の報告が報道を引いて述べている
+  from:
+  - Q4.1
+  evidence:
+  - F500
+- id: ch4-s2
+  chapter: ch4
+  section: null
+  question: なぜ見過ごされたのか
+  headline: 米上院の報告は、システムが頻繁に警報を鳴らしていたのであれば、職員が誤検知(出典の言い方)とみなした可能性があると推定している
+  from:
+  - Q4.1
+  evidence:
+  - F501
+- id: ch4-s3
+  chapter: ch4
+  section: null
+  question: 誤検知に慣れた解析者は、アラートをどう扱うのか
+  headline: ベンダーのImpervaが2018年に行った調査では、IT専門職179人の56%が、過去の誤検知(出典の言い方)を理由にアラートを無視したことがあると答えた
+  from:
+  - Q4.1
+  evidence:
+  - F506
+- id: ch5-s1
+  chapter: ch5
+  section: null
+  question: '演習1: このアラートを、閉じる・調べる・上げるのどれにするか'
+  headline: '演習1: 承認済みの脆弱性スキャンの時刻に、社内の1台から多数の宛先への接続のアラートが届いた'
+- id: ch5-s2
+  chapter: ch5
+  section: null
+  question: 演習1の答えは何か
+  headline: '演習1の答え: 一覧にある承認済みのスキャンに当てはまるため、想定内の検知として記録して閉じる'
+- id: ch5-s3
+  chapter: ch5
+  section: null
+  question: '演習2: このアラートを、閉じる・調べる・上げるのどれにするか'
+  headline: '演習2: 管理ツールの定期の通信に、緩く書かれたルールが反応したアラートが届いた'
+- id: ch5-s4
+  chapter: ch5
+  section: null
+  question: 演習2の答えは何か
+  headline: '演習2の答え: 検知の条件が無害な活動に反応した誤検知として、根拠を記録して閉じる'
+- id: ch5-s5
+  chapter: ch5
+  section: null
+  question: '演習3: このアラートを、閉じる・調べる・上げるのどれにするか'
+  headline: '演習3: 外部から既知の攻撃の通信が届き、防がれた記録があるアラートが届いた'
+- id: ch5-s6
+  chapter: ch5
+  section: null
+  question: 演習3の答えは何か
+  headline: '演習3の答え: 侵害に至らなかった攻撃の試みであり、このSOCでは最初の3か月は全て上げる'
+- id: ch5-s7
+  chapter: ch5
+  section: null
+  question: '演習4: このアラートを、閉じる・調べる・上げるのどれにするか'
+  headline: '演習4: 重要なサーバで見慣れないプロセスが動いたアラートが届いた。一覧の想定内の活動には当てはまらない'
+- id: ch5-s8
+  chapter: ch5
+  section: null
+  question: 演習4の答えは何か
+  headline: '演習4の答え: 根拠がないため閉じずに調べる。ログで正当な活動と確かめられなければ、重要な資産での疑いとして、経過と証拠を添えて上げる'
+- id: ap-s1
+  chapter: appendix
+  section: null
+  question: 1日にどれだけのアラートが届くのか
+  headline: 届く量は出典で大きく違い、1つのSOCの実測では自動遮断の後も1日約13,764件、ベンダーの調査の自己申告では1日平均4,484件だった
+  from:
+  - Q1.1.2
+  evidence:
+  - F201
+  - F203
+  appendix_of: ch2-s6
+- id: ap-s2
+  chapter: appendix
+  section: null
+  question: 上げるのが遅れる誤りは、どれだけ起きているのか
+  headline: 上げるのが遅れる誤りを直接測った公開の調査は見つからなかった
+  from:
+  - Q4.2
+  evidence:
+  - F508
+  - F509
+  appendix_of: ch3-s11
+- id: ap-s3
+  chapter: appendix
+  section: null
+  question: 上げすぎる誤りは、どれだけ起きているのか
+  headline: 上げすぎる誤りの割合を測った調査は見つからなかった
+  from:
+  - Q4.3
+  evidence:
+  - F510
+  appendix_of: ch3-s14

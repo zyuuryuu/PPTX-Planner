@@ -42,3 +42,9 @@ artifacts:
     rounds: 2
   style.yaml:
     state: 作成中
+  04-storyline.yaml:
+    state: 作成中   # 骨組みの資料 preview/skeleton.html
+  04-chapter-states.yaml:
+    state: 作成中
+  04-scenarios.yaml:
+    state: 作成中

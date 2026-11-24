@@ -1,0 +1,109 @@
+# 章の前提と到達点(工程4)。懸念の文字列はブリーフの「懸念」と一致させる。
+- chapter: ch1
+  entry:
+    terms: []
+    accepted: []
+    open_questions: []
+  exit:
+    terms:
+    - アラート
+    - 誤検知
+    - 想定内の検知
+    - 閉じる
+    - 調べる
+    - 上げる
+    accepted: []
+    answered: []
+    open_questions:
+    - アラートとは何か
+    - 1件のアラートをどう扱うのか
+- chapter: ch2
+  entry:
+    terms:
+    - アラート
+    - 誤検知
+    - 想定内の検知
+    accepted: []
+    open_questions:
+    - アラートとは何か
+  exit:
+    terms:
+    - イベント
+    - ログ
+    - SIEM
+    - EDR
+    - ATT&CK
+    - 侵害に至らなかった攻撃の試み
+    accepted:
+    - C1
+    answered:
+    - アラートとは何か
+    open_questions:
+    - 1件のアラートをどう扱うのか
+    concerns_answered:
+    - 誤検知ばかりで、何を見ればいいか分からない
+- chapter: ch3
+  entry:
+    terms:
+    - アラート
+    - 誤検知
+    - 想定内の検知
+    - 閉じる
+    - 調べる
+    - 上げる
+    - ログ
+    accepted:
+    - C1
+    open_questions:
+    - 1件のアラートをどう扱うのか
+  exit:
+    terms:
+    - 持ち時間
+    accepted:
+    - C2
+    - C3
+    answered:
+    - 1件のアラートをどう扱うのか
+    open_questions:
+    - なぜ根拠のあるものだけを閉じるのか
+    concerns_answered:
+    - 間違って閉じるのが怖い
+    - どこまで調べたら上に上げていいのか分からない
+- chapter: ch4
+  entry:
+    terms:
+    - 誤検知
+    - 閉じる
+    accepted:
+    - C3
+    open_questions:
+    - なぜ根拠のあるものだけを閉じるのか
+  exit:
+    terms: []
+    accepted:
+    - C4
+    answered:
+    - なぜ根拠のあるものだけを閉じるのか
+    open_questions:
+    - 自分で決められるか
+- chapter: ch5
+  entry:
+    terms:
+    - 誤検知
+    - 想定内の検知
+    - 閉じる
+    - 調べる
+    - 上げる
+    accepted:
+    - C1
+    - C2
+    - C3
+    - C4
+    open_questions:
+    - 自分で決められるか
+  exit:
+    terms: []
+    accepted: []
+    answered:
+    - 自分で決められるか
+    open_questions: []
