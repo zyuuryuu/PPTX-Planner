@@ -6,6 +6,8 @@
 |---|---|
 | `check.py` | 工程0から6の機械的な検査の最小版 |
 | `build.py` | 確認用の資料(目次と章扉、骨組み、仮置き)のビルドの最小版 |
+| `render.py` | スライド仕様(`06-samples/`、`07-slides/`)から、型ごとの描画の関数でスライドを描く。HTML、PNG、`deck.html`、診断(`diagnostics.json`)を出す。書式と収容量は [patterns-data.md](patterns-data.md) |
+| `render_shot.js` | `render.py` の補助。Playwright の Chromium で診断を取り、PNG を撮る |
 | `selftest.py` | `check.py` の確かめ。見本が合格し、壊した写しが不合格になることを確かめる |
 | `fixtures/mini/` | 3章、スライド9枚の見本の成果物一式(工程0から5) |
 

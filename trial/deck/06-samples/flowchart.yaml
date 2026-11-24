@@ -5,10 +5,28 @@ headline: 配属から3か月の新人は、重大度 High 以上か攻撃の試
 takeaway: 上げる条件を先に見る。閉じるのは、一覧にあるか、調べて誤検知と言えたときだけ
 body:
   type: flowchart
+  mark: 運用
   scenario: S-newbie-ops
   proposal_parts:
   - R-op-fp
-  highlight: 先に確かめる2つの分かれ目(重大度、攻撃の試み)
+  labels:
+    D-op-alert: "届いた\nアラート"
+    R-op-severe:
+      condition: "重大度が\nHigh以上?"
+      label: すぐ上げる
+    R-op-attempt:
+      condition: "攻撃の\n試み?"
+    R-op-list:
+      condition: 一覧にある?
+    R-op-fp:
+      condition: 誤検知と根拠をもって言えた
+    R-op-inv-esc:
+      condition: 30分で根拠なし
+  highlight:
+    ids:
+    - R-op-severe
+    - R-op-attempt
+    label: 先に確かめる
 sources:
 - F002
 - F003
