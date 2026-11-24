@@ -1762,8 +1762,9 @@ def main():
             notes = f'<div class="notes">ノート: {E(nt)}</div>'
         nd = len([d for d in per.get(sid, {}).get('diagnostics', []) if d['severity'] == 'error'])
         badge = f' <span class="bad">診断 {nd}件</span>' if nd else ''
-        secs += (f'<section id="{E(sid)}"><div class="cap">{k}. {E(sid)}({E(kind)}){badge}</div>'
-                 f'<iframe src="slides/{E(sid)}.html" width="{W}" height="{H}" loading="lazy"></iframe>{notes}</section>')
+        aid = html.escape(sid, quote=True)   # 属性(ID、リンク)には語をつなぐ記号を入れない
+        secs += (f'<section id="{aid}"><div class="cap">{k}. {E(sid)}({E(kind)}){badge}</div>'
+                 f'<iframe src="slides/{aid}.html" width="{W}" height="{H}" loading="lazy"></iframe>{notes}</section>')
     (out / 'deck.html').write_text(
         '<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>deck</title><style>'
         f'body{{background:#e5e7eb;font-family:{FONT_FAMILY};margin:20px}}section{{margin:0 auto 28px;width:{W}px}}'
