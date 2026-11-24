@@ -2001,7 +2001,7 @@ python tools/render.py trial/deck --only ch2-s3 --no-png   # 1枚だけ描き直
 | 出典の行 | ストーリーラインの `source` を見出しの下に描く(仕様には書かない) |
 | `takeaway` | 下端の帯に1行。1行に収まらなければエラー(全角で約44字まで) |
 | `text` | 図の下に本文の大きさで描く。全角で約48字で1行 |
-| `notes` | スライドには描かない。`build/deck.html` のスライドの下に出す |
+| `notes` | スライドには描かない。`build/deck.html` のスライドの下に出す。`{F...}` は値に置き換える(値のない事実は ID のまま) |
 | `body.mark` | `案` か `運用`。図の上に札を置く(plain-list では題の前) |
 | `body.highlight` | 強調する1か所。型ごとの書き方は下の表。図と表の型で省くと警告 |
 
@@ -2031,9 +2031,20 @@ python tools/render.py trial/deck --only ch2-s3 --no-png   # 1枚だけ描き直
 | `quote_of` | 任意 | 引用元の事実のID。`text` を省くと、事実の `quote`(原文)を載せる |
 | `attribution` | 任意 | 引用の下の説明(訳であること、引用の出どころ) |
 | `caveat` | 任意 | 但し書き |
-| `highlight` | 任意 | `text` か `caveat` |
+| `value` | 任意 | 大きく示す1つの値。事実のID、または `{fact: ID, as: 数, round: 桁}`(pie-chart と同じ)。値と単位を 96px で描き、`text` をその下に値の説明として描く |
+| `bound` | 任意 | 値の後ろに付ける語(以上など) |
+| `highlight` | 任意 | `text` か `caveat`。`value` がある場合は `value`(値と説明を囲む)も |
 
-収容量: `text` は約200字まで(但し書き1行を含む)。
+収容量: `text` は約200字まで(但し書き1行を含む)。`value` を使う場合、`text` は約36字(1行)まで。
+
+```yaml
+body:
+  type: statement
+  value: F506
+  text: 過去の誤検知を理由に、アラートを無視したことがあると答えた回答者の割合
+  caveat: ベンダー(Imperva)の調査で、製品の宣伝を含む。回答者はSOCの解析者に限らず、回答は自己申告
+  highlight: value
+```
 
 ```yaml
 body:
@@ -2174,7 +2185,7 @@ body:
 | `relations` | 必須 | つながりのID。両端が `elements` にあること |
 | `labels` | 任意 | 短い名前(要素、つながり)。つながりを `''` にするとラベルなし |
 | `annotations` | 任意 | `要素ID: 文`。要素のすぐ下に添える |
-| `details` | 任意 | `要素ID: [項目]`。要素の中に一覧で描く |
+| `details` | 任意 | `要素ID: [項目]`。要素の箱の中に、名前の下に一覧で描く(つながりのある要素では約12字、つながりのない要素では約8字で折り返す)。枠(contain で中に部品を持つ要素)には書けない |
 | `direction` | 任意 | `LR`(既定、左から右)か `TB`(上から下) |
 | `groups` | 任意(構成図だけ) | `{title, elements, caption, direction}` の配列。群どうしがつながらなければ、群ごとに置いて横に並べる |
 | `highlight` | 任意 | 要素かつながりのID。構成図では `groups[番号]` も |
@@ -2193,7 +2204,7 @@ body:
 
 | 種類 | 内容 |
 |---|---|
-| `overflow` | 枠や領域に収まらない文字、図の幅や高さの超過、見出しが3行、結論1行が2行、語の途中での改行(警告) |
+| `overflow` | 枠や領域に収まらない文字、図の幅や高さの超過、見出しが3行、結論1行が2行。語の途中での折り返しは警告(見出し、出典の行、本文、図の中の文字。語の区切りは Chromium の Intl.Segmenter で判定する。HTML の文は `word-break: auto-phrase` で文節の区切りで折り返す) |
 | `font-too-small` | 文字の大きさが style.yaml の下限より小さい |
 | `overlap` | 図形どうし、図形と文字の重なり(入れ子と、自分の枠の中の文字は除く) |
 | `unrendered` | 描けなかった内容(参照先がない、書式の誤り、型の描画がない) |
