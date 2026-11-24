@@ -43,8 +43,8 @@ artifacts:
   style.yaml:
     state: 作成中
   04-storyline.yaml:
-    state: 作成中   # 骨組みの資料 preview/skeleton.html
+    state: 検査済み   # 重大な検査2回と再検査、意味の検査と再検査。往復2回。骨組みの資料 preview/skeleton.html
   04-chapter-states.yaml:
-    state: 作成中
+    state: 検査済み
   04-scenarios.yaml:
-    state: 作成中
+    state: 検査済み

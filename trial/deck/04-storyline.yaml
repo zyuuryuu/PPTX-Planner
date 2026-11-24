@@ -239,7 +239,7 @@
   chapter: ch3
   section: null
   question: どこまで調べたら上げてよいのか
-  headline: このSOCでは、最初の3か月は1件30分まで調べ、過ぎたら見たことを付けて上げる
+  headline: このSOCでは、配属から3か月の新人の持ち時間は1件30分で、過ぎたら見たことを付けて上げる
   from:
   - Q3.2
   evidence:
@@ -250,22 +250,24 @@
   chapter: ch3
   section: null
   question: どんなときに上げるのか
-  headline: 案として、重要な資産での疑い、横展開の証拠、時間切れ、守備範囲の超過のどれかなら上げる
+  headline: 案として、重要な資産での疑い、横展開の証拠、守備範囲の超過は、30分を待たずに上げる
   from:
   - Q3.3.1
   evidence:
   - F406
   - F407
-  source: Decryption Digest の解説記事(2026年)、Security Scientist の解説(日付なし)。どちらも標準や公的文書ではない
+  - F005
+  source: Decryption Digest の解説記事(2026年)、Security Scientist の解説(日付なし)。どちらも標準や公的文書ではない。30分を待たないことは、このSOCの運用(重大度が高いものはすぐ上げる)による
 - id: ch3-s13
   chapter: ch3
   section: null
   question: 迷ったときは、どうするのか
-  headline: 案として、迷ったときは、決められないことを理由に上げてよい
+  headline: 案として、30分調べても閉じる根拠がなく迷うなら、閉じずに上げる
   from:
   - Q3.3.1
   evidence:
   - F405
+  - F005
   objection:
     claim: C3
     index: 1
@@ -274,7 +276,7 @@
   chapter: ch3
   section: null
   question: 攻撃の試みは閉じてよいのか。全て上げたら溢れないか
-  headline: このSOCでは、最初の3か月は攻撃の試みも全て上げ、溢れたらリーダーの側で対処する
+  headline: このSOCでは、配属から3か月の新人は攻撃の試みも全て上げ、溢れたらリーダーが対処する
   from:
   - Q3.3
   evidence:
@@ -354,7 +356,7 @@
   chapter: ch5
   section: null
   question: 演習3の答えは何か
-  headline: '演習3の答え: 侵害に至らなかった攻撃の試みであり、このSOCでは最初の3か月は全て上げる'
+  headline: '演習3の答え: 侵害に至らなかった攻撃の試みで、配属から3か月の新人は全て上げる'
 - id: ch5-s7
   chapter: ch5
   section: null
@@ -364,12 +366,12 @@
   chapter: ch5
   section: null
   question: 演習4の答えは何か
-  headline: '演習4の答え: 閉じずに調べ、30分の中で正当と確かめられなければ、見たことを付けて上げる'
+  headline: '演習4の答え: 閉じずに調べ、30分の中で誤検知と根拠をもって言えなければ、見たことを付けて上げる'
 - id: ap-s1
   chapter: appendix
   section: null
   question: 1日にどれだけのアラートを扱うのか
-  headline: 扱う量は出典で大きく違い、1つのSOCの実測では、自動遮断の後も1日約13,764件残った
+  headline: 扱う量は出典で大きく違い、1つのSOCの実測は1日約13,764件、自己申告は1日平均4,484件
   from:
   - Q1.1.2
   evidence:
