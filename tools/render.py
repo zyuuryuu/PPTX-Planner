@@ -416,7 +416,7 @@ class Ctx:
 
 _IDS = re.compile(r'\{F\d+(?::\w+)?\}|\b(?:F|D|Q|C|H|P|A)\d+(?:\.\d+)*\b|\b(?:ch\d+|ap)-s\d+\b|\b[A-Z]-[\w-]+')
 _DOCNO = re.compile(r'[A-Za-z][A-Za-z.]*[ .]?\d[\w.-]*|\d+(?:-\d+)+')
-_COUNT = re.compile(r'(?:(?<=演習)|(?<=第))\d+|\d+(?=つ|項目|行|枚|章|段|番目|問)')
+_COUNT = re.compile(r'(?:(?<=演習)|(?<=第))\d+|\d+(?=つ|項目|行|枚|章|段|番目|問)|\d+対\d+|1人(?=で)|1件(?=について|につき|ごと|ずつ)')
 _NUM = re.compile(r'(?<![A-Za-z0-9_.])\d[\d,]*(?:\.\d+)?')
 
 
