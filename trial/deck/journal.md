@@ -512,3 +512,4 @@
 ## 製造の時期からの質問(工程6の後)
 
 - PM(session_01LpWHd12Hi4a7B7kXpdhYg5)から質問3件: flowchart の場面がない2枚(ch1-s2、ch3-s13)、架空の数値の例外、第5章の章扉の問い。D013 として答え、05-proof.yaml、03-chapters.yaml、style.yaml を直した。ch1-s2 の見せ方の変更は、依頼者の確認が要る(PM に伝えた)。
+- PM から Issue #1(ch4-s3 の円グラフの残りの値が台帳にない)。D014 として言い切りに変えた。
