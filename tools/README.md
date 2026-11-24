@@ -11,7 +11,7 @@
 | `checks_table.py` | 検査の台帳(`docs/checks.yaml`)から、文書の合格条件を作る。使い方は [docs/README.md](../docs/README.md) |
 | `tasks_table.py` | 工程表(`docs/tasks.yaml`)を確かめ、作業の一覧を文書に書き出す。使い方は [docs/README.md](../docs/README.md) |
 | `build_skills.py` | 工程表、工程の文書、検査の台帳から、スキル(`.claude/skills/`)を作る。使い方は [docs/README.md](../docs/README.md) |
-| `work_order.py` | 工程表から、作業1件の作業票を出す。使い方は [docs/README.md](../docs/README.md) |
+| `work_order.py` | 工程表から、作業1件の作業票を出す。入力を限る作業の写しを作る。使い方は [docs/README.md](../docs/README.md) |
 | `selftest.py` | `check.py` の確かめ。見本が合格し、壊した写しが不合格になることを確かめる |
 | `fixtures/mini/` | 3章、スライド9枚の見本の成果物一式(工程0から5) |
 

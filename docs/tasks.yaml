@@ -14,6 +14,7 @@
 #   skill       手順を持つスキルの名前。下の skills にある名前で書く。機械とユーザーの作業は null
 #   command     機械の作業だけに書く。今ある道具で実行できる場合は、そのコマンド。なければ null
 #   inputs      読む成果物のファイル名。項目まで絞る場合は「ファイル#項目」の形で書く。
+#               項目を除く場合は「ファイル#-項目」の形で書く。restricted の作業では、この書き方から機械が写しを作る
 #               ファイル名が決まっていないものは、名前を「」で囲んで書く
 #   restricted  true なら、inputs に挙げたもの以外を読まない。入力を限ることが目的の作業に書く
 #   restricted_by  restricted の作業で、ファイルをまるごと渡す場合に、そう定めた箇所(検査のID、または「文書#見出し」)
@@ -148,7 +149,7 @@ skills:
     stages: [7, 8]
     description: スライド資料の読み手の役のセッションが、ビルドした実物を通読する手順。作業票の1行目がこの名前のときに使う。
 
-count: 114
+count: 121
 tasks:
 
 # ---- 工程0
@@ -226,14 +227,15 @@ tasks:
   stage: 0
   name: ブリーフを検査する
   notes:
-    - 'checks: K00-06 の判定者はユーザー。検査セッションは、判定の材料になる要約を書く。要約の置き場は未決定である'
+    - 'checks: K00-06 の判定者はユーザー。検査セッションは、判定の材料になる要約を書く'
   role: inspector
   skill: deck-inspect
   inputs: [00-brief.md]
   restricted: true
   restricted_by: [K00-06]
-  outputs: [checks/]
-  sections: []
+  outputs: [checks/, work/answers/inspect-brief.yaml]
+  sections:
+    - 'checks.md#検査セッションの手順'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -322,7 +324,8 @@ tasks:
   skill: deck-inspect
   inputs: [00-brief.md, 01-plan.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#検査セッションの手順'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -525,6 +528,7 @@ tasks:
   inputs: [01-sources.yaml]
   outputs: [checks/, 01-sources.yaml]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'stages/01-exploration.md#検証済みの印'
     - 'checks.md#重大な検査'
   references:
@@ -547,6 +551,7 @@ tasks:
   inputs: [00-brief.md, 01-sources.yaml, assets/]
   outputs: [checks/, 01-sources.yaml]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'stages/01-exploration.md#検証済みの印'
     - 'checks.md#重大な検査'
   references:
@@ -567,6 +572,7 @@ tasks:
   inputs: [01-model.yaml, 01-sources.yaml]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
@@ -583,15 +589,15 @@ tasks:
   stage: 1
   name: 同じ出典から、仕組みの定義を独立に抜き出す
   notes:
-    - '資料の中心になる図に使う範囲だけで行う。手順は検査の条件の文だけにある'
-    - '差分を出す者は未決定である'
+    - '資料の中心になる図に使う範囲だけで行う。答えは、仕組みの定義と同じ書式で書く'
   role: inspector
   skill: deck-inspect
   inputs: ['「出典」']
   restricted: true
   restricted_by: [K01-29]
-  outputs: [checks/]
-  sections: []
+  outputs: [work/answers/extract-model-independently.yaml]
+  sections:
+    - 'checks.md#独立に書く'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -599,6 +605,29 @@ tasks:
     - 'rework.md#記録'
     - 'model.md#成果物'
     - 'model.md#抜き出し'
+  checks: [K01-29]
+  next: [compare-model-extractions]
+
+- id: compare-model-extractions
+  stage: 1
+  name: 独立の抜き出しを仕組みの定義と比べる
+  notes:
+    - '資料の中心になる図に使う範囲だけで行う。独立に書いたセッション(extract-model-independently)とは別の検査セッションが行う'
+  role: inspector
+  skill: deck-inspect
+  inputs: [01-model.yaml, work/answers/extract-model-independently.yaml]
+  outputs: [checks/]
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'stages/01-exploration.md#独立の抜き出しとの差分'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+    - 'model.md#成果物'
   checks: [K01-29]
   next: [approve-model]
 
@@ -790,6 +819,7 @@ tasks:
   inputs: [01-plan.yaml, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
@@ -806,14 +836,36 @@ tasks:
   stage: 2
   name: ブリーフの問いと素材台帳だけから答えを書く
   notes:
-    - '仮説の一覧を読まない。手順は検査の条件の文だけにある'
+    - '仮説の一覧と、主張の骨子を読まない'
   role: inspector
   skill: deck-inspect
-  inputs: ['00-brief.md#答えるべき問い', 01-sources.yaml]
+  inputs: ['00-brief.md#答えるべき問い', '01-sources.yaml#-stance']
   restricted: true
-  restricted_by: [K02-18]
+  outputs: [work/answers/derive-answer-independently.yaml]
+  sections:
+    - 'checks.md#独立に書く'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+  checks: [K02-18]
+  next: [compare-derived-answer]
+
+- id: compare-derived-answer
+  stage: 2
+  name: 独立した導出の答えを `answer` と比べる
+  notes:
+    - '独立に書いたセッション(derive-answer-independently)とは別の検査セッションが行う'
+  role: inspector
+  skill: deck-inspect
+  inputs: [02-claims.yaml, work/answers/derive-answer-independently.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'stages/02-claims.md#独立した導出との比較'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -827,13 +879,36 @@ tasks:
   stage: 2
   name: 要約の文だけを読んで結論と理由を述べる
   notes:
-    - '手順は検査の条件の文だけにある'
+    - '結論と理由を書く。読み取れなければ、分からないと書く'
   role: inspector
   skill: deck-inspect
   inputs: ['02-claims.yaml#summary']
   restricted: true
+  outputs: [work/answers/read-summary-alone.yaml]
+  sections:
+    - 'checks.md#独立に書く'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+  checks: [K02-23]
+  next: [compare-summary-reading]
+
+- id: compare-summary-reading
+  stage: 2
+  name: 要約の文から読み取った結論と理由を主張の骨子と比べる
+  notes:
+    - '独立に書いたセッション(read-summary-alone)とは別の検査セッションが行う'
+  role: inspector
+  skill: deck-inspect
+  inputs: [02-claims.yaml, work/answers/read-summary-alone.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'stages/02-claims.md#要約の文の読み取りとの比較'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -914,6 +989,7 @@ tasks:
   inputs: [00-brief.md, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'stages/03-chapters.md#1. 結論の位置を決める'
@@ -1052,6 +1128,7 @@ tasks:
   inputs: [00-brief.md, 01-sources.yaml, 02-answers.yaml, 03-chapters.yaml, 04-storyline.yaml]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
@@ -1153,6 +1230,7 @@ tasks:
   inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'stages/05-proof.md#1. 主張の種類を判定する'
@@ -1172,14 +1250,36 @@ tasks:
   stage: 5
   name: 立証の設計だけから要点を書く
   notes:
-    - '要点を読まない。手順は検査の条件の文だけにある'
-    - '元の要点と比べる者は未決定である'
+    - '要点を読まない。対象は、要点を持つスライドである'
   role: inspector
   skill: deck-inspect
   inputs: ['05-proof.yaml#show', '05-proof.yaml#focus', '05-proof.yaml#facts', '05-proof.yaml#view']
   restricted: true
+  outputs: [work/answers/restore-point-from-proof.yaml]
+  sections:
+    - 'checks.md#独立に書く'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+  checks: [K05-16]
+  next: [compare-restored-points]
+
+- id: compare-restored-points
+  stage: 5
+  name: 復元した要点を元の要点と比べる
+  notes:
+    - '独立に書いたセッション(restore-point-from-proof)とは別の検査セッションが行う'
+  role: inspector
+  skill: deck-inspect
+  inputs: [03-chapters.yaml, 04-storyline.yaml, work/answers/restore-point-from-proof.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'stages/05-proof.md#復元した要点との比較'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -1359,8 +1459,9 @@ tasks:
   skill: deck-inspect
   inputs: ['build/#見本の画像']
   restricted: true
-  outputs: [checks/]
-  sections: []
+  outputs: [work/answers/read-relations-from-sample.yaml]
+  sections:
+    - 'checks.md#独立に書く'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -1369,6 +1470,31 @@ tasks:
     - 'rework.md#検査と記録を守る'
     - 'visual-grammar.md#含意の語彙'
     - 'visual-grammar.md#形からの読み取り'
+  checks: [K06-12]
+  next: [compare-sample-relations]
+
+- id: compare-sample-relations
+  stage: 6
+  name: 見本から読み取った関係を型の定義と比べる
+  notes:
+    - '独立に書いたセッション(read-relations-from-sample)とは別の検査セッションが行う。型の定義のファイル名は未決定である'
+  role: inspector
+  skill: deck-inspect
+  inputs: [「型の定義」, 06-patterns.yaml, work/answers/read-relations-from-sample.yaml]
+  outputs: [checks/]
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'stages/06-patterns.md#形からの読み取りとの比較'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+    - 'visual-grammar.md#含意の語彙'
+    - 'visual-grammar.md#形からの読み取り'
+    - 'patterns.md#定義の項目'
   checks: [K06-12]
   next: [approve-samples, approve-terms]
 
@@ -1379,7 +1505,8 @@ tasks:
   skill: deck-inspect
   inputs: [build/, 05-proof.yaml, 06-samples/, style.yaml]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#検査セッションの手順'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -1441,17 +1568,40 @@ tasks:
   stage: 7
   name: 引き継ぎの検査を受ける
   notes:
-    - '新しいセッションの説明を、設計セッションの意図と比べる者は未決定である'
+    - '説明と、分からない点を書く。比べるのは、別の検査セッションである(compare-handover-explanation)'
   role: pm
   skill: deck-pm-7
   inputs: [00-brief.md, 01-hypotheses.yaml, 01-plan.yaml, 01-sources.yaml, 01-model.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, 05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml, decisions.md]
   restricted: true
   restricted_by: ['organization.md#引き継ぎの検査']
-  outputs: []
+  outputs: [work/answers/handover-check.yaml]
   sections:
     - 'organization.md#引き継ぎの検査'
   references:
     - 'organization.md#PM'
+    - 'checks.md#独立に書く'
+  checks: [K07-01]
+  next: [compare-handover-explanation]
+
+- id: compare-handover-explanation
+  stage: 7
+  name: 引き継ぎの説明を成果物と比べる
+  notes:
+    - '説明を書いたセッション(handover-check)とは別の検査セッションが行う。設計セッションは行わない'
+  role: inspector
+  skill: deck-inspect
+  inputs: [work/answers/handover-check.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
+  outputs: [checks/]
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'organization.md#引き継ぎの検査'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
   checks: [K07-01]
   next: [make-chapter-brief]
 
@@ -1559,6 +1709,7 @@ tasks:
   inputs: [00-brief.md, 01-sources.yaml, 04-storyline.yaml, 05-proof.yaml, 07-slides/, terms.yaml]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
@@ -1583,6 +1734,7 @@ tasks:
   restricted_by: ['writing.md#検査セッションが判断するもの']
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'
@@ -1597,13 +1749,14 @@ tasks:
   stage: 7
   name: スライドの文だけを読んで意味を書き直す
   notes:
-    - '経緯を知らない検査セッションが行う。書き直した文を素材台帳の事実と比べる者は未決定である'
+    - '経緯を知らない検査セッションが行う。素材台帳を読まない'
   role: inspector
   skill: deck-inspect
   inputs: ['07-slides/#スライドの文']
   restricted: true
-  outputs: [checks/]
-  sections: []
+  outputs: [work/answers/read-back-slides-<章のID>.yaml]
+  sections:
+    - 'checks.md#独立に書く'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -1611,6 +1764,31 @@ tasks:
     - 'rework.md#記録'
     - 'rework.md#検査と記録を守る'
     - 'writing.md#検査セッションが判断するもの'
+  checks: [K07-15]
+  next: [compare-read-back]
+
+- id: compare-read-back
+  stage: 7
+  name: 書き直した意味をスライドが使う事実と比べる
+  notes:
+    - '独立に書いたセッション(read-back-slides)とは別の検査セッションが行う'
+  role: inspector
+  skill: deck-inspect
+  inputs: [07-slides/, 01-sources.yaml, work/answers/read-back-slides-<章のID>.yaml]
+  outputs: [checks/]
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'stages/07-slide-spec.md#読み戻しとの比較'
+    - 'stages/07-slide-spec.md#スライドの文'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+    - 'writing.md#検査セッションが判断するもの'
+    - 'writing.md#限定と出どころ'
   checks: [K07-15]
   next: [accept-chapter]
 
@@ -1656,7 +1834,8 @@ tasks:
   skill: deck-inspect
   inputs: [build/, 01-sources.yaml, 07-slides/]
   outputs: [checks/]
-  sections: []
+  sections:
+    - 'checks.md#検査セッションの手順'
   references:
     - 'organization.md#セッションの分離'
     - 'rework.md#原則'
@@ -1881,6 +2060,7 @@ tasks:
   inputs: [02-claims.yaml]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'stages/08-integration.md#使う文'
   references:
     - 'organization.md#セッションの分離'
@@ -1913,7 +2093,7 @@ tasks:
     - '前の章が未完成の場合と、途中の章から読む場合は、その章の入口の状態も渡される(stages/08-integration.md#渡すもの)'
   role: reader
   skill: deck-read
-  inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '「題と要点の一覧」']
+  inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '04-scenarios.yaml#-expected', '「題と要点の一覧」']
   restricted: true
   restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
   outputs: [runs/]
@@ -2022,7 +2202,7 @@ tasks:
     - '期待する結果と、前回の指摘を読まない。変わった章の入口の状態を、保存済みの状態から渡す'
   role: reader
   skill: deck-read
-  inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, 'runs/#章の終わりの状態', '「題と要点の一覧」']
+  inputs: ['00-brief.md#主な読み手', '00-brief.md#読み手が既に知っていること', '00-brief.md#読み手の立場と懸念', build/, '04-scenarios.yaml#-expected', 'runs/#章の終わりの状態', '「題と要点の一覧」']
   restricted: true
   restricted_by: ['stages/08-integration.md#渡すもの', 'organization.md#セッションの分離']
   outputs: [runs/]
@@ -2137,6 +2317,7 @@ tasks:
   inputs: [build/deck.pptx, 00-brief.md]
   outputs: [checks/]
   sections:
+    - 'checks.md#検査セッションの手順'
     - 'checks.md#重大な検査'
   references:
     - 'organization.md#セッションの分離'

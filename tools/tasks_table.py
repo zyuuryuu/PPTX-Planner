@@ -29,7 +29,8 @@ sections と references は「文書#見出し」の形で書く。見出しは�
   - 担当が、決めた一覧にある。skill が、工程表の skills にある、その担当と工程のスキルである。
   - 工程表の skills と roles の書式が正しい。roles の rules と report の見出しが実在する。
   - next が実在する作業を指す。どこからも来ない作業は start: true、次がない作業は end: true である。
-  - restricted: true の作業の inputs が、「ファイル#項目」の形で項目まで絞られている。
+  - restricted: true の作業の inputs が、「ファイル#項目」か「ファイル#-項目」の形で項目まで絞られている。
+    同じファイルに、項目だけを渡す書き方と、項目を除く書き方を混ぜていない。
     まるごとのファイルを渡す場合は、そう定めた箇所(検査のID、または「文書#見出し」)が restricted_by にある。
   - inputs の「00-brief.md#項目」の項目が、工程0のブリーフの項目にある。
 """
@@ -375,6 +376,12 @@ def check_inputs(tasks, docs, ledger):
         for ref in t.get("restricted_by", []):
             if ref not in ledger and isinstance(docs.resolve(ref)[1], str):
                 errors.append(f"{t['id']}: restricted_by の {ref}: 検査のIDでも、実在する見出しでもない")
+        for name in dict.fromkeys(e.partition("#")[0] for e in t["inputs"]):
+            picked = [e.partition("#")[2] for e in t["inputs"] if "#" in e and e.partition("#")[0] == name]
+            if len({i.startswith("-") for i in picked}) > 1:
+                errors.append(f"{t['id']}: inputs の {name}: 項目だけを渡す書き方と、項目を除く書き方を混ぜている")
+            if "-" in picked:
+                errors.append(f"{t['id']}: inputs の {name}#-: 除く項目の名前がない")
         whole = [e for e in t["inputs"] if "#" not in e]
         if whole and not t.get("restricted_by"):
             errors.append(f"{t['id']}: restricted なのに、項目まで絞っていない入力がある {whole}。"

@@ -18,6 +18,7 @@
 references は、文面を写さず、場所だけを挙げる。リンクの先は、スキルの置き場から届く形に直す。
 
 入力に制限のある作業(restricted)は、正本の文書を開かずに済む形にする。
+  - 項目まで絞った入力は、機械が作る写し(work/views/<作業のid>/)を指す。写しは tools/work_order.py が作る。
   - references、検査の定義(defined_in)、制限の定め(restricted_by)、報告の書式が指す見出しの文面を、作業のファイルに写す。
   - 写した文面のリンクは、先を消して、文字だけにする。
 
@@ -61,6 +62,7 @@ LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
 QUOTED = re.compile(r"「([^「」]+)」")
 NUMBERED = re.compile(r"^(\d+)\. ")
 CHECKS = "checks.yaml"   # 検査の文面の出どころ。リンクは docs/ からの相対で書いてある
+WRITES = "checks.md#独立に書く"   # この見出しを手順に持つ作業は、答えを書くだけで、合否を判定しない
 
 
 def slug(title):
@@ -213,18 +215,55 @@ def places(refs):
     return out
 
 
-def input_text(entry):
-    """inputs の1件を、読む者に向けて書く。"""
-    name, sep, item = entry.partition("#")
+VIEW_DIR = "work/views"   # 写しの置き場。資料のディレクトリから
+
+
+def grouped_inputs(task):
+    """inputs を、ファイルごとに (ファイル名, 項目の一覧) にまとめる。項目のない入力は、項目の一覧が空になる。"""
+    grouped = {}
+    for entry in task["inputs"]:
+        name, sep, item = entry.partition("#")
+        grouped.setdefault(name, [])
+        if sep:
+            grouped[name].append(item)
+    return list(grouped.items())
+
+
+def has_view(task, name, items):
+    """この入力を、写しで渡すか。入力を限る作業の、項目まで絞った入力が当たる。"""
+    return bool(task.get("restricted") and items and not name.startswith("「"))
+
+
+def view_path(task, name):
+    return f"{VIEW_DIR}/{task['id']}/{name}"
+
+
+def item_text(items):
+    """項目の一覧を、読む者に向けて書く。"""
+    names = "".join(f"「{i.lstrip('-')}」" for i in items)
+    return f"から{names}を除いたもの" if items[0].startswith("-") else f"の{names}だけ"
+
+
+def input_text(task, name, items):
+    """入力の1件を、読む者に向けて書く。"""
     if name.startswith("「"):
-        return f"{name}(ファイル名は決まっていない)" + (f"の「{item}」" if sep else "")
-    return f"`{name}`" + (f" の「{item}」だけ" if sep else "")
+        return f"{name}(ファイル名は決まっていない)" + (item_text(items) if items else "")
+    if has_view(task, name, items):
+        return f"`{view_path(task, name)}`(写し。`{name}` {item_text(items)})"
+    return f"`{name}`" + (" " + item_text(items) if items else "")
 
 
 def input_lines(task):
     if not task["inputs"]:
         return ["工程表に、入力のファイルの定めがない。"]
-    return ["- " + input_text(e) for e in task["inputs"]]
+    return ["- " + input_text(task, name, items) for name, items in grouped_inputs(task)]
+
+
+def view_notice(task):
+    """写しで渡す入力がある作業に添える文。"""
+    if not any(has_view(task, name, items) for name, items in grouped_inputs(task)):
+        return []
+    return [f"`{VIEW_DIR}/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。"]
 
 
 def output_lines(task):
@@ -286,8 +325,10 @@ class Page:
         judged = [ledger[c] for c in task["checks"] if task["role"] in as_list(ledger[c]["judge"])]
         met = [ledger[c] for c in task["checks"] if task["role"] not in as_list(ledger[c]["judge"])]
         out = []
+        writes = WRITES in task["sections"]
         for title, lead, entries in (
-                ("判定する検査", "次の検査を判定する。", judged),
+                ("書くもとになる検査", "次の検査が書かせるとしているものを書く。合否は判定しない。", judged if writes else []),
+                ("判定する検査", "次の検査を判定する。", [] if writes else judged),
                 ("満たす合格条件", "成果物は、次の条件を満たす。括弧の中は、判定者である。「警告」とある条件は、合否にしない。", met)):
             if not entries:
                 continue
@@ -305,7 +346,7 @@ class Page:
         if not self.restricted:
             return ["この作業だけの制限はない。「守ること」に従う。"]
         out = ["入力に挙げたもの以外を読まない。このファイルと、スキルの「守ること」は読む。"
-               "正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。"]
+               "正本の文書(`docs/`)は開かない。要る箇所は、このファイルに写してある。"] + view_notice(task)
         by = task.get("restricted_by", [])
         if by:
             out += ["", "ファイルをまるごと渡す入力は、次の定めによる。"]
