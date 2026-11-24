@@ -14,7 +14,7 @@
 | `group` | 合格条件の中の小見出し |
 | `target` | 対象の成果物と項目 |
 | `check` | はいかいいえで答えられる条件の文 |
-| `judge` | 判定者。`machine`(機械)、`inspector`(検査セッション)、`user`(ユーザー)、`reader`(読み手の役のセッション)、`designer`(設計セッション)。複数あれば並べる |
+| `judge` | 判定者。`machine`(機械)、`inspector`(検査セッション)、`user`(ユーザー)、`reader`(読み手の役のセッション)、`designer`(設計セッション)、`pm`(PM)。複数あれば並べる |
 | `judge_text` | 判定者の括弧の中の書き方。判定者の名前を並べるだけでは足りない場合に書く |
 | `critical` | 重大な検査なら true |
 | `level` | 合否にしない検査なら `warning`(警告) |
