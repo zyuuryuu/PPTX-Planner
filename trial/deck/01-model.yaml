@@ -18,6 +18,8 @@
 #   basis: description(出典が仕組みを記述している) / requirement(標準の要件・ひな形の「〜しなければならない」) / product(特定の製品の記述)
 #     / operation(依頼者のSOCの運用。依頼者の証言 F002〜F005。工程5で設計セッションが足した)
 #   要素 kind に action(新人の行き先: 閉じる、調べる、上げる)を、つながり kind に route(from の状態から、condition のとき to の行き先へ進む)を足した(工程5)
+#   order: 同じ from から出る route を確かめる順(1から。最初に当たった道に進む。F007)
+#   proposal: そのつながりのうち、依頼者の運用ではなく、この講義の案(D001、D008)である部分。空なら全て運用
 #   mode: 送り方(push / pull / リアルタイムなど)。condition: つながりが成り立つ条件。書かれていないものは unknown。
 #
 # 出典で裏付けられず、つながりを登録しなかった箇所(図では途切れとして示す必要がある):
@@ -306,7 +308,7 @@ elements:
   - id: A-close
     basis: operation
     kind: action
-    name: 閉じる(記録して終える)
+    name: 閉じる
     evidence: [F002]
     note: このSOCの運用
   - id: A-investigate
@@ -647,27 +649,7 @@ relations:
     evidence: [F620]
     note: Symantec EDR(NIST SP 1800-24C の構築例)
 
-  # ---------- このSOCの運用(依頼者の証言) ----------
-  - id: R-op-list
-    basis: operation
-    kind: route
-    from: D-op-alert
-    to: A-close
-    label: 閉じる
-    mode: unknown
-    condition: リーダーの一覧にある活動に当てはまる
-    evidence: [F002]
-    note: このSOCの運用
-  - id: R-op-fp
-    basis: operation
-    kind: route
-    from: D-op-alert
-    to: A-close
-    label: 閉じる
-    mode: unknown
-    condition: 誤検知と根拠をもって言える
-    evidence: [F002]
-    note: このSOCの運用。誤検知と言える基準は案(D001、ch3-s5)
+  # ---------- このSOCの運用(依頼者の証言 F002〜F007) ----------
   - id: R-op-severe
     basis: operation
     kind: route
@@ -676,7 +658,9 @@ relations:
     label: 30分を待たずにすぐ上げる
     mode: unknown
     condition: 重大度が高い
-    evidence: [F005]
+    order: 1
+    proposal: ''
+    evidence: [F005, F006, F007]
     note: このSOCの運用
   - id: R-op-attempt
     basis: operation
@@ -686,28 +670,46 @@ relations:
     label: 上げる
     mode: unknown
     condition: 侵害に至らなかった攻撃の試み(配属から3か月)
-    evidence: [F003]
+    order: 2
+    proposal: ''
+    evidence: [F003, F006, F007]
+    note: このSOCの運用
+  - id: R-op-list
+    basis: operation
+    kind: route
+    from: D-op-alert
+    to: A-close
+    label: 閉じる
+    mode: unknown
+    condition: リーダーの一覧にある活動に当てはまる
+    order: 3
+    proposal: ''
+    evidence: [F002, F006, F007]
     note: このSOCの運用
   - id: R-op-other
     basis: operation
     kind: route
     from: D-op-alert
     to: A-investigate
-    label: 調べる
+    label: 調べる(30分まで)
     mode: unknown
-    condition: 上のどれにも当たらない
-    evidence: [F005]
-    note: このSOCの運用。依頼者が挙げた順に確かめる
-  - id: R-op-inv-close
+    condition: 上の3つのどれにも当たらない
+    order: 4
+    proposal: ''
+    evidence: [F005, F006, F007]
+    note: このSOCの運用
+  - id: R-op-fp
     basis: operation
     kind: route
     from: A-investigate
     to: A-close
-    label: 閉じる
+    label: 誤検知として記録して閉じる
     mode: unknown
-    condition: 30分の中で閉じる根拠が得られた
-    evidence: [F005]
-    note: このSOCの運用(30分)。根拠が得られたら閉じる分かれ方は案(D008)
+    condition: 30分の中で、誤検知と根拠をもって言えた
+    order: 1
+    proposal: 誤検知と言える基準(ch3-s5)
+    evidence: [F002, F006]
+    note: 誤検知を閉じてよいことはこのSOCの運用(F002)。依頼者は誤検知と言えるものを最初の段で閉じるとしたが、誤検知かどうかは調べて確かめるため、調べる段の中に置いた(D011)
   - id: R-op-inv-esc
     basis: operation
     kind: route
@@ -716,8 +718,10 @@ relations:
     label: 見たことを付けて上げる
     mode: unknown
     condition: 30分たっても閉じる根拠がない
-    evidence: [F005]
-    note: このSOCの運用(30分、見たことを付ける)。根拠がなければ上げる分かれ方は案(D008)
+    order: 2
+    proposal: ''
+    evidence: [F005, F006]
+    note: このSOCの運用
 
 scenarios:
   - id: S-siem-agent
@@ -771,6 +775,6 @@ scenarios:
   - id: S-newbie-ops
     basis: operation
     name: このSOCで、配属から3か月の新人が1件のアラートを扱う流れ
-    steps: [R-op-list, R-op-fp, R-op-severe, R-op-attempt, R-op-other, R-op-inv-close, R-op-inv-esc]
-    evidence: [F002, F003, F005]
-    note: 依頼者が工程5で挙げた順(一覧/誤検知→閉じる、重大度が高い→すぐ上げる、攻撃の試み→上げる、それ以外→30分調べる)。依頼者の運用で、線は依頼者が決めた
+    steps: [R-op-severe, R-op-attempt, R-op-list, R-op-other, R-op-fp, R-op-inv-esc]
+    evidence: [F002, F003, F005, F006, F007]
+    note: 上げる条件を先に確かめ、最初に当たった道に進む(F007)。誤検知と言える基準は案で、調べる段の中に置いた(D011)
