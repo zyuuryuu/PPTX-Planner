@@ -9,6 +9,7 @@
     - アラート
     - 誤検知
     - 想定内の検知
+    - 攻撃の疑い
     - 閉じる
     - 調べる
     - 上げる
@@ -33,15 +34,13 @@
     - SIEM
     - EDR
     - ATT&CK
-    - 侵害に至らなかった攻撃の試み
+    - 攻撃の試み
     accepted:
     - C1
     answered:
     - アラートとは何か
     open_questions:
     - 1件のアラートをどう扱うのか
-    concerns_answered:
-    - 誤検知ばかりで、何を見ればいいか分からない
 - chapter: ch3
   entry:
     terms:
@@ -67,6 +66,7 @@
     open_questions:
     - なぜ根拠のあるものだけを閉じるのか
     concerns_answered:
+    - 誤検知ばかりで、何を見ればいいか分からない
     - 間違って閉じるのが怖い
     - どこまで調べたら上に上げていいのか分からない
 - chapter: ch4

@@ -62,4 +62,7 @@ exceptions:
   - target: 02-claims.yaml summary
     rule: summary は1文で、結論と理由をまとめる(docs/stages/02-claims.md の合格条件)
     reason: 依頼者の指定。研修資料の冒頭と最後に置く文は新人に覚えさせる文であり、結論だけの短い2文にする(D004)
+  - target: 04-storyline.yaml の演習の問題のスライド(ch5-s1、s3、s5、s7)
+    rule: 見出しが否定の検査と具体性の検査を通る(docs/stages/04-storyline.md の合格条件)
+    reason: 演習の問題は架空のアラートの描写で、主張ではない。否定の検査の対象外とし、question は「どんなアラートが届いたのか」として見出しが答える形にする(D007)
 terms: terms.yaml
