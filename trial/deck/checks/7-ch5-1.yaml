@@ -1,0 +1,192 @@
+# 工程7 重大な検査: 裏付けのない文、限定の残存(ch5、1回目)
+check: 裏付けのない文、限定の残存(docs/writing.md「検査」、docs/checks.md「重大な検査」の工程7の2行)
+round: 1
+target: trial/deck/07-slides/ch5.yaml の ch5-s1〜s8(ブランチ claude/trial-soc、f0a3a64 で書かれた版。検査時の HEAD は 1c88146 で、ch5.yaml は f0a3a64 から変わっていない)
+judge: claude-opus-5-5
+materials:
+  - trial/deck/work/ch5.md(章の作業票)
+  - trial/deck/07-slides/ch3.yaml の ch3-s5、s6、s11、s13、s14 だけ(答えのスライドが当てはめる規則)
+premises:
+  - 演習の項目は架空。「架空」と明記されていれば、数値は事実のIDによらなくてよい(style.yaml の exceptions、D013)。架空の項目そのものは裏付けを求めず、「架空」の明記を確かめた
+  - 講義の決まりを述べる文の裏付けは、その決まりを述べるスライドのID(D015)。参照先は ch3-s5、s6、s11、s13、s14 のみ読んだ。ほかの ch3 のスライドは読んでいないため、それらに依る文は判定できないとした
+  - 対象は headline を除く takeaway、body の文、text、notes の文
+summary:
+  unsupported:   # 条件1: 裏付けのない文(講義の決まりの導出と、案か運用かの印を含む)
+    pass: 64
+    fail: 5   # 不合格の項目は5、指摘は4件(F2 は s8 の mark と text の2項目)
+    undetermined: 2
+  qualifiers:    # 条件2: 限定の残存
+    pass: 8
+    fail: 0
+    undetermined: 0
+  note: 条件2は、どのスライドも事実を使わない(立証の設計の facts が空)ため、事実の qualifiers の落としはない。規則のスライドの限定(「想定内の検知として」など)を落とした文は、規則から導けるかの問題として条件1で判定した
+
+# 不合格と判定できないの一覧(詳細は slides の下)
+findings:
+  - id: ch5-1-F1
+    slide: ch5-s8
+    field: body.caveat
+    verdict: 不合格
+    quote: '当てはめた規則: ch3-s6(一覧にある活動だけ閉じる)、ch3-s11(持ち時間)、ch3-s13(迷うなら上げる)'
+    source_quote: 'ch3-s6 headline: このSOCでは、新人が想定内の検知として閉じてよいのは、リーダーの一覧にある活動だけ'
+    reason: >-
+      ch3-s6 の限定「想定内の検知として」を落としている。「一覧にある活動だけ閉じる」は、一覧にない活動はどんな理由でも閉じない、と読める。
+      これは ch3-s5(誤検知として閉じてよい)と、同じスライドの text「誤検知と根拠をもって言えなければ、見たことを付けて上げる」(言えれば閉じる)と食い違う。
+    suggestion: '「ch3-s6(想定内の検知として閉じてよいのは一覧にある活動だけ)」のように限定を残す'
+  - id: ch5-1-F2
+    slide: ch5-s8
+    field: body.text(2文目)と body.mark
+    verdict: 不合格
+    quote: '持ち時間の中で調べ、誤検知と根拠をもって言えなければ、見たことを付けて上げる(mark: 運用)'
+    source_quote: >-
+      ch3-s13 は mark 運用だが proposal_parts に R-op-fp(誤検知と根拠をもって言えた?)を持ち、notes に「言える基準は案(ch3-s5)」とある。
+      ch3-s5 headline: 案として、検知の条件かデータの誤りで出たと根拠をもって言えるときだけ、誤検知として閉じる
+    reason: >-
+      判断の流れ自体は ch3-s6、s11、s13 から導ける。ただし「誤検知と根拠をもって言える」の基準は案(ch3-s5)で、参照先の ch3-s13 も、その部分を案として描き分けている。
+      ch5-s8 は運用の印だけを付け、caveat にも ch3-s5 を挙げていないため、案の部分が運用として示される。案か運用かの区別が参照先と合わない。
+    suggestion: caveat か notes に「誤検知と言える基準は案(ch3-s5)」を足す
+  - id: ch5-1-F3
+    slide: ch5-s8
+    field: notes(2文目)
+    verdict: 不合格
+    quote: 3つの規則を順に当てはめます。いずれもこのSOCの運用です。
+    source_quote: 'ch3-s13 notes: 誤検知と根拠をもって言えたら、記録して閉じる。言える基準は案(ch3-s5)。'
+    reason: 3つのスライドの印はいずれも運用だが、当てはめる判断には ch3-s13 が案として描き分けた部分(誤検知と言える基準)が含まれる。F2 と同じ食い違いで、ノートは「いずれも運用」と言い切っている
+    suggestion: 「いずれもこのSOCの運用です。ただし、誤検知と言える基準は案です(ch3-s5)」のように分ける
+  - id: ch5-1-F4
+    slide: ch5-s4
+    field: takeaway
+    verdict: 不合格
+    quote: 誤検知と言う根拠は、ルールの条件のどこが誤りかで示す
+    source_quote: 'ch3-s5 headline: 案として、検知の条件かデータの誤りで出たと根拠をもって言えるときだけ、誤検知として閉じる(items: 検知の条件の誤り、データの誤り)'
+    reason: >-
+      結論1行は演習2に限らない一般の言い方で、誤検知の根拠をルールの条件の誤りだけに狭めている。ch3-s5 は、データの誤りも誤検知の理由とする。
+      規則より狭い決まりを言い切っており、ch3-s5 から導けない。
+    suggestion: '「この演習では、誤検知と言う根拠を、ルールの条件のどこが誤りかで示す」、または「条件かデータのどこが誤りかで示す」'
+  - id: ch5-1-U1
+    slide: ch5-s1
+    field: notes(4文目)
+    verdict: 判定できない
+    quote: 宛先の数が多いことだけでは、行き先は決まりません。
+    reason: >-
+      講義の決まりを述べる文だが、決まりを述べるスライドのIDがない。参照先の ch3-s5、s6、s11、s13、s14 に、宛先の数を行き先の基準とする規則はなく、ch3-s6(一覧で決める)と矛盾はしない。
+      ただし、渡されていない ch3 のスライド(上げる条件、優先度など)に量に関わる規則がないことは確かめられない。
+    suggestion: 「(ch3-s6)」を添えるか、「閉じるかは、宛先の数ではなく、一覧の行に当てはまるかで決まります」のように ch3-s6 の範囲で言う
+  - id: ch5-1-U2
+    slide: ch5-s6
+    field: notes(4文目)
+    verdict: 判定できない
+    quote: 防がれた記録は、上げるときに添える証拠になります。
+    reason: >-
+      上げるときに添えるものの決まりで、参照先の ch3-s14 には書かれていない。スライドのIDがない。語彙の「上げる」の定義(経過と証拠を添えて引き継ぐ)とは合うが、
+      添えるものを述べるスライドは渡されていないため、どのスライドから導くか、案か運用かを確かめられない。
+    suggestion: 添えるものを述べるスライドのIDを添える(そのスライドが案なら、案と示す)
+
+observations:   # 判定には入れない気づき
+  - slide: ch5-s6
+    note: text の「通信は防がれ、侵害に至っていない」は、遮断の記録1件から侵害がないと言い切る形。架空の設定(headline「侵害に至らなかった攻撃の試み」)の前提として合格としたが、防がれた記録だけで侵害がないと分かる、と受講者が読む余地がある。行き先は上げるで変わらない
+  - slide: ch5-s2、s4、s6
+    note: caveat の規則の引用は、参照先の見出しから「このSOCでは」「案として」「配属から3か月の」を省いている。スライドの mark(運用、案)と notes で区別が示されているため合格とした
+  - slide: ch5-s1、s3、s5、s7
+    note: 架空の数値(1,200、火曜 02:10、02:00〜04:00、5分ごと、11月10日〜14日)は、いずれも body.title「演習Nのアラート(架空)」または「リーダーの一覧(架空)」の下にあり、notes も「架空のアラートです」で始まる。答えのスライド(s2、s4、s6、s8)の takeaway、text、caveat、notes に数値はない
+
+slides:
+  - id: ch5-s1
+    fictional_marked: 合格(body.title「演習1のアラート(架空)」、items[4]「リーダーの一覧(架空)の抜粋」、notes「架空のアラートです」)
+    unsupported:
+      - {text: 'takeaway: 端末と時刻を一覧の行と照らし、行き先と根拠を答える', verdict: 合格, reason: '演習の指示で、決まりや事実を述べない'}
+      - {text: 'body.title、items[0]〜[4]', verdict: 合格, reason: '架空の項目で、架空と明記されている'}
+      - {text: 'notes: 架空のアラートです。', verdict: 合格}
+      - {text: 'notes: 受講者に、閉じる、調べる、上げるのどれにするかと、その根拠を答えてもらいます。', verdict: 合格, reason: '演習の進め方'}
+      - {text: 'notes: 読み方: 上の4行がアラートの項目、最後の行がリーダーの一覧の抜粋です。', verdict: 合格, reason: 'body と合う'}
+      - {text: 'notes: 強調した一覧の行と、アラートの接続元の端末と時刻を見比べるよう促します。', verdict: 合格}
+      - {text: 'notes: 宛先の数が多いことだけでは、行き先は決まりません。', verdict: 判定できない, ref: ch5-1-U1}
+      - {text: 'notes: 答えは次のスライドで示します。', verdict: 合格}
+    qualifiers: {verdict: 合格, reason: '事実を使わない(facts 空、sources 空)'}
+  - id: ch5-s2
+    unsupported:
+      - {text: 'takeaway: 閉じる根拠は、一覧の行という確かめられるものに置く', verdict: 合格, reason: 'ch3-s6(想定内の検知として閉じてよいのは一覧にある活動だけ)から導ける'}
+      - {text: 'body.mark: 運用', verdict: 合格, reason: 'ch3-s6 の mark 運用と合う'}
+      - {text: 'text: 接続元の端末と時刻が、一覧の脆弱性スキャンの行に当てはまる。', verdict: 合格, reason: '架空の設定(ch5-s1 の items[1]、[2]、[4])と合う'}
+      - {text: 'text: 想定内の検知として、照らした行を記録して閉じる', verdict: 合格, reason: 'ch3-s6 を当てはめた判断。記録は「閉じる」の定義(調べたことと判断を記録)による'}
+      - {text: 'caveat: 当てはめた規則(ch3-s6): 新人が想定内の検知として閉じてよいのは、リーダーの一覧にある活動だけ', verdict: 合格, reason: 'ch3-s6 の見出しと同じ(「このSOCでは」は mark 運用で示される)'}
+      - {text: 'notes: ch3-s6 の規則を当てはめます。', verdict: 合格}
+      - {text: 'notes: 根拠は、アラートの端末と時刻が、一覧の行と両方とも合うことです。', verdict: 合格}
+      - {text: 'notes: 記録には、照らした一覧の行を書きます。', verdict: 合格, reason: '「閉じる」の定義の「調べたことを記録」の具体化'}
+      - {text: 'notes: 時刻が一覧の時間帯の外であれば、一覧に当てはまらないため、想定内の検知としては閉じられません。', verdict: 合格, reason: 'ch3-s6 の caveat(一覧にない活動は、新人が想定内の検知として閉じる対象に入らない)から導ける。限定「想定内の検知としては」も残っている'}
+      - {text: 'notes: 次の演習2は、ルールの条件そのものに目を向ける問題です。', verdict: 合格}
+    qualifiers: {verdict: 合格, reason: '事実を使わない'}
+  - id: ch5-s3
+    fictional_marked: 合格(body.title「演習2のアラート(架空)」、notes「架空のアラートです」)
+    unsupported:
+      - {text: 'takeaway: ルールの条件と反応した通信を照らし、行き先と根拠を答える', verdict: 合格}
+      - {text: 'body.title、items[0]〜[2]', verdict: 合格, reason: '架空の項目で、架空と明記されている'}
+      - {text: 'notes: 架空のアラートです。', verdict: 合格}
+      - {text: 'notes: 受講者に、閉じる、調べる、上げるのどれにするかと、その根拠を答えてもらいます。', verdict: 合格}
+      - {text: 'notes: 強調したルールの条件を読み、接続元で絞っていないことに気づかせます。', verdict: 合格, reason: 'items[0] と合う'}
+      - {text: 'notes: 条件が緩いため、管理ツールのサーバの定期の通信にも合います。', verdict: 合格, reason: '架空の設定の説明'}
+      - {text: 'notes: 演習1との違い(条件どおりの反応か、条件そのものの誤りか)を考えるよう促し、次のスライドで答えを示します。', verdict: 合格, reason: '誤検知と想定内の検知の区別は ch3-s5 の takeaway(正しく反応した想定内の検知は、誤検知としては閉じない)と合う'}
+    qualifiers: {verdict: 合格, reason: '事実を使わない'}
+  - id: ch5-s4
+    unsupported:
+      - {text: 'takeaway: 誤検知と言う根拠は、ルールの条件のどこが誤りかで示す', verdict: 不合格, ref: ch5-1-F4}
+      - {text: 'body.mark: 案', verdict: 合格, reason: 'ch3-s5 の mark 案と合う'}
+      - {text: 'text: ルールの条件が、接続元を問わず定期の通信に合うように書かれている。', verdict: 合格, reason: '架空の設定(ch5-s3 items[0])と合う'}
+      - {text: 'text: 検知の条件の誤りと根拠をもって言えるため、誤検知として、その根拠を記録して閉じる', verdict: 合格, reason: 'ch3-s5 を当てはめた判断。条件が緩く書かれていることは架空の設定の前提(ch5-s3)'}
+      - {text: 'caveat: 当てはめた規則(ch3-s5): 検知の条件かデータの誤りで出たと根拠をもって言えるときだけ、誤検知として閉じる', verdict: 合格, reason: 'ch3-s5 の見出しと同じ。「案として」は mark 案と notes で示される'}
+      - {text: 'notes: ch3-s5 の規則を当てはめます。', verdict: 合格}
+      - {text: 'notes: この規則は案で、公開資料の材料からこの講義が組み立てた基準です。', verdict: 合格, reason: 'ch3-s5 の mark 案、語彙の「案」の定義と合う'}
+      - {text: 'notes: このSOCの運用ではありません。', verdict: 合格, reason: '語彙の「案」の定義(このSOCの運用でもない)と合う'}
+      - {text: 'notes: 演習1は、ルールが条件どおりに正しく反応した想定内の検知でした。', verdict: 合格, reason: 'ch5-s2、語彙の定義と合う'}
+      - {text: 'notes: 演習2は、ルールの条件そのものが緩く、無害な活動に反応した誤検知です。', verdict: 合格, reason: '語彙の「誤検知」の定義(緩すぎるルール)と合う'}
+      - {text: 'notes: 記録には、条件のどこが緩いか(接続元で絞っていないこと)を書きます。', verdict: 合格}
+      - {text: 'notes: 次は、外部からの攻撃の通信の演習です。', verdict: 合格}
+    qualifiers: {verdict: 合格, reason: '事実を使わない'}
+  - id: ch5-s5
+    fictional_marked: 合格(body.title「演習3のアラート(架空)」、notes「架空のアラートです」)
+    unsupported:
+      - {text: 'takeaway: 防がれた記録をどう扱うかを考え、行き先と根拠を答える', verdict: 合格}
+      - {text: 'body.title、items[0]〜[2]', verdict: 合格, reason: '架空の項目で、架空と明記されている'}
+      - {text: 'notes: 架空のアラートです。', verdict: 合格}
+      - {text: 'notes: 受講者に、閉じる、調べる、上げるのどれにするかと、その根拠を答えてもらいます。', verdict: 合格}
+      - {text: 'notes: 強調した防がれた記録を見て、防がれたことが行き先を変えるかどうかを問います。', verdict: 合格}
+      - {text: 'notes: 答えは次のスライドで示します。', verdict: 合格}
+    qualifiers: {verdict: 合格, reason: '事実を使わない'}
+  - id: ch5-s6
+    unsupported:
+      - {text: 'takeaway: 防がれたかどうかは、新人が閉じてよい理由にならない', verdict: 合格, reason: 'ch3-s14(攻撃の試みも全て上げる)から導ける'}
+      - {text: 'body.mark: 運用', verdict: 合格, reason: 'ch3-s14 の mark 運用と合う'}
+      - {text: 'text: 通信は防がれ、侵害に至っていないが、攻撃の試みにあたる。', verdict: 合格, reason: '架空の設定の前提と語彙の「攻撃の試み」の定義による(observations を参照)'}
+      - {text: 'text: 新人は、攻撃の試みも全て上げる', verdict: 合格, reason: 'ch3-s14 の text と同じ。「新人」は語彙で配属から3か月と定義'}
+      - {text: 'caveat: 当てはめた規則(ch3-s14): 新人は攻撃の試みも全て上げ、溢れたらリーダーが対処する', verdict: 合格, reason: 'ch3-s14 の見出しと同じ内容'}
+      - {text: 'notes: ch3-s14 の規則を当てはめます。このSOCの運用です。', verdict: 合格}
+      - {text: 'notes: 攻撃の試みは、侵害に至らなかった攻撃によるアラートです。', verdict: 合格, reason: 'ch3-s14 の notes と同じ'}
+      - {text: 'notes: 誤検知でも想定内の検知でもないため、閉じる対象になりません。', verdict: 合格, reason: 'ch3-s6 の text(新人が閉じてよいのは、誤検知と一覧にある想定内の活動だけ)から導ける'}
+      - {text: 'notes: 防がれた記録は、上げるときに添える証拠になります。', verdict: 判定できない, ref: ch5-1-U2}
+      - {text: 'notes: 次の演習4は、一覧にない活動を扱います。', verdict: 合格}
+    qualifiers: {verdict: 合格, reason: '事実を使わない'}
+  - id: ch5-s7
+    fictional_marked: 合格(body.title「演習4のアラート(架空)」、items[2]「リーダーの一覧(架空)の抜粋」、notes「架空のアラートです」)
+    unsupported:
+      - {text: 'takeaway: 一覧に当てはまらない活動の行き先を、根拠とともに答える', verdict: 合格}
+      - {text: 'body.title、items[0]〜[3](sub を含む)', verdict: 合格, reason: '架空の項目で、架空と明記されている。一覧の抜粋の1行目は ch5-s1 と同じ'}
+      - {text: 'notes: 架空のアラートです。', verdict: 合格}
+      - {text: 'notes: 受講者に、閉じる、調べる、上げるのどれにするかと、その根拠を答えてもらいます。', verdict: 合格}
+      - {text: 'notes: 強調した照合の結果を見せ、一覧のどの行にも当てはまらないことを確かめます。', verdict: 合格}
+      - {text: 'notes: 端末が重要でない資産であることも読み取らせ、それが行き先を変えるかを問います。', verdict: 合格}
+      - {text: 'notes: 答えは次のスライドで示します。', verdict: 合格}
+    qualifiers: {verdict: 合格, reason: '事実を使わない'}
+  - id: ch5-s8
+    unsupported:
+      - {text: 'takeaway: 資産が重要でないことは、閉じる根拠にならない', verdict: 合格, reason: '閉じてよいのは誤検知(ch3-s5)と一覧にある想定内の活動(ch3-s6)だけで、資産の重要度はどちらの理由にも入らない'}
+      - {text: 'body.mark: 運用', verdict: 不合格, ref: ch5-1-F2}
+      - {text: 'text: 一覧に当てはまらないため、想定内の検知としては閉じられない。', verdict: 合格, reason: 'ch3-s6 の caveat から導ける'}
+      - {text: 'text: 持ち時間の中で調べ、誤検知と根拠をもって言えなければ、見たことを付けて上げる', verdict: 不合格, ref: ch5-1-F2, reason: '流れは ch3-s11、s13 から導けるが、案の部分(誤検知と言える基準、ch3-s5)が運用として示される'}
+      - {text: 'caveat: 当てはめた規則: ch3-s6(一覧にある活動だけ閉じる)、ch3-s11(持ち時間)、ch3-s13(迷うなら上げる)', verdict: 不合格, ref: ch5-1-F1}
+      - {text: 'notes: 3つの規則を順に当てはめます。', verdict: 合格}
+      - {text: 'notes: いずれもこのSOCの運用です。', verdict: 不合格, ref: ch5-1-F3}
+      - {text: 'notes: 1つ目に、一覧に当てはまる行がないため、想定内の検知としては閉じられません(ch3-s6)。', verdict: 合格}
+      - {text: 'notes: 2つ目に、新人の持ち時間の中で調べます(ch3-s11)。', verdict: 合格}
+      - {text: 'notes: 3つ目に、持ち時間の中で閉じる根拠がなく迷うなら、閉じずに、見たことを付けて上げます(ch3-s13)。', verdict: 合格, reason: 'ch3-s13 の見出しと notes(見たことを付けて上げる)と合う'}
+      - {text: 'notes: 端末が重要でない資産であることは、閉じてよい理由にはなりません。', verdict: 合格, reason: 'takeaway と同じ導出'}
+    qualifiers: {verdict: 合格, reason: '事実を使わない'}

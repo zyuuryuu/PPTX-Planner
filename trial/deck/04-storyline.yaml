@@ -274,7 +274,7 @@
   chapter: ch3
   section: null
   question: 迷ったときは、どうするのか
-  headline: このSOCでは、30分調べても閉じる根拠がなく迷うなら、閉じずに上げる
+  headline: このSOCでは、30分調べても閉じる根拠がなければ、閉じずに上げる
   from:
   - Q3.3.1
   evidence:
@@ -422,4 +422,4 @@
   - F509
   - F510
   appendix_of: ch3-s11
-  source: Kerstenら(2025年)、Moosmannら(2026年)、Alahmadiら(USENIX Security 2022)。近い調査はあるが、どれも誤りの割合は測っていない
+  source: Kerstenら(2025年)、Moosmannら(2026年)は上げるのが遅れる誤りを、Alahmadiら(USENIX Security 2022)は上げすぎる誤りの割合を測っていない

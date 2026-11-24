@@ -1,0 +1,101 @@
+# 工程7 重大な検査: 裏付けのない文、限定の残存(ch5、2回目。再検査)
+check: 裏付けのない文、限定の残存(docs/writing.md「検査」の表の2行)
+round: 2
+target: trial/deck/07-slides/ch5.yaml(0f177c9 の直し。検査時の HEAD は 6c3f4ee で、ch5.yaml は 0f177c9 から変わっていない)
+judge: claude-opus-5-5
+scope: >-
+  前回(7-ch5-1.yaml)の不合格 F1〜F4 と判定できない U1、U2 が解消したかと、0f177c9 で直した箇所に新しい問題がないかだけを確かめた。
+  直していない箇所は判定していない。
+materials:
+  - git show 0f177c9(ch5.yaml の差分 6行)
+  - trial/deck/checks/7-ch5-1.yaml の findings
+  - trial/deck/07-slides/ch3.yaml の ch3-s5、ch3-s15(HEAD の版。ch3-s15 は 6c3f4ee でノートが変わったが、見出しと mark 案は同じ)
+  - trial/deck/04-storyline.yaml の ch3-s15 の見出し
+  - trial/deck/work/ch5.md(ch5-s6、ch5-s8 の立証の設計、語彙の T-proposal「案」)
+  - trial/deck/decisions.md の D013、D015
+premises:
+  - 講義の決まりを述べる文の裏付けは、その決まりを述べるスライドのID。案か運用かは、そのスライドの印による(D015)
+  - 架空と明記した演習の数値は事実のIDによらない(D013)。今回の直しに数値はない
+  - 「案」は、公的な基準でも、このSOCの運用でもない(語彙 T-proposal)
+
+summary:
+  unsupported:     # 条件1: 裏付けのない文(直した箇所と前回の指摘のみ)
+    pass: 8
+    fail: 1
+    undetermined: 0
+  qualifiers:      # 条件2: 限定の残存
+    pass: 0
+    fail: 0
+    undetermined: 0
+    note: 直した箇所はどれも事実を使わない(facts 空)。判定の対象がない
+  previous:
+    resolved: [ch5-1-F1, ch5-1-F2, ch5-1-F3, ch5-1-F4, ch5-1-U1]
+    not_resolved: [ch5-1-U2]   # IDは添えられたが、案の印が示されていない(ch5-2-F1)
+
+findings:
+  - id: ch5-2-F1
+    slide: ch5-s6
+    field: notes(4文目)
+    verdict: 不合格
+    previous: ch5-1-U2
+    quote: '防がれた記録は、上げるときに添える証拠になります(ch3-s15)。'
+    context_quote: 'ch5-s6 body.mark: 運用。notes 1文目: ch3-s14 の規則を当てはめます。このSOCの運用です。'
+    source_quote: 'ch3-s15 headline: 案として、上げるときは、出どころとID、調べた経過、証拠、判定の仮説、次の手順を添える(body.mark: 案、items[2]: 集めた証拠)'
+    reason: >-
+      IDが添えられ、導出は確かめられた(防がれた記録は、ch3-s15 の「集めた証拠」に当たる)。
+      ただし ch3-s15 の印は案で、ch5-s6 は印が運用、ノートも直前に「このSOCの運用です」と言う。添える項目が案であることがどこにも示されず、運用の決まりとして読める。
+      前回の U2 の提案(「そのスライドが案なら、案と示す」)のうち後半が満たされていない。前回の ch5-1-F2、F3(ch5-s8)と同じ種類の食い違いで、そちらは直っている
+    suggestion: '「上げるときに添える証拠になります。添える項目は案です(ch3-s15)。」のように、案と示す'
+
+resolved:
+  - id: ch5-1-F1
+    slide: ch5-s8
+    field: body.caveat
+    verdict: 合格
+    quote: '当てはめた規則: ch3-s11(持ち時間)、ch3-s13(迷うなら上げる)、ch3-s6(想定内の検知として閉じてよいのは一覧にある活動だけ)。誤検知と言える基準は案(ch3-s5)'
+    reason: ch3-s6 の限定「想定内の検知として」が残り、ch3-s5(誤検知として閉じる)と食い違わなくなった
+  - id: ch5-1-F2
+    slide: ch5-s8
+    field: body.text、body.mark
+    verdict: 合格
+    quote: 'caveat: …。誤検知と言える基準は案(ch3-s5)'
+    reason: >-
+      text と mark は変わらないが、caveat が案の部分を ch3-s5 のIDとともに示す。前回の提案(caveat か notes に足す)どおりで、
+      ch3-s13 が R-op-fp を案として描き分けていることと合う
+  - id: ch5-1-F3
+    slide: ch5-s8
+    field: notes(2〜3文目)
+    verdict: 合格
+    quote: 'いずれもこのSOCの運用です。ただし、誤検知と言える基準は案です(ch3-s5)。'
+    reason: 3つのスライドの印(運用)と、ch3-s5 の印(案)を分けて述べている
+  - id: ch5-1-F4
+    slide: ch5-s4
+    field: takeaway
+    verdict: 合格
+    quote: '誤検知と言う根拠は、検知の条件かデータのどこが誤りかで示す'
+    source_quote: 'ch3-s5 headline: 案として、検知の条件かデータの誤りで出たと根拠をもって言えるときだけ、誤検知として閉じる'
+    reason: ch3-s5 の2つの理由(検知の条件の誤り、データの誤り)と同じ範囲になった。案であることは s4 の mark 案と notes で示される
+  - id: ch5-1-U1
+    slide: ch5-s1
+    field: notes
+    verdict: 合格
+    quote: '強調した一覧の行と、アラートの接続元の端末と時刻を見比べるよう促します。答えは次のスライドで示します。'
+    reason: 文が削られた。前後の文はつながって読める
+
+changed_other:
+  - slide: ch5-s2
+    field: body.text(2文目)
+    verdict: 合格
+    before: 想定内の検知として、照らした行を記録して閉じる
+    after: 照らした行を記録し、想定内の検知として閉じる
+    reason: >-
+      語順の入れ替えだけで、意味は変わらない。ch3-s6 を当てはめた判断で、限定「想定内の検知として」も残る。
+      見出し「想定内の検知として記録して閉じる」、notes「記録には、照らした一覧の行を書きます」と食い違わない
+
+observations:   # 判定には入れない気づき
+  - slide: ch5-s8
+    note: >-
+      caveat の規則の並びが ch3-s11、ch3-s13、ch3-s6 に変わり、notes の「3つの規則を順に当てはめます」の順(1つ目 ch3-s6、2つ目 ch3-s11、3つ目 ch3-s13)、
+      作業票の show の順(ch3-s6、ch3-s11、ch3-s13)と違う。裏付けの問題ではないが、講師が caveat を見ながら「順に」と話すと順が合わない
+  - slide: ch5-s8
+    note: caveat が1文から2文に伸びた。描画での収まりはこの検査の範囲外で、確かめていない

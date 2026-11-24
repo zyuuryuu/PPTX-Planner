@@ -6,17 +6,19 @@ takeaway: 戦術に当てはめると、そのアラートが攻撃のどこに�
 body:
   type: tree
   root: ATT&CK
+  levels:
+  - 戦術(なぜ)の例
+  - 技術(どのように)の例
   children:
-  - name: 戦術(例)
-    items:
-    - 初期アクセス
-    - 実行
-    - 横展開
-    - 持ち出し
-  - name: 技術(例)
-    items:
+  - 初期アクセス
+  - name: 実行
+    children:
     - コマンドの実行
-  example: 架空のアラートを戦術「実行」に当てはめる(案)
+  - 横展開
+  - 持ち出し
+  aside:
+    mark: 案
+    text: 架空のアラート「見慣れないコマンドが動いた」は戦術「実行」に当たる。これを優先度の要因「活動の段階」に使う
   highlight: 実行
 sources:
 - F114

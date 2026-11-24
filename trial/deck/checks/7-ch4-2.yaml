@@ -1,0 +1,84 @@
+# 検査の結果(工程7、ch4、2回目。再検査)
+check: 工程7の重大な検査(裏付けのない文、限定の残存)の再検査
+definition:
+- docs/writing.md「検査」の節の「裏付けのない文」「限定の残存」
+- trial/deck/decisions.md D015(講義の決まりを導く文は裏付けの検査の対象。裏付けは、その決まりを述べるスライドのID。事実から決まりが導かれる形で言い切らない)
+target:
+  file: trial/deck/07-slides/ch4.yaml
+  commits: [7ce11bd, c09e50b]
+  scope:
+  - 前回(7-ch4-1.yaml)の不合格1件と判定できない1件が解消したか
+  - 直した3か所(ch4-s1 の notes の1文、ch4-s3 の body、ch4-s3 の notes の最後の文)に新しい問題がないか
+  not_in_scope: 直していない箇所(新しい指摘は出さない)
+  upstream:
+  - trial/deck/work/ch4.md(F500、F506、章の message、ch4-s3 の source、statement の型の定義)
+  - trial/deck/04-storyline.yaml の ch3-s5、ch3-s6 の headline の2行
+inspector: claude-opus-5-5
+assumptions:
+- 'value: F506 は、型の定義(作業票の statement の表)により、台帳の value と unit で「56%」と描かれ、text がその下に値の説明として描かれるものとして読んだ。'
+- 出典の原文は開いていない(照合は依頼されていない)。事実の quote、metric、qualifiers を正とした。
+- D015 により、講義の決まりを述べる文の裏付けは ch3-s5、ch3-s6 の見出しとし、案か運用かの区別はそれらのスライドの印に任せるものとして読んだ。
+
+summary:
+  fail: 0
+  undeterminable: 0
+  pass: 9   # 前回の2件の解消(2件)、直した3か所の文ごとの2条件(3文×2=6件)、ch4-s3 の限定の残存(1件)
+  previous_findings:
+  - finding: ch4-s1 の notes「見落としたのは…」(不合格)
+    status: 解消
+  - finding: ch4-s3 の notes の最後の文(判定できない)
+    status: 解消(D015 により判定し、合格)
+
+slides:
+- id: ch4-s1
+  facts: [F500]
+  changed:
+  - field: notes(3文目)
+    before: 見落としたのは検知の仕組みではなく、アラートを受けた側だった。
+    text: 対応しなかったのは検知の仕組みではなく、アラートを受けた側だった。
+    unsupported: 合格
+    qualifiers: 合格
+    quote_fact: 'F500 quote: "However, Target’s security team neither reacted to the alarms nor allowed the FireEye software to automatically delete the malware in question."'
+    remark: >-
+      「対応しなかった」は quote の neither reacted と合い、前回の「見落とした」(気づかなかった)の強すぎる主張は消えた。
+      アラートを出したのは検知の製品(triggered urgent alerts)で、反応しなかったのはチームであるため、「検知の仕組みではなく、受けた側」という対比も事実の範囲にある。
+      1文目が「報告は報道を引いてこの経過を述べている」としており、報道を引いた記述という限定は同じノートに残る。
+      F501(誤検知とみなした可能性。推定)とも食い違わない。
+
+- id: ch4-s3
+  facts: [F506]
+  qualifiers_coverage:   # body を直したため、スライド単位で取り直した
+    verdict: 合格
+    items:
+    - qualifier: 自己申告
+      where: body.text「…と答えた回答者の割合」、body.caveat「回答は自己申告」、出典の行「自己申告」
+    - qualifier: 調査会社がセキュリティ製品のベンダーであり、製品の宣伝を含む資料(一次情報として扱わない)
+      where: 見出し「ベンダーの調査」、body.caveat「ベンダー(Imperva)の調査で、製品の宣伝を含む」、notes の3文目
+    - qualifier: RSA Conference 2018で、IT専門職179人を対象に実施。SOC分析者に限らない
+      where: 出典の行「2018年、RSA Conference の参加者のIT専門職179人」、body.caveat「回答者はSOCの解析者に限らず」
+  changed:
+  - field: 'body.value と body.text(highlight: value)'
+    before: 'text: 回答者の{F506}、highlight: text'
+    text: 'value: F506(56%)、text: 過去の誤検知を理由に、アラートを無視したことがあると答えた回答者の割合'
+    unsupported: 合格
+    qualifiers: 合格
+    remark: >-
+      text は F506 の metric「過去の誤検知を理由にアラートを無視したことがある回答者の割合」と同じ内容で、「答えた」により自己申告であることも残る。
+      値と説明の組み合わせは F506 の statement(56%が…無視したことがあると答えた)と合う。
+      text は35字で、型の定義の value を使う場合の収容量(約36字、1行)に収まる。highlight: value は型の定義が許す値。
+      notes の1文目「大きく示した値は…回答者の割合である」は、値を大きく描く今の body と合うようになった。
+      誤検知が出典の言い方(false positive)であることは notes の5文目と出典の行に残る。
+  - field: notes(最後の文)
+    before: だから、閉じてよいのは根拠をもって誤検知か想定内の検知と言えるものだけになる。
+    text: この講義が、根拠をもって誤検知か想定内の検知と言えるものだけを閉じる(ch3-s5、ch3-s6)のは、このためである。
+    unsupported: 合格
+    qualifiers: 合格
+    support:
+    - 'ch3-s5 headline: 案として、検知の条件かデータの誤りで出たと根拠をもって言えるときだけ、誤検知として閉じる'
+    - 'ch3-s6 headline: このSOCでは、新人が想定内の検知として閉じてよいのは、リーダーの一覧にある活動だけ'
+    remark: >-
+      D015 の形(講義の決まりを、前の文の可能性を理由として示す)に合い、事実(F506)から決まりが導かれる形の言い切り(「だから…になる」)は消えた。
+      決まりの主語を「この講義が」とし、裏付けのスライドID を添えているため、一般の決まりや事実からの帰結としては聞こえない。案か運用かは D015 のとおり引いたスライドの印に任される。
+      誤検知の側は ch3-s5 の「根拠をもって言えるときだけ」と合う。想定内の側は ch3-s6 では「リーダーの一覧にある活動だけ」で、この文はそれを「根拠をもって想定内の検知と言えるもの」とまとめている。
+      一覧にあることを根拠とみなす言い換えで、範囲を一覧の外に広げてはいないため合格とした。資料の summary と章の message も同じまとめ方をしている。
+      理由として受ける前の文(見過ごしうる)は「うる」を保っており、D015 の例と同じく可能性を理由に挙げる形である。

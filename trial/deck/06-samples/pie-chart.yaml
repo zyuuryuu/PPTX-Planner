@@ -9,14 +9,21 @@ body:
   - label: 侵害に至った攻撃
     value: F207
   - label: 攻撃の試み
-    value: F207
+    value:
+      fact: F207
+      as: 27
     bound: 以上
   - label: 想定内の検知
-    value: F207
+    value:
+      fact: F207
+      as: 49
     bound: 以上
   - label: 分類できないもの
-    value: F207
+    value:
+      fact: F207
+      as: 23.72
+      round: 0
   highlight: 攻撃の試み
 sources:
 - F207
-notes: 27%と49%は論文が「少なくとも」とする下限。想定内の検知は明確な証拠があるものだけを数えた。
+notes: 27%と49%は、論文が「少なくとも」とする下限(F207)。想定内の検知は明確な証拠があるものだけを数えた。

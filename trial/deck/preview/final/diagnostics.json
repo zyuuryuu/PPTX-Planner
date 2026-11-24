@@ -1,0 +1,641 @@
+{
+ "summary": {
+  "error": 0,
+  "warning": 2,
+  "info": 0
+ },
+ "slides": [
+  {
+   "id": "toc",
+   "kind": "目次",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch1-cover",
+   "kind": "章扉",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch1-s1",
+   "kind": "本編",
+   "spec": "07-slides/ch1.yaml",
+   "type": "step-flow",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "steps[0].description",
+     "lines": [
+      "製品の重大度が",
+      "High 以上なら"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch1-s2",
+   "kind": "本編",
+   "spec": "07-slides/ch1.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch2-cover",
+   "kind": "章扉",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch2-s1",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "er-diagram",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch2-s2",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "architecture-diagram",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "E-siem-server.details",
+     "lines": [
+      "相関で最も",
+      "一般的なのはルール",
+      "(ログ管理ソフトウェア",
+      "一般の記述)"
+     ]
+    },
+    {
+     "target": "D-significant-event",
+     "lines": [
+      "重要と",
+      "判断された",
+      "イベント",
+      "(まだアラート",
+      "ではない)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch2-s3",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "architecture-diagram",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "E-edr-central-db",
+     "lines": [
+      "中央の",
+      "データベース"
+     ]
+    },
+    {
+     "target": "E-mde",
+     "lines": [
+      "Defender",
+      "for Endpoint"
+     ]
+    },
+    {
+     "target": "D-mde-telemetry.details",
+     "lines": [
+      "レジストリと",
+      "ファイルの変更"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch2-s4",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch2-s5",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "tree",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "aside",
+     "lines": [
+      "架空のアラート「見慣れないコマンドが",
+      "動いた」は戦術「実行」に当たる。これを",
+      "優先度の要因「活動の段階」に使う"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch2-s6",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "pie-chart",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch2-s7",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "statement",
+   "diagnostics": [
+    {
+     "slide": "ch2-s7",
+     "kind": "number",
+     "severity": "warning",
+     "target": "notes",
+     "message": "notes の数値「8」の文に、事実の参照がない(D016): 「「アラートの8割は誤検知」という話を聞いたことがあるかもしれない。」"
+    },
+    {
+     "slide": "ch2-s7",
+     "kind": "number",
+     "severity": "warning",
+     "target": "notes",
+     "message": "notes の数値「8」が、同じ文で参照した事実(F204)の本文にない(D016)"
+    }
+   ],
+   "wraps": []
+  },
+  {
+   "id": "ch2-s8",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "cause-chain",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "chain[0]",
+     "lines": [
+      "検知のルールが",
+      "緩く書かれている"
+     ]
+    },
+    {
+     "target": "chain[1]",
+     "lines": [
+      "無害な通信にも",
+      "条件が合ってしまう"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch2-s9",
+   "kind": "本編",
+   "spec": "07-slides/ch2.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch2-summary",
+   "kind": "章のまとめ",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-cover",
+   "kind": "章扉",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s1",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "table",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s2",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s3",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "step-flow",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "steps[0].description",
+     "lines": [
+      "製品の重大度が",
+      "High 以上なら"
+     ]
+    },
+    {
+     "target": "steps[1].description",
+     "lines": [
+      "誤検知、想定内の",
+      "検知、攻撃の疑い"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch3-s4",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "step-flow",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "steps[0].description",
+     "lines": [
+      "アラートを出したルールの条件と、",
+      "アラートに含まれる利用者や端末を読む"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch3-s5",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s6",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s7",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s9",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s10",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s11",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s16",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s12",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s13",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "flowchart",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "A-investigate",
+     "lines": [
+      "調べる",
+      "(30分まで)"
+     ]
+    },
+    {
+     "target": "R-op-fp.condition",
+     "lines": [
+      "誤検知と",
+      "根拠をもって",
+      "言えた?"
+     ]
+    },
+    {
+     "target": "R-op-fp.label",
+     "lines": [
+      "誤検知として",
+      "記録して閉じる"
+     ]
+    },
+    {
+     "target": "A-escalate",
+     "lines": [
+      "見たことを",
+      "付けて上げる"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch3-s14",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s15",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch3-s17",
+   "kind": "本編",
+   "spec": "07-slides/ch3.yaml",
+   "type": "flowchart",
+   "diagnostics": [],
+   "wraps": [
+    {
+     "target": "D-op-alert",
+     "lines": [
+      "届いた",
+      "アラート"
+     ]
+    },
+    {
+     "target": "R-op-severe.condition",
+     "lines": [
+      "重大度が",
+      "High以上?"
+     ]
+    },
+    {
+     "target": "R-op-attempt.condition",
+     "lines": [
+      "攻撃の",
+      "試み?"
+     ]
+    },
+    {
+     "target": "R-op-list.label",
+     "lines": [
+      "想定内の検知として",
+      "記録して閉じる"
+     ]
+    },
+    {
+     "target": "A-investigate",
+     "lines": [
+      "調べる",
+      "(30分まで)"
+     ]
+    },
+    {
+     "target": "R-op-fp.label",
+     "lines": [
+      "誤検知として",
+      "記録して閉じる"
+     ]
+    },
+    {
+     "target": "R-op-fp.condition",
+     "lines": [
+      "誤検知と",
+      "根拠をもって",
+      "言えた"
+     ]
+    },
+    {
+     "target": "R-op-inv-esc.label",
+     "lines": [
+      "見たことを",
+      "付けて上げる"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch3-summary",
+   "kind": "章のまとめ",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch4-cover",
+   "kind": "章扉",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch4-s1",
+   "kind": "本編",
+   "spec": "07-slides/ch4.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch4-s2",
+   "kind": "本編",
+   "spec": "07-slides/ch4.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch4-s3",
+   "kind": "本編",
+   "spec": "07-slides/ch4.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch4-summary",
+   "kind": "章のまとめ",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-cover",
+   "kind": "章扉",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s1",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s2",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s3",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s4",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s5",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s6",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s7",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "plain-list",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-s8",
+   "kind": "本編",
+   "spec": "07-slides/ch5.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ch5-summary",
+   "kind": "章のまとめ",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "appendix-cover",
+   "kind": "付録の扉",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ap-s1",
+   "kind": "付録",
+   "spec": "07-slides/ap.yaml",
+   "type": "table",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "ap-s2",
+   "kind": "付録",
+   "spec": "07-slides/ap.yaml",
+   "type": "statement",
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "sources-1",
+   "kind": "出典の一覧",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "sources-2",
+   "kind": "出典の一覧",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  },
+  {
+   "id": "sources-3",
+   "kind": "出典の一覧",
+   "spec": null,
+   "type": null,
+   "diagnostics": [],
+   "wraps": []
+  }
+ ]
+}

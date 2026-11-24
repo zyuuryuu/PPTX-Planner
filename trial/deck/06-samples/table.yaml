@@ -8,18 +8,19 @@ body:
   columns:
   - 出典
   - 調べ方
-  - 値
+  - name: 値
+    align: right
   rows:
-  - - Yangら
-    - 実測
-    - F201
-  - - Alahmadiら
-    - 自己申告
-    - F202
-  - - Vectra AI
-    - 自己申告
-    - F203
-  highlight: 調べ方の列
+  - - 1つのSOC(Yangら)
+    - 実測(自動遮断の後に解析者が扱った件数)
+    - 1日 約{F201:value}件
+  - - 実務者の調査(Alahmadiら)
+    - 回答(自己申告)
+    - '{F202:metric}が{F202}'
+  - - ベンダーの調査(Vectra AI)
+    - 回答(自己申告)
+    - 1日平均 {F203:value}件
+  highlight: columns[1]
 sources:
 - F201
 - F202

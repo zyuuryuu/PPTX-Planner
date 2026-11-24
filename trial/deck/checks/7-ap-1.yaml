@@ -1,0 +1,240 @@
+# 検査の結果: 工程7、付録(ap)、1回目
+check: スライドの文の重大な検査(工程7)。裏付けのない文、限定の残存
+target:
+  file: trial/deck/07-slides/ap.yaml
+  slide: ap-s2
+  branch: claude/trial-soc
+  commit: c956a9e(ap.yaml は c956a9e から 93b8acb まで変更なし)
+  out_of_scope: ap-s1(承認済みの型の見本)、headline
+judge: claude-opus-5-5(検査セッション。モデルの識別子は設定値。実際に応答したモデルとは異なりうる)
+materials:
+  - trial/deck/work/ap.md(ストーリーライン、立証の設計、F508、F509、F510 の全文)
+  - trial/deck/decisions.md の D015、D016、D017
+  - docs/writing.md の「検査」の節、docs/checks.md の「重大な検査」の工程7の2行
+method: >-
+  条件1(裏付け)は、文ごとに、F508、F509、F510 の statement、quote、qualifiers だけで裏付けられるかを見た。
+  講義の決まりに触れる文は D015 に従い、決まりを述べるスライドのIDを裏付けとした。
+  出典は開いていない(照合を依頼されていないため)。事実に書かれていないことは、裏付けがないとした。
+  条件2(限定)は、文ごとに、その文が使う事実の qualifiers を落として、事実より強い、広い、または曖昧な主張になっていないかを見た。
+  そのうえで、スライド全体(本文、但し書き、ノート、出典の行)に qualifiers が全て残っているかを照合した。
+  ノートの文に置いた限定は残っているとみなした(D017 の考え方による)。
+
+summary:
+  sentences: 15
+  support: {pass: 12, fail: 3, undetermined: 0}
+  qualifiers: {pass: 15, fail: 0, undetermined: 0}
+  main_finding: >-
+    但し書き、結論1行、ノートの最後の文が、3つの調査の「どれも」が、上げるのが遅れる誤りと上げすぎる誤りの
+    両方の割合を測っていない、と述べている。事実が示すのは、Kerstenら(F508)とMoosmannら(F509)が
+    上げるのが遅れる誤りを、Alahmadiら(F510)が上げすぎる誤りの割合を、測っていないことだけである。
+    残りの組み合わせ(KerstenらとMoosmannらが上げすぎる誤りを、Alahmadiらが上げるのが遅れる誤りを測ったか)は、
+    渡された事実に書かれていない。3件は同じ1つの原因による。
+
+slide_level_qualifiers:
+  # スライドが使う事実の qualifiers が、スライドのどこかに残っているか
+  F508:
+    - {qualifier: 商用SOCと協力したthink-aloud実験, kept_in: "notes 3文目「商用SOCと協力した think-aloud(…)実験」。本文は「Kerstenらの実験では」"}
+    - {qualifier: 分析者は5人(400件の調査), kept_in: "notes 3文目「解析者5人が400件を調べた」"}
+    - {qualifier: 「可能性が高い(more likely)」という推論の記述, kept_in: "notes 4文目「…可能性が高い、というのは著者らの推論である」。本文は推論を述べていない"}
+    - {qualifier: 上げるのが遅れる誤りを直接測った結果ではない, kept_in: "notes 5文目、caveat、出典の行"}
+  F509:
+    - {qualifier: SOC分析者12人, kept_in: "本文2文目「解析者12人のうち」、notes 6文目"}
+    - {qualifier: 事前の質問票での自己申告, kept_in: "本文2文目「事前調査」「答えた」、notes 6文目「事前の質問票に答えた自己申告」"}
+    - {qualifier: 実際のエスカレーション遅れの測定ではない, kept_in: "notes 7文目、caveat、出典の行"}
+    - {qualifier: 一般化を主張しない研究, kept_in: "notes 7文目「著者らも一般化を主張していない」"}
+  F510:
+    - {qualifier: MSSP(外部委託のSOC)の分析者の証言(参加者A1, A2, D6, E7), kept_in: "本文3文目「外部委託のSOC(MSSP)の解析者が…語った」、notes 8文目「証言(参加者A1、A2、D6、E7)」"}
+    - {qualifier: 実務者21人の質的調査, kept_in: "notes 8文目「実務者21人の質的調査」"}
+    - {qualifier: 上げ過ぎの割合は未測定, kept_in: "notes 9文目、caveat、出典の行"}
+  result: 全て残っている
+
+sentences:
+  - id: takeaway
+    text: 近い調査が示すのは、調べる操作の数、自己申告、証言までである
+    facts: [F508, F509, F510]
+    support:
+      verdict: 不合格
+      quote: 近い調査が示すのは、調べる操作の数、自己申告、証言までである
+      reason: >-
+        「までである」は、3つの調査のどれも、この問い(上げるのが遅れる誤りと上げすぎる誤りがどれだけ起きているか)に
+        それ以上のこと、つまり誤りの割合を示していない、と言い切っている。事実が裏付けるのは、
+        F508「上げるのが遅れる誤りを直接測った結果ではない」、F509「実際のエスカレーション遅れの測定ではない」、
+        F510「上げ過ぎの割合は未測定」だけで、Kerstenら(Att と NAtt の400件の実験)とMoosmannらが上げすぎる誤りを、
+        Alahmadiらが上げるのが遅れる誤りを測っていないことは、事実に書かれていない。caveat と同じ原因。
+        3つの調査がそれぞれ何を示したか(操作の数、自己申告、証言)の部分は、F508 の quote、F509 の qualifiers、
+        F510 の qualifiers で裏付けられる。
+    qualifiers:
+      verdict: 合格
+      reason: 3つの調査の結果を、事実より弱い水準(操作の数、自己申告、証言)で述べており、事実の限定を落として主張を強めていない。
+
+  - id: body.text-1
+    text: Kerstenらの実験では、上げるべきアラートは、そうでないものより、調べる操作が平均で多かった。
+    facts: [F508]
+    support:
+      verdict: 合格
+      reason: F508 の quote「alerts that ought to be escalated (i.e., Att alerts) require more actions on average to investigate than NAtt ones」と合う。
+    qualifiers:
+      verdict: 合格
+      reason: >-
+        「平均で」(数量の幅)を残し、「Kerstenらの実験では」で主体と範囲を1つの実験に限っている。
+        F508 の推論(時間と認知の負担をかける可能性が高い)は述べておらず、強めていない。
+        think-aloud であること、5人、400件は本文になく、ノート3文目にある。
+      note: >-
+        参考(判定の対象外): F508 の statement の「Tier-1分析者の」は qualifiers にないため照合の対象外としたが、
+        スライドとノートでは「解析者」となり、Tier-1 の限定がない。
+
+  - id: body.text-2
+    text: Moosmannらの事前調査では、不確かなときにチケットを作って引き継ぐと答えたのは、解析者12人のうち{F509}だった。
+    facts: [F509]
+    support:
+      verdict: 合格
+      reason: >-
+        F509 の value 33(%)と metric、quote「Only 33% stated that they would create a ticket and pass the case on if they were unsure」と合う。
+        「12人」は F509 の qualifiers にあり、同じ文に {F509} の参照があるため D016 の条件を満たす。
+    qualifiers:
+      verdict: 合格
+      reason: 「事前調査」「答えた」「解析者12人のうち」で、自己申告であることと人数を残している。一般化を主張しない点はノート7文目にある。
+
+  - id: body.text-3
+    text: Alahmadiらの聞き取りでは、外部委託のSOC(MSSP)の解析者が、疑わしいアラートをできる限り全て顧客に上げる圧力を語った。
+    facts: [F510]
+    support:
+      verdict: 合格
+      reason: F510 の statement、quote「pressure on the analysts to raise every possible suspicious alarm」と合う。「聞き取り」は F510 の origin「聞き取り調査」による。
+    qualifiers:
+      verdict: 合格
+      reason: MSSP であること、証言であること(「語った」)を残している。21人の質的調査であることはノート8文目にある。
+
+  - id: body.caveat
+    text: どれも、上げるのが遅れる誤りや上げすぎる誤りの割合は測っていない
+    facts: [F508, F509, F510]
+    support:
+      verdict: 不合格
+      quote: どれも、上げるのが遅れる誤りや上げすぎる誤りの割合は測っていない
+      reason: >-
+        「どれも」が3つの調査の全てについて、2種類の誤りの両方を測っていない、と述べている。
+        事実が裏付けるのは、F508 の qualifiers「上げるのが遅れる誤りを直接測った結果ではない」、
+        F509 の qualifiers「実際のエスカレーション遅れの測定ではない」、F510 の qualifiers「上げ過ぎの割合は未測定」の3つだけである。
+        Kerstenら、Moosmannらが上げすぎる誤りの割合を測っていないこと、Alahmadiらが上げるのが遅れる誤りの割合を測っていないことは、
+        渡された事実のどこにも書かれていない。特に F508 は、上げるべきアラートとそうでないアラートを分けた400件の実験であり、
+        上げる判断の正誤を測っていないかは、事実からは分からない。
+        出典の行(ストーリーラインの source)にも「どれも誤りの割合は測っていない」とあるが、これは事実ではなく上流の文であり、裏付けにはしなかった。
+      suggestion: >-
+        事実の範囲に合わせて、調査ごとに測っていないものを書き分ける。例:「Kerstenら、Moosmannらは上げるのが遅れる誤りを、
+        Alahmadiらは上げすぎる誤りの割合を、測っていない」。または、素材台帳で各調査がもう一方の誤りも測っていないことを確かめ、
+        事実の qualifiers に足してから、今の文を使う。出典の行と見出しの扱いは設計セッションの判断による。
+    qualifiers:
+      verdict: 合格
+      reason: F508、F509、F510 の「測定ではない」「未測定」の限定を、むしろ広げて述べており、限定を落としてはいない(問題は裏付けの側)。
+
+  - id: notes-1
+    text: ch3-s11 の持ち時間で上げる決まりについて、誤りの割合を問われたときに使う。
+    facts: []
+    support:
+      verdict: 合格
+      reason: >-
+        講義の決まりへの言及で、D015 により裏付けは決まりを述べるスライドのID。文が ch3-s11 を名指しし、
+        ch3-s11 の見出し「…持ち時間は1件30分で、過ぎたら見たことを付けて上げる」と合う。ストーリーラインの appendix_of も ch3-s11。
+        事実から決まりを導く言い切りはない。
+    qualifiers:
+      verdict: 合格
+      reason: 事実を使っていない。
+
+  - id: notes-2
+    text: 近い調査を1つずつ、何を測ったかで読む。
+    facts: []
+    support:
+      verdict: 合格
+      reason: 話し方の指示で、事実の主張を含まない。
+    qualifiers:
+      verdict: 合格
+      reason: 事実を使っていない。
+
+  - id: notes-3
+    text: Kerstenらは、商用SOCと協力した think-aloud(考えを声に出しながら作業してもらう)実験で、解析者5人が400件を調べた様子を記録した(F508)。
+    facts: [F508]
+    support:
+      verdict: 合格
+      reason: >-
+        F508 の qualifiers「商用SOCと協力したthink-aloud実験」「分析者は5人(400件の調査)」と合う。5、400 は qualifiers にあり、
+        同じ文に (F508) があるため D016 の条件を満たす。「様子を記録した」は think-aloud 実験の言い換えとして読める範囲とした。
+        括弧の中は think-aloud の語の説明で、事実の主張ではない。
+    qualifiers:
+      verdict: 合格
+      reason: 実験の形と人数、件数をそのまま残している。
+
+  - id: notes-4
+    text: 上げるべきアラートはそうでないものより調べる操作が平均で多いため、解析者はそこに時間と認知の負担をかける可能性が高い、というのは著者らの推論である。
+    facts: [F508]
+    support:
+      verdict: 合格
+      reason: F508 の quote「Therefore, analysts are more likely to spend time and cognitive effort when analyzing escalation-worthy alerts」と合う。前の文の (F508) を受けている。
+    qualifiers:
+      verdict: 合格
+      reason: 「平均で」「可能性が高い」と、推論の記述であること(qualifiers の3つ目)を残している。
+
+  - id: notes-5
+    text: 上げるのが遅れる誤りを直接測った結果ではない。
+    facts: [F508]
+    support:
+      verdict: 合格
+      reason: F508 の qualifiers「上げるのが遅れる誤りを直接測った結果ではない」と同じ。
+    qualifiers:
+      verdict: 合格
+      reason: 限定そのものを述べている。
+
+  - id: notes-6
+    text: Moosmannらの数字は、SOC解析者12人が事前の質問票に答えた自己申告で、同僚に相談するは92%、自分で調べるは71%だった(F509)。
+    facts: [F509]
+    support:
+      verdict: 合格
+      reason: F509 の statement、quote(92%、71%)、qualifiers(12人、事前の質問票での自己申告)と合う。数値は全て F509 の本文にあり、同じ文に (F509) がある(D016)。
+    qualifiers:
+      verdict: 合格
+      reason: 人数と自己申告であることを残している。
+
+  - id: notes-7
+    text: 実際に上げるのが遅れたかは測っておらず、著者らも一般化を主張していない。
+    facts: [F509]
+    support:
+      verdict: 合格
+      reason: F509 の qualifiers「実際のエスカレーション遅れの測定ではない」「一般化を主張しない研究」と合う。
+    qualifiers:
+      verdict: 合格
+      reason: 限定そのものを述べている。
+
+  - id: notes-8
+    text: Alahmadiらは実務者21人の質的調査で、顧客に報告する立場のMSSPの解析者が、能力不足と見られることや罰金を避けるために、疑わしいアラートをできる限り全て上げる圧力を受けると述べた証言(参加者A1、A2、D6、E7)を挙げている(F510)。
+    facts: [F510]
+    support:
+      verdict: 合格
+      reason: >-
+        F510 の statement と qualifiers(21人の質的調査、参加者A1、A2、D6、E7)と合う。21 は qualifiers にあり、同じ文に (F510) がある(D016)。
+        quote は「receiving possible fines」で、「罰金を避ける」は statement の訳と同じ。意味は変わらないと判断した。
+    qualifiers:
+      verdict: 合格
+      reason: 主体(顧客に報告する立場のMSSPの解析者)、証言であること、調査の規模を残している。
+
+  - id: notes-9
+    text: 上げすぎの割合は測っていない。
+    facts: [F510]
+    support:
+      verdict: 合格
+      reason: F510 の qualifiers「上げ過ぎの割合は未測定」と同じ。
+    qualifiers:
+      verdict: 合格
+      reason: 限定そのものを述べている。
+
+  - id: notes-10
+    text: 強調するのは下の枠で、どの調査も誤りの割合は測っていない、という点である。
+    facts: [F508, F509, F510]
+    support:
+      verdict: 不合格
+      quote: どの調査も誤りの割合は測っていない
+      reason: >-
+        caveat と同じ原因。この文の「誤り」は caveat を指し、上げるのが遅れる誤りと上げすぎる誤りの両方を受ける。
+        3つの調査のそれぞれが両方の誤りの割合を測っていないことは、事実に書かれていない(caveat の理由を参照)。
+        caveat を調査ごとに書き分けるなら、この文も合わせて直す必要がある。
+    qualifiers:
+      verdict: 合格
+      reason: 事実の限定を落としていない。

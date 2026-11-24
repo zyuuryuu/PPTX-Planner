@@ -14,6 +14,12 @@ body:
   - R-sentinel-source-data
   - R-sentinel-rule-data
   - R-sentinel-rule-alert
+  labels:
+    R-sentinel-source-data: 集める
+    R-sentinel-rule-data: 問い合わせる
+    R-sentinel-rule-alert: 生成する
+  annotations:
+    D-sentinel-alert: ルールが探すものを見つけたときに出る
   highlight: D-sentinel-alert
 text: 1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは {F207}
 sources:

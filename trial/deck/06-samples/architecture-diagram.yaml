@@ -18,7 +18,33 @@ body:
   - R-agent-central-db
   - R-mde-sensor
   - R-mde-alert
-  highlight: 左の枠(記録を継続して集める)
+  groups:
+  - title: EDRの要件の例(NCA)
+    elements:
+    - E-endpoint
+    - E-edr-agent
+    - E-edr-central-db
+    caption: プロセス、接続、ファイルなどの端末の記録を集める
+  - title: 製品の例(Microsoft Defender for Endpoint)
+    elements:
+    - E-mde
+    - E-mde-sensor
+    - D-mde-alert
+    direction: TB
+  labels:
+    E-edr-agent: エージェント
+    E-mde: Defender for Endpoint
+    D-mde-telemetry: 製品が集める記録
+    R-endpoint-agent: ''
+    R-agent-central-db: ''
+    R-mde-alert: 作る
+  details:
+    D-mde-telemetry:
+    - プロセス
+    - ネットワーク
+    - ログオン
+    - レジストリとファイルの変更
+  highlight: groups[0]
 sources:
 - F615
 - F616

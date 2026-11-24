@@ -5,8 +5,9 @@ headline: 米上院の報告は、アラートが頻繁だったなら、誤検�
 takeaway: 見過ごしの原因は確かめられていないが、慣れが見過ごしにつながりうる
 body:
   type: statement
-  quote: F501
-  quote_ja: '{F501} の日本語訳'
+  quote_of: F501
+  text: システムが頻繁に警報を鳴らしていたのであれば、職員はこのアラートを誤検知とみなした可能性がある
+  attribution: 報告の原文(英語)の日本語訳。報道を引いた記述
   caveat: 推定であり、確認された原因ではない
   highlight: caveat
 sources:

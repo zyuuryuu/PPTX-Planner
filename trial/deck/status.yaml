@@ -76,3 +76,49 @@ artifacts:
     approved_on: 2026-11-24
     approved_commit: 118679a
     rounds: 2
+  07-slides/ch4.yaml:
+    state: 受け入れ済み   # PM が受け入れた(製造の時期)
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: 1c88146
+    rounds: 1   # 検査 7-ch4-1(不合格1、判定できない1)→ 直し → 再検査 7-ch4-2(合格)
+    notes: ch4-s3 は D014 で言い切りに変更(依頼者が同意した見せ方からの変更。依頼者に示す)
+  07-slides/ch2.yaml:
+    state: 受け入れ済み
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: f5df9b4
+    rounds: 1   # 検査 7-ch2-1(不合格9、判定できない1)→ 直し → 再検査 7-ch2-2(合格)
+    warnings: ch2-s7 の notes の「8割」の数値の警告2件(D016)を受け入れた。見出しにある俗説「8割が誤検知」を紹介する文で、事実の値ではない。描画上の診断(あふれ、文字の下限、重なり、描けなかった内容)は0件
+  07-slides/ch5.yaml:
+    state: 受け入れ済み
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: 3178be5
+    rounds: 2   # 7-ch5-1(不合格5、判定できない2)→ 直し → 7-ch5-2(不合格1)→ 直し → 7-ch5-3(合格)。D018 による ch5-s8 の追従を 7-ch5-4 で再検査(合格。上流の変更による無効のため往復に数えない)
+  07-slides/ch1.yaml:
+    state: 受け入れ済み
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: 8fa87bf
+    rounds: 1   # 7-ch1-1(不合格2)→ 直し → 7-ch1-2(合格)
+    notes: ch1-s2 は D013 で流れ図から言い切りに変更(依頼者に示す)。残る指摘(記録して受け入れ)は、caveat の「持ち時間」は ch3-s11 で定義される語で、ch1 では定義より前に出る(章の到達点 ch3 の exit にある語)
+  07-slides/ch3.yaml:
+    state: 受け入れ済み
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: 579d2d7
+    rounds: 1   # 7-ch3-1(不合格15、判定できない6)→ 直し → 7-ch3-2(合格)
+    notes: 受け入れの後、D018 で ch3-s13 の見出しが変わり、ch3-s13 だけを再検査した(7-ch3-3 不合格1 → takeaway の直し → 7-ch3-4 合格。ch3 の往復は計2回)。最後の合格のコミットは 942ec7d
+  07-slides/ap.yaml:
+    state: 受け入れ済み
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: 4560981
+    rounds: 1   # 7-ap-1(不合格3)→ 直し(設計が出典の行も直した)→ 7-ap-2(合格)
+    notes: 残る指摘(記録して受け入れ)は、notes の「一次解析を担う解析者(出典の語で Tier-1)」の言い換えが事実に書かれていないこと
+  preview/final/:
+    state: 作成済み   # PM が全章の受け入れの後に全体を描いて写した。工程8、9は行わない(試行の範囲)
+    made_by: PM
+    made_on: 2026-11-24
+    contents: 54枚の PNG と HTML(slides/)、deck.html、diagnostics.json。診断はエラー0、警告2(ch2-s7、受け入れ済み)
