@@ -105,7 +105,7 @@ samples['step-flow'] = dict(spec=dict(id='ch1-s1', status='done', headline=S['ch
 g = '<text x="0" y="22" font-size="22" fill="#374151">配属から3か月の新人</text>'
 g += box(0, 150, 130, 76, '届いた\nアラート', fs=21)
 g += arrow(130, 188, 175, 188)
-ds = [(250, '重大度が\n高い?', True), (470, '攻撃の\n試み?', True), (690, '一覧に\nある?', False)]
+ds = [(250, '重大度が\nHigh以上?', True), (470, '攻撃の\n試み?', True), (690, '一覧に\nある?', False)]
 nxt = [395, 615, 830]
 for (x, lab, em), n in zip(ds, nxt):
     g += diamond(x, 188, 150, 104, lab, emph=em)
@@ -127,7 +127,7 @@ g += box(820, 322, 170, 72, '見たことを\n付けて上げる', fill=C['上�
 samples['flowchart'] = dict(spec=dict(id='ch3-s17', status='done', headline=S['ch3-s17']['headline'],
     takeaway='上げる条件を先に見る。閉じるのは、一覧にあるか、調べて誤検知と言えたときだけ',
     body=dict(type='flowchart', scenario='S-newbie-ops', proposal_parts=['R-op-fp'], highlight='上げる条件の2つの分かれ目(重大度、攻撃の試み)を先に確かめる順'),
-    sources=['F002', 'F003', 'F005', 'F006', 'F007', 'F008'], notes='上から順に確かめ、最初に当たった道に進む。一覧にある作業でも重大度が高く出たものは上げる。'),
+    sources=['F002', 'F003', 'F005', 'F006', 'F007', 'F008', 'F009'], notes='上から順に確かめ、最初に当たった道に進む。重大度は製品が付けた値。一覧にある作業でも重大度が High 以上なら上げる。'),
     html=page('ch3-s17', TAG_O + svg(1184, 400, g), '上げる条件を先に見る。閉じるのは、一覧にあるか、調べて誤検知と言えたときだけ'))
 
 # 5. architecture-diagram: ch2-s3

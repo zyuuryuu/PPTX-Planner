@@ -200,7 +200,7 @@
   chapter: ch3
   section: null
   question: 優先度は何で付けるのか
-  headline: 案として、優先度はSIEMの深刻度だけでなく、資産の重要度、影響、活動の段階で付ける
+  headline: 案として、優先度は製品の重大度だけでなく、資産の重要度、影響、活動の段階で付ける
   from:
   - Q2.1
   - Q3.3.1
@@ -248,11 +248,12 @@
   chapter: ch3
   section: null
   question: 30分を待たずに上げるのは、どんなときか
-  headline: このSOCでは、重大度が高いアラートは30分を待たずにすぐ上げる
+  headline: このSOCでは、製品の重大度が High 以上のアラートは30分を待たずにすぐ上げる
   from:
   - Q3.3
   evidence:
   - F005
+  - F009
   source: このSOCの運用
 - id: ch3-s12
   chapter: ch3
@@ -309,7 +310,7 @@
   chapter: ch3
   section: null
   question: 1件のアラートを受けたら、新人はどう動くのか
-  headline: 配属から3か月の新人は、重大度が高いか攻撃の試みなら上げ、一覧なら閉じ、残りは30分まで調べる
+  headline: 配属から3か月の新人は、重大度 High 以上か攻撃の試みなら上げ、一覧なら閉じ、残りは調べる
   from:
   - Q2
   - Q3
@@ -319,6 +320,7 @@
   - F005
   - F006
   - F007
+  - F009
   source: このSOCの運用(上げる条件から順に確かめる)。調べる中で誤検知と言える基準は案
 - id: ch4-s1
   chapter: ch4

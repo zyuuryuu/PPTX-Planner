@@ -163,6 +163,25 @@
     H1: neutral
     H2: neutral
     H3: neutral
+- id: F009
+  statement: 依頼者のSOCの運用では、「重大度」は製品(SIEM、EDR)がアラートに付けた重大度を指し、High 以上ならすぐ上げる。新人が自分で重大度を判断しなくてよいように、製品の値で線を引く
+  kind: testimony
+  source: 依頼者(SOCのリーダー)が、自分のSOCの運用として決めた
+  locator: 2026-11-24 の聞き取り(工程6、「重大度」の意味の質問への返事)
+  as_of: '2026-11-24'
+  superseded_by: null
+  quote: A。製品が付けた重大度。言葉は「重大度」にそろえて。うちでは High 以上ならすぐ上げる。新人が自分で重大度を判断しなくていいように、製品の値で線を引く。
+  qualifiers:
+  - 依頼者のSOCの運用
+  - 設計セッションが示した選択肢 A に依頼者が同意したもの
+  origin: 依頼者
+  answers:
+  - Q3.3
+  verified: true
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F100
   statement: SIEMは、複数のログ源のデータを分析し、ログ項目間でイベントを相関させ、重要なイベントを特定して優先順位を付ける
   kind: fact

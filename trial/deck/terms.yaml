@@ -294,6 +294,14 @@ terms:
   definition: このSOCで、新人が閉じたアラートを見直し、一覧を作る人
   defined_in: null
   no_definition: ブリーフの主な読み手とその関係者で、受講者が既に知っている
+- id: T-severity
+  term: 重大度
+  kind: noun
+  definition: 製品(SIEM、EDR)がアラートに付けた重大度の値(High、Critical など)。このSOCでは High 以上ならすぐ上げる
+  not:
+  - T-priority
+  defined_in: ch3-s16
+  no_definition: null
 banned:
 - term: 良性のトリガー
   reason: 想定内の検知と同じ対象を指す。出典の訳語
@@ -336,6 +344,10 @@ banned:
   reason: 公的な目安と、このSOCの持ち時間が混ざる。このSOCの値は「持ち時間」、外の値は出典の行で示す
   use:
   - T-timebox
+- term: 深刻度
+  reason: 重大度と同じ対象を指す(依頼者の指定)
+  use:
+  - T-severity
 allowed: []
 model_labels:
   D-sentinel-incident: 'アラートのまとまり(製品の呼び名: インシデント。資料で言うインシデントではない)'
@@ -346,7 +358,7 @@ candidates:
   terms:
   - 重大度
   - 深刻度
-  decision: 依頼者に確認中(工程6)
+  decision: 同じ対象。製品が付けた重大度で、言葉は「重大度」にそろえる。深刻度は banned(依頼者が工程6で決めた。F009)
   note: このSOCの運用の「重大度が高い」と、ch3-s7 の「SIEMの深刻度」
 - kind: 同じ概念か
   terms:
