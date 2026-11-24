@@ -215,7 +215,7 @@
 - id: ch3-s13
   status: done
   headline: このSOCでは、30分調べても閉じる根拠がなければ、閉じずに上げる
-  takeaway: 迷うなら、上げすぎる側に倒す
+  takeaway: 根拠がなければ、閉じない側に倒す
   body:
     type: flowchart
     mark: 運用
