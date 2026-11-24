@@ -29,7 +29,7 @@
 
 記録するのは、案を却下したとき、証拠と食い違う結論を維持したとき、表現規約の規則の矛盾をユーザーが裁いたとき、および各工程の定義が記録を求めるときである。
 
-製造の時期に入っても終了させず、設計担当として残す。製造中に設計の疑問や見直しが出たら、PMとユーザーはこのセッションに戻る。
+製造の時期に入っても終了させず、設計担当として残す。製造中に設計の疑問や見直しが出たら、PMとユーザーはこのセッションに戻る。発表の後の反応は、ユーザーが伝え、このセッションが記録する([工程9](stages/09-finish.md))。
 
 ### 引き継ぎの検査
 
@@ -51,6 +51,8 @@
 - 型の見本にしたスライドの仕様を、該当する章のファイルに入れる。章の執筆のセッションは、そのスライドを書き直さない。
 - 子セッションには、章の作業票を渡す。内容を要約して伝えない。
 - 設計の見直しが必要になったら、Issueを立てて設計セッションとユーザーに知らせる。自分では設計を直さない。
+- 工程8で、読み手の役のセッションの指摘を、1件ずつIssueにする。読み手の役のセッションは、読んで指摘を書くだけである。
+- 工程9を進め、ユーザーの承認の後に引き渡す。
 
 節は、工程3で決める。長い章は、節ごとに子セッションを起こしてよい。
 
@@ -117,6 +119,8 @@
 
 読み手の役のセッションは、工程7の章の受け入れと、工程8の結合テストで、PMが起こす。実行のたびに新しく起こす。
 
+検査は、機械の検査を先に行う。検査セッションは、機械の検査に通ったものを検査する。
+
 分ける理由:
 
 - 執筆中のLLMは、文を完成させるために必要な事実を補ってしまう。事実を台帳のIDでしか参照できなくすれば、補う余地がなくなる。
@@ -134,3 +138,122 @@
 - 全体の流れを先に見せ、その後は章ごとに進める。
 - 検査に通ったものは見せず、判断が要るものだけを出す。
 - 承認済みのものを再び聞かない。上流の変更で見直しが要るときは、変わった箇所だけを見せる。
+
+## 作業の一覧
+
+工程ごとの作業と、その担当は、工程表 [`tasks.yaml`](tasks.yaml) に置く。作業は、1つの担当が、決まった入力から決まった成果物を作る、ひとまとまりの仕事である。次の一覧は、道具 `tools/tasks_table.py` が工程表から作る。
+
+<!-- tasks:begin -->
+<!-- この区間は tools/tasks_table.py が tasks.yaml から作る。直接は直さない -->
+
+| 工程 | 作業 | 名前 | 担当 |
+|---|---|---|---|
+| 0 | `draft-brief` | ブリーフを書く | 設計セッション |
+| 0 | `create-style` | 資料の表現規約を作る | 設計セッション |
+| 0 | `check-brief-machine` | ブリーフと資料の表現規約を機械で検査する | 機械 |
+| 0 | `inspect-brief` | ブリーフを検査する | 検査セッション |
+| 0 | `approve-brief` | ブリーフを承認する | ユーザー |
+| 1 | `write-hypotheses` | 仮説の一覧を書く | 設計セッション |
+| 1 | `plan-exploration` | 探索の計画を立てる | 設計セッション |
+| 1 | `check-plan-machine` | 探索の計画と仮説の一覧を機械で検査する | 機械 |
+| 1 | `inspect-plan` | 探索の計画を検査する | 検査セッション |
+| 1 | `approve-plan` | 探索の計画を承認する | ユーザー |
+| 1 | `request-research` | 調査依頼を出す | 設計セッション |
+| 1 | `collect-facts` | 事実を集める | 収集セッション |
+| 1 | `collect-images` | 画像の素材を登録する | 収集セッション |
+| 1 | `extract-model` | 仕組みの定義を抜き出す | 収集セッション |
+| 1 | `record-stance` | 事実ごとに仮説への立場を書く | 設計セッション |
+| 1 | `judge-exploration-end` | 探索の終了を判断する | 設計セッション |
+| 1 | `decide-exploration-limits` | 探索の限界の扱いを決める | ユーザー |
+| 1 | `check-sources-machine` | 素材台帳と仕組みの定義を機械で検査する | 機械 |
+| 1 | `inspect-sources` | 素材台帳の事実を出典と突き合わせる | 検査セッション |
+| 1 | `inspect-images` | 画像の素材を検査する | 検査セッション |
+| 1 | `inspect-model` | 仕組みの定義を出典と突き合わせる | 検査セッション |
+| 1 | `approve-model` | 仕組みの定義を承認する | ユーザー |
+| 2 | `answer-questions` | 問いごとの答えを書く | 設計セッション |
+| 2 | `tally-contradicting-facts` | 仮説ごとに否定する事実を数える | 機械 |
+| 2 | `compare-with-hypotheses` | 根の答えを仮説の一覧と比べる | 設計セッション |
+| 2 | `choose-answer` | 採る答えを決める | ユーザー |
+| 2 | `write-claims` | 主張の骨子を書く | 設計セッション |
+| 2〜4 | `extract-terms` | 題と要点から語を抜き出す | 機械 |
+| 2〜4 | `register-terms` | 語を語彙表に登録する | 設計セッション |
+| 2〜4 | `confirm-terms` | 対象を指す語の一覧を確認する | ユーザー |
+| 2 | `check-claims-machine` | 問いごとの答えと主張の骨子を機械で検査する | 機械 |
+| 2 | `inspect-claims` | 問いごとの答えと主張の骨子を検査する | 検査セッション |
+| 2 | `derive-answer-independently` | ブリーフの問いと素材台帳だけから答えを書く | 検査セッション |
+| 2 | `read-summary-alone` | 要約の文だけを読んで結論と理由を述べる | 検査セッション |
+| 2 | `approve-claims` | 主張の骨子を承認する | ユーザー |
+| 3 | `design-chapters` | 章構成を書く | 設計セッション |
+| 3 | `check-chapters-machine` | 章構成を機械で検査する | 機械 |
+| 3 | `inspect-chapters` | 章構成を検査する | 検査セッション |
+| 3 | `build-toc-deck` | 目次と章扉の資料をビルドする | 機械 |
+| 3 | `approve-chapters` | 章構成を承認する | ユーザー |
+| 4 | `write-storyline` | スライドの題と要点を書く | 設計セッション |
+| 4 | `write-chapter-states` | 章の前提と到達点を書く | 設計セッション |
+| 4 | `write-scenarios` | テストの場面と期待する結果を書く | 設計セッション |
+| 4 | `check-storyline-machine` | ストーリーライン、章の前提と到達点、テストの場面を機械で検査する | 機械 |
+| 4 | `inspect-storyline` | スライドの題と要点を検査する | 検査セッション |
+| 4 | `build-skeleton-deck` | 骨組みの資料をビルドする | 機械 |
+| 4 | `approve-storyline` | 題、要点、出どころを章ごとに承認する | ユーザー |
+| 5 | `design-proof` | スライドごとの立証の設計を書く | 設計セッション |
+| 5 | `check-proof-machine` | 立証の設計を機械で検査する | 機械 |
+| 5 | `inspect-proof` | 立証の設計を検査する | 検査セッション |
+| 5 | `restore-point-from-proof` | 立証の設計だけから要点を書く | 検査セッション |
+| 5 | `build-placeholder-deck` | 仮置きの資料をビルドする | 機械 |
+| 5 | `approve-proof` | 見せ方を承認する | ユーザー |
+| 6 | `map-patterns` | 主張の種類ごとに型を選ぶ | 設計セッション |
+| 6 | `set-common-rules` | 要点の位置と資料に共通の規則を決める | 設計セッション |
+| 6 | `write-samples` | 型の見本のスライド仕様を書く | 設計セッション |
+| 6 | `build-samples` | 型の見本をビルドする | 機械 |
+| 6 | `propose-term-merges` | 語彙表の重なりの候補を挙げる | 設計セッション |
+| 6 | `check-patterns-machine` | 表現の対応表、共通の規則、見本、語彙表を機械で検査する | 機械 |
+| 6 | `read-relations-from-sample` | 見本の画像だけから関係を読み取る | 検査セッション |
+| 6 | `inspect-samples` | 型の見本を検査する | 検査セッション |
+| 6 | `approve-samples` | 型の見本を承認する | ユーザー |
+| 6 | `approve-terms` | 語彙表を承認する | ユーザー |
+| 7 | `handover-check` | 引き継ぎの検査を受ける | PM |
+| 7 | `make-chapter-brief` | 章の作業票を作る | 機械 |
+| 7 | `assign-chapters` | 章を執筆のセッションに割り振る | PM |
+| 7 | `write-chapter-slides` | 章のスライド仕様を書く | 執筆のセッション |
+| 7 | `check-chapter-machine` | 章のスライド仕様を機械で検査する | 機械 |
+| 7 | `inspect-chapter` | 章のスライド仕様を検査する | 検査セッション |
+| 7 | `read-back-slides` | スライドの文だけを読んで意味を書き直す | 検査セッション |
+| 7 | `rule-on-restatements` | 言い直しのスライドを統合するか残すかを決める | 設計セッション |
+| 7 | `build-chapter` | 章を実物に差し替えてビルドする | 機械 |
+| 7 | `inspect-chapter-images` | 描いた結果の画像を検査する | 検査セッション |
+| 7 | `tally-chapter-phrases` | 言い回しと文型の出現回数を集計する | 機械 |
+| 7 | `decide-phrase-fix` | 言い回しの反復の直し方を決める | 設計セッション |
+| 7 | `read-chapter-as-reader` | 章を主な読み手として通読する | 読み手の役のセッション |
+| 7 | `accept-chapter` | 章を受け入れる | PM |
+| 7 | `check-term-application` | 語の登録の申請を機械で確かめる | 機械 |
+| 7 | `review-term-application` | 語の登録の申請を審査する | 設計セッション |
+| 7 | `decide-term-registration` | 語を登録するかを決める | ユーザー |
+| 8 | `coordinate-integration` | 結合テストを進める | PM |
+| 8 | `prepare-summary` | 要約のスライドを用意する | 設計セッション |
+| 8 | `build-full-deck` | 全ての章を結合してビルドする | 機械 |
+| 8 | `check-integration-entry` | 結合テストの開始の条件を機械で確かめる | 機械 |
+| 8 | `inspect-summary-evidence` | 要約に添えた根拠を検査する | 検査セッション |
+| 8 | `extract-titles-and-points` | 題と要点の一覧を抜き出す | 機械 |
+| 8 | `run-scenarios` | 全ての場面を通しで読む | 読み手の役のセッション |
+| 8 | `tally-integration-errors` | 集計でエラーの候補を挙げる | 機械 |
+| 8 | `file-defects` | エラーを1件ずつIssueにする | PM |
+| 8 | `rule-on-defects` | エラーの候補を裁定する | 設計セッション |
+| 8 | `confirm-dismissed-defects` | 設計セッションが退けた指摘を確かめる | ユーザー |
+| 8 | `coordinate-regression` | 回帰テストを進める | PM |
+| 8 | `run-regression` | 直した章から先を再び通しで読む | 読み手の役のセッション |
+| 8 | `add-past-feedback-scenario` | ユーザーの指摘を「過去の指摘」の場面に加える | 設計セッション |
+| 8 | `check-coverage` | 網羅と終了の条件を機械で確かめる | 機械 |
+| 8 | `decide-medium-errors` | 重大度が中のエラーを受け入れるかを決める | ユーザー |
+| 9 | `coordinate-acceptance` | 受け入れテストを進める | PM |
+| 9 | `build-final` | 最終のビルドを行い、出力を機械で検査する | 機械 |
+| 9 | `inspect-final-images` | 最終の出力の画像の写り込みを検査する | 検査セッション |
+| 9 | `make-inspection-report` | 検査の報告を作る | 機械 |
+| 9 | `sample-check` | 抜き取りで中身と出典を見比べる | ユーザー |
+| 9 | `walk-through` | 実際に使う形で1回通す | ユーザー |
+| 9 | `check-real-environment` | 実際の環境で確かめる | ユーザー |
+| 9 | `approve-final` | 受け入れの問いに答え、資料を承認する | ユーザー |
+| 9 | `hand-over` | 承認した版にタグを付けて引き渡す | PM |
+| 9 | `record-reactions` | 発表の後の反応を記録する | 設計セッション |
+| 9 | `tally-metrics` | 集計の記録を作る | 機械 |
+
+<!-- tasks:end -->

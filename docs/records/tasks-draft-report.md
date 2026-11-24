@@ -1,13 +1,15 @@
 # 工程表の下書きの報告
 
-[目次に戻る](README.md)
+[目次に戻る](../README.md)
 
-状態: 下書き。工程の文書(`stages/00-brief.md` から `09-finish.md`)と検査の台帳(`checks.yaml`)から、作業の一覧 [`tasks.yaml`](tasks.yaml) を起こした。既存の文書と道具は変更していない。数は、`tasks.yaml` と各文書をスクリプトで読んで数えた。
+状態: 記録。工程表の下書き(作業100件)を起こした時点の報告である。この後に、工程の文書の見出しを切り直し、工程表 [`tasks.yaml`](../tasks.yaml) を確定した。見出しの名前と作業の数は、今の文書と合わない。
+
+工程の文書(`stages/00-brief.md` から `09-finish.md`)と検査の台帳(`checks.yaml`)から、作業の一覧を起こした。既存の文書と道具は変更していない。数は、`tasks.yaml` と各文書をスクリプトで読んで数えた。
 
 ## 表の作り方
 
 - 作業は100件である。先頭に `count` を置き、`tasks` に並べた。書式は検査の台帳に合わせた。
-- 担当の識別子は、台帳の `judge` の6つ(`user`、`designer`、`pm`、`inspector`、`reader`、`machine`)に、`collector`(収集セッション)と `writer`(執筆のセッション)を足した。どちらも [体制とセッション](organization.md)にある担当である。
+- 担当の識別子は、台帳の `judge` の6つ(`user`、`designer`、`pm`、`inspector`、`reader`、`machine`)に、`collector`(収集セッション)と `writer`(執筆のセッション)を足した。どちらも [体制とセッション](../organization.md)にある担当である。
 - 担当の定めがない作業は、`role` を `null` とした。3件ある。
 - `stage` は工程の番号とした。工程2から4のそれぞれで行う語の登録の3件だけ、台帳の `KX` と同じく `[2, 3, 4]` と並べた。
 - 合格条件、開始の条件、終了の条件の見出しは、`sections` に入れていない。条件は `checks` のIDで渡す前提である。
