@@ -28,7 +28,7 @@ artifacts:
     state: 承認済み   # 凍結
     approved_by: 依頼者
     approved_on: 2026-11-24
-    approved_commit: PENDING
+    approved_commit: 118679a
   02-answers.yaml:
     state: 検査済み   # 重大な検査2回と再検査2回。unresolved 3件
   02-claims.yaml:
@@ -47,7 +47,7 @@ artifacts:
     state: 承認済み   # 資料に共通の規則(common)を含む
     approved_by: 依頼者
     approved_on: 2026-11-24
-    approved_commit: PENDING
+    approved_commit: 118679a
   04-storyline.yaml:
     state: 承認済み
     approved_by: 依頼者
@@ -68,11 +68,11 @@ artifacts:
     state: 承認済み
     approved_by: 依頼者
     approved_on: 2026-11-24
-    approved_commit: PENDING   # 型の見本(preview/samples.html)と共通の規則を見て確定
+    approved_commit: 118679a   # 型の見本(preview/samples.html)と共通の規則を見て確定
     rounds: 2
   06-samples/:
     state: 承認済み
     approved_by: 依頼者
     approved_on: 2026-11-24
-    approved_commit: PENDING
+    approved_commit: 118679a
     rounds: 2
