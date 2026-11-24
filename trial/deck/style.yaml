@@ -65,4 +65,7 @@ exceptions:
   - target: 04-storyline.yaml の演習の問題のスライド(ch5-s1、s3、s5、s7)
     rule: 見出しが否定の検査と具体性の検査を通る(docs/stages/04-storyline.md の合格条件)
     reason: 演習の問題は架空のアラートの描写で、主張ではない。否定の検査の対象外とし、question は「どんなアラートが届いたのか」として見出しが答える形にする(D007)
+  - target: 03-chapters.yaml ch1 の章のまとめ
+    rule: 全ての章に章扉と章のまとめを置く(docs/vocabulary.md の半導出。tools/check.py の工程4の枚数の検査は、章の枚数に章扉と章のまとめの2枚を足して数える)
+    reason: 依頼者の指示。第1章は扉も中身2枚も結論そのもので、まとめを足すと同じ文が3回続く(D010)。工程4の枚数の機械の検査は ch1 で不合格になるが、この例外による
 terms: terms.yaml
