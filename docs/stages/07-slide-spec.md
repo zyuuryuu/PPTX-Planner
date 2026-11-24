@@ -13,10 +13,10 @@
 ```yaml
 - id: ch2-s1
   status: done               # done(書き終えた) / blocked(保留。Issueの番号を添える)
-  title: △△領域の市場規模の推移                 # 題
-  point: △△の領域は過去5年、年率8%で伸びている   # 要点
+  title: △△領域の年ごとの市場規模               # 題
+  point: △△の領域の市場規模は、5年続けて前の年を上回った   # 要点
   qualifiers: [国内]         # 限定
-  provenance: cited          # 出どころ
+  provenance: cited          # 出どころ。ストーリーラインにある場合
   body:
     type: line-chart
     data: {...}
@@ -39,7 +39,6 @@
   status: done
   title: 納期の入力と保存
   point: 納期が空のまま保存すると、発注が止まる
-  provenance: cited
   body:
     type: annotated-image-steps
     asset: A003

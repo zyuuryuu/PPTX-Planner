@@ -99,6 +99,11 @@
   captured_at: 2026-11-10           # 取得した日
   environment: 検証環境             # 取得した環境
   regions:                          # 画像の中の要素と、その位置
+    - id: due-date-field
+      element: E-ui-due-date
+      label: 納期の欄
+      box: [0.30, 0.42, 0.25, 0.05]
+      box_origin: recorded
     - id: save-button
       element: E-ui-save            # 仕組みの定義の要素。対応するものがある場合
       label: 保存ボタン

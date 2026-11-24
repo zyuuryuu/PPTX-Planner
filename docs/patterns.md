@@ -16,7 +16,7 @@
 | `expresses` | この型が表せる関係。[形が伝える意味](visual-grammar.md)の含意の語彙で書く |
 | `implies` | この型を使うと、読み手が必ず受け取る関係。同じ語彙で書く |
 | `data` | 必要な項目(手順なら、各段の名前と説明など) |
-| `point_position` | 要点を置く位置の既定。`below-title`(題の直下)、`below-body`(中身の下)、`body`(中身そのもの)のいずれか。資料ごとの対応は、[工程6](stages/06-patterns.md)で決める |
+| `point_position` | 要点を置く位置の既定。位置の種類と、資料ごとの決め方は、[工程6](stages/06-patterns.md)に定める |
 | `capacity` | 収容量。項目の数と、項目ごとの字数の上限 |
 | `overflow_to` | 収容量を超えた場合に使う型 |
 | `renderers` | 描画の実装ごとに、どの機能で描くか |

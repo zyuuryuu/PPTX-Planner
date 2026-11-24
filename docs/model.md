@@ -48,6 +48,10 @@ scenarios:
     name: 購入の処理
     steps: [R-web-order, R-order-stock, R-order-db]   # つながりを順に並べる
     evidence: [F110]         # 順序の出典
+  - id: S-order-entry
+    name: 注文の入力
+    steps: [R-user-due-date, R-user-save]   # 画面の操作の手順
+    evidence: [F120]
 ```
 
 要素、つながり、場面の1件ごとに、素材台帳の事実を紐づける。事実の種類と確認の条件は、[工程1](stages/01-exploration.md)の定めに従う。

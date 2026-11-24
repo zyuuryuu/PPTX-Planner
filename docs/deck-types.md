@@ -26,19 +26,19 @@
 | `decomposition` | 1 | 問いの最初の分解 |
 | `chapter_order` | 3 | 章の並びの定型 |
 | `required_slides` | 4 | 必ず置くスライドと、その書き方。ストーリーラインのスライドが `required` で参照する |
-| `annotation` | 4、7 | 限定(`qualifiers`)と出どころ(`provenance`)の載せ方 |
-| `limits` | 0 | 合格条件の初期値(主張の数の上限、字数の上限、集計の目安、往復の上限など)。工程0で資料の表現規約に写し、以後の工程はそこから読む |
+| `annotation` | 4、7 | 限定(`qualifiers`)と出どころ(`provenance`)の置き場。出どころを区別するかどうかも、ここで決める |
+| `limits` | 0 | 合格条件の初期値(主張の数の上限、字数の上限、1節あたりの枚数の上限 `section_max_slides`、節のまとめを置く境目の枚数 `section_summary_min_slides`、集計の目安、往復の上限など)。工程0で資料の表現規約に写し、以後の工程はそこから読む |
 
 `decomposition` と `chapter_order` は出発点であり、資料に合わなければ変えてよい。`perspectives` は必須で、探索の計画に全て含める。
 
 `annotation` の値は次の通り。
 
-| 項目 | 値 | 載せ方 |
+| 値 | 置き場 | 使える項目 |
 |---|---|---|
-| `qualifiers` | `footnote` | 各スライドの脚注に書く |
-| `qualifiers` | `notes` | ノートに書く。口頭で説明する資料に限る |
-| `provenance` | `footnote` | 各スライドの脚注に書く |
-| `provenance` | `mark` | 各スライドには小さな印だけを付ける。印の意味(出典のある事実、案、今の運用)は、冒頭の1枚でまとめて説明する。この1枚は、ビルドの際に機械的に作る |
+| `footnote` | 各スライドの脚注 | `qualifiers`、`provenance` |
+| `notes` | ノート。口頭で説明する資料に限る | `qualifiers`、`provenance` |
+| `mark` | 各スライドの小さな印。印の意味(出典のある事実、案、今の運用)は、冒頭の1枚でまとめて説明する。この1枚は、ビルドの際に機械的に作る | `provenance` |
+| `none` | 載せない。出どころを区別しない資料で使う。スライドに `provenance` を書かない | `provenance` |
 
 定義の中身は、その種類の資料の経験則を具体的に書く。「読み手に合わせる」のような一般論は書かない。
 
@@ -54,7 +54,7 @@ Plannerに付属する定義、個人の定義、資料の定義の3層で持つ
 
 ## 付属する定義
 
-`limits` の値は未確定である。提案書と製品紹介の `annotation` は、仮の既定である。
+`limits` の値は未確定である。提案書と製品紹介の `annotation` は、仮の既定である。出どころを区別するのは、今は研修資料だけである。
 
 ### 提案書
 
@@ -69,7 +69,7 @@ perspectives: [何もしない場合, 他の案, 費用, リスク, 反対する
 decomposition: [問題はあるか, 原因は何か, 提案は効くか, 実行できるか, 費用に見合うか]
 chapter_order: [結論, 問題, 解決策, 効果, 実行の計画, 費用とリスク, 依頼したいこと]
 required_slides: []
-annotation: {qualifiers: footnote, provenance: footnote}
+annotation: {qualifiers: footnote, provenance: none}
 limits: null
 ```
 
@@ -85,7 +85,7 @@ perspectives: [範囲の定義, 対立する見解, データの限界]
 decomposition: [現状はどうか, なぜそうなったか, 今後どうなるか, 何を意味するか]
 chapter_order: [要約, 目的と方法, 結果, 考察, 示唆]
 required_slides: []
-annotation: {qualifiers: footnote, provenance: footnote}   # 各スライドに限定を残す
+annotation: {qualifiers: footnote, provenance: none}   # 各スライドに限定を残す
 limits: null
 ```
 
@@ -101,7 +101,7 @@ perspectives: [競合する手段, 向かない用途]
 decomposition: [相手は何に困っているか, どう解決するか, 他の手段と何が違うか, 導入できるか]
 chapter_order: [相手の課題, 解決の方法, 特長, 事例, 導入の進め方]
 required_slides: []
-annotation: {qualifiers: footnote, provenance: footnote}
+annotation: {qualifiers: footnote, provenance: none}
 limits: null
 ```
 
