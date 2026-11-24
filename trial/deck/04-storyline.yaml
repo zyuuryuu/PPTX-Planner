@@ -422,4 +422,4 @@
   - F509
   - F510
   appendix_of: ch3-s11
-  source: Kerstenら(2025年)、Moosmannら(2026年)、Alahmadiら(USENIX Security 2022)。近い調査はあるが、どれも誤りの割合は測っていない
+  source: Kerstenら(2025年)、Moosmannら(2026年)は上げるのが遅れる誤りを、Alahmadiら(USENIX Security 2022)は上げすぎる誤りの割合を測っていない
