@@ -25,7 +25,10 @@ artifacts:
     approved_commit: fc10d64   # 図(preview/model.html)と、語彙表の4語(イベント、ログ、アラート、インシデント)を見て同意
     rounds: 2
   terms.yaml:
-    state: 作成中   # 依頼者が決めた語(誤検知、想定内の検知、イベント、ログ、アラート、インシデント)を含む。工程6で承認
+    state: 承認済み   # 凍結
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: PENDING
   02-answers.yaml:
     state: 検査済み   # 重大な検査2回と再検査2回。unresolved 3件
   02-claims.yaml:
@@ -41,7 +44,10 @@ artifacts:
     approved_commit: 94da945   # 目次と章扉の資料(preview/toc.html)を見て確定
     rounds: 2
   style.yaml:
-    state: 作成中
+    state: 承認済み   # 資料に共通の規則(common)を含む
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: PENDING
   04-storyline.yaml:
     state: 承認済み
     approved_by: 依頼者
@@ -58,3 +64,15 @@ artifacts:
     approved_on: 2026-11-24
     approved_commit: 6f630a8   # 仮置きの資料(preview/placeholder.html)の見せ方に全体で同意。流れ図(ch3-s17)の「記録して」を足すことを条件に
     rounds: 2   # 立証の設計全体で2回、足した流れ図で2回
+  06-patterns.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: PENDING   # 型の見本(preview/samples.html)と共通の規則を見て確定
+    rounds: 2
+  06-samples/:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: PENDING
+    rounds: 2
