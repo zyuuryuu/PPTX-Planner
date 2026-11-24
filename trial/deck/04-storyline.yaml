@@ -341,7 +341,7 @@
   - Q4.1
   evidence:
   - F501
-  source: 米上院商務委員会の多数党スタッフの報告(2014年)。確認された原因ではない
+  source: 米上院商務委員会の多数党スタッフの報告(2014年)
 - id: ch4-s3
   chapter: ch4
   section: null
@@ -404,7 +404,7 @@
   - F202
   - F203
   appendix_of: ch2-s6
-  source: Yangら(USENIX Security 2024。1つのSOCの2020年12月〜2022年7月。自動遮断の後に解析者が扱った件数)、Alahmadiら(USENIX Security 2022。SOC実務者20人の回答)、Vectra AI の調査(2023年、自己申告で1日平均4,484件)
+  source: Yangら(USENIX Security 2024)、Alahmadiら(USENIX Security 2022)、Vectra AI の調査(2023年)
 - id: ap-s2
   chapter: appendix
   section: null

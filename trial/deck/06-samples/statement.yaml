@@ -6,9 +6,9 @@ takeaway: 見過ごしの原因は確かめられていないが、慣れが見�
 body:
   type: statement
   quote: F501
-  quote_ja: '{F501} の日本語訳: システムが頻繁に警報を鳴らしていたのであれば、職員はこのアラートを誤検知とみなした可能性がある'
+  quote_ja: '{F501} の日本語訳'
   caveat: 推定であり、確認された原因ではない
   highlight: caveat
 sources:
 - F501
-notes: 報告は報道を引いて推定を述べている。報告自身は原因を確かめていない。
+notes: 報告は報道(Bloomberg Businessweek)を引いて推定を述べている。報告自身は原因を確かめていない。

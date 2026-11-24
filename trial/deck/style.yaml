@@ -98,7 +98,7 @@ common:
     unit: 値のすぐ後ろ、または凡例
     note: 図の左下
     takeaway: 下端の帯(結論1行)
-  max_hues_per_slide: 4        # 灰色と黒を除く
+  max_hues_per_slide: 4        # 灰色と黒を除き、colors で割り当てた色を1つずつ数える(色相の近さでまとめない)
   takeaway_on_slide: true      # 結論1行を下端の帯に載せる
   summary_form: 要約の文だけ。読み手に求めることは載せない(研修資料で、新人に判断を求める資料ではないため)
   metadata: 作成者の欄は空にする。題は「SOCのアラートの一次解析(新人研修)」とし、会社名、社内の名前を入れない(ブリーフの出せない情報)

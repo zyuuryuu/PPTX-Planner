@@ -8,7 +8,7 @@ body:
   scenario: S-newbie-ops
   proposal_parts:
   - R-op-fp
-  highlight: 上げる条件の2つの分かれ目(重大度、攻撃の試み)を先に確かめる順
+  highlight: 先に確かめる2つの分かれ目(重大度、攻撃の試み)
 sources:
 - F002
 - F003

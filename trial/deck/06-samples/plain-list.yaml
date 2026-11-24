@@ -5,13 +5,14 @@ headline: 案として、上げるときは、出どころとID、調べた経�
 takeaway: 文脈のない引き継ぎでは、受けた側が調べ直すことになる
 body:
   type: plain-list
+  title: 上げるときに添える5項目
   items:
   - アラートの出どころとID
   - 調べた経過
   - 集めた証拠
   - 現時点の判定の仮説
   - 次に勧める手順
-  highlight: items(5項目そろえること)
+  highlight: title(5項目そろえること)
   mark: 案
 sources:
 - F413

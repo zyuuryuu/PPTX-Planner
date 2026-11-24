@@ -10,6 +10,6 @@ body:
     description: 誤検知、想定内の検知、攻撃の疑い
   - name: 行き先を決める
     description: 閉じる、調べる、上げる
-  highlight: steps[0]
+  highlight: 2段をつなぐ矢印(順)
 sources: []
-notes: 分け方は第2章、行き先の決め方は第3章で扱う。
+notes: どの区分がどの行き先になるかは、第3章の流れで扱う。区分と行き先は1対1ではない。
