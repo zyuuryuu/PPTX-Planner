@@ -3,11 +3,11 @@ name: 工程5 運用の流れ図(ch3-s17)と付録(ap-s2)の照合
 target:
   commit: 62bfacd9706e607ab263f8a7ef1bc7b1f381384f
   files:
-    - trial/deck/01-model.yaml(basis: operation の要素、つながり、場面 S-newbie-ops、冒頭のコメント)
+    - 'trial/deck/01-model.yaml(basis: operation の要素、つながり、場面 S-newbie-ops、冒頭のコメント)'
     - trial/deck/04-storyline.yaml(ch3-s17、ap-s2)
     - trial/deck/05-proof.yaml(ch3-s17、ap-s2)
   reference:
-    - trial/deck/01-sources.yaml の F002、F003、F005(依頼者の証言、kind: testimony)、F508、F509、F510
+    - 'trial/deck/01-sources.yaml の F002、F003、F005(依頼者の証言、kind: testimony)、F508、F509、F510'
     - 04-storyline.yaml と 05-proof.yaml の ch3-s5、s6、s10、s11、s13、s14、s16
     - decisions.md の D001、D002、D008、D009
     - docs/visual-grammar.md の含意の語彙と問い
@@ -19,7 +19,7 @@ summary:
   cannot_judge: 0
   main_findings:
     - 【重大】確かめる順(一覧→誤検知→重大度→攻撃の試み→それ以外)と「上のどれにも当たらない」は F002、F003、F005 にない。重なる条件(一覧にあり重大度が高いなど)の行き先を、証言にない順序で決めている。D009 自身が確かめていないと書いている。
-    - 【重大】案の部分(「誤検知と根拠をもって言える」、30分の後の分かれ方)が basis: operation のつながりの condition に入っている。案であることは note にしかない。場面の note「線は依頼者が決めた」は D009 と合わない。
+    - '【重大】案の部分(「誤検知と根拠をもって言える」、30分の後の分かれ方)が basis: operation のつながりの condition に入っている。案であることは note にしかない。場面の note「線は依頼者が決めた」は D009 と合わない。'
     - 【重大】ch3-s17 の見出し、source、show のどれも「配属から3か月」を落としている(F003、F005 の限定。ch3-s11、s14 の見出しにはある)。
     - ch3-s17 は誤検知の判定と攻撃の試みの判定を「調べる」の前に置き、30分を「残り」だけに当てている。ch3-s5、s11、s13(閉じる根拠は30分の調べで得る)と食い違う。一覧にあって重大度が高いアラートを閉じる道ができ、ch3-s16 と食い違う。
     - ap-s2 と holds、relation は合格。
@@ -43,7 +43,7 @@ checks:
           順序の根拠とされる「依頼者が挙げた順」は、出典(01-sources.yaml)に証言として登録されていない。
           条件が重なる場合(一覧にあり重大度が高い、など)に行き先を決めているのはこの順序で、証言にない順序を足している。
           また「線は依頼者が決めた」は、D009 の「依頼者の運用なので線を引いてよく」(許可)と「依頼者に確かめていない」と合わない。
-      - point: 案の部分を basis: operation のつながりとして登録している
+      - point: '案の部分を basis: operation のつながりとして登録している'
         quote:
           - '01-model.yaml R-op-fp: basis: operation / condition: 誤検知と根拠をもって言える / note: このSOCの運用。誤検知と言える基準は案(D001、ch3-s5)'
           - '01-model.yaml R-op-inv-close: basis: operation / condition: 30分の中で閉じる根拠が得られた / note: …根拠が得られたら閉じる分かれ方は案(D008)'
@@ -70,7 +70,7 @@ checks:
 
   # ===== 条件2【重大】見出し、source、show が証言と案の限定を落としていない =====
   - id: 2
-    condition: 【重大】ch3-s17 の見出しと source、show が、証言と案の限定を落としていない(配属から3か月の新人、30分、案の部分の印)。real: true の view と show が合う。
+    condition: '【重大】ch3-s17 の見出しと source、show が、証言と案の限定を落としていない(配属から3か月の新人、30分、案の部分の印)。real: true の view と show が合う。'
     verdict: 不合格
     findings:
       - point: 「配属から3か月」が見出し、source、show のどれにもない
@@ -159,7 +159,7 @@ checks:
       2つの誤りは「も、も」で並べただけで、因果や両立しないといった関係を述べておらず、2つの主張をつないでいない。
     notes:
       - 旧 ap-s2 の「直接測った」は「割合を測った」に変わった。遅れの誤りは割合以外(時間など)でも測れるため、「割合」は遅れについてはやや狭い言い方だが、言い過ぎではない(主張が弱くなる向き)。
-      - appendix_of は ch3-s11 だけになり、旧 ap-s3 の appendix_of: ch3-s14(上げすぎる誤り)の結び付きがなくなった。条件4の範囲外だが、本編から付録を引く箇所で確かめるとよい。
+      - 'appendix_of は ch3-s11 だけになり、旧 ap-s3 の appendix_of: ch3-s14(上げすぎる誤り)の結び付きがなくなった。条件4の範囲外だが、本編から付録を引く箇所で確かめるとよい。'
 
   # ===== 条件5 holds と relation =====
   - id: 5
