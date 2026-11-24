@@ -16,6 +16,7 @@
 | `expresses` | この型が表せる関係。[形が伝える意味](visual-grammar.md)の含意の語彙で書く |
 | `implies` | この型を使うと、読み手が必ず受け取る関係。同じ語彙で書く |
 | `data` | 必要な項目(手順なら、各段の名前と説明など) |
+| `point_position` | 要点を置く位置の既定。`below-title`(題の直下)、`below-body`(中身の下)、`body`(中身そのもの)のいずれか。資料ごとの対応は、[工程6](stages/06-patterns.md)で決める |
 | `capacity` | 収容量。項目の数と、項目ごとの字数の上限 |
 | `overflow_to` | 収容量を超えた場合に使う型 |
 | `renderers` | 描画の実装ごとに、どの機能で描くか |
@@ -29,12 +30,15 @@ expresses: [ordered]
 implies: [ordered]
 data:
   steps: [{name: 段の名前, description: 説明}]
+point_position: below-body
 capacity: {steps: null, name_chars: null, description_chars: null}   # 値は未確定
 overflow_to: null
 renderers: {}
 ```
 
 `implies` は、型の形から決まる。[形が伝える意味](visual-grammar.md)の手がかりの表で、強と書かれた含意を全て挙げる。
+
+`point_position` の既定は、`below-title` とする。数量の区分の型、段階の流れ、因果の連鎖、フローチャートは `below-body` とする。言い切りと大きな数字は `body` とする。
 
 型の定義には、情報を運ばない要素(影、グラデーション、意味のないアイコン)を置かない。
 
