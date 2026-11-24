@@ -9,7 +9,7 @@ PMが上流の成果物から `trial/deck/work/make_tickets.py` で機械的に�
 | スライド | 型 | 扱い |
 |---|---|---|
 | ch1-s1 | step-flow | 型の見本(承認済み)。PMが `06-samples/step-flow.yaml` をそのまま入れる。書き直さない |
-| ch1-s2 | flowchart | 執筆する |
+| ch1-s2 | statement | 執筆する |
 
 章扉、目次、章のまとめ、出典の一覧は、描画の道具が上流の成果物から作る。書かない。
 
@@ -184,7 +184,7 @@ holds:
 
 ### ch1-s2
 
-型: `flowchart`
+型: `statement`
 
 ```yaml
 # ストーリーライン
@@ -197,16 +197,21 @@ from:
 - Q0
 # 立証の設計
 id: ch1-s2
-relation: branching-flow
-show: アラートから「根拠をもって誤検知か想定内と言えるか」で分かれ、言えれば記録して閉じる、言えず迷えば上げる流れ(この講義の案)
-focus: 迷ったときの行き先が「上げる」であること
+relation: statement
+show: 閉じてよいもの2つ(一覧にある、誤検知と根拠をもって言える)と、それ以外は閉じずに上げる、を1文ずつ。詳しい流れは第3章の最後(ch3-s17)
+focus: 閉じてよいのは、根拠をもって言えるものだけであること
 facts: []
 axis: null
 base: none
-holds:
-- ordered
-- connected
+holds: []
+relation_reason: 結論の規則を1つ述べるスライド。流れ図にすると第3章の流れ図(ch3-s17)と重なり、場面の一部だけを描くと順が違って見える(D013)
 ```
+
+## 立証の設計が参照する、ほかの章のスライドの見出し
+
+| スライド | 見出し |
+|---|---|
+| ch3-s17 | 配属から3か月の新人は、重大度 High 以上か攻撃の試みなら上げ、一覧なら閉じ、残りは調べる |
 
 ## 前後の章の見出し
 
@@ -325,6 +330,12 @@ terms:
     - T-attack-attempt
     - T-incident
     defined_in: ch1-s1
+    no_definition: null
+  - id: T-list
+    term: 一覧
+    kind: noun
+    definition: リーダーが事前に作った、想定内の活動(承認済みのスキャン、委託した診断など)の一覧。新人が想定内の検知として閉じてよいのは、これに当てはまるものだけ
+    defined_in: ch3-s6
     no_definition: null
   - id: T-siem
     term: SIEM
@@ -589,6 +600,9 @@ exceptions:
   - target: 03-chapters.yaml ch1 の章のまとめ
     rule: 全ての章に章扉と章のまとめを置く(docs/vocabulary.md の半導出。tools/check.py の工程4の枚数の検査は、章の枚数に章扉と章のまとめの2枚を足して数える)
     reason: 依頼者の指示。第1章は扉も中身2枚も結論そのもので、まとめを足すと同じ文が3回続く(D010)。工程4の枚数の機械の検査は ch1 で不合格になるが、この例外による
+  - target: 07-slides の演習(ch5-s1、s3、s5、s7)の架空のアラートの項目と、架空の例(ch2-s8 の「宛先のポートが443」など)
+    rule: text、body.data、notes に、事実のIDによらない数値がない(docs/stages/07-slide-spec.md の合格条件)
+    reason: 架空の例の数値は事実ではなく、台帳に載せるものではない。スライドに「架空」と明記することを条件に、事実のIDによらずに書いてよい(D013)。事実を述べる数値には適用しない
 terms: terms.yaml
 ```
 
@@ -640,47 +654,24 @@ terms: terms.yaml
 
 ## この章で使う型の見本の仕様(`06-samples/`)
 
-### flowchart(`06-samples/flowchart.yaml`、画像は `06-samples/flowchart.png`)
+### statement(`06-samples/statement.yaml`、画像は `06-samples/statement.png`)
 
 ```yaml
 # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
-id: ch3-s17
+id: ch4-s2
 status: done
-headline: 配属から3か月の新人は、重大度 High 以上か攻撃の試みなら上げ、一覧なら閉じ、残りは調べる
-takeaway: 上げる条件を先に見る。閉じるのは、一覧にあるか、調べて誤検知と言えたときだけ
+headline: 米上院の報告は、アラートが頻繁だったなら、誤検知とみなされた可能性があると推定する
+takeaway: 見過ごしの原因は確かめられていないが、慣れが見過ごしにつながりうる
 body:
-  type: flowchart
-  mark: 運用
-  scenario: S-newbie-ops
-  proposal_parts:
-  - R-op-fp
-  labels:
-    D-op-alert: "届いた\nアラート"
-    R-op-severe:
-      condition: "重大度が\nHigh以上?"
-      label: すぐ上げる
-    R-op-attempt:
-      condition: "攻撃の\n試み?"
-    R-op-list:
-      condition: 一覧にある?
-    R-op-fp:
-      condition: 誤検知と根拠をもって言えた
-    R-op-inv-esc:
-      condition: 30分で根拠なし
-  highlight:
-    ids:
-    - R-op-severe
-    - R-op-attempt
-    label: 先に確かめる
+  type: statement
+  quote_of: F501
+  text: システムが頻繁に警報を鳴らしていたのであれば、職員はこのアラートを誤検知とみなした可能性がある
+  attribution: 報告の原文(英語)の日本語訳。報道を引いた記述
+  caveat: 推定であり、確認された原因ではない
+  highlight: caveat
 sources:
-- F002
-- F003
-- F005
-- F006
-- F007
-- F008
-- F009
-notes: 上から順に確かめ、最初に当たった道に進む。重大度は製品が付けた値。一覧にある作業でも重大度が High 以上なら上げる。
+- F501
+notes: 報告は報道(Bloomberg Businessweek)を引いて推定を述べている。報告自身は原因を確かめていない。
 ```
 
 ### step-flow(`06-samples/step-flow.yaml`、画像は `06-samples/step-flow.png`)

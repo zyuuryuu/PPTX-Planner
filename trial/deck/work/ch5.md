@@ -117,6 +117,7 @@ TCP/IP、WindowsとLinuxの基本、ログというものの概念。
 
 ```yaml
 id: ch5
+cover_question: 架空のアラートで、閉じる・調べる・上げるを自分で決められるか
 kind: closing
 title: 演習とまとめ
 message: 新人は、この講義の最後の演習で、架空のアラートを3つに分け、閉じる、調べる、上げるのどれにするかと根拠を答え、配属から3か月で1人で決められるようにする
@@ -710,6 +711,9 @@ exceptions:
   - target: 03-chapters.yaml ch1 の章のまとめ
     rule: 全ての章に章扉と章のまとめを置く(docs/vocabulary.md の半導出。tools/check.py の工程4の枚数の検査は、章の枚数に章扉と章のまとめの2枚を足して数える)
     reason: 依頼者の指示。第1章は扉も中身2枚も結論そのもので、まとめを足すと同じ文が3回続く(D010)。工程4の枚数の機械の検査は ch1 で不合格になるが、この例外による
+  - target: 07-slides の演習(ch5-s1、s3、s5、s7)の架空のアラートの項目と、架空の例(ch2-s8 の「宛先のポートが443」など)
+    rule: text、body.data、notes に、事実のIDによらない数値がない(docs/stages/07-slide-spec.md の合格条件)
+    reason: 架空の例の数値は事実ではなく、台帳に載せるものではない。スライドに「架空」と明記することを条件に、事実のIDによらずに書いてよい(D013)。事実を述べる数値には適用しない
 terms: terms.yaml
 ```
 

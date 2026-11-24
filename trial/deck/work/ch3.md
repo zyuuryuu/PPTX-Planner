@@ -645,7 +645,7 @@ source: このSOCの運用。有志の手順書(SOC-SOP「Escalation Matrix」�
 # 立証の設計
 id: ch3-s13
 relation: branching-flow
-show: '30分の時点(このSOCの運用)で「閉じる根拠があるか」で分かれる流れ: ある→記録して閉じる、なく迷う→閉じずに上げる。閉じる根拠のうち誤検知と言える基準は案(ch3-s5)'
+show: 'S-newbie-ops のうち、調べる(30分まで)から出る2つの道だけを描く: 誤検知と根拠をもって言えた→誤検知として記録して閉じる(案の基準)、30分たっても根拠がない→見たことを付けて上げる'
 focus: 根拠がなければ閉じない側に倒すこと
 facts:
 - F005
@@ -656,6 +656,14 @@ base: none
 holds:
 - ordered
 - connected
+real: true
+view:
+  scenario: S-newbie-ops
+  start: A-investigate
+  elements:
+  - A-investigate
+  - A-close
+  - A-escalate
 ```
 
 ### ch3-s14
@@ -1435,12 +1443,12 @@ holds:
 #     集めたテレメトリが検知に使われる経路、テレメトリの保存場所、センサーの置き場所。
 #   - EDR(Microsoft Defender for Endpoint)から Microsoft Sentinel への経路。F711 の「ほかの Microsoft のセキュリティ製品」に Defender for Endpoint が含まれるとは、読んだ出典に書かれていない。
 elements:
-- id: D-op-alert
+- id: A-investigate
   basis: operation
-  kind: data
-  name: 新人に届いたアラート
+  kind: action
+  name: 調べる(30分まで)
   evidence:
-  - F002
+  - F005
   note: このSOCの運用
 - id: A-close
   basis: operation
@@ -1449,13 +1457,6 @@ elements:
   evidence:
   - F002
   note: このSOCの運用
-- id: A-investigate
-  basis: operation
-  kind: action
-  name: 調べる(30分まで)
-  evidence:
-  - F005
-  note: このSOCの運用
 - id: A-escalate
   basis: operation
   kind: action
@@ -1463,6 +1464,13 @@ elements:
   evidence:
   - F003
   - F005
+  note: このSOCの運用
+- id: D-op-alert
+  basis: operation
+  kind: data
+  name: 新人に届いたアラート
+  evidence:
+  - F002
   note: このSOCの運用
 relations:
 - id: R-op-severe
@@ -1980,6 +1988,9 @@ exceptions:
   - target: 03-chapters.yaml ch1 の章のまとめ
     rule: 全ての章に章扉と章のまとめを置く(docs/vocabulary.md の半導出。tools/check.py の工程4の枚数の検査は、章の枚数に章扉と章のまとめの2枚を足して数える)
     reason: 依頼者の指示。第1章は扉も中身2枚も結論そのもので、まとめを足すと同じ文が3回続く(D010)。工程4の枚数の機械の検査は ch1 で不合格になるが、この例外による
+  - target: 07-slides の演習(ch5-s1、s3、s5、s7)の架空のアラートの項目と、架空の例(ch2-s8 の「宛先のポートが443」など)
+    rule: text、body.data、notes に、事実のIDによらない数値がない(docs/stages/07-slide-spec.md の合格条件)
+    reason: 架空の例の数値は事実ではなく、台帳に載せるものではない。スライドに「架空」と明記することを条件に、事実のIDによらずに書いてよい(D013)。事実を述べる数値には適用しない
 terms: terms.yaml
 ```
 
