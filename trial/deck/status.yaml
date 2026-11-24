@@ -26,5 +26,13 @@ artifacts:
     rounds: 2
   terms.yaml:
     state: 作成中   # 依頼者が決めた語(誤検知、想定内の検知、イベント、ログ、アラート、インシデント)を含む。工程6で承認
+  02-answers.yaml:
+    state: 検査済み   # 重大な検査2回と再検査2回。unresolved 3件
+  02-claims.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: next   # このコミットの次(要約の文を差し替えたコミット)
+    rounds: 2
   style.yaml:
     state: 作成中
