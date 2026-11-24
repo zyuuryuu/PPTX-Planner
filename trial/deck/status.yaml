@@ -94,8 +94,8 @@ artifacts:
     state: 受け入れ済み
     accepted_by: PM
     accepted_on: 2026-11-24
-    accepted_commit: 422cb44
-    rounds: 2   # 7-ch5-1(不合格5、判定できない2)→ 直し → 7-ch5-2(不合格1)→ 直し → 7-ch5-3(合格)
+    accepted_commit: 3178be5
+    rounds: 2   # 7-ch5-1(不合格5、判定できない2)→ 直し → 7-ch5-2(不合格1)→ 直し → 7-ch5-3(合格)。D018 による ch5-s8 の追従を 7-ch5-4 で再検査(合格。上流の変更による無効のため往復に数えない)
   07-slides/ch1.yaml:
     state: 受け入れ済み
     accepted_by: PM
@@ -117,3 +117,8 @@ artifacts:
     accepted_commit: 4560981
     rounds: 1   # 7-ap-1(不合格3)→ 直し(設計が出典の行も直した)→ 7-ap-2(合格)
     notes: 残る指摘(記録して受け入れ)は、notes の「一次解析を担う解析者(出典の語で Tier-1)」の言い換えが事実に書かれていないこと
+  preview/final/:
+    state: 作成済み   # PM が全章の受け入れの後に全体を描いて写した。工程8、9は行わない(試行の範囲)
+    made_by: PM
+    made_on: 2026-11-24
+    contents: 54枚の PNG と HTML(slides/)、deck.html、diagnostics.json。診断はエラー0、警告2(ch2-s7、受け入れ済み)
