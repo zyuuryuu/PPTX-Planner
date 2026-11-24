@@ -5,6 +5,7 @@ deck_type: training
 delivery: oral
 limits:
   max_claims: 5   # 設計セッションが決めた(D003)。研修資料の分解の4つに、1つの余裕
+  headline_chars: 50   # 見出しは2行まで(D006)。骨組みの資料の画面で1行が約37字
 # 個人の表現規約は、資料のディレクトリの外に置くとされるが、実体がない。
 # docs/style-rules.md が定める個人の表現規約の初期値を、ここに写す。
 # 機械で検出する辞書(docs/writing.md)がまだないため、全て inspection とする。
