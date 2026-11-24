@@ -32,7 +32,7 @@ artifacts:
     state: 承認済み
     approved_by: 依頼者
     approved_on: 2026-11-24
-    approved_commit: next   # このコミットの次(要約の文を差し替えたコミット)
+    approved_commit: 48be952
     rounds: 2
   style.yaml:
     state: 作成中
