@@ -1,0 +1,1691 @@
+# 工程表(下書き)。工程の文書(stages/)を、作業に分けた一覧。
+# 作業は、1つの担当が、決まった入力から決まった成果物を作る、ひとまとまりの仕事である。
+# 正本は工程の文書である。この表は、工程の文書と検査の台帳(checks.yaml)から起こした下書きで、食い違う場合は工程の文書に従う。
+# 起こしたときの数、割り当たらなかった見出し、決められなかった点は、tasks-draft-report.md にある。
+#
+# 項目:
+#   id          変わらない短い英語の名前
+#   stage       工程の番号。複数の工程で行う作業は並べる
+#   name        日本語の名前
+#   role        担当。user(ユーザー) / designer(設計セッション) / pm(PM) / collector(収集セッション) /
+#               writer(執筆のセッション) / inspector(検査セッション) / reader(読み手の役のセッション) / machine(機械)。
+#               文書に定めがない作業は null
+#   inputs      読む成果物のファイル名
+#   outputs     作る、または書き換える成果物のファイル名
+#   sections    手順が書かれている、工程の文書の見出し
+#   references  手順を行うのに読む、工程の文書の外の文書と見出し
+#   checks      担当が自分で満たす、または判定する検査のID
+#   next        次に行う作業の id。分かれる場合と、順序の定めがない場合は並べる
+# 「#」で始まる行は、文書から決められなかった点と、作業を行う条件の覚え書きである。
+# 合格条件、開始の条件、終了の条件の見出しは sections に入れていない。条件は checks のIDで渡す。
+
+count: 100
+tasks:
+
+# ---- 工程0
+
+# inputs: ユーザーの最初の依頼文と手元の資料を読む。ファイル名の定めがない
+# outputs: この資料に固有の受け入れの条件の置き場の定めがない
+- id: draft-brief
+  stage: 0
+  name: ブリーフを書く
+  role: designer
+  inputs: []
+  outputs: [00-brief.md]
+  sections:
+    - 'stages/00-brief.md#成果物'
+    - 'stages/00-brief.md#受け入れの問い'
+    - 'stages/00-brief.md#作り方'
+    - 'stages/00-brief.md#後から変える場合'
+  references:
+    - 'deck-types.md#定義の項目'
+    - 'deck-types.md#置き場と追加'
+    - 'deck-types.md#付属する定義'
+    - 'vocabulary.md#スライドの区分'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K00-01, K00-02, K00-03, K00-04, K00-05, K00-06, K00-08, K00-09]
+  next: [create-style]
+
+# inputs: 資料の型の定義と個人の表現規約も読む。どちらもファイル名の定めがない
+# next: 機械の検査と検査セッションの検査の順序の定めがない。並べて書いた
+- id: create-style
+  stage: 0
+  name: 資料の表現規約を作る
+  role: designer
+  inputs: [00-brief.md]
+  outputs: [style.yaml]
+  sections:
+    - 'stages/00-brief.md#資料の表現規約の作成'
+  references:
+    - 'rework.md#記録'
+    - 'style-rules.md#規約の構成'
+    - 'deck-types.md#定義の項目'
+  checks: [K00-07]
+  next: [check-brief-machine, inspect-brief]
+
+- id: check-brief-machine
+  stage: 0
+  name: ブリーフと資料の表現規約を機械で検査する
+  role: machine
+  inputs: [00-brief.md, style.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K00-01, K00-02, K00-07, K00-08]
+  next: [approve-brief]
+
+# checks: K00-06 の判定者はユーザー。検査セッションは、判定の材料になる要約を書く。要約の置き場の定めがない
+- id: inspect-brief
+  stage: 0
+  name: ブリーフを検査する
+  role: inspector
+  inputs: [00-brief.md]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+  checks: [K00-03, K00-04, K00-05, K00-06]
+  next: [approve-brief]
+
+# outputs: 承認はGitのタグとして残す(rework.md#記録)。タグを付ける者の定めがない
+- id: approve-brief
+  stage: 0
+  name: ブリーフを承認する
+  role: user
+  inputs: [00-brief.md]
+  outputs: []
+  sections:
+    - 'stages/00-brief.md#受け入れの問い'
+  references: []
+  checks: [K00-06, K00-09]
+  next: [write-hypotheses]
+
+# ---- 工程1
+
+- id: write-hypotheses
+  stage: 1
+  name: 仮説の一覧を書く
+  role: designer
+  inputs: [00-brief.md]
+  outputs: [01-hypotheses.yaml]
+  sections:
+    - 'stages/01-exploration.md#仮説の一覧 `01-hypotheses.yaml`'
+  references:
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K01-17]
+  next: [plan-exploration]
+
+- id: plan-exploration
+  stage: 1
+  name: 探索の計画を立てる
+  role: designer
+  inputs: [00-brief.md, 01-hypotheses.yaml]
+  outputs: [01-plan.yaml]
+  sections:
+    - 'stages/01-exploration.md#探索の計画 `01-plan.yaml`'
+    - 'stages/01-exploration.md#問いの分解'
+  references:
+    - 'deck-types.md#定義の項目'
+    - 'checks.md#意味の検査'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K01-01, K01-02, K01-03, K01-04, K01-05]
+  next: [check-plan-machine, inspect-plan]
+
+- id: check-plan-machine
+  stage: 1
+  name: 探索の計画と仮説の一覧を機械で検査する
+  role: machine
+  inputs: [01-plan.yaml, 01-hypotheses.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K01-01, K01-02, K01-17]
+  next: [approve-plan]
+
+- id: inspect-plan
+  stage: 1
+  name: 探索の計画を検査する
+  role: inspector
+  inputs: [00-brief.md, 01-plan.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#意味の検査'
+  checks: [K01-03, K01-04]
+  next: [approve-plan]
+
+- id: approve-plan
+  stage: 1
+  name: 探索の計画を承認する
+  role: user
+  inputs: [01-plan.yaml]
+  outputs: []
+  sections:
+    - 'stages/01-exploration.md#探索の計画 `01-plan.yaml`'
+  references: []
+  checks: [K01-05]
+  next: [request-research]
+
+# outputs: 調査依頼。Issueとする(git.md)。ファイル名の定めがない
+# next: 事実、画像の素材、仕組みの定義の収集の順序の定めがない。並べて書いた
+- id: request-research
+  stage: 1
+  name: 調査依頼を出す
+  role: designer
+  inputs: [01-plan.yaml]
+  outputs: []
+  sections:
+    - 'stages/01-exploration.md#収集'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'git.md#管理の方法'
+  checks: [K01-15]
+  next: [collect-facts, collect-images, extract-model]
+
+# inputs: 調査依頼と外部の資料を読む(organization.md#セッションの分離)。ファイル名の定めがない
+# checks: K01-11 は `metric` を語彙表の語で書くことを求める。工程1の時点で語彙表に語を登録する手順の定めがない
+- id: collect-facts
+  stage: 1
+  name: 事実を集める
+  role: collector
+  inputs: []
+  outputs: [01-sources.yaml]
+  sections:
+    - 'stages/01-exploration.md#素材台帳 `01-sources.yaml`'
+    - 'stages/01-exploration.md#収集'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K01-06, K01-07, K01-08, K01-09, K01-10, K01-11, K01-12, K01-13]
+  next: [record-stance]
+
+# 画像を使う資料だけで行う
+# inputs: 調査依頼と外部の資料、ユーザーが提供した画像。ファイル名の定めがない
+- id: collect-images
+  stage: 1
+  name: 画像の素材を登録する
+  role: collector
+  inputs: []
+  outputs: [01-sources.yaml, assets/]
+  sections:
+    - 'stages/01-exploration.md#画像の素材'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K01-19, K01-20, K01-21, K01-22, K01-23]
+  next: [check-sources-machine, inspect-images]
+
+# 実在の仕組みを写す図を使う資料だけで行う
+- id: extract-model
+  stage: 1
+  name: 仕組みの定義を抜き出す
+  role: collector
+  inputs: [01-sources.yaml]
+  outputs: [01-model.yaml, 01-sources.yaml]
+  sections:
+    - 'stages/01-exploration.md#仕組みの定義 `01-model.yaml`'
+  references:
+    - 'model.md#考え方'
+    - 'model.md#成果物'
+    - 'model.md#抜き出し'
+    - 'model.md#画面の操作の手順'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K01-24, K01-25, K01-26, K01-27, K01-28, K01-29, K01-30]
+  next: [check-sources-machine, inspect-model]
+
+- id: record-stance
+  stage: 1
+  name: 事実ごとに仮説への立場を書く
+  role: designer
+  inputs: [01-sources.yaml, 01-hypotheses.yaml]
+  outputs: [01-sources.yaml]
+  sections:
+    - 'stages/01-exploration.md#素材台帳 `01-sources.yaml`'
+  references: []
+  checks: [K01-16]
+  next: [judge-exploration-end]
+
+# role: `result` を書く者の定めがない。探索の計画を書くのが設計セッションであること(organization.md)から、設計セッションとした
+# outputs: K01-12 で `superseded_by` を決めるのは設計セッション。素材台帳に書き込む者の定めがない
+- id: judge-exploration-end
+  stage: 1
+  name: 探索の終了を判断する
+  role: designer
+  inputs: [01-plan.yaml, 01-sources.yaml]
+  outputs: [01-plan.yaml, decisions.md]
+  sections:
+    - 'stages/01-exploration.md#終了の判断'
+  references:
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K01-12, K01-14, K01-18]
+  next: [request-research, decide-exploration-limits, check-sources-machine, inspect-sources]
+
+# `answered` にならなかった問いが残って終えた場合だけ行う
+- id: decide-exploration-limits
+  stage: 1
+  name: 探索の限界の扱いを決める
+  role: user
+  inputs: [01-plan.yaml]
+  outputs: []
+  sections:
+    - 'stages/01-exploration.md#終了の判断'
+  references: []
+  checks: []
+  next: [request-research, check-sources-machine, inspect-sources]
+
+- id: check-sources-machine
+  stage: 1
+  name: 素材台帳と仕組みの定義を機械で検査する
+  role: machine
+  inputs: [01-plan.yaml, 01-hypotheses.yaml, 01-sources.yaml, 01-model.yaml, terms.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K01-06, K01-07, K01-09, K01-11, K01-12, K01-13, K01-14, K01-16, K01-18, K01-19, K01-23, K01-24, K01-28]
+  next: [answer-questions]
+
+# inputs: 出典と、調査依頼の文面も読む。ファイル名の定めがない
+# checks: K01-15(調査依頼の文面)を検査する時点の定めがない。台帳の小見出しが素材台帳であることから、ここに入れた
+# outputs: `verified` を書き込む者の定めがない
+- id: inspect-sources
+  stage: 1
+  name: 素材台帳の事実を出典と突き合わせる
+  role: inspector
+  inputs: [01-sources.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#重大な検査'
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+  checks: [K01-08, K01-10, K01-15]
+  next: [answer-questions]
+
+- id: inspect-images
+  stage: 1
+  name: 画像の素材を検査する
+  role: inspector
+  inputs: [00-brief.md, 01-sources.yaml, assets/]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#重大な検査'
+  checks: [K01-20, K01-21, K01-22]
+  next: [answer-questions]
+
+# checks: K01-29 の独立の抜き出しは「別のセッション」が行う。入力(同じ出典)が違うので、作業を分ける余地がある
+- id: inspect-model
+  stage: 1
+  name: 仕組みの定義を出典と突き合わせる
+  role: inspector
+  inputs: [01-model.yaml, 01-sources.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#重大な検査'
+    - 'model.md#成果物'
+    - 'model.md#抜き出し'
+  checks: [K01-25, K01-26, K01-27, K01-29]
+  next: [approve-model]
+
+# inputs: 定義の全体を図にしたものを見る(K01-30)。図を作る者とファイル名の定めがない
+- id: approve-model
+  stage: 1
+  name: 仕組みの定義を承認する
+  role: user
+  inputs: [01-model.yaml]
+  outputs: []
+  sections: []
+  references: []
+  checks: [K01-29, K01-30]
+  next: [answer-questions]
+
+# ---- 工程2
+
+- id: answer-questions
+  stage: 2
+  name: 問いごとの答えを書く
+  role: designer
+  inputs: [01-plan.yaml, 01-sources.yaml, 01-hypotheses.yaml]
+  outputs: [02-answers.yaml]
+  sections:
+    - 'stages/02-claims.md#問いごとの答え `02-answers.yaml`'
+    - 'stages/02-claims.md#1. 末端の問いに答える'
+    - 'stages/02-claims.md#2. 親の問いに答える'
+    - 'stages/02-claims.md#3. 仮説と比べる'
+  references:
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K02-01, K02-02, K02-03, K02-04, K02-05]
+  next: [tally-contradicting-facts]
+
+# outputs: 一覧の置き場の定めがない
+- id: tally-contradicting-facts
+  stage: 2
+  name: 仮説ごとに否定する事実を数える
+  role: machine
+  inputs: [01-hypotheses.yaml, 01-plan.yaml, 01-sources.yaml]
+  outputs: []
+  sections:
+    - 'stages/02-claims.md#3. 仮説と比べる'
+  references: []
+  checks: []
+  next: [choose-answer]
+
+- id: choose-answer
+  stage: 2
+  name: 採る答えを決める
+  role: user
+  inputs: [02-answers.yaml, 01-hypotheses.yaml]
+  outputs: []
+  sections:
+    - 'stages/02-claims.md#3. 仮説と比べる'
+  references: []
+  checks: []
+  next: [write-claims]
+
+# `objections` は、検査セッションが組み立てた反論(K02-19)を受けて書く。inspect-claims の後に、この作業に戻る
+- id: write-claims
+  stage: 2
+  name: 主張の骨子を書く
+  role: designer
+  inputs: [00-brief.md, 01-plan.yaml, 01-hypotheses.yaml, 01-sources.yaml, 02-answers.yaml, style.yaml]
+  outputs: [02-claims.yaml, decisions.md]
+  sections:
+    - 'stages/02-claims.md#主張の骨子 `02-claims.yaml`'
+    - 'stages/02-claims.md#4. 主張の骨子を書く'
+    - 'stages/02-claims.md#5. 要約の文を書く'
+    - 'stages/02-claims.md#6. 否定する事実と反論を扱う'
+  references:
+    - 'deck-types.md#定義の項目'
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+    - 'writing.md#表記'
+    - 'checks.md#意味の検査'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K02-06, K02-07, K02-08, K02-09, K02-10, K02-11, K02-12, K02-13, K02-14, K02-15, K02-16, K02-17, K02-18, K02-19, K02-20, K02-21, K02-22, K02-23, K02-24, K02-25, K02-26, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [extract-terms, inspect-claims, derive-answer-independently, read-summary-alone, plan-exploration]
+
+# ---- 工程2から4
+
+# 工程の文書に手順がない。terms.md だけに定めがある
+# 工程2から4のそれぞれの中で行う時点の定めがない
+# outputs: 抜き出した語の一覧の置き場の定めがない
+- id: extract-terms
+  stage: [2, 3, 4]
+  name: 題と要点から語を抜き出す
+  role: machine
+  inputs: [02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml]
+  outputs: []
+  sections: []
+  references:
+    - 'terms.md#設計の時期: 登録する'
+  checks: []
+  next: [register-terms]
+
+# 工程の文書に手順がない。terms.md だけに定めがある
+- id: register-terms
+  stage: [2, 3, 4]
+  name: 語を語彙表に登録する
+  role: designer
+  inputs: [02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml]
+  outputs: [terms.yaml]
+  sections: []
+  references:
+    - 'terms.md#原則'
+    - 'terms.md#成果物'
+    - 'terms.md#厳しさの段階'
+    - 'terms.md#設計の時期: 登録する'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: []
+  next: [confirm-terms]
+
+# 工程の文書に手順がない。terms.md だけに定めがある
+# next: その工程の機械の検査に進む
+- id: confirm-terms
+  stage: [2, 3, 4]
+  name: 対象を指す語の一覧を確認する
+  role: user
+  inputs: [terms.yaml]
+  outputs: []
+  sections: []
+  references: []
+  checks: []
+  next: [check-claims-machine, check-chapters-machine, check-storyline-machine]
+
+# ---- 工程2
+
+- id: check-claims-machine
+  stage: 2
+  name: 問いごとの答えと主張の骨子を機械で検査する
+  role: machine
+  inputs: [01-plan.yaml, 01-hypotheses.yaml, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml, style.yaml, terms.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K02-01, K02-02, K02-05, K02-06, K02-07, K02-10, K02-12, K02-13, K02-14, K02-17, K02-20, K02-21, K02-25, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [approve-claims]
+
+- id: inspect-claims
+  stage: 2
+  name: 問いごとの答えと主張の骨子を検査する
+  role: inspector
+  inputs: [01-plan.yaml, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#意味の検査'
+    - 'checks.md#重大な検査'
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+  checks: [K02-03, K02-04, K02-08, K02-09, K02-11, K02-15, K02-16, K02-19, K02-22]
+  next: [write-claims, approve-claims]
+
+# 仮説の一覧を読んでいない検査セッションが行う。手順は検査の条件の文だけにある
+# inputs: ブリーフのうち、問いだけを渡す
+- id: derive-answer-independently
+  stage: 2
+  name: ブリーフの問いと素材台帳だけから答えを書く
+  role: inspector
+  inputs: [00-brief.md, 01-sources.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+  checks: [K02-18]
+  next: [approve-claims]
+
+# inputs: `summary` だけを渡す。手順は検査の条件の文だけにある
+- id: read-summary-alone
+  stage: 2
+  name: 要約の文だけを読んで結論と理由を述べる
+  role: inspector
+  inputs: [02-claims.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+  checks: [K02-23]
+  next: [approve-claims]
+
+# 証言だけに頼る主張(K02-14)と、独立した導出との違い(K02-18)を示される
+- id: approve-claims
+  stage: 2
+  name: 主張の骨子を承認する
+  role: user
+  inputs: [02-claims.yaml]
+  outputs: []
+  sections: []
+  references: []
+  checks: [K02-24, K02-26]
+  next: [design-chapters]
+
+# ---- 工程3
+
+- id: design-chapters
+  stage: 3
+  name: 章構成を書く
+  role: designer
+  inputs: [00-brief.md, 02-answers.yaml, 02-claims.yaml, style.yaml]
+  outputs: [03-chapters.yaml, decisions.md]
+  sections:
+    - 'stages/03-chapters.md#成果物'
+    - 'stages/03-chapters.md#1. 結論の位置を決める'
+    - 'stages/03-chapters.md#2. 章を並べる'
+    - 'stages/03-chapters.md#3. 節を決める'
+    - 'stages/03-chapters.md#4. 枚数を配分する'
+    - 'stages/03-chapters.md#5. 載せないものを決める'
+  references:
+    - 'vocabulary.md#資料の構造'
+    - 'deck-types.md#定義の項目'
+    - 'writing.md#項目ごとの書き方'
+    - 'writing.md#限定と出どころ'
+    - 'checks.md#意味の検査'
+    - 'checks.md#題と要点の通読'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K03-01, K03-02, K03-03, K03-04, K03-05, K03-06, K03-07, K03-08, K03-09, K03-10, K03-11, K03-12, K03-13, K03-14, K03-15, K03-16, K03-17, K03-18, K03-19, K03-20, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [extract-terms, inspect-chapters, build-toc-deck]
+
+- id: check-chapters-machine
+  stage: 3
+  name: 章構成を機械で検査する
+  role: machine
+  inputs: [00-brief.md, 01-plan.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, style.yaml, terms.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K03-01, K03-02, K03-03, K03-04, K03-05, K03-06, K03-10, K03-11, K03-12, K03-13, K03-14, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [approve-chapters]
+
+- id: inspect-chapters
+  stage: 3
+  name: 章構成を検査する
+  role: inspector
+  inputs: [00-brief.md, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
+  outputs: [checks/]
+  sections:
+    - 'stages/03-chapters.md#1. 結論の位置を決める'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#意味の検査'
+    - 'checks.md#題と要点の通読'
+    - 'checks.md#重大な検査'
+  checks: [K03-07, K03-08, K03-09, K03-15, K03-16, K03-17, K03-18, K03-19, K03-20]
+  next: [approve-chapters]
+
+# outputs: 確認用の資料のファイル名の定めがない
+- id: build-toc-deck
+  stage: 3
+  name: 目次と章扉の資料をビルドする
+  role: machine
+  inputs: [03-chapters.yaml]
+  outputs: [build/]
+  sections:
+    - 'stages/03-chapters.md#成果物'
+  references:
+    - 'rendering.md#ビルド'
+    - 'vocabulary.md#スライドの区分'
+  checks: [K03-21]
+  next: [approve-chapters]
+
+- id: approve-chapters
+  stage: 3
+  name: 章構成を承認する
+  role: user
+  inputs: [build/]
+  outputs: []
+  sections:
+    - 'stages/03-chapters.md#成果物'
+  references: []
+  checks: [K03-21]
+  next: [write-storyline]
+
+# ---- 工程4
+
+- id: write-storyline
+  stage: 4
+  name: スライドの題と要点を書く
+  role: designer
+  inputs: [00-brief.md, 01-sources.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, style.yaml]
+  outputs: [04-storyline.yaml]
+  sections:
+    - 'stages/04-storyline.md#成果物'
+    - 'stages/04-storyline.md#1. 読み手の問いを書き出す'
+    - 'stages/04-storyline.md#2. 問いに、題と要点で答える'
+    - 'stages/04-storyline.md#3. 要点のないスライドを足す'
+    - 'stages/04-storyline.md#4. 節の要点を載せるスライドを決める'
+    - 'stages/04-storyline.md#5. 必ず置くスライドを入れる'
+    - 'stages/04-storyline.md#6. 枚数を章構成の配分に合わせる'
+  references:
+    - 'vocabulary.md#資料の構造'
+    - 'vocabulary.md#スライドの区分'
+    - 'writing.md#項目ごとの書き方'
+    - 'writing.md#限定と出どころ'
+    - 'deck-types.md#定義の項目'
+    - 'checks.md#意味の検査'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K04-01, K04-02, K04-03, K04-04, K04-05, K04-06, K04-07, K04-08, K04-09, K04-10, K04-11, K04-12, K04-13, K04-14, K04-15, K04-16, K04-17, K04-18, K04-19, K04-20, K04-21, K04-22, K04-23, K04-24, K04-25, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [write-chapter-states, request-research, design-chapters]
+
+- id: write-chapter-states
+  stage: 4
+  name: 章の前提と到達点を書く
+  role: designer
+  inputs: [00-brief.md, 02-claims.yaml, 04-storyline.yaml]
+  outputs: [04-chapter-states.yaml, decisions.md]
+  sections:
+    - 'stages/04-storyline.md#7. 章の前提と到達点を書く'
+    - 'stages/08-integration.md#章の前提と到達点'
+  references: []
+  checks: [K04-26, K04-27, K04-28]
+  next: [write-scenarios]
+
+# `04-scenarios.yaml` の書式の定めがない
+- id: write-scenarios
+  stage: 4
+  name: テストの場面と期待する結果を書く
+  role: designer
+  inputs: [00-brief.md, 02-claims.yaml, 04-storyline.yaml, 04-chapter-states.yaml]
+  outputs: [04-scenarios.yaml]
+  sections:
+    - 'stages/04-storyline.md#8. テストの場面と、期待する結果を書く'
+    - 'stages/08-integration.md#テストの場面'
+  references: []
+  checks: [K04-29]
+  next: [extract-terms, build-skeleton-deck]
+
+# K04-17 と K04-18 では、機械が候補を挙げ、検査セッションが判定する
+- id: check-storyline-machine
+  stage: 4
+  name: ストーリーライン、章の前提と到達点、テストの場面を機械で検査する
+  role: machine
+  inputs: [00-brief.md, 01-sources.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, decisions.md, style.yaml, terms.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K04-01, K04-02, K04-03, K04-04, K04-05, K04-06, K04-07, K04-09, K04-10, K04-11, K04-12, K04-13, K04-14, K04-15, K04-16, K04-17, K04-26, K04-27, K04-28, K04-29, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [inspect-storyline, approve-storyline]
+
+- id: inspect-storyline
+  stage: 4
+  name: スライドの題と要点を検査する
+  role: inspector
+  inputs: [00-brief.md, 01-sources.yaml, 02-answers.yaml, 03-chapters.yaml, 04-storyline.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#意味の検査'
+    - 'checks.md#題と要点の通読'
+    - 'checks.md#重大な検査'
+    - 'vocabulary.md#スライドの区分'
+    - 'deck-types.md#定義の項目'
+  checks: [K04-08, K04-17, K04-18, K04-19, K04-20, K04-21, K04-22, K04-23, K04-24, K04-25]
+  next: [approve-storyline]
+
+# outputs: 確認用の資料のファイル名の定めがない
+- id: build-skeleton-deck
+  stage: 4
+  name: 骨組みの資料をビルドする
+  role: machine
+  inputs: [01-sources.yaml, 03-chapters.yaml, 04-storyline.yaml]
+  outputs: [build/]
+  sections:
+    - 'stages/04-storyline.md#成果物'
+  references:
+    - 'rendering.md#ビルド'
+    - 'vocabulary.md#スライドの区分'
+  checks: [K04-30]
+  next: [approve-storyline]
+
+- id: approve-storyline
+  stage: 4
+  name: 題、要点、出どころを章ごとに承認する
+  role: user
+  inputs: [build/]
+  outputs: []
+  sections:
+    - 'stages/04-storyline.md#成果物'
+  references: []
+  checks: [K04-30]
+  next: [design-proof]
+
+# ---- 工程5
+
+# 「6. 表現の偏りを見る」の集計を行う者の定めがない
+- id: design-proof
+  stage: 5
+  name: スライドごとの立証の設計を書く
+  role: designer
+  inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, style.yaml]
+  outputs: [05-proof.yaml]
+  sections:
+    - 'stages/05-proof.md#成果物'
+    - 'stages/05-proof.md#1. 主張の種類を判定する'
+    - 'stages/05-proof.md#2. 見せるものを決める'
+    - 'stages/05-proof.md#3. 注目させる点を決める'
+    - 'stages/05-proof.md#4. 実在の仕組みを写す図では、仕組みの定義から選ぶ'
+    - 'stages/05-proof.md#5. 成り立つ関係を申告する'
+    - 'stages/05-proof.md#6. 表現の偏りを見る'
+  references:
+    - 'vocabulary.md#主張の種類の語彙'
+    - 'visual-grammar.md#含意の語彙'
+    - 'visual-grammar.md#A と B: 含意の照合'
+    - 'model.md#図での使い方'
+    - 'checks.md#意味の検査'
+    - 'rework.md#警告'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K05-01, K05-02, K05-03, K05-04, K05-05, K05-06, K05-07, K05-08, K05-09, K05-10, K05-11, K05-12, K05-13, K05-14, K05-15, K05-16]
+  next: [check-proof-machine, inspect-proof, restore-point-from-proof, build-placeholder-deck, request-research, write-storyline]
+
+- id: check-proof-machine
+  stage: 5
+  name: 立証の設計を機械で検査する
+  role: machine
+  inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K05-01, K05-02, K05-03, K05-04, K05-06, K05-07, K05-08, K05-09, K05-10, K05-11]
+  next: [approve-proof]
+
+- id: inspect-proof
+  stage: 5
+  name: 立証の設計を検査する
+  role: inspector
+  inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml]
+  outputs: [checks/]
+  sections:
+    - 'stages/05-proof.md#1. 主張の種類を判定する'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#意味の検査'
+    - 'checks.md#重大な検査'
+    - 'vocabulary.md#主張の種類の語彙'
+    - 'visual-grammar.md#含意の語彙'
+    - 'visual-grammar.md#A と B: 含意の照合'
+  checks: [K05-05, K05-12, K05-13, K05-14, K05-15]
+  next: [approve-proof]
+
+# inputs: `show`、`focus`、`facts`、`view` だけを渡す。要点は渡さない。手順は検査の条件の文だけにある
+# 元の要点と比べる者の定めがない
+- id: restore-point-from-proof
+  stage: 5
+  name: 立証の設計だけから要点を書く
+  role: inspector
+  inputs: [01-sources.yaml, 01-model.yaml, 05-proof.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+  checks: [K05-16]
+  next: [approve-proof]
+
+# outputs: 確認用の資料のファイル名の定めがない
+- id: build-placeholder-deck
+  stage: 5
+  name: 仮置きの資料をビルドする
+  role: machine
+  inputs: [04-storyline.yaml, 05-proof.yaml]
+  outputs: [build/]
+  sections:
+    - 'stages/05-proof.md#成果物'
+  references:
+    - 'rendering.md#ビルド'
+  checks: [K05-17]
+  next: [approve-proof]
+
+# 警告(K05-09、K05-10、表現の偏り)を直すか受け入れるかを、ここで決める(rework.md#警告)
+- id: approve-proof
+  stage: 5
+  name: 見せ方を承認する
+  role: user
+  inputs: [build/]
+  outputs: []
+  sections:
+    - 'stages/05-proof.md#成果物'
+    - 'stages/05-proof.md#6. 表現の偏りを見る'
+  references: []
+  checks: [K05-17]
+  next: [map-patterns]
+
+# ---- 工程6
+
+# 「1. 主張の種類を集計する」を行う者の定めがない。量の区分は機械が決める
+# inputs: 型の定義のファイル名の定めがない
+- id: map-patterns
+  stage: 6
+  name: 主張の種類ごとに型を選ぶ
+  role: designer
+  inputs: [05-proof.yaml, style.yaml]
+  outputs: [06-patterns.yaml]
+  sections:
+    - 'stages/06-patterns.md#表現の対応表 `06-patterns.yaml`'
+    - 'stages/06-patterns.md#1. 主張の種類を集計する'
+    - 'stages/06-patterns.md#2. 種類ごとに主な型を選ぶ'
+    - 'stages/06-patterns.md#3. 収容量を超えるスライドを扱う'
+  references:
+    - 'patterns.md#定義の項目'
+    - 'patterns.md#付属する型の候補'
+    - 'visual-grammar.md#含意の語彙'
+    - 'visual-grammar.md#含意を弱める、強める'
+    - 'visual-grammar.md#A と B: 含意の照合'
+    - 'visual-grammar.md#C: 一貫性'
+    - 'rendering.md#描画の実装の条件'
+    - 'organization.md#設計セッション'
+    - 'organization.md#ユーザーとのやり取り'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+  checks: [K06-01, K06-02, K06-03, K06-04, K06-05, K06-06]
+  next: [set-common-rules, design-proof]
+
+# inputs: テンプレートも読む。ファイル名の定めがない
+- id: set-common-rules
+  stage: 6
+  name: 要点の位置と資料に共通の規則を決める
+  role: designer
+  inputs: [01-model.yaml, 06-patterns.yaml, style.yaml]
+  outputs: [style.yaml]
+  sections:
+    - 'stages/06-patterns.md#要点の位置'
+    - 'stages/06-patterns.md#資料に共通の規則'
+    - 'stages/06-patterns.md#4. 要点の位置と、資料に共通の規則を決める'
+  references:
+    - 'patterns.md#定義の項目'
+    - 'style-rules.md#規約の構成'
+    - 'visual-grammar.md#C: 一貫性'
+    - 'visual-grammar.md#E: 注目'
+    - 'rework.md#記録'
+  checks: [K06-07, K06-08, K06-09]
+  next: [write-samples]
+
+# checks: 見本のスライド仕様に、工程7の検査(K07、KX)を工程6で当てるかどうかの定めがない
+# next: 語彙表の候補を挙げる時点は「凍結の前」としか定めがない
+- id: write-samples
+  stage: 6
+  name: 型の見本のスライド仕様を書く
+  role: designer
+  inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml, 06-patterns.yaml, style.yaml, terms.yaml]
+  outputs: [06-samples/]
+  sections:
+    - 'stages/06-patterns.md#型の見本 `06-samples/`'
+    - 'stages/06-patterns.md#5. 型の見本を作る'
+    - 'stages/07-slide-spec.md#成果物'
+  references:
+    - 'writing.md#項目ごとの書き方'
+    - 'writing.md#限定と出どころ'
+    - 'writing.md#内部のID'
+    - 'writing.md#表記'
+    - 'writing.md#ノート'
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+    - 'writing.md#技術的な内容の規則'
+    - 'writing.md#収まらないときの順序'
+  checks: [K06-10, K06-11, K06-12, K06-13, K06-14, K06-15, K06-16]
+  next: [build-samples, propose-term-merges]
+
+# outputs: 見本の画像のファイル名の定めがない
+- id: build-samples
+  stage: 6
+  name: 型の見本をビルドする
+  role: machine
+  inputs: [06-samples/, 06-patterns.yaml, style.yaml]
+  outputs: [build/]
+  sections:
+    - 'stages/06-patterns.md#5. 型の見本を作る'
+  references:
+    - 'rendering.md#描画の実装の条件'
+    - 'visual-grammar.md#D: 知覚の限界'
+  checks: [K06-11]
+  next: [check-patterns-machine, read-relations-from-sample, inspect-samples]
+
+- id: propose-term-merges
+  stage: 6
+  name: 語彙表の重なりの候補を挙げる
+  role: designer
+  inputs: [terms.yaml]
+  outputs: [terms.yaml]
+  sections:
+    - 'stages/06-patterns.md#語彙表の凍結'
+  references:
+    - 'terms.md#成果物'
+    - 'terms.md#工程6: 凍結する'
+  checks: [K06-17, K06-18, K06-19]
+  next: [check-patterns-machine, approve-terms]
+
+- id: check-patterns-machine
+  stage: 6
+  name: 表現の対応表、共通の規則、見本、語彙表を機械で検査する
+  role: machine
+  inputs: [05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K06-01, K06-02, K06-03, K06-04, K06-05, K06-06, K06-07, K06-08, K06-09, K06-10, K06-11, K06-17, K06-18, K06-19]
+  next: [approve-samples, approve-terms]
+
+# inputs: 見本の画像だけを渡す
+- id: read-relations-from-sample
+  stage: 6
+  name: 見本の画像だけから関係を読み取る
+  role: inspector
+  inputs: [build/]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'visual-grammar.md#含意の語彙'
+    - 'visual-grammar.md#形からの読み取り'
+  checks: [K06-12]
+  next: [approve-samples]
+
+- id: inspect-samples
+  stage: 6
+  name: 型の見本を検査する
+  role: inspector
+  inputs: [build/, 05-proof.yaml, 06-samples/, style.yaml]
+  outputs: [checks/]
+  sections:
+    - 'stages/06-patterns.md#6. 見本を検査し、承認を得る'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'visual-grammar.md#E: 注目'
+    - 'visual-grammar.md#G: 飾り'
+  checks: [K06-13, K06-14, K06-15]
+  next: [approve-samples]
+
+# K06-06 は、描画の実装が型の一覧を返せない場合だけ、ユーザーが確かめる
+- id: approve-samples
+  stage: 6
+  name: 型の見本を承認する
+  role: user
+  inputs: [build/]
+  outputs: []
+  sections:
+    - 'stages/06-patterns.md#6. 見本を検査し、承認を得る'
+  references: []
+  checks: [K06-06, K06-16]
+  next: [handover-check]
+
+# 型の見本の承認とあわせて行う(terms.md)。承認の後に凍結する。凍結を行う者の定めがない
+- id: approve-terms
+  stage: 6
+  name: 語彙表を承認する
+  role: user
+  inputs: [terms.yaml]
+  outputs: []
+  sections:
+    - 'stages/06-patterns.md#語彙表の凍結'
+  references: []
+  checks: [K06-20]
+  next: [handover-check]
+
+# ---- 工程7
+
+# role: 台帳の判定者はPM。新しいセッションの説明を設計セッションの意図と比べる者と、成果物を直した後のやり直しの定めがない
+# 工程6と工程7のどちらの作業かの定めがない。台帳が工程7の開始の条件に置くことから、工程7とした
+- id: handover-check
+  stage: 7
+  name: 引き継ぎの検査を受ける
+  role: pm
+  inputs: [00-brief.md, 01-hypotheses.yaml, 01-plan.yaml, 01-sources.yaml, 01-model.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, 05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml, decisions.md]
+  outputs: []
+  sections: []
+  references:
+    - 'organization.md#引き継ぎの検査'
+    - 'organization.md#PM'
+  checks: [K07-01]
+  next: [make-chapter-brief]
+
+# 工程の文書に手順がない。organization.md だけに定めがある
+# outputs: 章の作業票のファイル名の定めがない
+- id: make-chapter-brief
+  stage: 7
+  name: 章の作業票を作る
+  role: machine
+  inputs: [00-brief.md, 01-sources.yaml, 01-model.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml]
+  outputs: []
+  sections: []
+  references:
+    - 'organization.md#章の作業票'
+    - 'terms.md#製造の時期: 登録済みの語だけで書く'
+  checks: []
+  next: [assign-chapters]
+
+# 工程の文書に手順がない。organization.md だけに定めがある
+# outputs: 型の見本にしたスライドの仕様を、該当する章のファイルに入れる
+- id: assign-chapters
+  stage: 7
+  name: 章を執筆のセッションに割り振る
+  role: pm
+  inputs: [status.yaml, 03-chapters.yaml, 06-samples/]
+  outputs: [07-slides/]
+  sections: []
+  references:
+    - 'organization.md#PM'
+    - 'organization.md#章の作業票'
+    - 'organization.md#子セッション'
+  checks: []
+  next: [write-chapter-slides]
+
+# inputs: 章の作業票も読む。ファイル名の定めがない
+- id: write-chapter-slides
+  stage: 7
+  name: 章のスライド仕様を書く
+  role: writer
+  inputs: [06-samples/]
+  outputs: [07-slides/]
+  sections:
+    - 'stages/07-slide-spec.md#成果物'
+    - 'stages/07-slide-spec.md#作り方'
+  references:
+    - 'writing.md#項目ごとの書き方'
+    - 'writing.md#限定と出どころ'
+    - 'writing.md#内部のID'
+    - 'writing.md#表記'
+    - 'writing.md#ノート'
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+    - 'writing.md#技術的な内容の規則'
+    - 'writing.md#収まらないときの順序'
+    - 'organization.md#セッションの分離'
+    - 'organization.md#完了の報告'
+    - 'organization.md#上流の問題の戻し方'
+    - 'terms.md#製造の時期: 登録済みの語だけで書く'
+    - 'terms.md#1. 申請'
+    - 'model.md#図での使い方'
+    - 'model.md#画面の操作の手順'
+    - 'visual-grammar.md#画像と注釈'
+    - 'visual-grammar.md#E: 注目'
+    - 'visual-grammar.md#F: 量の歪み'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#検査と記録を守る'
+  checks: [K07-02, K07-03, K07-04, K07-05, K07-06, K07-07, K07-08, K07-09, K07-10, K07-11, K07-12, K07-13, K07-14, K07-15, K07-16, K07-18, K07-21, K07-22, K07-23, K07-24, K07-25, K07-26, K07-27, K07-28, K07-30, K07-31, K07-32, K07-33, K07-34, K07-35, K07-36, K07-37, K07-38, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [check-chapter-machine]
+
+# 執筆のセッションが書き終えたときと、PMが受け入れるときの2回実行する(checks.md#検査の実行)
+- id: check-chapter-machine
+  stage: 7
+  name: 章のスライド仕様を機械で検査する
+  role: machine
+  inputs: [01-sources.yaml, 01-model.yaml, 04-storyline.yaml, 05-proof.yaml, 06-patterns.yaml, 07-slides/, style.yaml, terms.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+  checks: [K07-02, K07-03, K07-04, K07-05, K07-06, K07-07, K07-08, K07-10, K07-11, K07-12, K07-16, K07-18, K07-21, K07-22, K07-23, K07-24, K07-30, K07-31, K07-32, K07-33, K07-34, K07-35, K07-36, K07-37, K07-38, KX-01, KX-02, KX-03, KX-04, KX-05, KX-06, KX-07, KX-08, KX-09, KX-10, KX-11, KX-12, KX-13, KX-14, KX-15, KX-16, KX-17, KX-18, KX-19]
+  next: [inspect-chapter, read-back-slides, build-chapter]
+
+# inputs: 裏付けのない文の検査(K07-13)では、スライド仕様と、そのスライドが使う事実だけを渡す(writing.md)。検査ごとに渡すものが違うので、作業を分ける余地がある
+- id: inspect-chapter
+  stage: 7
+  name: 章のスライド仕様を検査する
+  role: inspector
+  inputs: [00-brief.md, 01-sources.yaml, 04-storyline.yaml, 05-proof.yaml, 07-slides/, terms.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'writing.md#検査セッションが判断するもの'
+    - 'writing.md#削ってよいものと、削ってはいけないもの'
+    - 'checks.md#重大な検査'
+    - 'visual-grammar.md#E: 注目'
+    - 'terms.md#成果物'
+  checks: [K07-05, K07-09, K07-13, K07-14, K07-25, K07-26, K07-27, K07-28, K07-29]
+  next: [rule-on-restatements, accept-chapter]
+
+# inputs: 経緯を知らない検査セッションに、スライドの文だけを渡す。書き直した文を素材台帳の事実と比べる者の定めがない
+- id: read-back-slides
+  stage: 7
+  name: スライドの文だけを読んで意味を書き直す
+  role: inspector
+  inputs: [07-slides/, 01-sources.yaml]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'writing.md#検査セッションが判断するもの'
+  checks: [K07-15]
+  next: [accept-chapter]
+
+# 工程の文書に手順がない。検査の条件の文と writing.md だけに定めがある
+# outputs: 判断の置き場の定めがない
+- id: rule-on-restatements
+  stage: 7
+  name: 言い直しのスライドを統合するか残すかを決める
+  role: designer
+  inputs: [07-slides/, checks/, 04-storyline.yaml]
+  outputs: []
+  sections: []
+  references:
+    - 'writing.md#検査セッションが判断するもの'
+    - 'rework.md#役割'
+  checks: [K07-26]
+  next: [write-storyline, accept-chapter]
+
+- id: build-chapter
+  stage: 7
+  name: 章を実物に差し替えてビルドする
+  role: machine
+  inputs: [07-slides/, style.yaml]
+  outputs: [build/]
+  sections:
+    - 'stages/08-integration.md#結合の進め方'
+  references:
+    - 'rendering.md#ビルド'
+    - 'rendering.md#描画の実装の条件'
+    - 'visual-grammar.md#D: 知覚の限界'
+    - 'rework.md#人の手直しを守る'
+  checks: [K07-17, K07-19, K07-20, K07-40, K07-41, K07-42]
+  next: [inspect-chapter-images, tally-chapter-phrases, read-chapter-as-reader]
+
+# 画像の型のスライドがある章だけで行う
+- id: inspect-chapter-images
+  stage: 7
+  name: 描いた結果の画像を検査する
+  role: inspector
+  inputs: [build/, 01-sources.yaml, 07-slides/]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'visual-grammar.md#D: 知覚の限界'
+  checks: [K07-17, K07-19, K07-20]
+  next: [accept-chapter]
+
+- id: tally-chapter-phrases
+  stage: 7
+  name: 言い回しと文型の出現回数を集計する
+  role: machine
+  inputs: [07-slides/, style.yaml]
+  outputs: [checks/]
+  sections: []
+  references: []
+  checks: [K07-39]
+  next: [decide-phrase-fix, accept-chapter]
+
+# 集計が資料の表現規約の目安を超えた場合だけ行う
+# 工程の文書に手順がない。検査の条件の文と rework.md だけに定めがある
+- id: decide-phrase-fix
+  stage: 7
+  name: 言い回しの反復の直し方を決める
+  role: designer
+  inputs: [07-slides/, checks/, style.yaml]
+  outputs: []
+  sections: []
+  references:
+    - 'rework.md#直す成果物と、無効になる範囲'
+  checks: [K07-39]
+  next: [write-chapter-slides]
+
+# inputs: ブリーフのうち、読み手の情報だけを渡す。前の章が未完成の場合は、入口の状態も渡す
+# K07-42 は重大度が高のエラーがないことを求める。章の受け入れの時点で重大度を決める者の定めがない
+- id: read-chapter-as-reader
+  stage: 7
+  name: 章を主な読み手として通読する
+  role: reader
+  inputs: [00-brief.md, build/]
+  outputs: [runs/]
+  sections:
+    - 'stages/08-integration.md#実行の方法'
+    - 'stages/08-integration.md#通読で見つけるもの'
+  references:
+    - 'organization.md#セッションの分離'
+  checks: [K07-42]
+  next: [accept-chapter]
+
+# checks: K07-42 の出口の状態と到達点の照合は、PMが機械的に行う。台帳の判定者にPMはない
+- id: accept-chapter
+  stage: 7
+  name: 章を受け入れる
+  role: pm
+  inputs: [status.yaml, checks/, runs/, 04-chapter-states.yaml]
+  outputs: [status.yaml]
+  sections: []
+  references:
+    - 'organization.md#PM'
+    - 'organization.md#完了の報告'
+    - 'organization.md#合格が無効になったスライド'
+    - 'checks.md#検査の実行'
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+    - 'rework.md#上流が変わったとき'
+  checks: [K07-42]
+  next: [write-chapter-slides, coordinate-integration]
+
+# ---- 工程8
+
+# 読み手の役のセッションを起こすのはPM(organization.md)。場面ごとに、期待する結果と実行の結果を比べる者の定めは、章の出口の状態の照合(PM)のほかにない
+- id: coordinate-integration
+  stage: 8
+  name: 結合テストを進める
+  role: pm
+  inputs: [status.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, runs/]
+  outputs: []
+  sections:
+    - 'stages/08-integration.md#結合の進め方'
+    - 'stages/08-integration.md#実行の方法'
+    - 'stages/08-integration.md#この工程でやらないこと'
+  references:
+    - 'organization.md#PM'
+    - 'organization.md#セッションの分離'
+    - 'organization.md#子セッション'
+    - 'rework.md#役割'
+  checks: []
+  next: [prepare-summary]
+
+# outputs: 要約のスライドの仕様のファイル名の定めがない
+- id: prepare-summary
+  stage: 8
+  name: 要約のスライドを用意する
+  role: designer
+  inputs: [02-claims.yaml, 03-chapters.yaml, style.yaml]
+  outputs: []
+  sections:
+    - 'stages/08-integration.md#要約、章のまとめ、節のまとめ'
+  references:
+    - 'vocabulary.md#スライドの区分'
+  checks: [K08-07, K08-08]
+  next: [build-full-deck]
+
+- id: build-full-deck
+  stage: 8
+  name: 全ての章を結合してビルドする
+  role: machine
+  inputs: [02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 07-slides/, style.yaml, terms.yaml]
+  outputs: [build/]
+  sections:
+    - 'stages/08-integration.md#要約、章のまとめ、節のまとめ'
+  references:
+    - 'rendering.md#ビルド'
+    - 'vocabulary.md#スライドの区分'
+    - 'rework.md#人の手直しを守る'
+  checks: [K08-04, K08-05, K08-06, K08-07]
+  next: [check-integration-entry]
+
+- id: check-integration-entry
+  stage: 8
+  name: 結合テストの開始の条件を機械で確かめる
+  role: machine
+  inputs: [status.yaml, 07-slides/, 02-claims.yaml]
+  outputs: [checks/, status.yaml]
+  sections: []
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+    - 'rework.md#上流が変わったとき'
+  checks: [K08-01, K08-02, K08-03, K08-08]
+  next: [inspect-summary-evidence, extract-titles-and-points, run-scenarios]
+
+# 要約に根拠を添える場合だけ行う
+# inputs: 要約のスライドの仕様も読む。ファイル名の定めがない
+- id: inspect-summary-evidence
+  stage: 8
+  name: 要約に添えた根拠を検査する
+  role: inspector
+  inputs: [02-claims.yaml]
+  outputs: [checks/]
+  sections:
+    - 'stages/08-integration.md#要約、章のまとめ、節のまとめ'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+  checks: [K08-08]
+  next: [run-scenarios]
+
+# outputs: 一覧の置き場の定めがない
+- id: extract-titles-and-points
+  stage: 8
+  name: 題と要点の一覧を抜き出す
+  role: machine
+  inputs: [03-chapters.yaml, 04-storyline.yaml]
+  outputs: []
+  sections:
+    - 'stages/08-integration.md#実行の方法'
+  references: []
+  checks: []
+  next: [run-scenarios]
+
+# inputs: ブリーフのうち、読み手の情報だけを渡す。「題と要点だけ」の場面では、機械が抜き出した題と要点の一覧を渡す
+# 読み手の役のセッションに `04-scenarios.yaml` の期待する結果を渡すかどうかの定めがない
+- id: run-scenarios
+  stage: 8
+  name: 全ての場面を通しで読む
+  role: reader
+  inputs: [00-brief.md, build/]
+  outputs: [runs/]
+  sections:
+    - 'stages/08-integration.md#テストの場面'
+    - 'stages/08-integration.md#実行の方法'
+    - 'stages/08-integration.md#通読で見つけるもの'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'checks.md#題と要点の通読'
+  checks: [K08-09, K08-10]
+  next: [tally-integration-errors]
+
+# outputs: 候補の置き場の定めがない
+- id: tally-integration-errors
+  stage: 8
+  name: 集計でエラーの候補を挙げる
+  role: machine
+  inputs: [runs/, 07-slides/, 01-sources.yaml, style.yaml, terms.yaml]
+  outputs: []
+  sections:
+    - 'stages/08-integration.md#集計で見つけるもの'
+  references: []
+  checks: []
+  next: [file-defects]
+
+# role: Issueにする者の定めがない
+- id: file-defects
+  stage: 8
+  name: エラーを1件ずつIssueにする
+  role: null
+  inputs: [runs/]
+  outputs: []
+  sections:
+    - 'stages/08-integration.md#不具合の記録と裁定'
+  references:
+    - 'git.md#管理の方法'
+  checks: []
+  next: [rule-on-defects]
+
+# inputs: Issueと、引用された箇所の成果物を読む
+# next: 修正は、混入した工程の作業に戻す。ここには章の執筆だけを書いた
+- id: rule-on-defects
+  stage: 8
+  name: エラーの候補を裁定する
+  role: designer
+  inputs: [runs/]
+  outputs: []
+  sections:
+    - 'stages/08-integration.md#不具合の記録と裁定'
+    - 'stages/08-integration.md#回帰テスト'
+    - 'stages/08-integration.md#この工程でやらないこと'
+  references:
+    - 'rework.md#役割'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#直す成果物と、無効になる範囲'
+  checks: [K08-11, K08-12]
+  next: [confirm-dismissed-defects, write-chapter-slides, run-regression, check-coverage]
+
+# 原因が設計の成果物にあると見られる指摘を、設計セッションがエラーでないと裁いた場合だけ行う
+- id: confirm-dismissed-defects
+  stage: 8
+  name: 設計セッションが退けた指摘を確かめる
+  role: user
+  inputs: []
+  outputs: []
+  sections:
+    - 'stages/08-integration.md#不具合の記録と裁定'
+  references: []
+  checks: []
+  next: [check-coverage]
+
+# inputs: 変わった章の入口の状態を、保存済みの状態から渡す
+# 再実行の指摘を前回の実行の記録と比べる者の定めがない
+- id: run-regression
+  stage: 8
+  name: 直した章から先を再び通しで読む
+  role: reader
+  inputs: [00-brief.md, build/, runs/]
+  outputs: [runs/]
+  sections:
+    - 'stages/08-integration.md#回帰テスト'
+    - 'stages/08-integration.md#テストの場面'
+    - 'stages/08-integration.md#実行の方法'
+    - 'stages/08-integration.md#通読で見つけるもの'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'checks.md#題と要点の通読'
+  checks: [K08-09, K08-10]
+  next: [tally-integration-errors]
+
+- id: check-coverage
+  stage: 8
+  name: 網羅と終了の条件を機械で確かめる
+  role: machine
+  inputs: [runs/, 00-brief.md, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 07-slides/, terms.yaml]
+  outputs: [checks/, status.yaml]
+  sections:
+    - 'stages/08-integration.md#網羅の確認'
+  references:
+    - 'checks.md#検査の実行'
+    - 'rework.md#記録'
+  checks: [K08-09, K08-10, K08-11, K08-13]
+  next: [decide-medium-errors]
+
+# 手順は検査の条件の文だけにある
+- id: decide-medium-errors
+  stage: 8
+  name: 重大度が中のエラーを受け入れるかを決める
+  role: user
+  inputs: []
+  outputs: []
+  sections: []
+  references: []
+  checks: [K08-12]
+  next: [build-final]
+
+# ---- 工程9
+
+- id: build-final
+  stage: 9
+  name: 最終のビルドを行い、出力を機械で検査する
+  role: machine
+  inputs: [07-slides/, 01-sources.yaml, 04-storyline.yaml, 00-brief.md, style.yaml]
+  outputs: [build/deck.pptx, checks/]
+  sections:
+    - 'stages/09-finish.md#成果物'
+    - 'stages/09-finish.md#1. 最終のビルドを行い、出力を機械的に検査する'
+  references:
+    - 'rendering.md#ビルド'
+    - 'rendering.md#描画の実装の条件'
+    - 'visual-grammar.md#D: 知覚の限界'
+    - 'writing.md#内部のID'
+    - 'rework.md#人の手直しを守る'
+    - 'rework.md#記録'
+  checks: [K09-01, K09-02, K09-03, K09-04, K09-05, K09-06, K09-07, K09-08, K09-09, K09-10]
+  next: [inspect-final-images, make-inspection-report]
+
+# 画像を使う資料だけで行う
+- id: inspect-final-images
+  stage: 9
+  name: 最終の出力の画像の写り込みを検査する
+  role: inspector
+  inputs: [build/deck.pptx, 00-brief.md]
+  outputs: [checks/]
+  sections: []
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'checks.md#重大な検査'
+  checks: [K09-02]
+  next: [make-inspection-report]
+
+# inputs: Issueも読む
+- id: make-inspection-report
+  stage: 9
+  name: 検査の報告を作る
+  role: machine
+  inputs: [00-brief.md, 02-claims.yaml, 04-storyline.yaml, runs/, checks/, status.yaml, decisions.md, style.yaml]
+  outputs: [09-report.md]
+  sections:
+    - 'stages/09-finish.md#2. 検査の報告を作る'
+    - 'stages/00-brief.md#受け入れの問い'
+  references:
+    - 'rework.md#警告'
+  checks: [K09-11, K08-13]
+  next: [sample-check]
+
+# スライドを無作為に選ぶ者、結果を集計の記録に書く者の定めがない(rework.md#記録は、集計の記録を書く者を検査のコマンドとする)
+# 誤りが見つかった場合は、重大な検査をやり直す(checks.md#重大な検査)
+- id: sample-check
+  stage: 9
+  name: 抜き取りで中身と出典を見比べる
+  role: user
+  inputs: [build/deck.pptx, 01-sources.yaml]
+  outputs: [metrics.yaml]
+  sections:
+    - 'stages/09-finish.md#3. 抜き取りで確かめる'
+  references: []
+  checks: [K09-12]
+  next: [walk-through]
+
+# 気づいた点は、通し終えた後に feedback.md の手順で扱う。指摘を整理するセッションの定めがない
+- id: walk-through
+  stage: 9
+  name: 実際に使う形で1回通す
+  role: user
+  inputs: [build/deck.pptx, 09-report.md]
+  outputs: []
+  sections:
+    - 'stages/09-finish.md#4. ユーザーが、実際に使う形で通す'
+  references: []
+  checks: [K09-13]
+  next: [check-real-environment]
+
+# 確かめる項目の一覧を渡す者、結果の記録の置き場の定めがない
+- id: check-real-environment
+  stage: 9
+  name: 実際の環境で確かめる
+  role: user
+  inputs: [build/deck.pptx]
+  outputs: []
+  sections:
+    - 'stages/09-finish.md#5. 実際の環境で確かめる'
+  references: []
+  checks: [K09-14]
+  next: [approve-final]
+
+# 直す必要がある場合は、該当する工程に戻し、工程8の回帰テストの後に工程9に戻る
+- id: approve-final
+  stage: 9
+  name: 受け入れの問いに答え、資料を承認する
+  role: user
+  inputs: [build/deck.pptx, 09-report.md, 00-brief.md]
+  outputs: []
+  sections:
+    - 'stages/09-finish.md#6. ユーザーが承認する'
+    - 'stages/00-brief.md#受け入れの問い'
+  references: []
+  checks: [K09-15, K09-16]
+  next: [hand-over]
+
+# role: タグを付ける者、手直しの注意を伝える者の定めがない
+# outputs: 承認の記録(Gitのタグ)
+- id: hand-over
+  stage: 9
+  name: 承認した版にタグを付けて引き渡す
+  role: null
+  inputs: []
+  outputs: []
+  sections:
+    - 'stages/09-finish.md#7. 引き渡す'
+  references:
+    - 'git.md#管理の方法'
+  checks: []
+  next: [record-reactions, tally-metrics]
+
+# role: 記録する者の定めがない
+# outputs: Issueとして記録する(feedback.md#記録)
+- id: record-reactions
+  stage: 9
+  name: 発表の後の反応を記録する
+  role: null
+  inputs: []
+  outputs: []
+  sections:
+    - 'stages/09-finish.md#8. 発表の後に、反応を記録する'
+  references:
+    - 'feedback.md#入口'
+    - 'feedback.md#記録'
+  checks: []
+  next: []
+
+# inputs: Issueも読む
+# 集計の後の、表現規約と型の定義への書き戻し(style-rules.md#規則の追加と整理)を行う者の定めがない
+- id: tally-metrics
+  stage: 9
+  name: 集計の記録を作る
+  role: machine
+  inputs: [checks/, runs/, status.yaml]
+  outputs: [metrics.yaml]
+  sections:
+    - 'stages/09-finish.md#9. 集計する'
+  references:
+    - 'checks.md#守らせる方法の強さ'
+    - 'rework.md#記録'
+  checks: [K09-12]
+  next: []
