@@ -66,6 +66,8 @@
 | 57 | 5 | 検査(重大・1回目と意味の検査) | 立証の設計(9a72668) | claude-opus-5-5 | session_01LpWHd3e44gRhbnYRwKfhvk |
 | 58 | 5 | 検査(重大・2回目) | real の申告(9a72668) | claude-sonnet-5-5 | session_01LpWHd1HUm7rppk6gFhBAe3 |
 | 59 | 5 | 検査(見出しの復元) | show、focus、facts、view からの見出し(9a72668) | claude-haiku-5-5 | session_01LpWHd2seMRw7kKAxznqd4k |
+| 60 | 5 | 検査(重大・再検査) | 立証の設計の直し(38ba555) | claude-sonnet-5-5 | session_01LpWHd2z7nV8ueRD7oX6T2J |
+| 61 | 5 | 検査(見出しの復元・再検査) | 前回不一致の20枚(38ba555) | claude-haiku-5-5 | session_01LpWHd1kJK2iyQGLYikrWSn |
 
 ## 工程0 依頼の確定
 
@@ -435,3 +437,4 @@
 - 重大な検査1回目と意味の検査(`checks/5-proof-1.yaml`、Opus): 7条件すべて不合格。real の3枚(2回目と同じ)、holds の過大な申告(ch2-s3 の ordered、ch2-s7 の comparable、ch3-s4 の ordered、ch3-s2 の partition)、relation の不一致(ch2-s4、ch3-s16、演習の exhibit)、除去(ch2-s4 のマルウェア対策ソフト、ch2-s9 の後の2項目)、分類の軸、案の印、演習の表示に答えに要る項目がない。
 - ch3-s1 の見出しを台帳で確かめた。F312 の民間の解説の段は 取り込み→分類→優先付け→調べる→判定 で、優先付けは最初ではない。工程4で承認した見出し「民間の解説は優先付けを先に置く」は不正確だった。「判定より先に置く」に直した(依頼者に伝える)。
 - 直した(往復の1回目): real: true の3枚は仕組みの定義にあるつながりだけを描く形にした(ch2-s1 は Sentinel の3つのつながりだけ、0.01% は図の外の1行。ch2-s2 は push の場面、ch2-s3 は NCA の要件の収集と MDE の製品を2つの枠に分け、定義にない経路に矢印を描かない。F616 を facts に足した)。仕組みの定義にない実在のもの(Target の事案、このSOCの運用の時間の線、製品の閉じるときの分類)は図にせず、言い切り(statement)または並列の列挙にした(`05-proof.md` の「定義にないものは描かない」に従う)。holds の過大な申告を外した。案の6枚の show に「(案)」を付けた。演習の問題の表示に答えに要る項目を入れ、答えは当てはめた規則のスライドを示す言い切りにした(第1章の流れ図に30分と3か月の規則がないため)。ch2-s9 と ch2-s7 の evidence を show に合わせて減らした(ストーリーラインの変更)。
+- 再検査を2つ起こした(表の60、61。対象 38ba555。往復の2回目で最後)。待ち始め: 01:10 UTC。
