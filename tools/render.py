@@ -24,7 +24,12 @@ from pathlib import Path
 import yaml
 from PIL import ImageFont
 
-E = html.escape
+_SID = re.compile(r'\b((?:ch\d+|ap)-)(s\d+)\b')
+
+
+def E(s):
+    """HTML に書く文字。スライドのID(ch3-s11)はハイフンの後で折り返さないよう、語をつなぐ記号(U+2060)を入れる"""
+    return _SID.sub('\\1\u2060\\2', html.escape(str(s)))
 W, H = 1280, 720
 MX = 48                 # 左右の余白
 CW = W - 2 * MX         # 中身の幅 1184

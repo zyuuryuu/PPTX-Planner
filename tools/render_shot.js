@@ -49,6 +49,9 @@ const CHECK = (min) => {
         const rg = document.createRange(); rg.setStart(n, i); rg.setEnd(n, i + 1);
         const rc = rg.getClientRects()[0]; if (!rc) continue;
         if (prevTop !== null && rc.top > prevTop + 4) {
+          const before = s.slice(0, i).replace(/\u2060/g, ''), after = s.slice(i);
+          if (/[A-Za-z0-9]-$/.test(before.trimEnd()) && /^[A-Za-z0-9]/.test(after))
+            out.push({ kind: 'overflow', severity: 'warning', target: el.dataset.role, message: `英数字の語の途中(ハイフンの後)で折り返した: (${before.slice(-8)}|${after.slice(0, 6)})` });
           const w = inWord(s, i);
           if (w) out.push({ kind: 'overflow', severity: 'warning', target: el.dataset.role, message: `語の途中で折り返した: 「${w}」(${s.slice(Math.max(0, i - 6), i)}|${s.slice(i, i + 6)})` });
         }
