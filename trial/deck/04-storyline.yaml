@@ -274,7 +274,7 @@
   chapter: ch3
   section: null
   question: 迷ったときは、どうするのか
-  headline: このSOCでは、30分調べても閉じる根拠がなく迷うなら、閉じずに上げる
+  headline: このSOCでは、30分調べても閉じる根拠がなければ、閉じずに上げる
   from:
   - Q3.3.1
   evidence:
