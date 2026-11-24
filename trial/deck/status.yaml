@@ -76,3 +76,10 @@ artifacts:
     approved_on: 2026-11-24
     approved_commit: 118679a
     rounds: 2
+  07-slides/ch4.yaml:
+    state: 受け入れ済み   # PM が受け入れた(製造の時期)
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: 1c88146
+    rounds: 1   # 検査 7-ch4-1(不合格1、判定できない1)→ 直し → 再検査 7-ch4-2(合格)
+    notes: ch4-s3 は D014 で言い切りに変更(依頼者が同意した見せ方からの変更。依頼者に示す)
