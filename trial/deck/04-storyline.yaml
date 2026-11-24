@@ -246,18 +246,27 @@
   - F005
   - F403
   source: 'このSOCの運用(測った値ではなく、外の目安より長めに取った)。参考: Decryption Digest の解説記事(2026年)は一次解析で12〜20分とする'
+- id: ch3-s16
+  chapter: ch3
+  section: null
+  question: 30分を待たずに上げるのは、どんなときか
+  headline: このSOCでは、重大度が高いアラートは30分を待たずにすぐ上げる
+  from:
+  - Q3.3
+  evidence:
+  - F005
+  source: このSOCの運用
 - id: ch3-s12
   chapter: ch3
   section: null
   question: どんなときに上げるのか
-  headline: 案として、重要な資産での疑い、横展開の証拠、守備範囲の超過は、30分を待たずに上げる
+  headline: 案として、重要な資産での疑い、横展開の証拠、守備範囲の超過のどれかなら上げる
   from:
   - Q3.3.1
   evidence:
   - F406
   - F407
-  - F005
-  source: Decryption Digest の解説記事(2026年)、Security Scientist の解説(日付なし)。どちらも標準や公的文書ではない。30分を待たないことは、このSOCの運用(重大度が高いものはすぐ上げる)による
+  source: Decryption Digest の解説記事(2026年)、Security Scientist の解説(日付なし)。どちらも標準や公的文書ではない
 - id: ch3-s13
   chapter: ch3
   section: null
@@ -311,7 +320,7 @@
   chapter: ch4
   section: null
   question: なぜ見過ごされたのか
-  headline: 米上院の報告は、警報が頻繁だったなら、誤検知とみなされた可能性があると推定する
+  headline: 米上院の報告は、アラートが頻繁だったなら、誤検知とみなされた可能性があると推定する
   from:
   - Q4.1
   evidence:
