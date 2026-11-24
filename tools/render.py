@@ -889,8 +889,9 @@ def r_flowchart(ctx):
 
     # 主の列: 始まり → 分かれ目(最後の道を除く) → 最後の道の行き先。行き先がさらに道を持てば、その先は腕で描く
     cols = []
-    sl = ctx.wrap(elname(start), FS, 110, False, start)
-    cols.append({'kind': 'start', 'lines': sl, 'w': maxw(sl, FS) + 40, 'h': max(76, len(sl) * LH + 30), 'id': start})
+    sbold = dk.el.get(start, {}).get('kind') == 'action'
+    sl = ctx.wrap(elname(start), FS, 110, sbold, start)
+    cols.append({'kind': 'start', 'lines': sl, 'w': maxw(sl, FS, sbold) + 40, 'h': max(76, len(sl) * LH + 30), 'id': start})
     routes = outs[start]
     for r in routes[:-1]:
         t = lab(r['id'], 'condition', r.get('condition', ''))
@@ -908,7 +909,8 @@ def r_flowchart(ctx):
             c['w'] = max(130, c['wt'] / (1 - c['ht'] / DH) + 24)
     last = routes[-1]
     nxt = last['to']
-    nl = ctx.wrap(elname(nxt), FS, 140, True, nxt)
+    # 行き先がさらに道を持たなければ、その道の札(label)を載せる
+    nl = ctx.wrap(elname(nxt) if nxt in outs else lab(last['id'], 'label', strip_gloss(last.get('label', '')) or elname(nxt)), FS, 140 if nxt in outs else 200, True, nxt)
     node = {'kind': 'node', 'lines': nl, 'w': max(120, maxw(nl, FS, True) + 36), 'h': max(56, len(nl) * LH + 26), 'id': nxt,
             'col': ctx.color(elname(nxt)), 'r': last}
     cols.append(node)
@@ -916,8 +918,9 @@ def r_flowchart(ctx):
     if len(arms) > 2:
         ctx.diag('unrendered', f'{nxt} から出る道が3つ以上あり、描けない(上と下の2つまで)', 'error', nxt)
         arms = arms[:2]
+    # start を指定したときは、start から届く道だけを描く(場面のほかの道は対象外)
     for k in outs:
-        if k not in (start, nxt):
+        if k not in (start, nxt) and not b.get('start'):
             ctx.diag('unrendered', f'{k} から出る道は描けない(始まりと、その最後の行き先からの道だけを描く)', 'error', k)
     # 腕: 最後の道は下、それ以外は右(条件の札を行き先の上に置き、札を通って行き先へ進む)
     arm_up = arms[:-1] if len(arms) == 2 else []
@@ -974,8 +977,13 @@ def r_flowchart(ctx):
     for i, c in enumerate(cols):
         cx = c['cx']
         if c['kind'] == 'start':
-            rid = sv.rect(cx - c['w'] / 2, yc - c['h'] / 2, c['w'], c['h'], name=c['id'])
-            sv.lines(cx, yc, c['lines'], FS, inside=rid)
+            scol = ctx.color(elname(c['id'])) if dk.el.get(c['id'], {}).get('kind') == 'action' else None
+            if scol:   # 始まりが行き先(閉じる、調べる、上げる)なら、行き先の札の形と色で描く
+                rid = sv.rect(cx - c['w'] / 2, yc - c['h'] / 2, c['w'], c['h'], fill='#fff', stroke=scol, sw=3, rx=min(c['h'] / 2, 28), name=c['id'])
+                sv.lines(cx, yc, c['lines'], FS, scol, True, inside=rid)
+            else:
+                rid = sv.rect(cx - c['w'] / 2, yc - c['h'] / 2, c['w'], c['h'], name=c['id'])
+                sv.lines(cx, yc, c['lines'], FS, inside=rid)
         elif c['kind'] == 'dec':
             r = c['r']
             prop = r['id'] in proposals
@@ -1471,7 +1479,11 @@ def contrast(a, b):
 # ---------------------------------------------------------------- 導出と半導出のスライド
 
 def chapter_questions(deck, ch):
-    """章で答える問い: 章の主張の question。主張のない章は、章のスライドの from の問い"""
+    """章で答える問い: 章構成の cover_question(D013)があればそれ。なければ章の主張の question、
+    主張のない章は章のスライドの from の問い"""
+    cq = ch.get('cover_question')
+    if cq:
+        return [(None, q) for q in (cq if isinstance(cq, list) else [cq])]
     qs = [deck.claims[c]['question'] for c in ch.get('claims') or [] if c in deck.claims and deck.claims[c].get('question')]
     if not qs:
         for s in deck.storyline:
