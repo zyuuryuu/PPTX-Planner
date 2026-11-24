@@ -103,3 +103,10 @@ artifacts:
     accepted_commit: 8fa87bf
     rounds: 1   # 7-ch1-1(不合格2)→ 直し → 7-ch1-2(合格)
     notes: ch1-s2 は D013 で流れ図から言い切りに変更(依頼者に示す)。残る指摘(記録して受け入れ)は、caveat の「持ち時間」は ch3-s11 で定義される語で、ch1 では定義より前に出る(章の到達点 ch3 の exit にある語)
+  07-slides/ch3.yaml:
+    state: 受け入れ済み
+    accepted_by: PM
+    accepted_on: 2026-11-24
+    accepted_commit: 579d2d7
+    rounds: 1   # 7-ch3-1(不合格15、判定できない6)→ 直し → 7-ch3-2(合格)
+    notes: 上流への気づき(設計セッションに伝えた)は、ch3-s13 の見出しの「迷うなら」が運用の側に置かれ、ノートの「この講義では」の読み方と見出しだけでは食い違って読める点
