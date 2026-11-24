@@ -1407,10 +1407,14 @@ def render_content(deck, sid):
     spec = deck.specs.get(sid)
     ctx = Ctx(deck, sid, spec)
     src = s.get('source') or ''
-    if spec is None:
+    blocked = spec is not None and spec.get('status') == 'blocked'
+    if spec is None or blocked:   # 仕様がない、または保留: 立証設計から仮置きを描く
         p = deck.proof.get(sid) or {}
         pat = deck.pattern_of.get((p.get('relation'), p.get('base', 'none')))
-        ctx.diag('placeholder', 'スライド仕様がない。仮置きを描いた', 'info')
+        if blocked:
+            ctx.diag('placeholder', f'保留のスライド({spec.get("issue") or "Issue の番号なし"})。仮置きを描いた', 'info')
+        else:
+            ctx.diag('placeholder', 'スライド仕様がない。仮置きを描いた', 'info')
         bits = []
         if pat or p.get('relation'):
             bits.append(f'<b>型</b>: {E(str(pat or "未定"))}(主張の種類 {E(str(p.get("relation")))})')
@@ -1424,8 +1428,6 @@ def render_content(deck, sid):
     t = b.get('type')
     if spec.get('headline') != s.get('headline'):
         ctx.diag('unrendered', 'スライド仕様の headline がストーリーラインと違う。ストーリーラインの見出しで描いた', 'warning', 'headline')
-    if spec.get('status') == 'blocked':
-        ctx.diag('placeholder', f'保留のスライド({spec.get("issue") or "Issue の番号なし"})', 'info')
     p = deck.proof.get(sid) or {}
     want = deck.pattern_of.get((p.get('relation'), p.get('base', 'none')))
     if want and t != want:
