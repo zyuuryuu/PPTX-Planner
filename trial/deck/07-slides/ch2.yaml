@@ -1,0 +1,162 @@
+# スライド仕様: ch2(工程7)。型の見本(06-samples/)の仕様は、PMが写した。執筆のセッションは書き直さない。
+# 見本 06-samples/er-diagram.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch2-s1
+  status: done
+  headline: アラートは、検知の仕組みが探すものを見つけたときの知らせで、本物の攻撃とは限らない
+  takeaway: アラートは「条件に合った」という知らせで、「攻撃だ」という判定ではない
+  body:
+    type: er-diagram
+    elements:
+    - E-sentinel-source
+    - D-sentinel-data
+    - E-sentinel-rule
+    - D-sentinel-alert
+    relations:
+    - R-sentinel-source-data
+    - R-sentinel-rule-data
+    - R-sentinel-rule-alert
+    labels:
+      R-sentinel-source-data: 集める
+      R-sentinel-rule-data: 問い合わせる
+      R-sentinel-rule-alert: 生成する
+    annotations:
+      D-sentinel-alert: ルールが探すものを見つけたときに出る
+    highlight: D-sentinel-alert
+  text: 1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは {F207}
+  sources:
+  - F709
+  - F619
+  - F207
+  notes: 製品の例は Microsoft Sentinel。ほかの製品でも、条件に合うと知らせる点は同じだが、仕組みの細部は製品ごとに違う。内訳は ch2-s6 で示す。
+# 見本 06-samples/architecture-diagram.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch2-s3
+  status: done
+  headline: EDRは端末の振る舞いの記録を継続して集め、製品の例では脅威を検知するとアラートを作る
+  takeaway: EDRの材料は、端末の振る舞いを集め続けた記録である
+  body:
+    type: architecture-diagram
+    elements:
+    - E-endpoint
+    - E-edr-agent
+    - E-edr-central-db
+    - E-mde
+    - E-mde-sensor
+    - D-mde-telemetry
+    - D-mde-alert
+    relations:
+    - R-endpoint-agent
+    - R-agent-central-db
+    - R-mde-sensor
+    - R-mde-alert
+    groups:
+    - title: EDRの要件の例(NCA)
+      elements:
+      - E-endpoint
+      - E-edr-agent
+      - E-edr-central-db
+      caption: プロセス、接続、ファイルなどの端末の記録を集める
+    - title: 製品の例(Microsoft Defender for Endpoint)
+      elements:
+      - E-mde
+      - E-mde-sensor
+      - D-mde-alert
+      direction: TB
+    labels:
+      E-edr-agent: エージェント
+      E-mde: Defender for Endpoint
+      D-mde-telemetry: 製品が集める記録
+      R-endpoint-agent: ''
+      R-agent-central-db: ''
+      R-mde-alert: 作る
+    details:
+      D-mde-telemetry:
+      - プロセス
+      - ネットワーク
+      - ログオン
+      - レジストリとファイルの変更
+    highlight: groups[0]
+  sources:
+  - F615
+  - F616
+  - F618
+  - F619
+  notes: 左は要件の文書、右は製品の文書で、出典が違う。右の記録からアラートへの経路は出典に書かれていないので描かない。
+# 見本 06-samples/tree.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch2-s5
+  status: done
+  headline: 案として、ATT&CKの戦術で、アラートの活動が攻撃のどの段階かを表し、優先度の材料にする
+  takeaway: 戦術に当てはめると、そのアラートが攻撃のどこにいるかを言える
+  body:
+    type: tree
+    root: ATT&CK
+    levels:
+    - 戦術(なぜ)の例
+    - 技術(どのように)の例
+    children:
+    - 初期アクセス
+    - name: 実行
+      children:
+      - コマンドの実行
+    - 横展開
+    - 持ち出し
+    aside:
+      mark: 案
+      text: 架空のアラート「見慣れないコマンドが動いた」は戦術「実行」に当たる。これを優先度の要因「活動の段階」に使う
+    highlight: 実行
+  sources:
+  - F114
+  - F116
+  - F125
+  - F610
+  notes: 戦術と技術の名前は例示で、ATT&CK の全体ではない。当てはめ方と優先度へのつなぎ方は案。
+# 見本 06-samples/pie-chart.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch2-s6
+  status: done
+  headline: 1つのSOCの実測では、侵害に至った攻撃は0.01%、攻撃の試みは27%以上、想定内は49%以上
+  takeaway: 誤検知でも想定内でもない攻撃の試みが、少なくとも4分の1ある
+  body:
+    type: pie-chart
+    data:
+    - label: 侵害に至った攻撃
+      value: F207
+    - label: 攻撃の試み
+      value:
+        fact: F207
+        as: 27
+      bound: 以上
+    - label: 想定内の検知
+      value:
+        fact: F207
+        as: 49
+      bound: 以上
+    - label: 分類できないもの
+      value:
+        fact: F207
+        as: 23.72
+        round: 0
+    highlight: 攻撃の試み
+  sources:
+  - F207
+  notes: 27%と49%は論文が「少なくとも」とする下限。想定内の検知は明確な証拠があるものだけを数えた。
+# 見本 06-samples/cause-chain.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch2-s8
+  status: done
+  headline: 誤検知の原因には、弱いルールや緩く書かれたルールなど、検知の条件の誤りがある
+  takeaway: 誤検知の原因は、活動の側ではなく検知の条件の側にある
+  body:
+    type: cause-chain
+    chain:
+    - 検知のルールが緩く書かれている
+    - 無害な通信にも条件が合ってしまう
+    - 誤検知
+    example: '架空の例: 「宛先のポートが443」だけを条件にしたルールは、ふつうのWebの閲覧にも合う'
+    highlight: chain[0]
+  sources:
+  - F208
+  - F214
+  notes: NIST の文書は弱いシグネチャを原因に挙げ、実務者の一部は緩く書かれたシグネチャを挙げた。資料では「ルール」と呼ぶ。

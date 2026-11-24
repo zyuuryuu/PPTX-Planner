@@ -1,0 +1,17 @@
+# スライド仕様: ch4(工程7)。型の見本(06-samples/)の仕様は、PMが写した。執筆のセッションは書き直さない。
+# 見本 06-samples/statement.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch4-s2
+  status: done
+  headline: 米上院の報告は、アラートが頻繁だったなら、誤検知とみなされた可能性があると推定する
+  takeaway: 見過ごしの原因は確かめられていないが、慣れが見過ごしにつながりうる
+  body:
+    type: statement
+    quote_of: F501
+    text: システムが頻繁に警報を鳴らしていたのであれば、職員はこのアラートを誤検知とみなした可能性がある
+    attribution: 報告の原文(英語)の日本語訳。報道を引いた記述
+    caveat: 推定であり、確認された原因ではない
+    highlight: caveat
+  sources:
+  - F501
+  notes: 報告は報道(Bloomberg Businessweek)を引いて推定を述べている。報告自身は原因を確かめていない。

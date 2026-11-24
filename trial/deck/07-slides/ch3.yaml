@@ -1,0 +1,61 @@
+# スライド仕様: ch3(工程7)。型の見本(06-samples/)の仕様は、PMが写した。執筆のセッションは書き直さない。
+# 見本 06-samples/plain-list.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch3-s15
+  status: done
+  headline: 案として、上げるときは、出どころとID、調べた経過、証拠、判定の仮説、次の手順を添える
+  takeaway: 文脈のない引き継ぎでは、受けた側が調べ直すことになる
+  body:
+    type: plain-list
+    mark: 案
+    title: 上げるときに添える5項目
+    items:
+    - アラートの出どころとID
+    - 調べた経過
+    - 集めた証拠
+    - 現時点の判定の仮説
+    - 次に勧める手順
+    highlight: title
+  sources:
+  - F413
+  - F414
+  notes: 送信元のIPアドレスを書き漏らすと、受けた側が元のイベントを探し直すことになる(F414 の例)。
+# 見本 06-samples/flowchart.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch3-s17
+  status: done
+  headline: 配属から3か月の新人は、重大度 High 以上か攻撃の試みなら上げ、一覧なら閉じ、残りは調べる
+  takeaway: 上げる条件を先に見る。閉じるのは、一覧にあるか、調べて誤検知と言えたときだけ
+  body:
+    type: flowchart
+    mark: 運用
+    scenario: S-newbie-ops
+    proposal_parts:
+    - R-op-fp
+    labels:
+      D-op-alert: "届いた\nアラート"
+      R-op-severe:
+        condition: "重大度が\nHigh以上?"
+        label: すぐ上げる
+      R-op-attempt:
+        condition: "攻撃の\n試み?"
+      R-op-list:
+        condition: 一覧にある?
+      R-op-fp:
+        condition: 誤検知と根拠をもって言えた
+      R-op-inv-esc:
+        condition: 30分で根拠なし
+    highlight:
+      ids:
+      - R-op-severe
+      - R-op-attempt
+      label: 先に確かめる
+  sources:
+  - F002
+  - F003
+  - F005
+  - F006
+  - F007
+  - F008
+  - F009
+  notes: 上から順に確かめ、最初に当たった道に進む。重大度は製品が付けた値。一覧にある作業でも重大度が High 以上なら上げる。

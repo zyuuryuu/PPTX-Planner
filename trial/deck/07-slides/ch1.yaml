@@ -1,0 +1,28 @@
+# スライド仕様: ch1(工程7)。型の見本(06-samples/)の仕様は、PMが写した。執筆のセッションは書き直さない。
+# 見本 06-samples/step-flow.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ch1-s1
+  status: done
+  headline: 重大度 High 以上はまず上げ、残りを3つに分けて、閉じる・調べる・上げるを決める
+  takeaway: 最初に重大度を見る。残りを3つに分け、それから行き先を決める
+  body:
+    type: step-flow
+    numbering: 0
+    steps:
+    - name: 重大度を見る
+      description:
+      - 製品の重大度が High 以上なら
+      - text: まず上げる
+        color: 上げる
+      next: それ以外
+    - name: 3つに分ける
+      description:
+      - 誤検知
+      - 想定内の検知
+      - 攻撃の疑い
+    - name: 行き先を決める
+      description: 閉じる、調べる、上げる
+    highlight: steps[0]
+  sources:
+  - F009
+  notes: この順は第3章の最後の流れ図と同じ。区分と行き先は1対1ではなく、どの区分がどの行き先になるかは第3章で扱う。

@@ -1,0 +1,30 @@
+# スライド仕様: ap(工程7)。型の見本(06-samples/)の仕様は、PMが写した。執筆のセッションは書き直さない。
+# 見本 06-samples/table.yaml から
+  # 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+- id: ap-s1
+  status: done
+  headline: 扱う量は出典で大きく違い、1つのSOCの実測は1日約13,764件、自己申告は1日平均4,484件
+  takeaway: 届く量の数字は、調べ方をそろえないと比べられない
+  body:
+    type: table
+    columns:
+    - 出典
+    - 調べ方
+    - name: 値
+      align: right
+    rows:
+    - - 1つのSOC(Yangら)
+      - 実測(自動遮断の後に解析者が扱った件数)
+      - 1日 約{F201:value}件
+    - - 実務者の調査(Alahmadiら)
+      - 回答(自己申告)
+      - '{F202:metric}が{F202}'
+    - - ベンダーの調査(Vectra AI)
+      - 回答(自己申告)
+      - 1日平均 {F203:value}件
+    highlight: columns[1]
+  sources:
+  - F201
+  - F202
+  - F203
+  notes: 実測と自己申告は、数え方が違う。
