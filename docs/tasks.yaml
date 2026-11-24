@@ -18,7 +18,7 @@
 #               ファイル名が決まっていないものは、名前を「」で囲んで書く
 #   restricted  true なら、inputs に挙げたもの以外を読まない。入力を限ることが目的の作業に書く
 #   restricted_by  restricted の作業で、ファイルをまるごと渡す場合に、そう定めた箇所(検査のID、または「文書#見出し」)
-#   outputs     作る、または書き換える成果物のファイル名
+#   outputs     作る、または書き換える成果物のファイル名。書式の置き場は、下の formats に書く
 #   sections    手順が書かれている文書の見出し。「文書#見出し」の形で書く。
 #               見出しは、その直下の文だけを指す。下位の見出しは、個別に書く。
 #               「文書#前文」は、文書の題から最初の見出しまでを指す
@@ -40,6 +40,7 @@ roles:
       - 'organization.md#ユーザーとのやり取り'
       - 'principles.md#原則'
       - 'rework.md#原則'
+      - 'rework.md#承認のタグ'
   pm:
     rules:
       - 'organization.md#PM'
@@ -82,7 +83,14 @@ roles:
     rules:
       - 'organization.md#セッションの分離'
     report:
-      - 'stages/08-integration.md#通読'
+      - 'stages/08-integration.md#実行の記録'
+
+# 成果物の書式を定めた見出し。成果物の名前から「文書#見出し」への対応で書く。
+# スキルの「成果物」に文面を写し、作業票の「成果物」に場所を添える
+formats:
+  checks/: 'rework.md#検査の記録'
+  status.yaml: 'rework.md#状態の記録'
+  runs/: 'stages/08-integration.md#実行の記録'
 
 # スキル。設計セッションとPMは工程ごと、ほかは担当ごとに1つ持つ。
 #   name         スキルの名前。小文字とハイフンで書く
@@ -151,7 +159,7 @@ skills:
     stages: [7, 8]
     description: スライド資料の読み手の役のセッションが、ビルドした実物を通読する手順。作業票の1行目がこの名前のときに使う。
 
-count: 120
+count: 123
 tasks:
 
 # ---- 工程0
@@ -250,8 +258,6 @@ tasks:
 - id: approve-brief
   stage: 0
   name: ブリーフを承認する
-  notes:
-    - 'outputs: 承認はGitのタグとして残す(rework.md#記録)。タグを付ける担当はPMである。設計の時期にはPMを置かないため、工程0から6でタグを付ける作業は未決定である'
   role: user
   skill: null
   inputs: [00-brief.md]
@@ -260,7 +266,25 @@ tasks:
     - 'stages/00-brief.md#受け入れの問い'
   references: []
   checks: [K00-06, K00-09]
-  next: [write-hypotheses]
+  next: [tag-approval]
+
+- id: tag-approval
+  stage: [0, 1, 2, 3, 4, 5, 6]
+  name: 承認した成果物にタグを付ける
+  notes:
+    - 'ユーザーが成果物を承認するたびに行う'
+    - 'outputs: 承認のタグ(rework.md#承認のタグ)'
+    - 'next: 承認した工程の、次の作業に進む'
+  role: designer
+  skill: deck-design-0
+  inputs: [00-brief.md, 01-plan.yaml, 01-model.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 05-proof.yaml, 06-samples/, terms.yaml]
+  outputs: []
+  sections:
+    - 'rework.md#承認のタグ'
+  references:
+    - 'git.md#管理の方法'
+  checks: []
+  next: [write-hypotheses, request-research, answer-questions, design-chapters, write-storyline, design-proof, map-patterns, freeze-terms]
 
 # ---- 工程1
 
@@ -349,7 +373,7 @@ tasks:
     - 'stages/01-exploration.md#計画の承認'
   references: []
   checks: [K01-05]
-  next: [request-research]
+  next: [tag-approval]
 
 - id: request-research
   stage: 1
@@ -645,7 +669,7 @@ tasks:
   sections: []
   references: []
   checks: [K01-29, K01-30]
-  next: [answer-questions]
+  next: [tag-approval]
 
 # ---- 工程2
 
@@ -932,7 +956,7 @@ tasks:
   sections: []
   references: []
   checks: [K02-24, K02-26]
-  next: [design-chapters]
+  next: [tag-approval]
 
 # ---- 工程3
 
@@ -1034,7 +1058,7 @@ tasks:
     - 'stages/03-chapters.md#7. 承認する'
   references: []
   checks: [K03-21]
-  next: [write-storyline]
+  next: [tag-approval]
 
 # ---- 工程4
 
@@ -1174,7 +1198,7 @@ tasks:
     - 'stages/04-storyline.md#10. 承認する'
   references: []
   checks: [K04-30]
-  next: [design-proof]
+  next: [tag-approval]
 
 # ---- 工程5
 
@@ -1321,7 +1345,7 @@ tasks:
     - 'stages/05-proof.md#8. 承認する'
   references: []
   checks: [K05-17]
-  next: [map-patterns]
+  next: [tag-approval]
 
 # ---- 工程6
 
@@ -1533,7 +1557,7 @@ tasks:
     - 'stages/06-patterns.md#8. 型の見本と語彙表を承認する'
   references: []
   checks: [K06-06, K06-16]
-  next: [freeze-terms]
+  next: [tag-approval]
 
 - id: approve-terms
   stage: 6
@@ -1548,7 +1572,7 @@ tasks:
     - 'stages/06-patterns.md#8. 型の見本と語彙表を承認する'
   references: []
   checks: [K06-20]
-  next: [freeze-terms]
+  next: [tag-approval]
 
 - id: freeze-terms
   stage: 6
@@ -1568,21 +1592,63 @@ tasks:
 
 - id: handover-check
   stage: 7
-  name: 引き継ぎの検査を受ける
+  name: 引き継ぎの検査で説明を書き、合否を判定する
   notes:
-    - '新しいセッションの説明を、設計セッションの意図と比べる者は未決定である'
+    - '合否は、検査セッションが比べた結果(compare-handover)と、設計セッションの判断(decide-handover-fixes)を受けて判定する'
   role: pm
   skill: deck-pm-7
   inputs: [00-brief.md, 01-hypotheses.yaml, 01-plan.yaml, 01-sources.yaml, 01-model.yaml, 02-answers.yaml, 02-claims.yaml, 03-chapters.yaml, 04-storyline.yaml, 04-chapter-states.yaml, 04-scenarios.yaml, 05-proof.yaml, 06-patterns.yaml, 06-samples/, style.yaml, terms.yaml, decisions.md]
   restricted: true
   restricted_by: ['organization.md#引き継ぎの検査']
-  outputs: []
+  outputs: [work/answers/handover-check.yaml]
   sections:
     - 'organization.md#引き継ぎの検査'
+    - 'organization.md#説明を書く'
   references:
     - 'organization.md#PM'
   checks: [K07-01]
-  next: [make-chapter-brief]
+  next: [compare-handover, make-chapter-brief]
+
+- id: compare-handover
+  stage: 7
+  name: PMの説明を設計の成果物と比べる
+  notes:
+    - 'checks: K07-01 の判定者はPM。検査セッションは、食い違いを挙げる'
+    - 'next: 食い違いも、分からない点もなければ、PMの判定(handover-check)に進む'
+  role: inspector
+  skill: deck-inspect
+  inputs: [work/answers/handover-check.yaml, 02-claims.yaml, 03-chapters.yaml, decisions.md]
+  outputs: [checks/]
+  sections:
+    - 'checks.md#検査セッションの手順'
+    - 'checks.md#比べる'
+    - 'organization.md#引き継ぎの検査'
+    - 'organization.md#説明を設計の成果物と比べる'
+  references:
+    - 'organization.md#セッションの分離'
+    - 'rework.md#原則'
+    - 'rework.md#不合格のときの手順'
+    - 'rework.md#記録'
+    - 'rework.md#検査と記録を守る'
+  checks: [K07-01]
+  next: [decide-handover-fixes, handover-check]
+
+- id: decide-handover-fixes
+  stage: 7
+  name: 引き継ぎの検査の食い違いについて、成果物を直すかを決める
+  notes:
+    - 'next: 直した場合は、新しく起こしたPMで、引き継ぎの検査をやり直す。直す作業は、直す成果物の作業に戻す(rework.md)'
+  role: designer
+  skill: deck-design-production
+  inputs: [checks/, work/answers/handover-check.yaml, decisions.md]
+  outputs: [decisions.md]
+  sections:
+    - 'organization.md#引き継ぎの検査'
+    - 'organization.md#成果物を直すかを決める'
+  references:
+    - 'rework.md#直す成果物と、無効になる範囲'
+  checks: []
+  next: [handover-check]
 
 - id: make-chapter-brief
   stage: 7
@@ -1867,6 +1933,7 @@ tasks:
   outputs: [runs/]
   sections:
     - 'stages/08-integration.md#通読'
+    - 'stages/08-integration.md#実行の記録'
     - 'stages/08-integration.md#通読で見つけるもの'
   references:
     - 'organization.md#セッションの分離'
@@ -1878,8 +1945,10 @@ tasks:
   name: 章を受け入れる
   role: pm
   skill: deck-pm-7
+  notes:
+    - 'outputs: 承認のタグ(rework.md#承認のタグ)。状態の記録は、検査のコマンドがタグから写す'
   inputs: [status.yaml, checks/, runs/, 04-chapter-states.yaml]
-  outputs: [status.yaml]
+  outputs: []
   sections:
     - 'stages/07-slide-spec.md#3. 章を受け入れる'
     - 'stages/08-integration.md#渡すもの'
@@ -1892,6 +1961,7 @@ tasks:
     - 'rework.md#役割'
     - 'rework.md#不合格のときの手順'
     - 'rework.md#記録'
+    - 'rework.md#承認のタグ'
     - 'rework.md#検査と記録を守る'
     - 'rework.md#上流が変わったとき'
     - 'rework.md#直す成果物と、無効になる範囲'
@@ -2079,6 +2149,7 @@ tasks:
   sections:
     - 'stages/08-integration.md#場面と読み方'
     - 'stages/08-integration.md#通読'
+    - 'stages/08-integration.md#実行の記録'
     - 'stages/08-integration.md#通読で見つけるもの'
   references:
     - 'organization.md#セッションの分離'
@@ -2188,6 +2259,7 @@ tasks:
   sections:
     - 'stages/08-integration.md#場面と読み方'
     - 'stages/08-integration.md#通読'
+    - 'stages/08-integration.md#実行の記録'
     - 'stages/08-integration.md#通読で見つけるもの'
   references:
     - 'organization.md#セッションの分離'
@@ -2407,7 +2479,7 @@ tasks:
   stage: 9
   name: 承認した版にタグを付けて引き渡す
   notes:
-    - 'outputs: 承認の記録(Gitのタグ)'
+    - 'outputs: 承認のタグ(rework.md#承認のタグ)'
   role: pm
   skill: deck-pm-9
   inputs: []
@@ -2416,6 +2488,7 @@ tasks:
     - 'stages/09-finish.md#7. 引き渡す'
   references:
     - 'git.md#管理の方法'
+    - 'rework.md#承認のタグ'
   checks: []
   next: [record-reactions, tally-metrics]
 

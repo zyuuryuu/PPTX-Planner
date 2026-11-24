@@ -52,4 +52,4 @@
 
 ## 次の作業
 
-- `handover-check` 引き継ぎの検査を受ける(PM、スキル `deck-pm-7`)
+- `handover-check` 引き継ぎの検査で説明を書き、合否を判定する(PM、スキル `deck-pm-7`)

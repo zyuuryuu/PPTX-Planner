@@ -24,7 +24,7 @@ description: スライド資料の工程7から9で、設計セッションが�
 - 受け入れた影響(証拠との食い違い、残る危険など)
 - 決めた人と日付
 
-記録するのは、案を却下したとき、証拠と食い違う結論を維持したとき、表現規約の規則の矛盾をユーザーが裁いたとき、および各工程の定義が記録を求めるときである。
+記録するのは、案を却下したとき、証拠と食い違う結論を維持したとき、表現規約の規則の矛盾をユーザーが裁いたとき、および各工程の定義と[不合格と修正の手順](../../../docs/rework.md)が記録を求めるときである。
 
 製造の時期に入っても終了させず、設計担当として残す。製造中に設計の疑問や見直しが出たら、PMとユーザーはこのセッションに戻る。発表の後の反応は、ユーザーが伝え、このセッションが記録する([工程9](../../../docs/stages/09-finish.md))。
 
@@ -58,16 +58,25 @@ description: スライド資料の工程7から9で、設計セッションが�
 5. 往復に上限を持つ。超えたら人が決める。
 6. 合格も不合格も、記録に残す。記録は、検査した側が書く。
 
+### 承認のタグ(`docs/rework.md`)
+
+ユーザーが承認した成果物と、PMが受け入れた章には、その時点の版にGitのタグを付ける。付けるのは、設計の時期(工程0から6)は設計セッション、製造の時期(工程7から9)はPMである。
+
+- タグの名前は、`approved/` に、成果物のファイル名から拡張子を除いたものを続ける。章のスライド仕様 `07-slides/ch2.yaml` のタグは、`approved/07-slides/ch2` である。
+- 承認を取り直したときは、新しい版に付け直す。
+- 検査のコマンドが、タグを状態の記録に写す。
+
 ## 作業の一覧
 
 | 順 | 作業 | 名前 | 工程 | 手順 |
 |---|---|---|---|---|
-| 1 | `rule-on-restatements` | 言い直しのスライドを統合するか残すかを決める | 7 | [tasks/rule-on-restatements.md](tasks/rule-on-restatements.md) |
-| 2 | `decide-phrase-fix` | 言い回しの反復の直し方を決める | 7 | [tasks/decide-phrase-fix.md](tasks/decide-phrase-fix.md) |
-| 3 | `review-term-application` | 語の登録の申請を審査する | 7 | [tasks/review-term-application.md](tasks/review-term-application.md) |
-| 4 | `prepare-summary` | 要約のスライドを用意する | 8 | [tasks/prepare-summary.md](tasks/prepare-summary.md) |
-| 5 | `rule-on-defects` | エラーの候補を裁定する | 8 | [tasks/rule-on-defects.md](tasks/rule-on-defects.md) |
-| 6 | `add-past-feedback-scenario` | ユーザーの指摘を「過去の指摘」の場面に加える | 8 | [tasks/add-past-feedback-scenario.md](tasks/add-past-feedback-scenario.md) |
-| 7 | `record-reactions` | 発表の後の反応を記録する | 9 | [tasks/record-reactions.md](tasks/record-reactions.md) |
-| 8 | `sort-feedback` | 指摘を整理し、反映先の範囲を提案する | 9 | [tasks/sort-feedback.md](tasks/sort-feedback.md) |
-| 9 | `revise-rules` | 規則を足し、既存の規則と整理する | 9 | [tasks/revise-rules.md](tasks/revise-rules.md) |
+| 1 | `decide-handover-fixes` | 引き継ぎの検査の食い違いについて、成果物を直すかを決める | 7 | [tasks/decide-handover-fixes.md](tasks/decide-handover-fixes.md) |
+| 2 | `rule-on-restatements` | 言い直しのスライドを統合するか残すかを決める | 7 | [tasks/rule-on-restatements.md](tasks/rule-on-restatements.md) |
+| 3 | `decide-phrase-fix` | 言い回しの反復の直し方を決める | 7 | [tasks/decide-phrase-fix.md](tasks/decide-phrase-fix.md) |
+| 4 | `review-term-application` | 語の登録の申請を審査する | 7 | [tasks/review-term-application.md](tasks/review-term-application.md) |
+| 5 | `prepare-summary` | 要約のスライドを用意する | 8 | [tasks/prepare-summary.md](tasks/prepare-summary.md) |
+| 6 | `rule-on-defects` | エラーの候補を裁定する | 8 | [tasks/rule-on-defects.md](tasks/rule-on-defects.md) |
+| 7 | `add-past-feedback-scenario` | ユーザーの指摘を「過去の指摘」の場面に加える | 8 | [tasks/add-past-feedback-scenario.md](tasks/add-past-feedback-scenario.md) |
+| 8 | `record-reactions` | 発表の後の反応を記録する | 9 | [tasks/record-reactions.md](tasks/record-reactions.md) |
+| 9 | `sort-feedback` | 指摘を整理し、反映先の範囲を提案する | 9 | [tasks/sort-feedback.md](tasks/sort-feedback.md) |
+| 10 | `revise-rules` | 規則を足し、既存の規則と整理する | 9 | [tasks/revise-rules.md](tasks/revise-rules.md) |

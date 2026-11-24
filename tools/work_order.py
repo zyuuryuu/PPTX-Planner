@@ -319,7 +319,7 @@ def for_session(src, task, args):
     out += target_lines(args) + note_lines(task)
     out += ["", "入力:"] + (view_lines(task, args) if task.get("restricted") else input_lines(task))
     out += ["", "読まないもの:"] + unread_lines(src, task)
-    out += ["", "成果物:"] + output_lines(task)
+    out += ["", "成果物:"] + output_lines(src.plan, task, lambda ref: f"作業のファイルに写した「{ref.partition('#')[2]}」")
     report = src.plan.roles[task["role"]].get("report", [])
     if report:
         out += ["", "報告の書式: 作業のファイルの「報告の書式」による。"]
@@ -344,7 +344,7 @@ def for_machine(src, task, args):
             out += [f"「{PLACEHOLDER}」は、資料の成果物を置いたディレクトリに置き換える。"]
     out += [""] + target_lines(args) + note_lines(task)
     out += ["", "入力:"] + input_lines(task)
-    out += ["", "成果物:"] + output_lines(task)
+    out += ["", "成果物:"] + output_lines(src.plan, task)
     if task["checks"]:
         out += ["", "判定する検査: " + "、".join(f"`{c}`" for c in task["checks"])]
     return out + next_lines(src, task)

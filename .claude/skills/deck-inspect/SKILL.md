@@ -48,7 +48,7 @@ description: スライド資料の検査セッションが、成果物を検査�
 
 - 検査のコマンド、辞書、検査の記録、状態の記録、上流の成果物は、執筆のセッションの作業の枝で変更できない。変更が含まれる場合は、受け入れを拒む。
 - 受け入れる側は、執筆のセッションの作業の枝にある検査のコマンドを使わない。受け入れ済みの本流にある検査のコマンドと辞書で、自分で実行する。
-- ユーザーが承認した成果物は、承認のときにタグを付ける。タグを付けるのは、設計の時期(工程0から6)は設計セッション、製造の時期(工程7から9)はPMである。承認の後に内容が変わった成果物は、検査のコマンドがタグとの差分から機械的に挙げ、承認を取り直すまで、下流の工程の開始を止める。設計セッションが、検査を通すために承認済みの成果物を直すことを、これで拾う。
+- 承認の後に内容が変わった成果物は、検査のコマンドが承認のタグとの差分から機械的に挙げ、承認を取り直すまで、下流の工程の開始を止める。設計セッションが、検査を通すために承認済みの成果物を直すことを、これで拾う。
 - 検査を通すための書き換えや、検査の回避が見つかった場合は、PMまたは設計セッションが、変更を取り消し、そのセッションを新しいセッションに替える。事実をIssueに記録する。
 
 作業の一覧の後に、「守ること(続き)」がある。
@@ -77,13 +77,14 @@ description: スライド資料の検査セッションが、成果物を検査�
 | 18 | `read-relations-from-sample` | 見本の画像だけから関係を読み取る | 6 | [tasks/read-relations-from-sample.md](tasks/read-relations-from-sample.md) |
 | 19 | `compare-sample-relations` | 見本から読み取った関係を型の定義と比べる | 6 | [tasks/compare-sample-relations.md](tasks/compare-sample-relations.md) |
 | 20 | `inspect-samples` | 型の見本を検査する | 6 | [tasks/inspect-samples.md](tasks/inspect-samples.md) |
-| 21 | `inspect-chapter` | 章のスライド仕様を検査する | 7 | [tasks/inspect-chapter.md](tasks/inspect-chapter.md) |
-| 22 | `inspect-unsupported-sentences` | 裏付けのない文がないかを検査する | 7 | [tasks/inspect-unsupported-sentences.md](tasks/inspect-unsupported-sentences.md) |
-| 23 | `read-back-slides` | スライドの文だけを読んで意味を書き直す | 7 | [tasks/read-back-slides.md](tasks/read-back-slides.md) |
-| 24 | `compare-read-back` | 書き直した意味をスライドが使う事実と比べる | 7 | [tasks/compare-read-back.md](tasks/compare-read-back.md) |
-| 25 | `inspect-chapter-images` | 描いた結果の画像を検査する | 7 | [tasks/inspect-chapter-images.md](tasks/inspect-chapter-images.md) |
-| 26 | `inspect-summary-evidence` | 要約に添えた根拠を検査する | 8 | [tasks/inspect-summary-evidence.md](tasks/inspect-summary-evidence.md) |
-| 27 | `inspect-final-images` | 最終の出力の画像の写り込みを検査する | 9 | [tasks/inspect-final-images.md](tasks/inspect-final-images.md) |
+| 21 | `compare-handover` | PMの説明を設計の成果物と比べる | 7 | [tasks/compare-handover.md](tasks/compare-handover.md) |
+| 22 | `inspect-chapter` | 章のスライド仕様を検査する | 7 | [tasks/inspect-chapter.md](tasks/inspect-chapter.md) |
+| 23 | `inspect-unsupported-sentences` | 裏付けのない文がないかを検査する | 7 | [tasks/inspect-unsupported-sentences.md](tasks/inspect-unsupported-sentences.md) |
+| 24 | `read-back-slides` | スライドの文だけを読んで意味を書き直す | 7 | [tasks/read-back-slides.md](tasks/read-back-slides.md) |
+| 25 | `compare-read-back` | 書き直した意味をスライドが使う事実と比べる | 7 | [tasks/compare-read-back.md](tasks/compare-read-back.md) |
+| 26 | `inspect-chapter-images` | 描いた結果の画像を検査する | 7 | [tasks/inspect-chapter-images.md](tasks/inspect-chapter-images.md) |
+| 27 | `inspect-summary-evidence` | 要約に添えた根拠を検査する | 8 | [tasks/inspect-summary-evidence.md](tasks/inspect-summary-evidence.md) |
+| 28 | `inspect-final-images` | 最終の出力の画像の写り込みを検査する | 9 | [tasks/inspect-final-images.md](tasks/inspect-final-images.md) |
 
 ## 守ること(続き)
 
@@ -91,7 +92,7 @@ description: スライド資料の検査セッションが、成果物を検査�
 
 1. **検査が不合格を返す。** 落ちた条件、該当する箇所、理由を添える。検査セッションの指摘には、対象の該当する箇所の引用を付け、条件のどの部分に反するかを書く。
 2. **書いたセッションが、直すか、異議を唱えるかを選ぶ。**
-3. **異議を唱える場合は、理由を添えて裁定を求める。** 裁く者は上の表による。裁定の結果は、検査の記録に残す。
+3. **異議を唱える場合は、理由を添えて裁定を求める。** 裁く者は上の表による。裁定の結果は、設計の判断の記録に残す。
 4. **直す場合は、原因のある成果物を直す。** 原因が自分の成果物にあれば直す。上流にあれば、Issueを立てて上流に戻し、自分の成果物は保留にする。
 5. **検査し直す。**
    - 機械的な検査は、全て再実行する。
@@ -117,10 +118,10 @@ description: スライド資料の検査セッションが、成果物を検査�
 
 | 記録 | 置き場 | 内容 | 書く者 |
 |---|---|---|---|
-| 状態の記録 | `status.yaml` | 成果物ごとの状態(作成中、保留、検査済み、承認済み、無効)、承認した版、往復の回数 | 検査のコマンド。ユーザーの承認は、Gitのタグとして残し、検査のコマンドがタグから写す。章の受け入れは、PMが書く |
-| 検査の記録 | `checks/` | 検査ごとに、対象、条件、結果、判定者、指摘、裁定、前提にした上流の項目とその時点の内容 | 機械的な検査は、検査のコマンド。検査セッションの検査は、その検査セッション |
+| 状態の記録 | `status.yaml` | 成果物ごと、スライドごとの状態 | 検査のコマンド |
+| 検査の記録 | `checks/` | 検査1回ごとの、条件ごとの判定と引用 | 機械的な検査は、検査のコマンド。検査セッションの検査は、その検査セッション |
 | 資料の表現規約 | `style.yaml` | [表現規約](../../../docs/style-rules.md)が定める内容。規則、上限と目安の値、例外 | 設計セッション |
-| 結合テストの実行の記録 | `runs/` | 場面ごと、スライドごとの状態とエラー | 読み手の役のセッション |
+| 結合テストの実行の記録 | `runs/` | 場面ごとの、スライドごとの理解と指摘。書式は[工程8](../../../docs/stages/08-integration.md)に定める | 読み手の役のセッション |
 | 集計の記録 | `metrics.yaml` | 工程9が定める集計 | 検査のコマンド |
 
 資料の表現規約は、工程0で、資料の型の定義の `limits` と個人の表現規約を写して作る。工程6で、資料に共通の見た目の規則を加える。表現の対応表(`06-patterns.yaml`)と語彙表(`terms.yaml`)は別のファイルに置き、資料の表現規約から参照する。
@@ -129,12 +130,12 @@ description: スライド資料の検査セッションが、成果物を検査�
 
 ### 上流が変わったとき(`docs/rework.md`)
 
-検査に通ったとき、その成果物が前提にした上流の項目と、その時点の内容を、検査の記録に残す。記録した項目のいずれかが後で変わった場合は、その合格を無効とする。判定の単位は、ファイルではなく項目とする。
+検査の記録は、対象の版を `commit` に持つ。検査のコマンドは、その版の成果物の中の参照(事実のID、主張のID、スライドのIDなど)から、合格が前提にした上流の項目と、その時点の内容を導く。項目のいずれかが後で変わった場合は、その合格を無効とする。判定の単位は、ファイルではなく項目とする。
 
 - 機械的な検査は、再実行すれば上流の変化を拾える。
-- 検査セッションによる合格は、上流が変わっても失敗しない。そのため、この記録で拾う。
+- 検査セッションによる合格は、上流が変わっても失敗しない。そのため、この方法で拾う。
 - 無効になった成果物だけ、検査セッションの検査をやり直す。変わっていないものは再検査しない。
 - ユーザーが承認したもの(`answer`、要約の文、主張、章と節とスライドの題と要点、見せ方、型の見本、語彙表)が変わる場合は、ユーザーの承認を取り直す。
-- 設計の時期は設計セッションが、製造の時期はPMが、無効になった成果物を挙げる。挙げる元になるのは、検査の記録にある前提の項目である。前提の項目は、検査のコマンドが、成果物の中の参照(事実のID、主張のID、スライドのIDなど)から機械的に導く。検査セッションが書き足すことはできるが、機械が導いた項目を減らすことはできない。
+- 設計の時期は設計セッションが、製造の時期はPMが、無効になった成果物を挙げる。挙げる元になるのは、状態の記録である。
 
 スライド、事実、主張などのIDは、一度付けたら変えない。順序や章を変えても、IDは変えない。

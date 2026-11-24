@@ -24,7 +24,7 @@ description: スライド資料の工程4(ストーリーライン)で、設計�
 - 受け入れた影響(証拠との食い違い、残る危険など)
 - 決めた人と日付
 
-記録するのは、案を却下したとき、証拠と食い違う結論を維持したとき、表現規約の規則の矛盾をユーザーが裁いたとき、および各工程の定義が記録を求めるときである。
+記録するのは、案を却下したとき、証拠と食い違う結論を維持したとき、表現規約の規則の矛盾をユーザーが裁いたとき、および各工程の定義と[不合格と修正の手順](../../../docs/rework.md)が記録を求めるときである。
 
 製造の時期に入っても終了させず、設計担当として残す。製造中に設計の疑問や見直しが出たら、PMとユーザーはこのセッションに戻る。発表の後の反応は、ユーザーが伝え、このセッションが記録する([工程9](../../../docs/stages/09-finish.md))。
 
@@ -58,11 +58,20 @@ description: スライド資料の工程4(ストーリーライン)で、設計�
 5. 往復に上限を持つ。超えたら人が決める。
 6. 合格も不合格も、記録に残す。記録は、検査した側が書く。
 
+### 承認のタグ(`docs/rework.md`)
+
+ユーザーが承認した成果物と、PMが受け入れた章には、その時点の版にGitのタグを付ける。付けるのは、設計の時期(工程0から6)は設計セッション、製造の時期(工程7から9)はPMである。
+
+- タグの名前は、`approved/` に、成果物のファイル名から拡張子を除いたものを続ける。章のスライド仕様 `07-slides/ch2.yaml` のタグは、`approved/07-slides/ch2` である。
+- 承認を取り直したときは、新しい版に付け直す。
+- 検査のコマンドが、タグを状態の記録に写す。
+
 ## 作業の一覧
 
 | 順 | 作業 | 名前 | 工程 | 手順 |
 |---|---|---|---|---|
-| 1 | `register-terms` | 語を語彙表に登録する | 2〜4 | [`deck-design-2`](../deck-design-2/tasks/register-terms.md) が持つ |
-| 2 | `write-storyline` | スライドの題と要点を書く | 4 | [tasks/write-storyline.md](tasks/write-storyline.md) |
-| 3 | `write-chapter-states` | 章の前提と到達点を書く | 4 | [tasks/write-chapter-states.md](tasks/write-chapter-states.md) |
-| 4 | `write-scenarios` | テストの場面と期待する結果を書く | 4 | [tasks/write-scenarios.md](tasks/write-scenarios.md) |
+| 1 | `tag-approval` | 承認した成果物にタグを付ける | 0〜6 | [`deck-design-0`](../deck-design-0/tasks/tag-approval.md) が持つ |
+| 2 | `register-terms` | 語を語彙表に登録する | 2〜4 | [`deck-design-2`](../deck-design-2/tasks/register-terms.md) が持つ |
+| 3 | `write-storyline` | スライドの題と要点を書く | 4 | [tasks/write-storyline.md](tasks/write-storyline.md) |
+| 4 | `write-chapter-states` | 章の前提と到達点を書く | 4 | [tasks/write-chapter-states.md](tasks/write-chapter-states.md) |
+| 5 | `write-scenarios` | テストの場面と期待する結果を書く | 4 | [tasks/write-scenarios.md](tasks/write-scenarios.md) |

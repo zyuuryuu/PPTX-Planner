@@ -272,10 +272,20 @@ def view_notice(task):
     return [f"`{VIEW_DIR}/` にある入力は、機械が元のファイルから作った写しである。元のファイルを開かない。"]
 
 
-def output_lines(task):
+def output_formats(plan, task):
+    """成果物のうち、書式の置き場が工程表の formats にあるものの「文書#見出し」。"""
+    return [plan.formats[name] for name in task["outputs"] if name in plan.formats]
+
+
+def output_lines(plan, task, where=None):
+    """成果物の一覧。書式の定めがあるものには、その場所を添える。where は、場所の書き方を変える場合に渡す。"""
     if not task["outputs"]:
         return ["工程表に、成果物のファイルの定めがない。"]
-    return [f"- `{name}`" for name in task["outputs"]]
+    out = []
+    for name in task["outputs"]:
+        ref = plan.formats.get(name)
+        out.append(f"- `{name}`" + (f"(書式は、{(where or place)(ref)}に定める)" if ref else ""))
+    return out
 
 
 class Page:
@@ -397,7 +407,9 @@ class Page:
         out += self.siblings()
         for ref in task["sections"]:
             out += self.copy(ref, "###")
-        out += ["## 成果物", ""] + output_lines(task) + [""]
+        out += ["## 成果物", ""] + output_lines(src.plan, task, lambda ref: f"このファイルの「{ref.partition('#')[2]}」") + [""]
+        for ref in output_formats(src.plan, task):
+            out += self.copy(ref, "###")
         out += ["## 検査", ""] + self.checks("###") + [""]
         out += ["## 参照", ""]
         refs = [r for r in task["references"] if r not in task["sections"]]

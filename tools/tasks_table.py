@@ -28,6 +28,7 @@ sections と references は「文書#見出し」の形で書く。見出しは�
   - 台帳の検査が、判定者ごとに、その判定者が担当である作業の checks にある。
   - 担当が、決めた一覧にある。skill が、工程表の skills にある、その担当と工程のスキルである。
   - 工程表の skills と roles の書式が正しい。roles の rules と report の見出しが実在する。
+  - 工程表の formats が、成果物の名前から、実在する「文書#見出し」への対応である。その成果物が、いずれかの作業の outputs にある。
   - next が実在する作業を指す。どこからも来ない作業は start: true、次がない作業は end: true である。
   - restricted: true の作業の inputs が、「ファイル#項目」か「ファイル#-項目」の形で項目まで絞られている。
     同じファイルに、項目だけを渡す書き方と、項目を除く書き方を混ぜていない。
@@ -163,10 +164,11 @@ class Docs:
 
 
 class Plan:
-    """工程表。作業(tasks)、スキル(skills)、担当ごとの項目(roles)を持つ。"""
+    """工程表。作業(tasks)、スキル(skills)、担当ごとの項目(roles)、成果物の書式の置き場(formats)を持つ。"""
 
-    def __init__(self, tasks, skills, roles):
+    def __init__(self, tasks, skills, roles, formats=None):
         self.tasks, self.skills, self.roles = tasks, skills, roles
+        self.formats = formats if isinstance(formats, dict) else {}
         self.by_id = {t.get("id"): t for t in tasks}
 
     def skill_for(self, role, stage):
@@ -204,7 +206,10 @@ def load_plan(path):
     skills, roles = data.get("skills"), data.get("roles")
     if not isinstance(skills, list) or not isinstance(roles, dict):
         return Plan(tasks, [], {}), errors + ["工程表に skills と roles がない"]
-    return Plan(tasks, skills, roles), errors
+    formats = data.get("formats", {})
+    if not isinstance(formats, dict):
+        errors.append("formats が、成果物の名前から「文書#見出し」への対応でない")
+    return Plan(tasks, skills, roles, formats), errors
 
 
 def load(path):
@@ -258,6 +263,12 @@ def check_skills(plan, docs):
     for s in plan.skills:
         if s["role"] not in plan.roles:
             errors.append(f"skills の {s['name']}: roles に担当 {s['role']} がない")
+    made = {name for t in plan.tasks for name in t.get("outputs", [])}
+    for name, ref in plan.formats.items():
+        if not isinstance(ref, str) or "#" not in ref or isinstance(docs.resolve(ref)[1], str):
+            errors.append(f"formats の {name}: {ref}: 実在する「文書#見出し」でない")
+        if name not in made:
+            errors.append(f"formats の {name}: どの作業の outputs にもない")
     return errors
 
 

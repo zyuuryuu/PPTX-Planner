@@ -24,7 +24,7 @@ description: スライド資料の工程1(探索)で、設計セッションが�
 - 受け入れた影響(証拠との食い違い、残る危険など)
 - 決めた人と日付
 
-記録するのは、案を却下したとき、証拠と食い違う結論を維持したとき、表現規約の規則の矛盾をユーザーが裁いたとき、および各工程の定義が記録を求めるときである。
+記録するのは、案を却下したとき、証拠と食い違う結論を維持したとき、表現規約の規則の矛盾をユーザーが裁いたとき、および各工程の定義と[不合格と修正の手順](../../../docs/rework.md)が記録を求めるときである。
 
 製造の時期に入っても終了させず、設計担当として残す。製造中に設計の疑問や見直しが出たら、PMとユーザーはこのセッションに戻る。発表の後の反応は、ユーザーが伝え、このセッションが記録する([工程9](../../../docs/stages/09-finish.md))。
 
@@ -58,13 +58,22 @@ description: スライド資料の工程1(探索)で、設計セッションが�
 5. 往復に上限を持つ。超えたら人が決める。
 6. 合格も不合格も、記録に残す。記録は、検査した側が書く。
 
+### 承認のタグ(`docs/rework.md`)
+
+ユーザーが承認した成果物と、PMが受け入れた章には、その時点の版にGitのタグを付ける。付けるのは、設計の時期(工程0から6)は設計セッション、製造の時期(工程7から9)はPMである。
+
+- タグの名前は、`approved/` に、成果物のファイル名から拡張子を除いたものを続ける。章のスライド仕様 `07-slides/ch2.yaml` のタグは、`approved/07-slides/ch2` である。
+- 承認を取り直したときは、新しい版に付け直す。
+- 検査のコマンドが、タグを状態の記録に写す。
+
 ## 作業の一覧
 
 | 順 | 作業 | 名前 | 工程 | 手順 |
 |---|---|---|---|---|
-| 1 | `write-hypotheses` | 仮説の一覧を書く | 1 | [tasks/write-hypotheses.md](tasks/write-hypotheses.md) |
-| 2 | `plan-exploration` | 探索の計画を立てる | 1 | [tasks/plan-exploration.md](tasks/plan-exploration.md) |
-| 3 | `request-research` | 調査依頼を出す | 1 | [tasks/request-research.md](tasks/request-research.md) |
-| 4 | `gather-user-knowledge` | ユーザーの知識を取り込む | 1 | [tasks/gather-user-knowledge.md](tasks/gather-user-knowledge.md) |
-| 5 | `record-stance` | 事実ごとに仮説への立場を書く | 1 | [tasks/record-stance.md](tasks/record-stance.md) |
-| 6 | `judge-exploration-end` | 探索の終了を判断する | 1 | [tasks/judge-exploration-end.md](tasks/judge-exploration-end.md) |
+| 1 | `tag-approval` | 承認した成果物にタグを付ける | 0〜6 | [`deck-design-0`](../deck-design-0/tasks/tag-approval.md) が持つ |
+| 2 | `write-hypotheses` | 仮説の一覧を書く | 1 | [tasks/write-hypotheses.md](tasks/write-hypotheses.md) |
+| 3 | `plan-exploration` | 探索の計画を立てる | 1 | [tasks/plan-exploration.md](tasks/plan-exploration.md) |
+| 4 | `request-research` | 調査依頼を出す | 1 | [tasks/request-research.md](tasks/request-research.md) |
+| 5 | `gather-user-knowledge` | ユーザーの知識を取り込む | 1 | [tasks/gather-user-knowledge.md](tasks/gather-user-knowledge.md) |
+| 6 | `record-stance` | 事実ごとに仮説への立場を書く | 1 | [tasks/record-stance.md](tasks/record-stance.md) |
+| 7 | `judge-exploration-end` | 探索の終了を判断する | 1 | [tasks/judge-exploration-end.md](tasks/judge-exploration-end.md) |
