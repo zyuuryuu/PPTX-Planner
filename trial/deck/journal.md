@@ -63,6 +63,9 @@
 | 54 | 4 | 検査(意味の検査) | 見出し、章の状態、場面(49a88e2) | claude-opus-5-5 | session_01LpWHd1rMh49VFsWMDBcTmH |
 | 55 | 4 | 検査(重大・再検査) | 見出しの限定の直し(ce66f9a) | claude-sonnet-5-5 | session_01LpWHd2DRwzNnxb1Nv5MFp3 |
 | 56 | 4 | 検査(意味の検査・再検査) | 見出し、章の状態、場面の直し(ce66f9a) | claude-opus-5-5 | session_01LpWHd27PpAr1XK9eN1zmex |
+| 57 | 5 | 検査(重大・1回目と意味の検査) | 立証の設計(9a72668) | claude-opus-5-5 | session_01LpWHd3e44gRhbnYRwKfhvk |
+| 58 | 5 | 検査(重大・2回目) | real の申告(9a72668) | claude-sonnet-5-5 | session_01LpWHd1HUm7rppk6gFhBAe3 |
+| 59 | 5 | 検査(見出しの復元) | show、focus、facts、view からの見出し(9a72668) | claude-haiku-5-5 | session_01LpWHd2seMRw7kKAxznqd4k |
 
 ## 工程0 依頼の確定
 
@@ -426,3 +429,4 @@
 - 機械の検査: 合格10、警告1(同じ事実を複数のスライドが使う。10件)、未実装2。仮置きの資料をビルドし、`preview/placeholder.html`(出典の行つき)と `placeholder.pptx` に写した。
 - 主張の種類の集計(40枚): 分岐のある流れ6、言い切り6、手順5、並列の列挙5、項目の比較4、実物の提示4、構造3、構成2、構成比2、因果2、要素の関係1。言い切りと並列の列挙は合わせて11枚(28%)。目安の値は未確定(docs/open-items.md)。
 - 「見せ方の候補を2つか3つ出し、1つに絞る」は、各スライドで頭の中で行い、記録していない(文書が「選ばなかった候補は記録しない」とするため)。
+- 検査を3つ起こした(表の57〜59。対象 9a72668)。待ち始め: 01:01 UTC。
