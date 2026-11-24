@@ -144,6 +144,25 @@
     H1: neutral
     H2: neutral
     H3: neutral
+- id: F008
+  statement: 依頼者のSOCの運用では、新人が閉じるアラートは、一覧にあるものも誤検知も全て記録して閉じる。後の見直しはその記録を見て行う
+  kind: testimony
+  source: 依頼者(SOCのリーダー)が、自分のSOCの運用として述べた
+  locator: 2026-11-24 の聞き取り(工程5、流れ図の確認への返事)
+  as_of: '2026-11-24'
+  superseded_by: null
+  quote: 閉じるものは全部記録する、って22枚目で言ってるし、後で見直すのもその記録を見る。3も「想定内の検知として記録して閉じる」にして。
+  qualifiers:
+  - 依頼者のSOCの運用
+  - 記録する項目は案(ch3-s9)
+  origin: 依頼者
+  answers:
+  - Q3.1.2
+  verified: true
+  stance:
+    H1: neutral
+    H2: neutral
+    H3: neutral
 - id: F100
   statement: SIEMは、複数のログ源のデータを分析し、ログ項目間でイベントを相関させ、重要なイベントを特定して優先順位を付ける
   kind: fact

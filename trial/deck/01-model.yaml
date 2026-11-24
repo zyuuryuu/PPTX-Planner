@@ -16,7 +16,7 @@
 #     notify(from が to に知らせる) / investigate(from が to を調べる)
 #     store_in(from のログの保存先が to である。経路や転送は表さない) / based_on(from が to を基にする)
 #   basis: description(出典が仕組みを記述している) / requirement(標準の要件・ひな形の「〜しなければならない」) / product(特定の製品の記述)
-#     / operation(依頼者のSOCの運用。依頼者の証言 F002〜F007。工程5で設計セッションが足した)
+#     / operation(依頼者のSOCの運用。依頼者の証言 F002〜F008。工程5で設計セッションが足した)
 #   要素 kind に action(新人の行き先: 閉じる、調べる、上げる)を、つながり kind に route(from の状態から、condition のとき to の行き先へ進む)を足した(工程5)
 #   order: 同じ from から出る route を確かめる順(1から。最初に当たった道に進む。F007)
 #   proposal: そのつながりのうち、依頼者の運用ではなく、この講義の案(D001、D008)である部分。空なら全て運用
@@ -679,12 +679,12 @@ relations:
     kind: route
     from: D-op-alert
     to: A-close
-    label: 閉じる
+    label: 想定内の検知として記録して閉じる
     mode: unknown
     condition: リーダーの一覧にある活動に当てはまる
     order: 3
     proposal: ''
-    evidence: [F002, F006, F007]
+    evidence: [F002, F006, F007, F008]
     note: このSOCの運用
   - id: R-op-other
     basis: operation
@@ -703,12 +703,12 @@ relations:
     kind: route
     from: A-investigate
     to: A-close
-    label: 誤検知として閉じる
+    label: 誤検知として記録して閉じる
     mode: unknown
     condition: 30分の中で、誤検知と根拠をもって言えた
     order: 1
     proposal: 誤検知と言える基準(ch3-s5)
-    evidence: [F002, F006]
+    evidence: [F002, F006, F008]
     note: 誤検知を閉じてよいことはこのSOCの運用(F002)。依頼者は誤検知と言えるものを最初の段で閉じるとしたが、誤検知かどうかは調べて確かめるため、調べる段の中に置いた(D011)
   - id: R-op-inv-esc
     basis: operation
