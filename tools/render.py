@@ -957,6 +957,12 @@ def r_flowchart(ctx):
     downs = [arm_box(r) for r in arm_down]
 
     # 横の位置
+    def no_label(i):
+        # 分かれ目の「いいえ」。最後の分かれ目から次の要素へ進む道は、labels に condition があればそれを書く
+        if i == len(cols) - 2 and cols[i]['kind'] == 'dec':
+            return lab(last['id'], 'condition', 'いいえ')
+        return 'いいえ'
+
     # 主の列の幅で並べ、下の行き先どうしが重なるときだけ右へずらす
     x = 0
     prev_right = -1e9
@@ -970,7 +976,11 @@ def r_flowchart(ctx):
         g = 0
         if i < len(cols) - 1:   # 「いいえ」が、両側のひし形の角の上の空きに収まる間隔にする
             free = lambda d: d['w'] / 2 * 14 / d['h'] * 2 if d['kind'] == 'dec' else 0
-            g = max(G, tw('いいえ', FS) + 12 - free(c) - free(cols[i + 1])) if c['kind'] == 'dec' else G
+            if c['kind'] == 'dec':
+                hw_l = tw(no_label(i), FS) / 2 + 4
+                g = max(G, 2 * (hw_l - free(c) / 2), 2 * (hw_l - free(cols[i + 1]) / 2) + 4)
+            else:
+                g = G
         x = cx + c['w'] / 2 + g
     x = max(x, prev_right)
     for a in ups:
@@ -1055,7 +1065,7 @@ def r_flowchart(ctx):
             x2 = nx['cx'] - nx['w'] / 2 - 4
             sv.line([(x1, yc), (x2, yc)])
             if cols[i]['kind'] == 'dec':
-                sv.text((x1 + x2) / 2, yc - 20, 'いいえ', FS, 'middle', TEXT2)
+                sv.text((x1 + x2) / 2, yc - 20, no_label(i), FS, 'middle', TEXT2)
     # 複数の分かれ目の強調: まとめて1つの枠で囲む
     group = [(cx, c) for rid_, cx, c in dec_ids if rid_ in hl_ids]
     if len(hl_ids) > 1 and group:
