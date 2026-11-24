@@ -10,15 +10,14 @@
   holds:
   - ordered
 - id: ch1-s2
-  relation: branching-flow
-  show: アラートから「根拠をもって誤検知か想定内と言えるか」で分かれ、言えれば記録して閉じる、言えず迷えば上げる流れ(この講義の案)
-  focus: 迷ったときの行き先が「上げる」であること
+  relation: statement
+  show: 閉じてよいもの2つ(一覧にある、誤検知と根拠をもって言える)と、それ以外は閉じずに上げる、を1文ずつ。詳しい流れは第3章の最後(ch3-s17)
+  focus: 閉じてよいのは、根拠をもって言えるものだけであること
   facts: []
   axis: null
   base: none
-  holds:
-  - ordered
-  - connected
+  holds: []
+  relation_reason: 結論の規則を1つ述べるスライド。流れ図にすると第3章の流れ図(ch3-s17)と重なり、場面の一部だけを描くと順が違って見える(D013)
 - id: ch2-s1
   relation: entity-relation
   show: '製品の例(Microsoft Sentinel)の3つのつながり: データソースがデータを集める、分析ルールが集めたデータに問い合わせる、ルールがアラートを生成する。図の下に1行で「1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは0.01%(ch2-s6で詳しく)」'
@@ -301,7 +300,7 @@
   holds: []
 - id: ch3-s13
   relation: branching-flow
-  show: '30分の時点(このSOCの運用)で「閉じる根拠があるか」で分かれる流れ: ある→記録して閉じる、なく迷う→閉じずに上げる。閉じる根拠のうち誤検知と言える基準は案(ch3-s5)'
+  show: 'S-newbie-ops のうち、調べる(30分まで)から出る2つの道だけを描く: 誤検知と根拠をもって言えた→誤検知として記録して閉じる(案の基準)、30分たっても根拠がない→見たことを付けて上げる'
   focus: 根拠がなければ閉じない側に倒すこと
   facts:
   - F005
@@ -312,6 +311,14 @@
   holds:
   - ordered
   - connected
+  real: true
+  view:
+    scenario: S-newbie-ops
+    start: A-investigate
+    elements:
+    - A-investigate
+    - A-close
+    - A-escalate
 - id: ch3-s14
   relation: statement
   relation_reason: このSOCの運用の規則を1つ述べるスライドで、比べる対象も順序もない
