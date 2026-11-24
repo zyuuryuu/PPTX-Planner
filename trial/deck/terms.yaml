@@ -1,32 +1,32 @@
-# 語彙表(草案)。工程1では、素材台帳の metric の語だけを登録する。対象を指す語の登録と、ユーザーの確認は工程6で行う。
+# 語彙表(工程6で凍結の候補)。工程1では、素材台帳の metric の語だけを登録する。対象を指す語の登録と、ユーザーの確認は工程6で行う。
 terms:
 - id: T-close
   term: 閉じる
   kind: action
   definition: アラートを、誤検知か想定内の検知と判断して、調べたことと判断を記録し、対応を終える
   note: 依頼者が決めた3つの行き先の1つ(2026-11-24)
-  defined_in: null
+  defined_in: ch1-s1
   no_definition: null
 - id: T-investigate
   term: 調べる
   kind: action
   definition: 閉じるか上げるかを決めるために、持ち時間の中でログなどを確かめ続ける
   note: 依頼者が決めた3つの行き先の1つ。ブリーフの「調査を続ける」と同じ
-  defined_in: null
+  defined_in: ch1-s1
   no_definition: null
 - id: T-escalate
   term: 上げる
   kind: action
   definition: アラートを、経過と証拠を添えて上位の担当者に引き継ぐ
   note: 依頼者が決めた3つの行き先の1つ。ブリーフの「上に上げる」と同じ
-  defined_in: null
+  defined_in: ch1-s1
   no_definition: null
 - id: T-event
   term: イベント
   kind: noun
   definition: システムやネットワークで起きた出来事そのもの。良い悪いは問わない。新人はログを見てイベントを知る
   note: 依頼者が決めた(2026-11-23)
-  defined_in: null
+  defined_in: ch2-s2
   no_definition: null
   not:
   - T-log
@@ -36,7 +36,7 @@ terms:
   kind: noun
   definition: イベントを書き残したもの
   note: 依頼者が決めた(2026-11-23)
-  defined_in: null
+  defined_in: ch2-s4
   no_definition: null
   not:
   - T-event
@@ -45,7 +45,7 @@ terms:
   kind: noun
   definition: 検知の仕組みが、決められた条件に合うイベントを見つけて出す知らせ。この時点では本物の攻撃かどうかは分からない
   note: 依頼者が決めた(2026-11-23)
-  defined_in: null
+  defined_in: ch2-s1
   no_definition: null
   not:
   - T-incident
@@ -56,7 +56,7 @@ terms:
   definition: 調べた結果、実際に侵害や被害がある、と判断したもの。新人は自分でインシデントと決めず、その疑いがあれば上に上げる
   note: 依頼者が決めた(2026-11-23)。製品(Microsoft Sentinel、Defender)の「インシデント」はアラートのまとまりで、この語とは違う
   defined_in: null
-  no_definition: null
+  no_definition: 本編の見出しと図では使わない。製品の呼び名は model_labels で「アラートのまとまり」と書き分ける。出典の語として出る場合は、ノートで意味を補う
   not:
   - T-alert
 - id: T-false-positive
@@ -64,7 +64,7 @@ terms:
   kind: noun
   definition: 検知の条件そのものが誤っていて、無害な活動に反応したアラート(緩すぎるルール、誤ったデータなど)
   note: 依頼者が決めた(2026-11-23)。想定内の検知を含めない
-  defined_in: null
+  defined_in: ch2-s8
   no_definition: null
   not:
   - T-expected-detection
@@ -73,7 +73,7 @@ terms:
   kind: noun
   definition: 検知の条件どおりに正しく反応したが、業務上は問題のない活動によるアラート(社内の脆弱性スキャン、委託したペネトレーションテストなど)。出典では benign trigger、Benign Positive、Informational, expected activity などと呼ばれる
   note: 依頼者が名前を決めた(2026-11-23)
-  defined_in: null
+  defined_in: ch2-s9
   no_definition: null
   not:
   - T-false-positive
@@ -82,103 +82,218 @@ terms:
   kind: noun
   definition: 届いたアラートのうち、誤検知と想定内の検知を合わせたものの割合
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-fp-share
   term: 誤検知の割合
   kind: noun
   definition: 届いたアラートのうち、誤検知と判断されたものの割合。出典ごとに数え方が違い、想定内の検知を含む出典がある
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-alerts-per-day
   term: SOCが受けるアラート数(1日あたり)
   kind: noun
   definition: SOCに1日に届くアラートの件数
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-share-under-5000
   term: 1日5,000件未満のアラートを受ける回答者の割合
   kind: noun
   definition: 調査の回答者のうち、1日に受けるアラートが5,000件未満の者の割合
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-true-alert-share
   term: アラートのうち正当な検知の割合
   kind: noun
   definition: 調べたアラートのうち、実際の脅威だったものの件数の比
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-true-attack-share
   term: 真の攻撃に関連するアラートの割合
   kind: noun
   definition: アラートのうち、侵害に至った実際の攻撃に関連するものの割合
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-benign-dns-count
   term: DNS設定に起因する良性のトリガーの件数
   kind: noun
   definition: 組織のDNSの設定が原因で発火した良性のトリガーの件数
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-info-alert-count
   term: 情報提供目的のアラートの件数
   kind: noun
   definition: 攻撃と無関係で、情報や文脈を与えるために出るアラートの件数
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-benign-pentest-count
   term: 外部ペンテストに起因する良性のトリガーの件数
   kind: noun
   definition: 委託した外部のペネトレーションテストや監査が原因で発火したアラートの件数
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-triage-time
   term: Tier 1のアラート1件あたりのトリアージ時間の目安
   kind: noun
   definition: 一次解析の担当が、アラート1件の判定にかける時間の目安
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-p2-escalation-time
   term: 重大度P2のアラートをTier 2へ上げるまでの時間の目安
   kind: noun
   definition: 重大度P2のアラートを上位の担当に上げるまでの時間
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-no-response-wait
   term: 応答がないときに次の上位者へ引き上げるまでの待ち時間
   kind: noun
   definition: 連絡した相手から応答がないとき、さらに上位へ連絡するまで待つ時間
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-verdict-accuracy
   term: アラーム判定の正答率
   kind: noun
   definition: 分析者のアラームの判定が正しかった割合
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-ignored-after-fp
   term: 過去の誤検知を理由にアラートを無視したことがある回答者の割合
   kind: noun
   definition: 調査の回答者のうち、過去の誤検知の経験からアラートを無視したことがある者の割合
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-handover-when-unsure
   term: 不確かなときにチケットを作って引き継ぐと答えた分析者の割合
   kind: noun
   definition: 判断に迷ったとき、チケットを作って他の担当に引き継ぐと答えた者の割合
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-escalation-wait
   term: エスカレーションまでの待ち時間(例示)
   kind: noun
   definition: 応答がないときに上位へ上げるまでの待ち時間として、文書が例示する値
   defined_in: null
-  no_definition: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
 - id: T-edr-retention
   term: EDRのテレメトリの保存期間
   kind: noun
   definition: EDRが集めた端末の記録を保存する期間
   defined_in: null
+  no_definition: 素材台帳の metric の照合に使う指標の名前で、スライドの語ではない
+- id: T-attack-attempt
+  term: 攻撃の試み
+  kind: noun
+  definition: 侵害に至らなかった攻撃によるアラート(出典の attack attempts)
+  not:
+  - T-attack-suspect
+  defined_in: ch2-s6
   no_definition: null
+- id: T-attack-suspect
+  term: 攻撃の疑い
+  kind: noun
+  definition: 3つの区分の3つ目。誤検知とも想定内の検知とも根拠をもって言えないアラート。攻撃の試みと、侵害の疑いを含む
+  not:
+  - T-attack-attempt
+  - T-incident
+  defined_in: ch1-s1
+  no_definition: null
+- id: T-list
+  term: 一覧
+  kind: noun
+  definition: リーダーが事前に作った、想定内の活動(承認済みのスキャン、委託した診断など)の一覧。新人が想定内の検知として閉じてよいのは、これに当てはまるものだけ
+  defined_in: ch3-s6
+  no_definition: null
+- id: T-timebox
+  term: 持ち時間
+  kind: noun
+  definition: 新人が1件のアラートを調べてよい時間。このSOCでは配属から3か月は1件30分
+  defined_in: ch3-s11
+  no_definition: null
+- id: T-rule
+  term: ルール
+  kind: noun
+  definition: 検知の仕組みが、イベントがアラートに当たるかを決める条件。出典の signature(シグネチャ)と analytics rule を含む
+  defined_in: ch2-s2
+  no_definition: null
+- id: T-siem
+  term: SIEM
+  kind: noun
+  definition: 複数のログ源のデータを集めて相関させ、重要なイベントを特定する仕組み
+  not:
+  - T-edr
+  defined_in: ch2-s2
+  no_definition: null
+- id: T-edr
+  term: EDR
+  kind: noun
+  definition: 端末の振る舞いの記録を継続して集め、脅威を検知してアラートを出す仕組み
+  not:
+  - T-siem
+  defined_in: ch2-s3
+  no_definition: null
+- id: T-attck
+  term: ATT&CK
+  kind: noun
+  definition: 攻撃者の戦術と技術の、実世界の観測に基づく知識ベース(MITRE)
+  defined_in: ch2-s5
+  no_definition: null
+- id: T-tactic
+  term: 戦術
+  kind: noun
+  definition: ATT&CK で、攻撃者がその行動をとる目的(なぜ)
+  not:
+  - T-technique
+  defined_in: ch2-s5
+  no_definition: null
+- id: T-technique
+  term: 技術
+  kind: noun
+  definition: ATT&CK で、攻撃者が目的を達成する方法(どのように)
+  not:
+  - T-tactic
+  defined_in: ch2-s5
+  no_definition: null
+- id: T-priority
+  term: 優先度
+  kind: noun
+  definition: 複数のアラートのうち、どれから扱うかの順位
+  not:
+  - T-severity
+  defined_in: ch3-s7
+  no_definition: null
+- id: T-proposal
+  term: 案
+  kind: noun
+  definition: 公開資料の材料から、この講義が組み立てた基準。公的な基準でも、このSOCの運用でもない
+  not:
+  - T-soc-ops
+  defined_in: ch3-s2
+  no_definition: null
+- id: T-soc-ops
+  term: このSOCの運用
+  kind: noun
+  definition: リーダーが決めた、このSOCでの新人の扱い方
+  not:
+  - T-proposal
+  defined_in: ch3-s2
+  no_definition: null
+- id: T-lateral
+  term: 横展開
+  kind: noun
+  definition: 攻撃者が、入り込んだ端末から別の端末へ広がること。複数の端末にまたがる
+  defined_in: ch3-s12
+  no_definition: null
+- id: T-newbie
+  term: 新人
+  kind: noun
+  definition: 配属から3か月の解析者。この講義の受講者
+  defined_in: null
+  no_definition: ブリーフの主な読み手とその関係者で、受講者が既に知っている
+- id: T-leader
+  term: リーダー
+  kind: noun
+  definition: このSOCで、新人が閉じたアラートを見直し、一覧を作る人
+  defined_in: null
+  no_definition: ブリーフの主な読み手とその関係者で、受講者が既に知っている
 banned:
 - term: 良性のトリガー
   reason: 想定内の検知と同じ対象を指す。出典の訳語
@@ -196,8 +311,68 @@ banned:
   reason: 同上。出典の語として引く場合を除く
   use:
   - T-escalate
+- term: 警報
+  reason: アラートと同じ対象を指す(依頼者の指定)。出典の引用の訳を除く
+  use:
+  - T-alert
+- term: シグネチャ
+  reason: ルールと同じ対象を指す。出典の語として出典の行で示す場合を除く
+  use:
+  - T-rule
+- term: 偽陽性
+  reason: 誤検知と同じ対象を指す。出典の False positive の訳
+  use:
+  - T-false-positive
+- term: 真陽性
+  reason: この資料は使わない。攻撃の疑い、攻撃の試み、侵害に至った攻撃のどれを指すかが決まらない
+  use:
+  - T-attack-suspect
+  - T-attack-attempt
+- term: トリアージ
+  reason: 一次解析の全体か、優先度付けだけかが出典で割れる。この資料は「分ける」「優先度を付ける」で書く
+  use:
+  - T-priority
+- term: 持ち時間の目安
+  reason: 公的な目安と、このSOCの持ち時間が混ざる。このSOCの値は「持ち時間」、外の値は出典の行で示す
+  use:
+  - T-timebox
 allowed: []
 model_labels:
   D-sentinel-incident: 'アラートのまとまり(製品の呼び名: インシデント。資料で言うインシデントではない)'
   D-mde-incident: 'アラートのまとまり(製品の呼び名: インシデント。資料で言うインシデントではない)'
   D-significant-event: 重要と判断されたイベント(まだアラートではない)
+candidates:
+- kind: 同じ概念か
+  terms:
+  - 重大度
+  - 深刻度
+  decision: 依頼者に確認中(工程6)
+  note: このSOCの運用の「重大度が高い」と、ch3-s7 の「SIEMの深刻度」
+- kind: 同じ概念か
+  terms:
+  - ルール
+  - シグネチャ
+  decision: 同じ対象。資料ではルールで書き、シグネチャは banned(案。依頼者の確認を待つ)
+- kind: 同じ概念か
+  terms:
+  - アラート
+  - 警報
+  decision: 同じ対象。警報は banned(依頼者が工程4で指定)
+- kind: 同じ概念か
+  terms:
+  - 攻撃の疑い
+  - 攻撃の試み
+  decision: 別の概念。攻撃の試みは攻撃の疑いの一部(案。依頼者の確認を待つ)
+- kind: 同じ概念か
+  terms:
+  - 想定内の検知
+  - 想定内の活動
+  decision: 別の概念。想定内の活動は一覧に載る業務、想定内の検知はそれによるアラート(案)
+- kind: 2つの意味
+  terms:
+  - インシデント
+  decision: 資料の意味(実際に侵害や被害があると判断したもの)と、製品の呼び名(アラートのまとまり)。製品の呼び名は model_labels で書き分ける(依頼者が工程1で決めた)
+- kind: 2つの意味
+  terms:
+  - 一覧
+  decision: 資料ではリーダーの一覧だけを指す(案)
