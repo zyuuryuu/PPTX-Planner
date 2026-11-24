@@ -1,0 +1,257 @@
+# 工程4 ストーリーライン 検査: 見出しが、根拠の事実の限定を落としていない(重大な検査)
+name: 見出しが、根拠の事実の限定を落としていない
+stage: 4
+round: 2
+target: trial/deck/04-storyline.yaml(コミット 49a88e24866a83a2511bdaa0fb20362feec9e87d)の全スライドの headline と source
+upstream: trial/deck/01-sources.yaml(evidence が指す52件の事実の statement、quote、qualifiers、source、as_of)、trial/deck/decisions.md D006、trial/deck/terms.yaml
+inspector: claude-sonnet-5-5
+criteria: |
+  D006 に従い、限定は見出しと source を合わせて落ちていなければ合格とする。ただし、意味の範囲を変える限定
+  (1つのSOC、自己申告、下限、案、このSOCの運用、「通常」「なりうる」などの度合い、調べた範囲での「ない」)は、
+  見出し自体に必要とする。「案として」の見出しは出典の事実と同じ強さで言い切っていないか、「このSOCでは」の見出しは
+  依頼者の証言(kind: testimony)に照らす。ch5 は限定の検査の対象外とし、ch3 との食い違いだけを見る。
+  数値は evidence の値と手で照合した。
+summary:
+  slides_total: 40
+  pass: 33
+  fail: 6
+  cannot_judge: 1
+  fail_ids: [ch2-s4, ch3-s6, ch3-s11, ch3-s13, ch4-s2, ap-s1]
+  cannot_judge_ids: [ch1-s1]
+  number_check: 見出しの数値は全て evidence の値と一致した(27、0.01、49、83、56、12〜20、13,764、4,484、3か月、2013)。ap-s1 の13,764件は値は一致するが、何の件数かに問題がある(ap-s1 を参照)。
+  source_line_years: source の年は全て as_of と一致した。
+
+results:
+- id: ch1-s1
+  verdict: 判定できない
+  headline: 届いたアラートを、閉じる・調べる・上げるのどれにするか、根拠とともに1人で決められる
+  reason: evidence も source もなく、事実を述べる見出しではない(講義の到達目標)。照合先がないため限定の落ちは確かめられない。事実の主張は含まない。対象外に近い。
+
+- id: ch1-s2
+  verdict: 合格
+  evidence: [F207]
+  reason: 「1つのSOCの実測では」「27%以上」(下限)が見出しにある。F207 の qualifiers(1つのSOC、27%は下限)と一致。27 は値と一致。
+
+- id: ch2-s1
+  verdict: 合格
+  evidence: [F709, F619, F207]
+  reason: |
+    「本物の攻撃とは限らない」は否定の度合いが弱く、F207(0.01%)と整合する。source に Microsoft Learn(Sentinel、Defender for Endpoint)と
+    1つのSOCの実測が出ている。
+  note: |
+    F709、F619 の qualifiers は「製品の定義」である。見出しは製品の定義を一般のアラートの定義として述べているが、
+    語彙表 T-alert の定義(依頼者が決めた)と同じなので、限定の落ちとはしない。
+
+- id: ch2-s2
+  verdict: 合格
+  evidence: [F100, F101]
+  reason: |
+    「最も一般的には」(F101 の most common)を見出しに残している。2006年とルール以外の相関があることは source にある。
+  note: F101 は「ログ管理ソフトウェア一般」の記述で、SIEM に結びつけたのは F100。見出しの結びつけは F100 で支えられる。
+
+- id: ch2-s3
+  verdict: 合格
+  evidence: [F615, F618, F619]
+  reason: 「製品の例では」が、アラートを作るという後半の節に付いている。OMB と Microsoft の出どころが source にある。
+  note: |
+    前半の「振る舞いの記録」は F618(Defender for Endpoint の製品の記述)の語で、F615(OMB)は「端末のデータ」と述べるだけ。
+    EDR 一般の記述として読める書き方だが、source に Microsoft Learn(Defender for Endpoint の文書)があるので、D006 の範囲では合格とした。
+
+- id: ch2-s4
+  verdict: 不合格
+  evidence: [F108, F110, F107, F111]
+  headline_quote: 認証のログからは接続元、利用者、成否、日時が分かる
+  fact_quote: 'F108: "Authentication servers ... typically log each authentication attempt, including its origin, username, success or failure, and date and time."(qualifiers: 「通常は」(typically)の記述)'
+  reason: |
+    F108 は typically(通常は)の記述だが、見出しは「分かる」と言い切り、「通常」が見出しにない。「通常」は D006 が見出し自体に残すとする度合いの語。
+    source に「「通常は記録する」の記述」と書いてあるが、D006 では見出しに必要。F107(typically)、F111(often)も同様に度合いの語が付く。
+  suggestion: 「認証のログからは、通常、接続元、利用者、成否、日時が分かる」。
+
+- id: ch2-s5
+  verdict: 合格
+  evidence: [F114, F116, F125, F119]
+  reason: 「なりうる」が見出しにある(F119 の "can help")。MITRE の公式サイトと v20.1 は source にある。
+
+- id: ch2-s6
+  verdict: 合格
+  evidence: [F207]
+  reason: |
+    「1つのSOCの実測では」、「27%以上」「49%以上」(下限)が見出しにある。0.01%、27、49 は値と一致。
+    分類できないものが約24%残ることは source にあり、見出しの3つの数値が示す範囲は変わらない。
+  note: 「想定内」は語彙表で「想定内の検知」(出典の benign trigger)。見出しの略し方は語の定義と合う。
+
+- id: ch2-s7
+  verdict: 合格
+  evidence: [F204, F220]
+  reason: |
+    「調べた範囲では」(「ない」の範囲)、「ベンダーの調査」、「自己申告」、83% が見出しにある。F204 の値と一致。
+    F205(99%、1人の解析者の発言)と F001(依頼者の実感)は、「8割に近い値」の調査には当たらないので、「だけだった」と矛盾しない。
+  note: 「誤検知」の定義が示されていないことは source にある。
+
+- id: ch2-s8
+  verdict: 合格
+  evidence: [F208, F210, F214]
+  reason: 「出典の言う誤検知」「原因には…がある」と、範囲を狭く言っている。原文の false positive であることが source にある。
+  note: |
+    F210 は異常検知型 IDPS の記述、F208 は NIDS の記述だが、見出しにも source にもその限定がない。
+    「原因には…がある」という存在の形なので、不合格とはしない。source に「異常検知型」を足すとよい。
+
+- id: ch2-s9
+  verdict: 合格
+  evidence: [F215, F221, F216, F217]
+  reason: 「1つのSOCの実測では」が見出しにある。「社内の脆弱性スキャン」「外部の診断」は F215、F221 と一致。
+
+- id: ch3-s1
+  verdict: 合格
+  evidence: [F303, F312]
+  reason: |
+    NIST の主張は F303 と一致。「インシデントの報告の扱い」(F303 の qualifiers)と、民間の解説であることが source にある。
+  note: 「食い違う」は2つの出典を並べた設計側の読みで、F312 の段階の順は各段の見出しによる(F312 の qualifiers)。
+
+- id: ch3-s2
+  verdict: 合格
+  evidence: [F600, F610]
+  reason: 「調べた公的な文書に」(「ない」の範囲)と「案である」が見出しにある。
+  note: |
+    evidence は NIST SP 800-61 Rev.3 の2件だけで、「公的な文書」が複数であることは evidence からは確かめられない
+    (D001 の探索の記録による)。見出しは範囲を限っているので限定の落ちではないが、根拠の足りなさは別の検査で見るべきである。
+
+- id: ch3-s3
+  verdict: 合格
+  evidence: [F303, F305]
+  reason: 「案として」が見出しにあり、source に「組み立てた案」とある。
+  note: source の「標準や公的文書ではないの材料から組み立てた案」は文が崩れている(「ではないの」)。NIST は公的文書なので、「標準や公的文書ではない」とも合わない。source の文面を直すとよい。
+
+- id: ch3-s4
+  verdict: 合格
+  evidence: [F709, F710]
+  reason: 「製品の例では」が見出しにある。Microsoft Sentinel が source にある。
+
+- id: ch3-s5
+  verdict: 合格
+  evidence: [F605, F609, F220]
+  reason: 「案として」が見出しにあり、「根拠をもって言えるときだけ」は案の条件として述べている。F605 の「アラートの論理が誤り」「データが誤り」、F220 の定義(悪い規則・エラー・誤設定)と合う。語彙表 T-false-positive とも合う。
+
+- id: ch3-s6
+  verdict: 不合格
+  evidence: [F002, F220, F215]
+  headline_quote: このSOCでは、想定内の検知として閉じてよいのは、リーダーの一覧にある活動だけである
+  fact_quote: 'F002: 依頼者のSOCの運用では、新人が自分で閉じてよいのは、誤検知と、リーダーが事前に一覧にした想定内の活動…に当てはまるものだけである'
+  reason: |
+    「このSOCでは」と、リーダーの一覧は残っている。一方、証言の主語は「新人が自分で」で、見出しにも source(「このSOCの運用」)にもない。
+    見出しは、このSOCで誰が閉じても一覧にある活動だけと読め、証言の範囲(新人)を超える。同じ資料の ch3-s10 は「新人が」を残している。
+  severity: 軽い(読み手は新人なので誤読の危険は小さい)
+  suggestion: 「このSOCでは、新人が想定内の検知として閉じてよいのは、リーダーの一覧にある活動だけである」。
+  note: |
+    F002 の quote(「おすすめのが近い。それでいい。」)は、設計セッションの案への依頼者の同意で、運用の自発的な説明ではない。
+    見出しは運用として言い切るが、D005 で依頼者が受け入れた書き方なので、限定の落ちとはしない。
+
+- id: ch3-s7
+  verdict: 合格
+  evidence: [F610, F305]
+  reason: 「などで」が要因の例示であることを表し、「要因は例示」が source にある。NIST SP 800-61 Rev.3 が source にある。
+
+- id: ch3-s8
+  verdict: 合格
+  evidence: [F306]
+  reason: 「案として」が見出しにあり、民間の解説で標準や公的文書ではないことが source にある。
+
+- id: ch3-s9
+  verdict: 合格
+  evidence: [F318]
+  reason: 「案として」が見出しにある。記録の4つの内容は F318 と一致。
+
+- id: ch3-s10
+  verdict: 合格
+  evidence: [F004, F318]
+  reason: 「このSOCでは」「新人が閉じた」が見出しにある。F004 の「閉じたものは後で見直される」程度に書くという依頼者の指定(F004 の qualifiers)に沿う。
+  note: |
+    F004 の頻度(決まっておらず、およそ週1回)は見出しにも source にもないが、依頼者の指定で省いている。
+    「見直される」は閉じたもの全てが見直される保証とも読めるが、F004 の言い方と同じ強さ。
+
+- id: ch3-s11
+  verdict: 不合格
+  evidence: [F403]
+  headline_quote: 実務者の解説の1件は12〜20分を目安とする
+  fact_quote: 'F403: "12-20 minutes is typical for Tier 1"(qualifiers: Tier 1の場合)'
+  reason: |
+    12〜20分は Tier 1 の持ち時間。「Tier 1」が見出しにも source にもない。
+    見出しの前半は「調べた公的な文書に…ない」(調べた範囲の「ない」)と「1件」を残していて、目安の対象の限定だけが落ちている。
+  suggestion: 「実務者の解説の1件は、Tier 1で12〜20分を目安とする」。
+  note: 前半の「調べた公的な文書に持ち時間の目安はない」は、この slide の evidence(F403)では支えられない。F401(Rev.2、時間の数値なし)など別の事実を evidence に足す必要がある。範囲は「調べた」で限っているため、この検査では不合格の理由にしない。
+
+- id: ch3-s12
+  verdict: 合格
+  evidence: [F406, F407]
+  reason: 「案として」が見出しにあり、標準や公的文書ではないことが source にある。4つの条件は F406、F407 と一致。
+
+- id: ch3-s13
+  verdict: 不合格
+  evidence: [F405, F401]
+  headline_quote: 迷ったときは上げる。有志の手順書も、判断に迷うときは上げる側に倒すとする
+  fact_quote: 'F405: "Over-escalate if unsure"(有志のSOP集で標準や公的文書ではない)。F401: 判定が判断の問題になり、他の担当者と協力して決める必要が生じうる(撤回済みの版。上げるとは述べていない)'
+  reason: |
+    1文目「迷ったときは上げる」は、見出しにも source にも「案」がない。D001 と D004 は、この基準は出典の事実から組み立てた案で、
+    案であることは中のスライドで示すとしている。この見出しがその slide にあたる。ほかの案の見出し(ch3-s3、s5、s8、s9、s12、s15)は全て「案として」を付けているのに、ここだけ付けていない。
+    2文目の「有志の手順書も」の「も」は、1文目を支える出典がほかにもあるように読ませる。evidence の F401 は、上げることを述べておらず、協力して決めると述べるだけで、撤回済みの版でもある。
+    実際の支えは F405(有志の手順書)の1件だけで、事実と同じ強さで言い切っている。
+  suggestion: 「案として、迷ったときは上げる。有志の手順書の1件も、判断に迷うときは上げる側に倒すとする」。F401 は evidence から外すか、source に撤回済みの版であることを書く。
+
+- id: ch3-s14
+  verdict: 合格
+  evidence: [F003, F207]
+  reason: 「このSOCでは」「配属から最初の3か月は」「侵害に至らなかった攻撃の試み」「全て」が F003 と一致。「配属から」が新人の範囲を表す。
+
+- id: ch3-s15
+  verdict: 合格
+  evidence: [F413, F414]
+  reason: 「案として」が見出しにあり、標準や公的文書ではないことが source にある。5つの項目は F413 と一致。
+
+- id: ch4-s1
+  verdict: 合格
+  evidence: [F500]
+  reason: 「報告されている」が見出しにあり、報道を引いた記述であることが source にある。2013年は F500 と一致。
+
+- id: ch4-s2
+  verdict: 不合格
+  evidence: [F501]
+  headline_quote: 警報が頻繁だったため誤検知とみなされた可能性があると推定している
+  fact_quote: 'F501: "It is possible that Target staff could have viewed this alert as a false positive if the system was frequently alarming."(「可能性がある」という推測の記述)'
+  reason: |
+    原文は「警報が頻繁なら」という仮定の文。見出しは「警報が頻繁だったため」と、警報が頻繁だったことを事実として述べる形に変えている。
+    「可能性がある」「推定している」は残っているが、条件の「なら」が理由の「ため」に変わり、警報が頻繁だったことを報告が確認したように読める。
+    source の「確認された原因ではない」は、原因が確認されていないことを述べるだけで、警報の頻度が仮定であることは伝えていない。
+  suggestion: 「米上院の報告は、警報が頻繁なら誤検知とみなされた可能性があると推定している」。
+
+- id: ch4-s3
+  verdict: 合格
+  evidence: [F506]
+  reason: 「ベンダーの調査」「答えた」(自己申告)、56% が見出しにある。F506 の値と一致。調査の対象(RSA Conference の参加者179人)が source にある。
+  note: 問いは「解析者」だが、F506 の対象は SOC 分析者に限らないIT専門職。見出しは「IT専門職」と書いており、限定は落ちていない(問いに答えているかは別の検査)。
+
+- id: ch5
+  ids: [ch5-s1, ch5-s2, ch5-s3, ch5-s4, ch5-s5, ch5-s6, ch5-s7, ch5-s8]
+  verdict: 合格
+  reason: |
+    限定の検査の対象外(架空の例で evidence がない)。ch3 の見出しとの食い違いだけを見た。
+    ch5-s2(一覧にある承認済みのスキャン)は ch3-s6、ch5-s4(検知の条件が誤反応、根拠を記録)は ch3-s5、s9、
+    ch5-s6(このSOCでは最初の3か月は全て上げる)は ch3-s14、ch5-s8(調べ、経過と証拠を添えて上げる)は ch3-s15 と食い違わない。
+    ch5-s7(重要なサーバ)は ch3-s12 と合う。
+  note: ch5-s4、s8 は「案」を付けずに答えを述べるが、演習の模範解答であり、ch3 の案と内容は同じ。
+
+- id: ap-s1
+  verdict: 不合格
+  evidence: [F201, F203]
+  headline_quote: 届く量は出典で大きく違い、1日約13,764件の実測と、1日平均4,484件の自己申告がある
+  fact_quote: 'F201: 自動遮断(BHR)で処理された約44.9%を除いても、解析者が処理するアラートは1日あたり約13,764件残った(1つのSOC、第2期)。F207 の quote: SOC analysts are facing excessive alerts (24K–134K per day)'
+  reason: |
+    (1)「実測」に「1つのSOC」がない。見出しは出典の違いを言い、「1つのSOC」は source にしかない。D006 は、1つのSOCであることを見出し自体に必要とする。
+    (2)「届く量」の13,764件は、自動遮断で処理された約44.9%を除いた後の、解析者が処理する件数。同じSOCで届く件数は F207 によると1日24K〜134K。
+    見出しは「届く量」同士の比較として読め、実測側の数が届く量より小さく見える。「自動遮断の後」は source にしかない。
+    比較の相手(F203 の平均4,484件、自己申告)は届く件数なので、両者の対象が違う。
+  suggestion: 「届く量は出典で大きく違い、1つのSOCの実測では、自動遮断の後で解析者が処理する分が1日約13,764件、自己申告の平均は1日4,484件」(50字に収まるかは要確認)。
+
+recommendations:
+- 不合格の6件(ch2-s4、ch3-s6、ch3-s11、ch3-s13、ch4-s2、ap-s1)は、見出しの直しで解消できる。特に ch3-s13(案の欠落)と ap-s1(数の対象)は意味が変わる。
+- ch3-s2、ch3-s11 の「調べた公的な文書にない」を支える事実(F401 など)が evidence にない。別の検査(根拠の十分さ)で確かめるとよい。
+- ch3-s3 の source の文が崩れている。

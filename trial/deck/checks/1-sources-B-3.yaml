@@ -1,0 +1,205 @@
+検査の名前: 素材台帳の重大な検査(引用の実在と切り取り、statement と qualifiers の一致)。再検査
+回: B-3(B-1、B-2 の指摘に対する再検査)
+対象: trial/deck/incoming/R2.yaml、R4.yaml、R5.yaml(F200〜F221、F400〜F414、F500〜F510)
+判定に使ったコミット: R2.yaml と R5.yaml は 27ccbf6(c0bb875 以降も変更なし)。R4.yaml は c0bb875(R4 の最新。依頼元の連絡を受けて、F404、F405、F407、F409、F410 を判定し直した)
+判定者: claude-opus-5-5(検査セッション)
+日付: '2026-11-23'
+基準: docs/stages/01-exploration.md「素材台帳」の合格条件(quote の実在、切り取りが条件・範囲・主体を落としていない(落としている場合は quote を広げる)、statement が quote と合う、qualifiers が漏れなく value/unit が quote と一致)
+方法: |
+  出典をこのセッションで取得し(PDF は pdftotext、HTML はタグを除去)、quote を表記(引用符、ダッシュ、空白、行末の分綴)を正規化して全文照合し、前後の文を読んで判定した。
+  CISA の PDF は直接の取得が 403 だったため、WebFetch が保存した同じ URL の PDF を pdftotext で抽出して確認した。開けなかった出典はない。
+  直した事実の特定は、B-1 の時点(54d7f57)と現在の YAML を項目ごとに比べて行った。
+範囲:
+  - 前回の不合格(B-1 または B-2)24件 は、指摘の解消と新しい問題を確かめた
+  - 前回は両方で合格し今回内容が変わった10件(F201、F208、F403、F406、F411、F413、F503、F507、F509、F510)は、変わった項目について新しい問題を確かめた
+  - 新しい事実3件(F219〜F221)は全条件を判定した
+  - verified 以外に変化のない F202、F217、F218、F400、F401、F412、F500、F501、F502、F505 は判定の対象外(前回どちらも合格、変更なし)
+件数:
+  判定した事実: 37
+  合格: 23
+  不合格: 14
+  判定できない: 0
+  内訳:
+    前回の不合格24件: {解消: 12, 未解消: 9, 解消したが新しい問題: 3}
+    前回合格で直された10件: {合格: 8, 新しい問題: 2}
+    新しい事実3件: {合格: 3}
+不合格の一覧: [F200, F201, F203, F204, F207, F208, F209, F210, F214, F216, F402, F404, F408, F506]
+主な指摘:
+  - '未対応のまま(内容に変更がない): F203、F204(標本数2,000がページにあるのに「未確認」)、F214(「一部の分析者」がない)、F216(「the vast majority」を落としている)'
+  - '直したが指摘が残る: F200(2.4万件/日に自動遮断分を含むことが qualifiers にない)、F207(攻撃の試み27%が下限であることがない)、F209(「in most cases」がまだ落ちている)、F402(適用範囲の「確認された悪性のサイバー活動」がない)'
+  - 'quote の外の内容を qualifiers に「quote には含めていない」と書いて statement に残す直し方は、合格条件を満たさない: F404、F408(c0bb875 で F407、F409、F410 は quote を広げるか statement を quote に合わせて解消した)。条件は「落としている場合は quote を広げる」と「statement が quote と合う」で、qualifiers に書いても、statement の内容が quote にないことは変わらない'
+  - 'F210 は quote を広げすぎて、PDF 抽出の脚注5と柱(「2-4 GUIDE TO INTRUSION DETECTION AND PREVENTION SYSTEMS (IDPS)」)が文の途中("e- ... mails")に入っている。出典に連続した文としては存在しない'
+  - '直したことで生じた軽い問題: F201(「ファイアウォール」は quote の外)、F208(「may have」を「異なる」と断定)、F506(179人・RSA Conference は quote の外)'
+結果:
+  # ---- 前回の不合格 ----
+  F200:
+    前回: B-1 statement 不合格(4年・件数が quote の外)、B-2 切り取り 不合格(2.4万件/日は自動遮断分を含む総数)
+    判定: {1_quote: 合格, 2_切り取り: 不合格, 3_statement: 合格, 4_qualifiers: 不合格}
+    解消: B-1 の指摘は解消(quote を前の文まで広げた)。B-2 の指摘は未解消
+    引用: '§6.1 "the average number of daily alerts is 134,000, which is 5-6 times higher than the 24,000 alerts per day in the second period (December 2020 to July 2022)" と、同節 "6,474,204 alerts are handled by BHR during the second period (44.9%) without involving human analysts ... after BHR filtering ... (about 13,764 alerts per day)"'
+    理由: statement は「解析者が直面するアラートは1日あたり2.4万〜13.4万件」のまま。第2期の2.4万件は自動遮断(BHR)で処理された44.9%を含む総数で、qualifiers にもその記載がない。F201(約1.38万件)と並べると食い違って見える。
+    直し方の案: qualifiers に「第2期の2.4万件/日は自動遮断(BHR)で人手を介さず処理された分を含む総数(§6.1)」を加える
+  F203:
+    前回: B-2 qualifiers 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 不合格}
+    解消: 未解消(変更なし)
+    引用: '台帳 qualifiers "標本数と調査方法は本ページで未確認" / 出典ページ "a March-April 2023 study commissioned by Vectra and carried out by Sapio Research. Sapio surveyed 2,000 IT security analysts working at organizations with more than 1,000 employees"'
+    理由: 標本数と調査方法はページにある。qualifiers の「未確認」は出典と食い違う。
+  F204:
+    前回: B-2 qualifiers 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 不合格}
+    解消: 未解消(変更なし)
+    引用: '台帳 qualifiers "標本数は未確認" / 出典ページ "Sapio surveyed 2,000 IT security analysts"'
+    理由: F203 と同じ。
+  F205:
+    前回: B-1、B-2 statement 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。statement を B3 の発言に留め、論文の分析は F219 に分けた
+  F206:
+    前回: B-2 qualifiers 不合格(1%〜25%を10人全体の範囲のように書いていた)
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。qualifiers を「回答した10人のうちの2例」に直し、quote を "some analysts (n = 10)" から広げた
+  F207:
+    前回: B-1 statement・qualifiers 不合格、B-2 statement・qualifiers 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 不合格}
+    解消: 0.01% と value の指摘は解消(quote を0.01%の文まで広げた)。B-1 の「攻撃の試み27%は下限」は未解消
+    引用: '§1 "A significant portion of the alerts is related to “attack attempts” (at least 27%) that failed to cause damages." / §6.2 "we located 27.37% alerts that are associated with attack attempts"'
+    理由: qualifiers に下限であることがない。statement は「27%を占めた」と確定値として述べる。
+    直し方の案: qualifiers に「攻撃の試み27%は下限(本文 at least 27%、§6.2 は2020〜2022年で27.37%)」を加える
+  F209:
+    前回: B-1 statement・qualifiers・as_of 不合格、B-2 statement 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 不合格}
+    解消: チューニングの文と as_of(2007-02、初版)は解消。"in most cases" の脱落は未解消
+    引用: '"It is not possible to eliminate all false positives and negatives; in most cases, reducing the occurrences of one increases the occurrences of the other." / 台帳 statement "すべての誤検知をなくすことはできず、一方を減らすと他方が増える"'
+    理由: statement は「多くの場合」を落として断定している。qualifiers(IDPS全般、SP 800-94(2007年))にもない。また原文は「誤検知と見逃しの全てをなくせない」で、statement は「すべての誤検知」としている(軽微)。
+    直し方の案: statement を「誤検知と見逃しを全てなくすことはできず、多くの場合、一方を減らすと他方が増える」にする
+  F210:
+    前回: B-2 statement 不合格(軽。「保守作業など」が quote の外)
+    判定: {1_quote: 不合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: B-2 の指摘は解消(保守作業の文が quote に入った)。直したことで新しい問題が生じた
+    引用: '台帳 quote の途中 "send large numbers of e- 5 Signature-based detection is sometimes referred to as misuse detection, ... other publications may have different definitions. 2-4 GUIDE TO INTRUSION DETECTION AND PREVENTION SYSTEMS (IDPS) mails, initiate large numbers of network connections"'
+    理由: quote は PDF 抽出の文字列をそのまま写しており、ページ下の脚注5とページの柱が "e-mails" の語の途中に入っている。出典に連続した文として存在しない。また quote は §2.3.1(Signature-Based Detection)の末尾から始まり、locator(§2.3.2)と範囲が合わず、statement に関係しない部分が大半を占める。
+    直し方の案: quote を "Another problem with building profiles is that it can be very challenging in some cases to make them accurate, ... especially in more diverse or dynamic environments." の範囲(§2.3.2 の連続した本文)に絞る
+  F211:
+    前回: B-1、B-2 statement 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。statement を quote の範囲に留めた
+  F212:
+    前回: B-1、B-2 切り取り・statement 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。quote を "debatable" の文まで広げ、移設の例を外し、statement に限定を入れた
+  F213:
+    前回: B-1、B-2 statement 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: statement の指摘は解消(定義の紹介に留めた)
+    備考: B-1 が指摘した locator は直っていない。quote は Introduction にあり(本文中で1回だけ現れ、"2 Related Work" より前)、locator の「RQ2 Definition of FPs(および §3 の用語の定義)」には見当たらない。判定条件の外のため不合格にしないが、直すことを勧める
+  F214:
+    前回: B-2 qualifiers 不合格(軽)
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 不合格}
+    解消: 未解消(変更なし)
+    引用: '"Some analysts reported that signatures are “loosely written”" / 台帳 qualifiers "インタビュー参加者の認識(定性)"'
+    理由: 主体は「一部の分析者」。qualifiers にない。
+  F215:
+    前回: B-1、B-2 statement 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。statement を内部スキャンに絞り、外部ペネトレーションテストは F221 に分けた
+  F216:
+    前回: B-2 statement 不合格(軽)
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 合格}
+    解消: 未解消(変更なし)
+    引用: '"We identified benign triggers related to DNS services (1.4 million), and the vast majority are triggered due to external domains hosted under a local/internal IP." / 台帳 statement "外部ドメインを内部IPで運用していることがDNS関連アラートを大量に引き起こした(約140万件)"'
+    理由: 140万件の全体をこの原因に結んでいる。原文は「その大半」。
+  F402:
+    前回: B-1 qualifiers・as_of 不合格、B-2 判定できない(403)
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 不合格}
+    解消: as_of は解消(表紙 Publication November 2021 と一致)。適用範囲の指摘は未解消
+    引用: '"The Incident Response Playbook applies to incidents that involve confirmed malicious cyber activity and for which a major incident ... has been declared or not yet been reasonably ruled out." / 台帳 qualifiers "対象は連邦文民行政機関(FCEB)の、重大インシデントが宣言された、または未だ合理的に除外されていない事案"'
+    理由: 「確認された悪性のサイバー活動を含む」の条件が qualifiers にない。
+  F404:
+    前回: B-2 切り取り 不合格(表の P1 5分以内が落ちている)
+    判定したコミット: c0bb875(qualifiers に雛形であることが加わった。ページの "⚠️ Replace with your actual contacts." と一致。statement と quote は変わらない)
+    判定: {1_quote: 合格, 2_切り取り: 不合格, 3_statement: 不合格, 4_qualifiers: 合格}
+    解消: 表の値は出典で確認した(P1 は Step 2 Escalate to Tier 2 が 5 min、P2 は 30 min。SLA Respond は P1 15 min、P2 30 min)。ただし直し方が合格条件を満たさない
+    引用: '台帳 statement "同じ手順書の表では、P1はTier 2へ5分以内、P2はTier 2へ30分以内とされている" / 台帳 qualifiers "表の文面の写しは quote に含めていない" / 出典 "🔴 P1 Critical Incident ... 2 Escalate to Tier 2 Tier 2 Analyst (on-call) 5 min Phone + Ticket"'
+    理由: statement に quote にない内容(表の値)を加えた。条件は「落としている場合は quote を広げる」で、quote は図のラベルのままである。
+    直し方の案: 表の Step 2 の行を quote に加える(例 "2 Escalate to Tier 2 Tier 2 Analyst (on-call) 5 min" / "2 Escalate to Tier 2 Tier 2 Analyst 30 min")。qualifiers の「補助エージェントが2回の取得で同じ値を報告」は、照合した後なら不要
+  F405:
+    前回: B-2 qualifiers 不合格(軽)
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。qualifiers で1つ目を P1 の規則、2つ目を Do's の一般規則と分け、statement も「P1については」「一般の規則として」と分けた
+  F407:
+    前回: B-1 切り取り・statement 不合格、B-2 切り取り・statement 不合格
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。1つ目の引用を文末("... than simple monitoring allows")まで広げ、statement に2つ目の条件を加えた
+    備考: qualifiers の「1つ目の引用は原文の文の後半の終端記号を省いている」は、文末のピリオドを省いたという意味なら「文末のピリオドを省いている」とする方が分かりやすい
+  F408:
+    前回: B-1 statement・qualifiers・as_of 不合格、B-2 判定できない(403)
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 合格}
+    解消: as_of と qualifiers の書式は解消。statement の指摘は未解消
+    引用: '台帳 statement "連邦文民行政機関(FCEB)は、重大度によらず全てのサイバーセキュリティインシデントをCISAに速やかに報告する" / 台帳 qualifiers "(quote には含めていない)" / 出典 "Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA"'
+    理由: statement の後半は quote にない。quote の直後には "Report major incidents to CISA and to OMB at CyberIncidentReport@omb.eop.gov." もあり、宣言と報告の範囲に関わる。
+    直し方の案: quote を Declare Incident の項の Note の文まで広げる(4文が連続している)
+  F409:
+    前回: B-1、B-2 statement 不合格
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。statement から通知先を外し、quote の範囲(通知する、少なくとも誰に何をいつ報告するかを方針に含める、要件は組織で異なる)に留めた
+    備考: |
+      quote は §3.2.7 に実在(PDF ではページ番号 33 と柱が文中に入るが、本文は連続している)。
+      statement の「誰に何をいつ報告するかを少なくとも方針で定める」は、原文 "policies should include provisions concerning incident reporting—at a minimum, what must be reported to whom and at what times" の「少なくとも」の掛かり先と少しずれる(原文は「方針に、少なくとも誰に何をいつを含める」)。意味は大きく変わらないため合格とする。
+      qualifiers の通知先の一覧は、原文の括弧書き("Public affairs (for incidents that may generate publicity)"、"Legal department (for incidents with potential legal ramifications)")を省いている。statement の根拠ではないため判定に影響しない。
+  F410:
+    前回: B-1 statement・qualifiers 不合格、B-2 statement 不合格
+    判定したコミット: c0bb875
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。statement から3つの要因を外し、「資源に限りがあるため、先着順ではなく」を入れた
+    備考: 原文は "perhaps the most critical decision point"(おそらく最も重要な判断の点)。statement の「最も重要なものの1つ」は言い換えで、断定を強めてはいないので合格とする。「おそらく最も重要な判断の点」とする方が原文に近い
+  F504:
+    前回: B-1 statement・qualifiers 不合格、B-2 statement 不合格
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消。quote を Abstract の83%と39%の文にし、locator を Abstract に直し、qualifiers に欧州の1つのSOCを加えた(本文 "a SOC in Europe"、"six cases" も確認)
+  F506:
+    前回: B-1、B-2 statement 不合格(主体が SOC の分析者になっていた)
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 合格}
+    解消: 主体の指摘は解消(IT担当者に直した)。直したことで軽い問題が生じた
+    引用: '台帳 statement "RSA Conference 2018でImpervaが調べたIT担当者(IT professionals)179人のうち" / 出典 "Imperva surveyed 179 IT professionals"(quote の外。quote は "Because of this, it can be tempting ... past false-positive experiences.")'
+    理由: (軽)179人と RSA Conference 2018 は quote にない。値は出典と一致する。
+    直し方の案: 179人と RSA Conference を statement から外して qualifiers だけに置くか、"During the RSA Conference 2018, Imperva surveyed 179 IT professionals" を quote に加える
+  F508:
+    前回: B-1 statement 不合格(more likely を断定)
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    解消: 解消(「可能性が高い」とした)
+  # ---- 前回は合格で、今回内容が変わった事実 ----
+  F201:
+    変更: quote を前の2文まで広げ、statement と qualifiers を変更
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 合格}
+    引用: '台帳 statement "自動遮断(BHR)・ファイアウォールで人手を介さず処理されたアラートは約44.9%" / quote "6,474,204 alerts are handled by BHR during the second period (44.9%)"'
+    理由: (軽)「ファイアウォール」は quote にない(前の文 "implemented a Black Hole Router (BHR) [39] and firewall rules")。44.9%は BHR で処理された件数。第2期の期間(2020-12〜2022-07)は §6.1 で確認。
+    直し方の案: statement の「・ファイアウォール」を外す
+  F208:
+    変更: quote を "no such thing as a standard network" まで広げ、statement に「誤検知率は環境ごとに異なる」を加えた
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 不合格, 4_qualifiers: 合格}
+    引用: '"an IDS may have a different false positive rate in each network environment" / 台帳 statement "誤検知率は環境ごとに異なる"'
+    理由: (軽)"may have" を断定にしている(B-1 が F508 で不合格とした型と同じ)。quote は p.1 から p.2 へ続く連続した本文で実在。
+    直し方の案: 「誤検知率は環境ごとに異なりうる」にする
+  F403: {変更: quote を前後の文まで広げ「...」を外した, 判定: 合格, 理由: 連続した本文として実在。statement、qualifiers に問題なし}
+  F406: {変更: quote に "Hard escalation triggers:" までを加えた, 判定: 合格}
+  F411: {変更: quote の「...」を原文の2文で埋めた, 判定: 合格, 理由: 連続した本文として実在}
+  F413: {変更: quote の「...」を外した, 判定: 合格, 理由: 原文と一致}
+  F503: {変更: statement を「大半」に直した, 判定: 合格}
+  F507: {変更: quote に IDC と調査対象の文を加えた, 判定: 合格, 理由: statement の300人と MSSP 50社は quote と一致}
+  F509: {変更: locator を Appendix A.3 に直した, 判定: 合格, 理由: PDF の A.3 の後に "Dealing with uncertainties" の段落がある}
+  F510: {変更: qualifiers の書式を直した, 判定: 合格, 理由: 参加者 A1, A2, D6, E7 が1項目になった}
+  # ---- 新しい事実 ----
+  F219:
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    理由: §6 RQ2 の末尾に実在(直後は 7 RQ3 Quality of Alarms)。"mostly benign triggers and not necessarily a measurement" を「主に」「とは限らない」と訳しており合う。
+  F220:
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    理由: §6.2 の段落 "Benign Triggers." に実在。[4] は参考文献で Alahmadi らと確認。
+    備考: statement は良性のトリガーを「…説明される挙動」と定義しているが、原文は "correctly fired alerts, explained by business-justified, acceptable behaviors"(アラートの定義)。「…説明されるアラート」とするのが正確。意味の取り違えに近いので直すことを勧める
+  F221:
+    判定: {1_quote: 合格, 2_切り取り: 合格, 3_statement: 合格, 4_qualifiers: 合格}
+    理由: §6.4 External Pen Test に実在。2.7百万件、92%、Log4j(2022年前半)は quote と一致。

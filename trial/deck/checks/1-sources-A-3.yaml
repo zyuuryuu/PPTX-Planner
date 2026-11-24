@@ -1,0 +1,424 @@
+# 検査: 素材台帳の重大な検査 A(3回目。再検査)
+name: 素材台帳の出典照合(重大な検査。引用の実在と切り取り、記述と限定の一致)の再検査
+target:
+  - trial/deck/incoming/R1.yaml(F100〜F125)
+  - trial/deck/incoming/R3.yaml(F300〜F325)
+previous:
+  - trial/deck/checks/1-sources-A-1.yaml
+  - trial/deck/checks/1-sources-A-2.yaml
+definitions:
+  - docs/stages/01-exploration.md(「素材台帳」の節と、合格条件の「素材台帳」)
+judge: 検査セッション(モデル Claude Opus 5.5)
+round: 3
+checked_at: 2026-11-23
+method: >
+  出典を全て取得し直して照合した。NIST SP 800-92 / 800-94 / 800-61r2 / 800-61r3 と MITRE ATT&CK Design and Philosophy の PDF は
+  nvlpubs.nist.gov と attack.mitre.org から curl で取得し、pdftotext で文字に起こした。attack.mitre.org の /、/resources/、
+  /resources/faq/、/resources/versions/ と CyberDefenders の記事は HTML を取得した。CISA の PDF は curl では 403 だったため、
+  WebFetch で同じ URL から取得した PDF(44頁、Publication: November 2021、2024-08-23 作成)を pdftotext で文字に起こした。
+  csrc.nist.gov の SP 800-92 と SP 800-94 のページも取得した。
+  quote は、空白、改行、引用符、ダッシュ、行末のハイフン分割、表の区切り記号(| と ;)を正規化して機械で照合し、
+  照合できなかった4件(F100、F101、F109、F305)は原文を目で読んで、脚注番号(37、6)、脚注の挿入、改ページで割れているだけと確かめた。
+  そのうえで、前回の指摘の箇所と、直した箇所の前後の文脈を読んだ。
+  前回の版(コミット 7c2bad2 と 1314416 の直前)と今回の版を項目ごとに比べ、変わった項目だけを新しい問題の対象にした。
+  01-hypotheses.yaml、01-sources.yaml、journal.md、ほかの checks/ は読んでいない。成果物は変えていない。
+conditions:
+  c1: quote が出典に実在する
+  c2: quote の切り取りが、前後の条件・範囲・主体を落としていない
+  c3: statement が quote の述べていることと合う(言い過ぎ、quote にない内容がない)
+  c4: qualifiers が quote の条件・範囲・幅・不確かさを漏れなく挙げ、value/unit が合う(対象に value を持つ事実はない)
+scope:
+  前回の不合格または判定できない(A-1 か A-2 のどちらか): [F100, F102, F103, F104, F105, F107, F109, F110, F112, F113, F116, F117, F118, F119, F120,
+    F300, F301, F302, F303, F305, F306, F307, F308, F309, F310, F311, F312, F315, F316, F318]
+  新しく足された事実: [F121, F122, F123, F124, F125, F319, F320, F321, F322, F323, F324, F325]
+  前回どちらも合格で、一部の項目だけ変わった事実(変わった項目だけを見た): [F101, F106, F108, F111, F114, F115, F304, F313, F314, F317]
+
+summary:
+  total: 52
+  pass: 52
+  fail: 0
+  undetermined: 0
+  前回の指摘: 30件の全てで解消した(F303 は前回 A-2 の指摘そのものが誤りで、台帳が正しい。下の disputes)
+  新しい問題: 不合格に当たるものはない。軽い注記を6件(F100、F104、F112、F121、F305、F306)と F311 に付けた。判定には数えない
+  disputes:
+    F303: 収集セッションが正しい
+    F115_F119: 収集セッションが正しい
+
+disputes:
+  - id: F303
+    判定: 収集セッションが正しい。A-2 の c1 の不合格は誤り
+    引用:
+      - "出典(SP 800-61r3 Table 3、RS.MA-02 の行。-layout で文字に起こしたもの): RS.MA-02 | Incident reports are triaged and validated | High | R1: Perform a preliminary review of a new incident report to verify that a cybersecurity incident has occurred, then estimate the severity of the incident and the level of urgency needed to respond to it."
+    理由: >
+      "validated" は CSF の要素の説明の列("Incident reports are triaged and validated")にあり、R1 の本文は
+      "Perform a preliminary review of a new incident report ..." で、"new" と "incident" の間に語はない。
+      PDF の全文で "validated" は3か所だけ(1464行 "identified, validated, and"、2549行の上の要素説明、2745行 "estimated and validated")で、
+      R1 の中にはない。台帳の quote は R1 と一致する。台帳の qualifiers の「R1 の本文に "validated" の語はない」も正しい。
+  - id: F115, F119
+    判定: 収集セッションが正しい。'Last updated April 2024' は頁の本文の更新日ではない
+    引用:
+      - "出典(https://attack.mitre.org/resources/ の HTML): <a href=\"/docs/attack_roadmap_2024_april.pdf\"> … MITRE ATT&CK Roadmap … </a> <div class=\"text-label-small\">Last updated April 2024</div>"
+      - "同: <a href=\"/docs/attack_matrix_poster_2024_april.pdf\"> … MITRE ATT&CK Matrix Poster … </a> <div class=\"text-label-small\">Last updated April 2024</div>"
+    理由: >
+      頁にある 'Last updated' は2つだけで、どちらも資料(Roadmap と Matrix Poster の PDF)へのボタンの直下に付いた小さなラベルである。
+      リンク先のファイル名も 2024_april である。頁の本文(What is ATT&CK?、How can I use ATT&CK?)に更新日の表示はない
+      (日付らしい表示は、ほかに著作権表示 "2015 - 2026" と参考文献の年だけ)。
+      したがって A-1 の c5 の指摘(頁の更新日は April 2024)は誤りで、台帳の as_of「2026-11-23取得(ATT&CK v20.1)。ページに本文の更新日の表示なし」が正しい。
+      v20.1 は /resources/versions/ の "ATT&CK v20.1 October 13, 2026 - current" で確かめた。
+
+facts:
+  # ---- R1: 前回の不合格 ----
+  - id: F100
+    判定: 合格
+    前回: A-2 の c2、c4(脚注37の限定が落ちている)
+    c1: {判定: 合格, 理由: "3.4節に実在。原文は \"significant events,37 and\" で、脚注番号37が挟まるだけ"}
+    c2: {判定: 合格, 理由: "脚注37の原文が qualifiers に加わった。quote 自体は変わっていない"}
+    c3: 合格
+    c4: {判定: 合格, 理由: "脚注37 'Some SIEM products can prioritize events based on correlating events with other sources of information, such as the result of vulnerability scans.' を逐語で挙げた。指摘は解消"}
+    注記(判定に数えない): >
+      qualifiers の要約「優先順位付けは一部のSIEM製品の機能」は脚注より広い。脚注が「一部の製品」とするのは、
+      脆弱性スキャンの結果など他の情報源と相関させて優先順位を付けることで、優先順位付けそのものではない。
+      主張を狭める向きの誤差で、原文も併記しているため不合格にはしない。「他の情報源と相関させた優先順位付けは一部の製品」と書くと正確。
+  - id: F102
+    判定: 合格
+    前回: A-1、A-2 の c3(statement の後半が quote にない)
+    c1: {判定: 合格, 理由: "2.3.1節に実在(2文)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement は定義だけに縮められ、quote の2文と合う。後半は新しい F121 に分けた。指摘は解消"}
+    c4: 合格
+  - id: F103
+    判定: 合格
+    前回: A-1、A-2 の c3(有効性が quote にない)、A-1 の c4
+    c1: {判定: 合格, 理由: "2.3.2節に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement は定義だけになった。有効性(F122)と誤検知(F123)は別の事実に分けた。指摘は解消。「プロファイル」は同じ節の語で、言い換えの範囲"}
+    c4: 合格
+  - id: F104
+    判定: 合格
+    前回: A-1 の c3、c4(might monitor の例を必ず監視するものとして書いた)
+    c1: {判定: 合格, 理由: "2.4節に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement は「監視しうる特性の例として〜が挙げられている」になり、\"for suspicious activity\"(不審な活動について)も入った。指摘は解消"}
+    c4: {判定: 合格, 理由: "'might monitor' と 'Examples' を qualifiers に挙げた"}
+    注記(判定に数えない): "\"network traffic (only for that host)\" を「そのホスト宛のネットワーク通信」と訳しているが、原文はそのホストの通信(送信も含む)で、「宛」はやや狭い。「そのホストのネットワーク通信」が正確"
+  - id: F105
+    判定: 合格
+    前回: A-1 の c4(3分類を全体の分類と読める)
+    c1: 合格
+    c2: 合格
+    c3: 合格
+    c4: {判定: 合格, 理由: "「特に関心のあるログの種類として挙げた3つで、全てではない」とスイッチ、無線アクセスポイント、ネットワーク監視ソフトのログを挙げた。原文 'logs from network devices such as switches and wireless access points, and from programs such as network monitoring software, might record data that could be of use' と合う。指摘は解消"}
+  - id: F107
+    判定: 合格
+    前回: A-1、A-2 の c3(主体を antivirus からマルウェア対策ソフト一般に広げた)
+    c1: 合格
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement の主体が「マルウェア対策ソフトの最も一般的な形であるウイルス対策ソフト」になり、「全ての」も入った。指摘は解消"}
+    c4: 合格
+  - id: F109
+    判定: 合格
+    前回: A-1、A-2 の c2、c3、c4(ポリシーの文が quote の外、tend to の断定)
+    c1: {判定: 合格, 理由: "2.1.1節に実在。原文は \"network traffic.6 Firewalls\" で脚注番号6(SP 800-41 の案内)が挟まるだけ"}
+    c2: {判定: 合格, 理由: "quote を3文に広げ、ポリシーの文が入った"}
+    c3: {判定: 合格, 理由: "statement は3文と合い、「傾向がある」とした。指摘は解消"}
+    c4: {判定: 合格, 理由: "'tend to' を挙げた"}
+  - id: F110
+    判定: 合格
+    前回: A-1 の c3、c4(such as の例示が落ちている)
+    c1: 合格
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement に「など」が入った"}
+    c4: {判定: 合格, 理由: "'such as'(例示)を挙げた。指摘は解消"}
+  - id: F112
+    判定: 合格
+    前回: A-1、A-2 の c2、c3(主体と前半の内容が quote の外、条件 particularly for … が落ちている)
+    c1: {判定: 合格, 理由: "2.1.3節に実在(2文)"}
+    c2: {判定: 合格, 理由: "quote に \"application logs\" と、条件 \"particularly for applications that are not used through unencrypted network communications\" が入った。指摘は解消"}
+    c3: {判定: 合格, 理由: "statement は2文の内容と合う"}
+    c4: {判定: 合格, 理由: "条件と 'often' を挙げた"}
+    注記(判定に数えない): >
+      quote は "Much of this information" で始まり、"this information" が指すもの(直前の箇条書き: クライアントの要求とサーバの応答、
+      アカウント情報、利用状況、主要な操作)は quote の外にある。statement の「アプリケーションでしか記録できない情報が多く」は、
+      この範囲の情報のうちの多く、という意味で読める程度で、主張は変わらないため不合格にしない。qualifiers に指す範囲を書くとよい。
+  - id: F113
+    判定: 合格
+    前回: A-1 の c3、c4(時計のずれの might)
+    c1: 合格
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement は時間帯の変換を「多い」、時計のずれの補正を「生じうる」と分けた。指摘は解消"}
+    c4: {判定: 合格, 理由: "'often need' と 'might be necessary' を分けて挙げた"}
+  - id: F116
+    判定: 合格
+    前回: A-1、A-2 の c3(技術の定義が quote にない)
+    c1: {判定: 合格, 理由: "FAQ に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement を戦術の定義だけに縮めた。技術の定義は F125 に分けた。指摘は解消"}
+    c4: 合格
+  - id: F117
+    判定: 合格
+    前回: A-1、A-2 の c3(タグの文が quote にない)、A-1 の c2(exfiltrate で切れている)
+    c1: {判定: 合格, 理由: "Design and Philosophy の Tactics の節に実在(4文)"}
+    c2: {判定: 合格, 理由: "文末 \"exfiltrate data.\" まで入った"}
+    c3: {判定: 合格, 理由: "タグの文が quote に入り、statement の「1つ以上の戦術」「結果に応じて」と合う。指摘は解消"}
+    c4: {判定: 合格, 理由: "「1つ以上」と such as の例示を挙げた"}
+  - id: F118
+    判定: 合格
+    前回: A-1、A-2 の c3(「ツールに依存しない」が quote にない)
+    c1: 合格
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement から「ツールに依存しない」を除いた。指摘は解消"}
+    c4: {判定: 合格, 理由: "直前の段落の 'may not rely on prior knowledge of adversary tools and indicators' は原文(391行)にあり、may を「場合がある」と訳している"}
+  - id: F119
+    判定: 合格
+    前回: A-1、A-2 の c3(脅威インテリジェンスの文が quote にない)、書式の不備
+    c1: {判定: 合格, 理由: "/resources/ の Detections and Analytics に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement を quote の1文に縮め、脅威インテリジェンスの文は F124 に分けた。指摘は解消"}
+    c4: {判定: 合格, 理由: "'can help' を挙げた。qualifiers の割れも解消"}
+  - id: F120
+    判定: 合格
+    前回: A-1 の c2、c4(検知が可能とは限らないという続きが落ちている)
+    c1: 合格
+    c2: {判定: 合格, 理由: "続きの 'Detection may not always be possible for a given (sub-)technique and should be documented as such.' を qualifiers に逐語で挙げた。A-2 は c2 を合格としており、qualifiers での補足で足りる"}
+    c3: 合格
+    c4: {判定: 合格, 理由: "上の限定と vendor agnostic(原文789行 \"remain vendor agnostic, recommending the general method and class of tools rather than a specific tool\")を挙げた。指摘は解消"}
+
+  # ---- R1: 新しく足された事実 ----
+  - id: F121
+    判定: 合格
+    c1: {判定: 合格, 理由: "2.3.1節に実在"}
+    c2: {判定: 合格, 理由: "1文が全体で、\"many variants of known threats\" も入っている"}
+    c3: 合格
+    c4: 合格
+    注記(判定に数えない): "qualifiers の「後続の文で「未知の脅威には largely ineffective」と述べる」は F102 から写したもので、F121 では quote そのものの内容である。誤りではないが不要"
+  - id: F122
+    判定: 合格
+    c1: {判定: 合格, 理由: "2.3.2節に実在"}
+    c2: {判定: 合格, 理由: "同じ節の誤検知の短所は F123 に分けてある"}
+    c3: {判定: 合格, 理由: "「有効でありうる」で can を写している"}
+    c4: 合格
+  - id: F123
+    判定: 合格
+    c1: {判定: 合格, 理由: "2.3.2節に実在"}
+    c2: 合格
+    c3: 合格
+    c4: {判定: 合格, 理由: "'often' と 'especially in more diverse or dynamic environments' を挙げた"}
+  - id: F124
+    判定: 合格
+    c1: {判定: 合格, 理由: "/resources/ の Threat Intelligence に実在"}
+    c2: 合格
+    c3: 合格
+    c4: 合格
+  - id: F125
+    判定: 合格
+    c1: {判定: 合格, 理由: "FAQ の \"What are techniques?\" に実在"}
+    c2: 合格
+    c3: 合格
+    c4: 合格
+
+  # ---- R1: 前回どちらも合格で、一部が変わった事実 ----
+  - id: F101
+    判定: 合格
+    変わった項目: qualifiers
+    理由: "CSRC の注記(Final、2006-09、撤回の表示なし)は csrc.nist.gov/pubs/sp/800/92/final の 'Date Published: September 2006'、'09/13/06: SP 800-92 (Final)' と合う。統計的手法などの記述も原文にある"
+  - id: F106
+    判定: 合格
+    変わった項目: qualifiers
+    理由: "CSRC の注記は F101 と同じで正しい"
+  - id: F108
+    判定: 合格
+    変わった項目: qualifiers
+    理由: "同上"
+  - id: F111
+    判定: 合格
+    変わった項目: qualifiers
+    理由: "同上"
+  - id: F114
+    判定: 合格
+    変わった項目: qualifiers
+    理由: "書式の割れが解消。'October 13, 2026 - current' は /resources/versions/ で確認"
+  - id: F115
+    判定: 合格
+    変わった項目: as_of
+    理由: "disputes の F115、F119 を参照。as_of は正しい"
+  # SP 800-94 の CSRC の注記(F102〜F104、F121〜F123)は csrc.nist.gov/pubs/sp/800/94/final の
+  # 'Planning Note (07/15/2022): In 2012, NIST released Draft SP 800-94 Revision 1 … never became a final publication and has been retired …
+  #  NIST will announce when it initiates work to provide new guidance for IDS/IPS.' と合う。
+
+  # ---- R3: 前回の不合格または判定できない ----
+  - id: F300
+    判定: 合格
+    前回: A-1、A-2 の c3(要因の一覧が quote にない)、A-1 の c4(資源の限り)
+    c1: {判定: 合格, 理由: "3.2.6節に実在(3文)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement から要因の一覧を除き、「資源に限りがあるため」を入れた。指摘は解消"}
+    c4: {判定: 合格, 理由: "such as の例示、撤回を挙げた"}
+  - id: F301
+    判定: 合格
+    前回: A-1、A-2 の c3(「3つ」と断定、情報への影響と復旧が quote にない)
+    c1: 合格
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement は「要因の例として機能への影響を挙げ」、現在と将来の影響を述べる quote の1文と合う。ほかの要因は F319、F320 に分けた。指摘は解消"}
+    c4: 合格
+  - id: F302
+    判定: 合格
+    前回: A-1、A-2 の c3(smooth の脱落、「チームに回す」が quote の外)
+    c1: {判定: 合格, 理由: "3.2.6節に実在(\"—for example\" の手前まで)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "「円滑でない」「待機させることがある」になり、「チームに回す」を除いた。即時対応の候補の文も quote に入った。指摘は解消"}
+    c4: {判定: 合格, 理由: "qualifiers の「判断は事業への影響の見積りと復旧に要する労力の見積りによる」は同じ節の 'prioritize the response to each incident based on its estimate of the business impact caused by the incident and the estimated efforts required to recover' による"}
+  - id: F303
+    判定: 合格
+    前回: A-2 の c1(validated の脱落)
+    c1: {判定: 合格, 理由: "R1 の本文に実在。A-2 の指摘は誤り(disputes)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "直した statement(予備的な確認、その後に深刻度と緊急度の見積り)は quote と合う"}
+    c4: {判定: 合格, 理由: "要素の説明に validated があることを挙げた"}
+  - id: F305
+    判定: 合格
+    前回: A-1 の c2、c4(成熟度の文の脱落、N2 の位置の誤り、資源の限り)
+    c1: {判定: 合格, 理由: "Table 3 RS.MA の R1、R2 に実在。\"This set can range\" と \"from simple to incredibly complex\" の間で改頁している"}
+    c2: {判定: 合格, 理由: "成熟度の文が入った"}
+    c3: {判定: 合格, 理由: "資源の限りと成熟度が statement に入った"}
+    c4: {判定: 合格, 理由: "N2 の原文を逐語で挙げた(原文と一致)。指摘は解消"}
+    注記(判定に数えない): "原文の \"escalation, and elevation\" の elevation が statement の「トリアージ・優先順位付け・エスカレーション・復旧開始」から落ちている。主張を広げる向きではない"
+  - id: F306
+    判定: 合格
+    前回: A-1、A-2 の c3(要因の一覧が quote にない)
+    c1: {判定: 合格, 理由: "Stage 3 に実在(2文)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement から要因の一覧を除いた(F321 に分けた)。指摘は解消"}
+    c4: 合格
+    注記(判定に数えない): "原文は \"Most SIEM platforms assign\"。statement の主張(スコアを最終判断にしない)には影響しない"
+  - id: F307
+    判定: 合格
+    前回: A-1 の c2、c4(表の前の本文の脱落)
+    c1: {判定: 合格, 理由: "3.5節の本文と Table 3-5 に実在(表は箇条を連結)"}
+    c2: {判定: 合格, 理由: "表の前の本文(手順は種類で変わる、1.2 と 1.3 が不要な場合、順序を定めない)が入った"}
+    c3: 合格
+    c4: {判定: 合格, 理由: "1.4 の条件を挙げた。指摘は解消"}
+  - id: F308
+    判定: 合格
+    前回: A-1、A-2 の c3(「指標が正確でも〜」が quote にない)
+    c1: {判定: 合格, 理由: "3.2.4節に実在(連続する5文)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "該当の文が quote に入った。指摘は解消"}
+    c4: {判定: 合格, 理由: "ideally と件数の文脈を挙げた"}
+  - id: F309
+    判定: 合格
+    前回: A-1、A-2 の c3(優先順位付けの文が quote にない)
+    c1: 合格
+    c2: 合格
+    c3: {判定: 合格, 理由: "次の文が quote に入った。指摘は解消"}
+    c4: 合格
+  - id: F310
+    判定: 合格
+    前回: A-1 の c3、c4(may include を「始める」とした)、A-2 は判定できない(403)
+    c1: {判定: 合格, 理由: "CISA の PDF p.10 Determine Investigation Scope に実在(\"thirdparty\" は行末のハイフン分割)"}
+    c2: {判定: 合格, 理由: "直前は範囲の確認の一般的な説明で、quote の条件を変えない"}
+    c3: {判定: 合格, 理由: "statement は「含まれうる」になった。指摘は解消"}
+    c4: {判定: 合格, 理由: "'may include' を挙げた。脚注15(\"NIST SP 800-61 Rev. 2: Computer Security Incident Handling Guide\")は同じ頁にあり、qualifiers の記述は正しい(本文で脚注15が付くのは次の Collect and Preserve Data の段落)"}
+  - id: F311
+    判定: 合格
+    前回: A-2 は判定できない(403)。A-1 は合格。台帳は verified 以外変わっていない
+    c1: {判定: 合格, 理由: "CISA の PDF pp.10-11 Perform Technical Analysis に実在(\"to\" と \"determine\" の間で改頁)"}
+    c2: {判定: 合格, 理由: "直後の文は分析の目的(攻撃の連鎖の一部を見つける)で、quote の条件を変えない"}
+    c3: 合格
+    c4: 合格
+    注記(判定に数えない): "原文は根本原因を determine(特定)し、TTPs を document(記録)する。statement の「根本原因と攻撃者の手口を記録し」は、根本原因についても「記録」としている。A-1 と同じく軽い言い換えとみなした。「根本原因を特定し、攻撃者の手口を記録し」が正確"
+  - id: F312
+    判定: 合格
+    前回: A-1、A-2 の c3(statement の7段階を quote が支えない)
+    c1: {判定: 合格, 理由: "The 7-Stage SOC Alert Triage Process に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "quote を A-1 が勧めた文に替え、statement もそれに合わせた。指摘は解消"}
+    c4: {判定: 合格, 理由: "7段階の名称は頁の見出し(Stage 1 - Alert Ingestion and Centralization 〜 Stage 7 - Documentation and Continuous Improvement)と一致"}
+  - id: F315
+    判定: 合格
+    前回: A-1、A-2 の c3(Benign True Positive と Unclear の行が quote にない)、A-1 の c4
+    c1: {判定: 合格, 理由: "Stage 5 の表の3行に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "3行が quote に入り、「閉じずに」も除いた。指摘は解消"}
+    c4: 合格
+  - id: F316
+    判定: 合格
+    前回: A-1、A-2 の c3(状況の記録が quote にない)、A-1 の c2、c3(疑った時点の条件と食い違い)
+    c1: {判定: 合格, 理由: "3.2.5節の冒頭の文に実在"}
+    c2: {判定: 合格, 理由: "quote を節の冒頭の文に替え、疑った時点の条件が入った"}
+    c3: {判定: 合格, 理由: "statement は quote と合う。状況の記録は F322、F323 に分けた。指摘は解消"}
+    c4: 合格
+  - id: F318
+    判定: 合格
+    前回: A-1、A-2 の c3(調整・抑制・更新が quote にない、can be used を「べき」)
+    c1: {判定: 合格, 理由: "Stage 7 に実在(3文)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "statement から Stage 5 の内容を除き(F324 に分けた)、記録の内容は quote に入った。指摘は解消"}
+    c4: 合格
+
+  # ---- R3: 新しく足された事実 ----
+  - id: F319
+    判定: 合格
+    c1: {判定: 合格, 理由: "3.2.6節の箇条に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "「影響しうる」で may を写している"}
+    c4: {判定: 合格, 理由: "例示と撤回を挙げた"}
+  - id: F320
+    判定: 合格
+    c1: {判定: 合格, 理由: "3.2.6節の箇条に実在"}
+    c2: {判定: 合格, 理由: "続く文(復旧できない場合もある)は quote の主張の条件ではない"}
+    c3: 合格
+    c4: 合格
+  - id: F321
+    判定: 合格
+    c1: {判定: 合格, 理由: "Stage 3 の導入の文と表に実在"}
+    c2: 合格
+    c3: 合格
+    c4: 合格
+  - id: F322
+    判定: 合格
+    c1: {判定: 合格, 理由: "3.2.5節に実在"}
+    c2: 合格
+    c3: 合格
+    c4: 合格
+  - id: F323
+    判定: 合格
+    c1: {判定: 合格, 理由: "3.2.5節に実在"}
+    c2: 合格
+    c3: 合格
+    c4: {判定: 合格, 理由: "qualifiers の追跡システムの記録項目は同じ段落の箇条(status、summary、indicators、actions taken ほか)と合う"}
+  - id: F324
+    判定: 合格
+    c1: {判定: 合格, 理由: "Stage 5 に実在(2文)"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "「使えるデータ」で can be used を写している"}
+    c4: 合格
+  - id: F325
+    判定: 合格
+    c1: {判定: 合格, 理由: "Stage 7 に実在"}
+    c2: 合格
+    c3: {判定: 合格, 理由: "measurably better を「目に見えて改善」とした。言い換えの範囲"}
+    c4: {判定: 合格, 理由: "解説者の主張で根拠の調査を示さないことは、頁の該当箇所の前後に出典や調査の引用がないことで確かめた"}
+
+  # ---- R3: 前回どちらも合格で、一部が変わった事実 ----
+  - id: F304
+    判定: 合格
+    変わった項目: source
+    理由: "題名を表紙の \"Cybersecurity Risk Management\" に直した(A-1 の参考の指摘に合う)"
+  - id: F313
+    判定: 合格
+    変わった項目: source
+    理由: "同上"
+  - id: F317
+    判定: 合格
+    変わった項目: source
+    理由: "同上"
+  - id: F314
+    判定: 合格
+    変わった項目: qualifiers
+    理由: "撤回の記載は r2 の PDF 冒頭 'Withdrawal Date April 3, 2025 … withdrawn and superseded in its entirety by NIST SP 800-61r3' と合う"
+
+out_of_scope_observation: >
+  指摘ではない(F303 の qualifiers のこの項目は直されておらず、前回の検査で問われていないため、判定に数えない)。
+  F303 の qualifiers「優先度の区分は High(推奨の度合い)」について、SP 800-61r3 は Priority を
+  "Each row’s relative priority within the context of incident response"(High: "Functions as a core incident response activity for most organizations")
+  と定義しており、R1 の推奨の度合いではなく、CSF の要素(RS.MA-02)の行の優先度である。設計セッションが使う前に確かめるとよい。

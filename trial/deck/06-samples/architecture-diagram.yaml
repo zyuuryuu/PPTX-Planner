@@ -1,0 +1,27 @@
+# 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+id: ch2-s3
+status: done
+headline: EDRは端末の振る舞いの記録を継続して集め、製品の例では脅威を検知するとアラートを作る
+takeaway: EDRの材料は、端末の振る舞いを集め続けた記録である
+body:
+  type: architecture-diagram
+  elements:
+  - E-endpoint
+  - E-edr-agent
+  - E-edr-central-db
+  - E-mde
+  - E-mde-sensor
+  - D-mde-telemetry
+  - D-mde-alert
+  relations:
+  - R-endpoint-agent
+  - R-agent-central-db
+  - R-mde-sensor
+  - R-mde-alert
+  highlight: 左の枠(記録を継続して集める)
+sources:
+- F615
+- F616
+- F618
+- F619
+notes: 左は要件の文書、右は製品の文書で、出典が違う。右の記録からアラートへの経路は出典に書かれていないので描かない。

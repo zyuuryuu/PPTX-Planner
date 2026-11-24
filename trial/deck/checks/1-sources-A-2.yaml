@@ -1,0 +1,342 @@
+# 検査: 素材台帳の重大な検査(引用の実在、切り取り、記述と限定の一致)
+name: 素材台帳の重大な検査 A(2回目)
+target: trial/deck/01-sources.yaml のうち request が R1 または R3 の事実 40件(F100〜F120、F300〜F318)
+inspector: Claude Sonnet 5.5
+date: 2026-11-23
+method: >
+  出典を取得して全文を照合した(NIST SP 800-92 / 800-94 / 800-61r2 / 800-61r3 と MITRE ATT&CK Design and Philosophy の PDF を
+  テキスト化、MITRE ATT&CK の3ページと CyberDefenders のページを HTML 取得)。quote は空白・引用符・改行の違いを除いて機械照合し、
+  不一致と、statement が quote の外にある内容を述べている箇所は出典の前後を読んで確かめた。
+  cisa.gov は取得時に 403 を返した。ユーザーエージェントの偽装などで回避せず、判定できないとした。
+conditions:
+  c1: quote が出典に実在する
+  c2: quote の切り取りが、前後の条件・範囲・主体を落としていない
+  c3: statement が quote の述べていることと合う(言い過ぎ、quote にない内容がない)
+  c4: qualifiers が quote の条件・範囲・幅・不確かさを漏れなく挙げ、value/unit が合う
+  c5: as_of と、撤回・旧版の扱い(参考)
+summary:
+  total: 40
+  pass: 17      # F101 F104 F105 F106 F108 F110 F111 F113 F114 F115 F120 F304 F305 F307 F313 F314 F317
+  fail: 21      # F100 F102 F103 F107 F109 F112 F116 F117 F118 F119 F300 F301 F302 F303 F306 F308 F309 F312 F315 F316 F318
+  undetermined: 2   # F310 F311(出典を開けない)
+  main_pattern: >
+    不合格の多くは c3。statement は出典の内容としては正しいが、quote が1文だけで、statement が述べる後続の文や別の文
+    (要因の一覧、定義の後半、用途の2つ目など)が quote に入っていない。出典に実在する内容なので、quote を広げれば直せるものが大半。
+    重大な検査の条件は「statement が quote に合う」ため、通さない。
+  other: >
+    F100 は脚注37が「優先順位付けは一部の製品」と限定している。F303 は quote が原文の validated を落としている。
+    F302 と F301 は原文の程度(smooth、such as)を statement が強めている。
+    F114 と F119 の qualifiers は、原文の引用の中のカンマで YAML の項目が分割されている(書式の不備)。
+    R3 の依頼で使う NIST SP 800-61r2 の事実(F300 F301 F302 F307 F308 F309 F314 F316)は、出典が 2025-04-03 に撤回されているのに、
+    qualifiers に撤回の記載がない(F400 と F401 にはある)。
+
+facts:
+- id: F100
+  c1: {verdict: 合格, reason: 'quote は出典 3.4 に実在。原文は "significant events," の直後に脚注番号37がある(転記で落ちた。実質の違いなし)'}
+  c2:
+    verdict: 不合格
+    quote_in_source: 'identifies and prioritizes significant events,37'
+    reason: '脚注37は "Some SIEM products can prioritize events based on correlating events with other sources of information, such as the result of vulnerability scans." と述べ、優先順位付けが一部の製品の機能であることを限定している。quote はこの限定を落としている'
+  c3: {verdict: 合格, reason: 'statement は quote の内容に合う(「応答の開始」は statement が省き、qualifiers が挙げている)'}
+  c4: {verdict: 不合格, reason: '「優先順位付けは一部の製品の機能(脚注37)」が qualifiers にない'}
+  c5: {verdict: 判定できない, reason: '「旧版(archived)」の表記は、取得した PDF からは確認できない。2006-09 は PDF の版と一致'}
+- id: F101
+  c1: {verdict: 合格, reason: '出典 3.2 に実在。原文は改ページで脚注24が挟まる(quote は本文を連結して正しく写している)'}
+  c2: {verdict: 合格, reason: '直後に "Event correlation can also be performed in other ways, such as using statistical methods" とあり、「最も一般的」の限定は statement にある'}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ(「旧版(archived)」の確認不能)'}
+- id: F102
+  c1: {verdict: 合格, reason: '出典 2.3.1 に実在(文末に脚注番号5)'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '既知の脅威には非常に有効だが、未知の脅威や回避された脅威には効果が乏しい'
+    reason: 'この部分は quote にない。出典の後続の文("very effective at detecting known threats but largely ineffective at detecting previously unknown threats, threats disguised by …")にはある。quote を広げれば直る'
+  c4: {verdict: 合格, reason: 'qualifiers が後続の文の存在を挙げている'}
+  c5: {verdict: 合格}
+- id: F103
+  c1: {verdict: 合格, reason: '出典 2.3.2 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '未知の脅威の検知に有効である'
+    reason: 'quote は定義の1文だけ。「有効」は後続の文 "Anomaly-based detection methods can be very effective at detecting previously unknown threats." による。同じ段落には "Common problems … generating many false positives." もあり、statement は有効性だけを述べている'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F104
+  c1: {verdict: 合格, reason: '出典 2.4 に実在(第2章)。quote は原文の2文を連結'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格, reason: 'statement は列挙の一部("network traffic (only for that host)" など)を省くが、「など」で足りる'}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F105
+  c1: {verdict: 合格, reason: '出典 2.1 に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F106
+  c1: {verdict: 合格, reason: '出典 2.1.1 に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F107
+  c1: {verdict: 合格, reason: '出典 2.1.1 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_source: 'The most common form of antimalware software is antivirus software, which typically records all instances of detected malware, …'
+    reason: 'quote の主体は antivirus software(antimalware の最も一般的な形)。statement は「マルウェア対策ソフトのログ」と主体を広げ、qualifiers も antivirus に限ることを挙げていない。"all instances" の「全て」も statement にない'
+  c4: {verdict: 合格, reason: '「通常は」は挙げている(ただし主体の限定は c3 の指摘)'}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F108
+  c1: {verdict: 合格, reason: '出典 2.1.1 に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F109
+  c1: {verdict: 合格, reason: '出典 2.1.1 に実在'}
+  c2:
+    verdict: 不合格
+    quote_in_source: 'Like routers, firewalls permit or block activity based on a policy; however, firewalls use much more sophisticated methods to examine network traffic.'
+    reason: '「ポリシーに基づき許可または遮断」は quote の直前の文にあり、quote の外'
+  c3:
+    verdict: 不合格
+    reason: 'statement の「ポリシーに基づき通信を許可または遮断し」は quote にない。quote の "tend to have more complex policies and generate more detailed logs" の「傾向がある」を、statement は断定に変えている'
+  c4: {verdict: 不合格, reason: '"tend to"(傾向)が qualifiers にない'}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F110
+  c1: {verdict: 合格, reason: '出典 2.1.2 に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格, reason: '「管理者が指定できる」は quote 外だが、直後の文 "OSs typically permit system administrators to specify …" による(typically の限定が付く)'}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F111
+  c1: {verdict: 合格, reason: '出典 2.1.2 に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F112
+  c1: {verdict: 合格, reason: '出典 2.1.3 に実在'}
+  c2:
+    verdict: 不合格
+    quote_in_source: 'However, these logs are often in proprietary formats …'
+    reason: 'quote は "However, these logs" で始まり、主体(アプリケーションログ)が quote に入っていない。主体は直前の文にある'
+  c3:
+    verdict: 不合格
+    quote_in_statement: 'クライアントの要求とサーバの応答、アカウント情報、利用状況などを記録し、アプリケーション関連のインシデントの調査に特に有用である'
+    reason: 'quote は「独自形式が多く、内容が文脈に依存し確認に資源が要る」だけで、この部分は quote にない(出典の前の文にはある)'
+  c4: {verdict: 合格, reason: '"often" は挙げている'}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F113
+  c1: {verdict: 合格, reason: '出典 3章の脚注24に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格, reason: 'quote は "particularly challenging"(特に難しい)とも述べるが、statement は必要性を述べており矛盾しない'}
+  c4: {verdict: 合格}
+  c5: {verdict: 判定できない, reason: 'F100 と同じ'}
+- id: F114
+  c1: {verdict: 合格, reason: 'MITRE ATT&CK トップページに実在(取得時点)'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格, reason: '書式の不備: qualifiers の「日付は Version History ページの「October 13, 2026 - current」」が、カンマで2つの項目に割れている'}
+  c5: {verdict: 合格, reason: 'Version History ページで "ATT&CK v20.1 October 13, 2026 - current" を確認'}
+- id: F115
+  c1: {verdict: 合格, reason: 'resources/ の Key Concepts に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F116
+  c1: {verdict: 合格, reason: 'FAQ に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '技術は戦術上の目的を達成する「どのように」を表す'
+    reason: 'quote は戦術の定義の1文だけ。技術の定義は qualifiers に原文があるが、quote にない。quote を広げる'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F117
+  c1: {verdict: 合格, reason: '出典 3.3 Tactics に実在。原文は "exfiltrate data" で、quote は "data" の手前で終わる(qualifiers に明記済み)'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '技術にタグとして付けられる'
+    reason: 'quote にない。出典の次の文 "Tactics are treated as “tags” within ATT&CK where a technique or sub-technique is associated or tagged with one or more tactic categories" による'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F118
+  c1: {verdict: 合格, reason: 'Behavioral Analytics Development に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '攻撃者が使うツールに依存しない'
+    reason: 'quote にない。出典の前の文 "agnostic or independent of specific tools that may be used" による'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F119
+  c1: {verdict: 合格, reason: 'resources/ の How can I use ATT&CK? に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '脅威インテリジェンスでは、構造化・比較・分析のための共通言語になる'
+    reason: 'quote は1文目だけ。2文目の内容は qualifiers にあるが quote にない'
+  c4: {verdict: 合格, reason: '書式の不備: qualifiers の脅威インテリジェンスの原文が、カンマで3つの項目に割れている'}
+  c5: {verdict: 合格}
+- id: F120
+  c1: {verdict: 合格, reason: 'Design and Philosophy の技術ページの項目表(Detection* Field)に実在'}
+  c2: {verdict: 合格, reason: '項目名の "Detection*" の * は、表の脚注 "*Only applies to techniques and not sub-techniques" と対応する可能性がある(表の配置から Detection に掛かるかは確定できない)。statement は「各技術」と述べるので、結論は変わらない'}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F300
+  c1: {verdict: 合格, reason: '出典 3.2.6 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '機能への影響・情報への影響・復旧の難しさなどの要因'
+    reason: 'quote は "such as the following:" で終わり、要因の一覧が quote にない。出典の直後の箇条書きにはある'
+  c4: {verdict: 合格, reason: '"such as" を挙げている'}
+  c5: {verdict: 不合格, reason: '出典は 2025-04-03 に撤回(後継は SP 800-61r3)。qualifiers に撤回の記載がない(F400 にはある)。参考'}
+- id: F301
+  c1: {verdict: 合格, reason: '出典 3.2.6 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '情報への影響(機密性・完全性・可用性)、復旧のしやすさの3つ'
+    reason: 'quote は機能への影響の1文だけ。情報への影響と復旧のしやすさは quote にない'
+  c4:
+    verdict: 不合格
+    reason: '出典の要因は "such as the following" による例示。statement の「3つ」は網羅を断定している。F300 の qualifiers にある「例示」が F301 にない'
+  c5: {verdict: 不合格, reason: 'F300 と同じ(撤回の記載なし)。参考'}
+- id: F302
+  c1: {verdict: 合格, reason: '出典 3.2.6 に実在(文は "—for example, …" の手前で終わる)'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    reason: 'quote は "may not have smooth recovery paths"(円滑な道筋がないことがある)。statement の「復旧の道筋がない」は程度を強めている。また「戦略的なチームに回す」は quote の "queued for a more strategic-level response" と違い、出典の後続の例の文("transfer part of the responsibility … to a more strategic-level team")による'
+  c4: {verdict: 合格}
+  c5: {verdict: 不合格, reason: 'F300 と同じ(撤回の記載なし)。参考'}
+- id: F303
+  c1:
+    verdict: 不合格
+    quote_in_source: 'R1: Perform a preliminary review of a new validated incident report to verify that a cybersecurity incident has occurred, then estimate the severity …'
+    quote_in_ledger: 'Perform a preliminary review of a new incident report to verify …'
+    reason: '原文の "new validated incident report" の validated が quote にない(省略記号なし)。表の要素 RS.MA-02 の説明は "Incident reports are triaged and validated"'
+  c2: {verdict: 合格, reason: 'R1 の位置(Table 3 RS.MA-02)、優先度 High は一致'}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F304
+  c1: {verdict: 合格, reason: 'Table 3 RS.MA-03 R2 に実在。原文は "time- critical" の行末のハイフンで、qualifiers に明記済み'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F305
+  c1: {verdict: 合格, reason: 'Table 3 RS.MA の R1 と R2 に実在(原文は "first- come" の行末ハイフン。quote は R1: の見出し記号を省いている)'}
+  c2: {verdict: 合格, reason: '続く N2 に要因の例があり、qualifiers が挙げている'}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F306
+  c1: {verdict: 合格, reason: 'Stage 3 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: 'アラートの優先順位を、資産の重要度、攻撃の段階、脅威インテリジェンスとの一致、異常スコア、業務上の文脈で付ける'
+    reason: 'quote は SIEM のスコアを最終判断にしないという1文だけ。要因の一覧は quote にない(同じ節の表にはある)'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格, reason: '"Last updated Sep 15, 2026" を確認'}
+- id: F307
+  c1: {verdict: 合格, reason: '3.5 Table 3-5 に実在(原文は箇条書きを連結)'}
+  c2: {verdict: 合格, reason: '直前の文 "it does not dictate the exact sequence" を qualifiers が挙げている'}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 不合格, reason: 'F300 と同じ(撤回の記載なし)。参考'}
+- id: F308
+  c1: {verdict: 合格, reason: '3.2.4 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '指標が正確でもインシデントとは限らないと述べる'
+    reason: 'quote にない。出典の後の文 "Even if an indicator is accurate, it does not necessarily mean that an incident has occurred." による。qualifiers に挙げてあるが、quote に入れるべき'
+  c4: {verdict: 合格}
+  c5: {verdict: 不合格, reason: 'F300 と同じ(撤回の記載なし)。参考'}
+- id: F309
+  c1: {verdict: 合格, reason: '3.2.4 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: 'その結果を後続の作業の優先順位付けに使う'
+    reason: 'quote は範囲の判定までで、次の文 "The initial analysis should provide enough information for the team to prioritize subsequent activities" が quote にない'
+  c4: {verdict: 合格}
+  c5: {verdict: 不合格, reason: 'F300 と同じ(撤回の記載なし)。参考'}
+- id: F310
+  c1: {verdict: 判定できない, reason: 'cisa.gov が 403 を返し、PDF を取得できなかった。回避の手段(ブラウザのふりなど)は取らなかった'}
+  c2: {verdict: 判定できない, reason: 'c1 と同じ'}
+  c3: {verdict: 判定できない, reason: 'c1 と同じ'}
+  c4: {verdict: 判定できない, reason: 'c1 と同じ'}
+  c5: {verdict: 判定できない, reason: 'c1 と同じ'}
+- id: F311
+  c1: {verdict: 判定できない, reason: 'F310 と同じ(403)'}
+  c2: {verdict: 判定できない, reason: 'F310 と同じ'}
+  c3: {verdict: 判定できない, reason: 'F310 と同じ'}
+  c4: {verdict: 判定できない, reason: 'F310 と同じ'}
+  c5: {verdict: 判定できない, reason: 'F310 と同じ'}
+- id: F312
+  c1: {verdict: 合格, reason: 'Stage 4 の本文に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    reason: 'statement は「7段階(取り込み、分類、優先順位付け、調査と証拠収集、真偽の判定、エスカレーション、文書化)で扱う」と述べるが、quote は第4段階の説明の1文だけで、7段階の構成を支えない。7段階は出典の見出しにある(Stage 1〜7)が quote にない。quote を、7段階を示す箇所に取り替える'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F313
+  c1: {verdict: 合格, reason: 'Table 3 DE.AE-08 R1 に実在(原文は表の2列で折り返され、本文順に直すと quote と一致)'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F314
+  c1: {verdict: 合格, reason: 'Appendix の用語集に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 不合格, reason: 'F300 と同じ(撤回の記載なし)。参考'}
+- id: F315
+  c1: {verdict: 合格, reason: 'Stage 5 の表の行に実在。quote の "|" は表の列の区切りを写したもの(qualifiers に明記済み)'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '挙動が実在しても承認済みか想定内なら閉じて、ルールの調整を検討する。証拠が足りない場合は閉じずに上位の分析者へ回すか追加データを待つ'
+    reason: 'quote は表の「False Positive」の1行だけ。「Benign True Positive」と「Unclear」の行の内容は quote にない(qualifiers には一部がある)'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F316
+  c1: {verdict: 合格, reason: '3.2.5 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '状況の記録を課題追跡システムなどで保つ'
+    reason: 'quote は「時刻を付けて文書化する」の1文だけ。状況の記録を保つこと(issue tracking system)は後続の文による'
+  c4: {verdict: 合格}
+  c5: {verdict: 不合格, reason: 'F300 と同じ(撤回の記載なし)。参考'}
+- id: F317
+  c1: {verdict: 合格, reason: 'Table 3 DE.CM R2 に実在'}
+  c2: {verdict: 合格}
+  c3: {verdict: 合格}
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}
+- id: F318
+  c1: {verdict: 合格, reason: 'Stage 7 に実在'}
+  c2: {verdict: 合格}
+  c3:
+    verdict: 不合格
+    quote_in_statement: '誤検知は閉じて終わりにせず、検知ルールの調整、既知の安全な条件の抑制、基準モデルの更新に使うべきだ'
+    reason: 'quote は「閉じた全てのアラートに記録を残す」の1文だけ。調整、抑制、基準モデルの更新は quote にない(Stage 5 の別の段落にある)'
+  c4: {verdict: 合格}
+  c5: {verdict: 合格}

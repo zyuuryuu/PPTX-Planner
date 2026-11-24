@@ -1,0 +1,92 @@
+# 工程2 問いごとの答えの再検査(重大な検査の最終の再検査。1回だけ行い、残った指摘は直さずに記録する)
+check: 問いごとの答え 最終の再検査(前回の指摘の解消、直したことによる新しい問題)
+target: trial/deck/02-answers.yaml
+target_scope: 前回(2-answers-3)で不合格だった8件(Q1.2、Q3.1.1、Q3.2、Q3.3.3、Q4.1、Q3.1、Q3、Q0)だけ
+target_commit: c63d51314e6726f37b31952522c7b2cf8c2f9a0d
+previous_check: trial/deck/checks/2-answers-3.yaml
+inspector: claude-sonnet-5-5
+read:
+  - trial/deck/02-answers.yaml(判定の版と、前回判定の版 fe6a8ab の差分)
+  - trial/deck/checks/2-answers-3.yaml
+  - trial/deck/01-plan.yaml、trial/deck/01-sources.yaml(stance の欄は読まない)、trial/deck/terms.yaml、trial/deck/decisions.md
+  - docs/stages/02-claims.md(問いごとの答えの合格条件)
+not_read: [01-hypotheses.yaml, journal.md, 出典の本文]
+note: 出典は開いていない。台帳の statement、quote、qualifiers と照らした。8件以外には指摘を出していない。
+conditions:
+  c1: 末端の答えが evidence の事実の限定を落としていない。事実にない内容を足していない。数値が一致する【重大】
+  c2: 末端の答えが evidence の事実で裏付けられる
+  c3: 親と根の答えが、子の答えと assumes から導ける。足していない。子の限定を落としていない
+  c4: 語彙表の区別に沿っている
+  c5: 撤回済みの Rev.2 だけが支える内容は明示。組み立てた基準は「案」と明示
+summary:
+  total: 8
+  pass: 5
+  fail: 3
+  cannot_judge: 0
+  fail_ids: [Q1.2, Q3.1, Q3]
+  pass_ids: [Q3.1.1, Q3.2, Q3.3.3, Q4.1, Q0]
+  severity: 不合格の3件は全て軽い指摘
+results:
+- question: Q1.2
+  verdict: 不合格
+  resolved:
+  - 「駆除の試み」「(記録する事象は管理者が指定できる)」を書いた
+  findings:
+  - condition: c1
+    severity: 軽い
+    status: 前回の指摘が一部残る
+    quote_answer: 認証サーバのログは、認証の試行ごとに接続元、ユーザー名、成否、日時を記録する
+    quote_fact: 'F108 qualifiers: 「通常は」(typically)の記述'
+    reason: 「通常」は直した文でもウイルス対策ソフトの項目にだけ付き、認証サーバには掛からない。認証サーバのログを、例外のない記録として述べている。前回の提案(「通常は、」を文頭に出すか認証サーバにも付ける)が反映されていない。
+- question: Q3.1.1
+  verdict: 合格
+  resolved:
+  - 「NIST SP 800-61 Rev.3 にも、ほかに調べた公的な文書にも書かれていなかった」とし、公開の標準全般の不在の断定を、調べた範囲の記述に直した(F600 の qualifiers と合う)
+  - 「閉じるときに」をやめ「アラートやインシデントに分類を付けるものがある」とし、F607、F609 の場面と合った
+- question: Q3.2
+  verdict: 合格
+  resolved:
+  - 「(根拠は示されていない)」を添え、F403 の qualifiers を保った
+- question: Q3.3.3
+  verdict: 合格
+  resolved:
+  - 「次の手順などを含めるとしていた」とし、F412 の一覧が全体でないことを示した
+- question: Q4.1
+  verdict: 合格
+  resolved:
+  - 「ベンダーのImpervaの調査」「IDCとFireEyeの調査を報じた記事」とし、ベンダーの調査であることと報道経由であることを示した
+  - 「1つのSOCの分析者12人に6件の事例を判定させた調査」とした
+  - 「誤検知(出典の言い方)」を2か所に付け、c4 の指摘が解消した
+  - Target の部分を「米上院の報告が報道を引いて述べ」とし、帰属が付いた(前回の新しい問題が解消)
+- question: Q3.1
+  verdict: 不合格
+  resolved:
+  - assumes に「閉じてよい条件は組織が決める(D001…)」を置き、「組織が決める」の根拠が示された
+  - 記録と見直しの主語を「民間の解説は」に分け、Q3.1.2 と合った
+  findings:
+  - condition: c3
+    severity: 軽い
+    status: 直したことによる新しい問題
+    quote_answer: 製品の文書と民間の解説には、閉じるときに分類を付けるものがある
+    quote_child: 'Q3.1.1: 製品の公式の文書と民間のSOC向けの解説には、アラートやインシデントに分類を付けるものがある'
+    reason: Q3.1.1 を直したとき「閉じるときに」を外した。Q3.1 には「閉じるときに」が残り、子の答えからは導けなくなった。閉じるときの分類が必須と言えるのは F605 と F315 で、F607、F609 は閉じるときとは述べていない。
+    suggestion: Q3.1 を「分類を付けるものがある」に合わせるか、Q3.1.1 に「閉じるときに分類を付けるもの(Sentinel、民間の解説)」を戻す。
+- question: Q3
+  verdict: 不合格
+  resolved:
+  - 「公開の標準になく」を「調べた公的な文書に書かれていなかった」に直した
+  - 記録を「民間の解説」だけに帰属させ、Q3.1 と合った
+  findings:
+  - condition: c3
+    severity: 軽い
+    status: 直したことによる新しい問題
+    quote_answer: (上げる判断について、NIST は組織の方針で定めるとする)
+    quote_child: 'Q3.3: 上げる条件の具体的な線は組織が決める。NIST(Rev.3)は判断の材料としてリスク評価の要因…を挙げ / Q3.3.1: 公開の標準は、上げる条件の具体的な線を組織に委ねている'
+    quote_fact: 'F409 qualifiers: 撤回済みの版 / 具体的な引き上げの閾値は書かれておらず、組織ごとの方針に委ねている。F610(Rev.3)は要因を挙げるのみ'
+    reason: 新しく足した部分で、組織に委ねることを「NIST」の主張として撤回済みの版を示さずに述べている。子の答えは「公開の標準は…委ねている」で、NIST が「方針で定める」とは言っていない。委ねるという記述の根拠は F409(撤回済みの Rev.2)で、Rev.3 の F610 は要因の組み合わせが組織による、とするだけである。
+    suggestion: 「(上げる条件を組織に委ねる記述は、撤回済みの Rev.2 にある)」とするか、Q3.3 の答えに合わせて「公開の標準は組織に委ねている」とする。
+- question: Q0
+  verdict: 合格
+  resolved:
+  - 「公開資料は…組織が決めるとする」を「調べた公的な文書に書かれていなかった」とし、Q3 の答えに合った
+  - 「案」の明示と assumes は保たれている

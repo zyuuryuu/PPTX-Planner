@@ -1,0 +1,177 @@
+# 検査: 素材台帳の事実(重大な検査)の出典照合
+検査の名前: "1-sources-R6-2"
+対象: "trial/deck/incoming/R6.yaml(F600〜F620、21件)"
+判定者: "Claude Sonnet 5.5(claude-sonnet-5-5)"
+方法: "全ての出典を実際に取得して照合した(PDF は pdftotext、HTML はタグを除去)。取得に失敗したものはない。"
+条件: "1=quote が出典に実在する / 2=切り取りが前後の条件・範囲・主体を落としていない / 3=statement が quote と合う / 4=qualifiers と value・unit が漏れなく合う / 5=as_of と旧版の扱い(参考)"
+集計:
+  不合格: "1件(F604)"
+  判定できない: "0件"
+  合格: "20件(うち、軽微な指摘つき: F607、F611、F615、F618、F620)"
+主な指摘:
+  - "F604: statement が quote の \"sometimes\" と \"ideally\" を落とし、言い過ぎになっている(不合格)。"
+  - "F615: quote の \"rulesbased\" は原文の \"rules-based\" と不一致(要修正、判定は合格)。"
+  - "F620: locator の p.179 は p.180 の誤り。"
+  - "F611、F607、F618: qualifiers の足りない点か、quote を越える点がある(軽微)。"
+判定:
+  - id: F600
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "p.26 に実在(Table 3, DE.AE-08)。quote の「—」は表の列の区切りを収集セッションが補ったもの(原文は表の2列)。"
+  - id: F601
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "DE.AE の N2、PDF の p.25 に実在。"
+  - id: F602
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "DE.CM の R2、PDF の p.24(表は p.23 から続く)に実在。"
+  - id: F603
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "Appendix C p.60 に実在。出典は PDF 冒頭に \"Withdrawn\" の表記があり、Rev.3 が置き換えたと明記(r3 の \"Supersedes SP 800-61r2\")。qualifiers の旧版の扱いは正しい。"
+  - id: F604
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 不合格
+    条件4_qualifiers: 不合格
+    条件5_as_of: 合格
+    理由: "p.28 に実在。「[...]」は「Making matters worse...」の1文の省略で、省略の位置と範囲は正しい。"
+    不合格の箇所:
+      - 箇所: "statement"
+        引用: "インシデントかどうかの判断は判断の問題であり"
+        出典: "quote: \"Determining whether a particular event is actually an incident is sometimes a matter of judgment.\""
+        理由: "原文の \"sometimes\"(場合による)が落ちている。statement は常に判断の問題であると読める。後続の「他の担当者と協力して決める必要がある場合がある」は \"may\" を保っているため、この句だけが言い過ぎになっている。"
+      - 箇所: "statement"
+        引用: "個々に正当かを評価すべきであり"
+        出典: "quote: \"each indicator ideally should be evaluated to determine if it is legitimate.\""
+        理由: "原文の \"ideally\"(理想的には)が落ちている。「べき」は義務に読めるが、原文は理想の述べ方である。"
+      - 箇所: "qualifiers"
+        引用: "[Rev.2 は Rev.3 で置き換えられた旧版, \"[...] は収集セッションによる省略\"]"
+        出典: "上の \"sometimes\" と \"ideally\""
+        理由: "quote にある不確かさの語(sometimes、ideally、may)が qualifiers に挙がっていない。"
+    直し方の提案: statement を「インシデントかどうかの判断は場合により判断の問題であり」「理想的には個々に正当かを評価すべきであり」に直す。
+  - id: F605
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "節 \"Close an incident\" に実在。原文の ’ は curly、quote は一部 straight の可能性があるが意味は同じ。選択肢5つが原文と一致。"
+  - id: F606
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "節 \"False positive causes and prevention\" と同じページの表(自動化ルールの列)に実在。原文には3つ目の例(プライベート以外の内部IPアドレス)があり、quote は「[...]」で省略されている。statement は「例として」2つを挙げており、言い過ぎではない。"
+  - id: F607
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "節 \"Manage alert status and classification\" に実在。軽微な指摘(不合格にしない): 原文は True positive と Informational に \"with a type of threat/activity\"(種別の選択が付く)があり、statement と qualifiers に種別の選択が載っていない。また Informational は原文で「通常は無視してよいが、実際の攻撃者による同様の活動では検知を期待する」と述べており、statement の「正常な振る舞い」だけでは、その含みが落ちる。"
+  - id: F608
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "節 \"Resolve an alert\" に実在。"
+  - id: F609
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "節 \"Part 1: Review and classify alerts\" の表に実在。表の列の区切り「—」は補ったもの(qualifiers に記載あり)。同じページの \"Classify an alert\" の手順には Informational, expected activity も選択肢に挙がっており、qualifiers の「F607 と一致しない」は、この文書の中でも選択肢と表の記述が食い違うという意味に読める。"
+  - id: F610
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "R2(p.26 から p.27 に続く)と N2(p.27)に実在。R2 と N2 の間に他の項はない。"
+  - id: F611
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "RS.MA-04、p.28 に実在。軽微な指摘: qualifiers の「対象は宣言済みのインシデント(アラートの段階ではない)」は quote の \"all ongoing incidents\" からの推論で、quote には書かれていない。誤りとは言えないが、qualifiers が quote の述べていることを越えている。"
+  - id: F612
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "GV.RM-06 N2、p.12 から p.13 に続く。quote は N2 の全文(次ページ冒頭に続く部分を含む)。"
+  - id: F613
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "RS.MA-02 R1 は p.27、RS.MA-03 R2 は p.28 に実在。「[...]」は RS.MA-03 の見出し行と R1 の省略。"
+  - id: F614
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "3.2.6 の末尾、p.33 に実在。value 15、unit 分は quote の \"perhaps 15 minutes\" と一致。metric が語彙表の語かは本検査の対象外。"
+  - id: F615
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "p.1 に実在。軽微な指摘(要修正): 原文は \"rules-based\"(行末で \"rules-\" と \"based\" に分かれる)で、ハイフンは語そのものの一部である。quote の \"rulesbased\" は原文と一致せず、qualifiers の「行末の折り返しを連結した」という説明も、ハイフンが折り返しの印でなく語の一部である点で正しくない。quote を \"rules-based\" に直す。脚注2は DoD と情報機関を \"agency\" から除くもので、qualifiers の記述と合う。"
+  - id: F616
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "PDF の p.6(Objective)と p.7(2-6、2-7)に実在。as_of は PDF の CreationDate(2023-11-11)で、qualifiers の説明と合う。"
+  - id: F617
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "p.8 に実在。"
+  - id: F618
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "ページ冒頭の導入部に実在。参考: ページの Applies to は Defender for Endpoint Plans 1 and 2 で、全プランでの保存期間とは限らない。必要なら qualifiers に足す(軽微)。as_of は ms.date の 2025-03-26 と一致。"
+  - id: F619
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "導入部と Note に実在。「[...]」は Plan 1 の注意書きなどの省略。"
+  - id: F620
+    条件1_quoteの実在: 合格
+    条件2_切り取り: 合格
+    条件3_statement: 合格
+    条件4_qualifiers: 合格
+    条件5_as_of: 合格
+    理由: "quote は実在。locator の p.179 は誤り。該当の節 2.7.6 は 1800-24C の p.180(目次も 180、本文のページ下端の表記も 180。179 は直前のページの表記)。locator を p.180 に直す(参考。判定の条件1-4には影響しない)。"

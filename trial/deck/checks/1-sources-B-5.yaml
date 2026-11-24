@@ -1,0 +1,90 @@
+検査の名前: 素材台帳の重大な検査の再検査(引用の実在と切り取り、statement、qualifiers、value と unit)。最終の再検査(docs/rework.md「不合格のときの手順」の5)
+回: B-5(B-3、B-4 の指摘に対する再検査。1回だけ)
+対象: trial/deck/incoming/R2.yaml、R4.yaml、R5.yaml のうち、前回不合格の16件(F200、F201、F203、F204、F207、F208、F209、F210、F213、F214、F216、F220、F402、F404、F408、F506)
+判定に使った版: a4a1b4bf58780204421562771d14231473d57ee0(git show で読んだ)
+判定者: claude-opus-5-5(検査セッション)
+日付: '2026-11-23'
+基準: docs/stages/01-exploration.md「素材台帳」の合格条件。quote の外の情報を qualifiers に「quote の外」と注記することは、statement に入れていない限り認める(依頼の注意)
+方法: |
+  出典をこのセッションで取得した。PDF は pdftotext、HTML はタグを除去した。quote を表記(引用符、ダッシュ、空白、行末のハイフン、ソフトハイフン)を正規化して全文と照合し、前後の文を読んで判定した。
+  CISA の PDF は直接の取得が 403 だったため、WebFetch が保存した同じ URL の PDF(2.6MB)を pdftotext で抽出して確認した。
+  変わった箇所の特定には、B-3 の時点の版(27ccbf6)と a4a1b4b を比べた。
+  開けなかった出典はない。
+件数:
+  判定した事実: 16
+  合格: 14
+  不合格: 2
+  判定できない: 0
+不合格の事実: [F200, F209]
+主な指摘:
+  - 'F200: B-4 の指摘のうち、0.01% が表4の期間(2020-12〜2022-07)の割合であることが qualifiers にない(F207 では直っている)。BHR の指摘は解消'
+  - 'F209: B-3 の指摘のうち、statement の「すべての誤検知をなくすことはできず」が未解消。原文は誤検知と見逃しの両方("all false positives and negatives")。「多くの場合」は解消'
+結果:
+  F200:
+    判定: 不合格
+    条件: {quote_実在: 合格, 切り取り: 合格, statement: 合格, qualifiers: 不合格, value_unit: 合格}
+    解消: |
+      B-3 と B-2 の指摘(2.4万件/日は BHR 処理分を含む総数)は解消。qualifiers に「13.4万件/日は第1期で BHR はまだない」「2.4万件/日は第2期で BHR 処理分(44.9%)を含む」が加わり、出典の Table 3 の説明("During the first period, the SOC did not have an auto-block mechanism yet. During the second period, the auto-block mechanism (BHR) helped ... (6,474,204 blocked alerts, 44.9%)")と §6.1 と一致する。
+      B-4 の指摘(0.01% は4年間全体ではなく表4の期間の割合)は未解消。
+    引用: '台帳 statement "実在のSOCの4年間のネットワークアラートログ(1.15億件)では、…真の攻撃に関連するのはそのうち0.01%だった" / 出典 Table 4 "Total 14,429,534 100% Table 4: Reason of Alerts— We categorize different reasons for triggering alerts during the period of 12/2020–07/2022."'
+    理由: statement は Abstract の文に沿っているが、0.01% は第2期(14,429,534件)の割合で、1.15億件の割合ではない。B-4 は qualifiers に期間を加えるよう求めたが、qualifiers に記載がない。
+    直し方の案: qualifiers に「0.01% は表4の期間(2020-12〜2022-07、14,429,534件)の割合(quote の外)」を加える(F207 と同じ記載)
+  F201:
+    判定: 合格
+    解消: B-3 の指摘(「ファイアウォール」が quote の外)は解消。statement は「自動遮断(BHR)」だけになり、quote(§6.1 に実在)と合う。BHR 処理分に良性のトリガーを含みうる旨の qualifiers は quote の "some may involve known benign triggers" と合う
+  F203:
+    判定: 合格
+    解消: 'qualifiers の「未確認」を削り、Methodology の内容に直した。出典 "This report is based on a March-April 2023 study commissioned by Vectra and carried out by Sapio Research. Sapio surveyed 2,000 IT security analysts working at organizations with more than 1,000 employees across the US (200), UK (200), France (200), Germany (200), Italy (200), ..." と一致する。quote はページに実在'
+  F204:
+    判定: 合格
+    解消: F203 と同じ。quote はページに実在し、value 83 と unit % は quote と一致
+  F207:
+    判定: 合格
+    解消: |
+      B-3 の指摘(27% が下限)と B-4 の指摘(期間の誤り)は解消。qualifiers の「割合は表4の期間(2020-12〜2022-07、14,429,534件)のもの」は Table 4 と一致する。「27%と49%は下限」は §1 "(at least 27%)" と Remark 6 "(at least 48.91%)"、§6.2 "(i.e., a lower bound)" と一致する。
+      Unknown 23.72% は quote の外だが qualifiers のみで、statement には入っていない。statement は quote(Abstract に実在)と合う
+  F208:
+    判定: 合格
+    解消: 'B-3 の指摘("may have" の断定)は解消。statement は「異なることがある」。quote は p.1 末尾から p.2 へ続く本文に実在する(PDF 抽出では "high-numbered" が "highnumbered"、改行のソフトハイフンがあるが、本文は連続している)'
+  F209:
+    判定: 不合格(軽)
+    条件: {quote_実在: 合格, 切り取り: 合格, statement: 不合格, qualifiers: 合格}
+    解消: '"in most cases" の脱落は解消(statement に「多くの場合」、qualifiers に「原文は『in most cases』」)。B-3 が併せて指摘した「すべての誤検知」は未解消'
+    引用: '台帳 statement "すべての誤検知をなくすことはできず、多くの場合、一方を減らすと他方が増える" / 出典 §2.2 "It is not possible to eliminate all false positives and negatives; in most cases, reducing the occurrences of one increases the occurrences of the other."'
+    理由: 原文は「誤検知と見逃しの全てをなくすことはできない」。statement は誤検知だけを挙げるため、続く「一方」「他方」が何を指すかが文の中にない。誤検知だけなら全てなくせない、とは原文は述べていない。
+    直し方の案: 「誤検知と見逃しを全てなくすことはできず、多くの場合、一方を減らすと他方が増える」
+  F210:
+    判定: 合格
+    解消: B-3 の指摘(脚注と柱の混入、範囲が §2.3.2 と合わない)は解消。quote は §2.3.2 の連続した本文 "Another problem with building profiles ... especially in more diverse or dynamic environments." と一致する
+    備考: 'statement は今回変わっていないため指摘にしないが、原文の "might not be observed" と "often produce" の限定が statement では弱まっている(「観測されず」「多くの誤検知を出し」)。「観測されないことがあり」「しばしば多くの誤検知を出し」とする方が原文に近い'
+  F213:
+    判定: 合格
+    解消: B-3 が勧めた locator は Introduction に直った。quote は本文で1回だけ現れ、"Introduction" の後、"2 Related Work" の前にある。statement は quote と合う
+  F214:
+    判定: 合格
+    解消: 主体の指摘は解消。statement は「SOC実務者の一部」、qualifiers は「『Some analysts』」。quote は 'Unreliable signature' の項に実在
+  F216:
+    判定: 合格
+    解消: statement が「140万件の大半は」となり、quote の "the vast majority" と合う。quote は §6.4 DNS Configurations に実在。value 1.4、unit 百万件は quote の "1.4 million" と一致
+  F220:
+    判定: 合格
+    解消: 'B-3 の備考(「…説明される挙動」)は解消。statement は「…説明される、正しく発火したアラート」で、原文 "correctly fired alerts, explained by business-justified, acceptable behaviors in the organization’s environment" と合う。quote は §6.2 に実在'
+  F402:
+    判定: 合格
+    解消: |
+      適用範囲の指摘は解消。2つ目の引用 "Note: the incident response playbook for incidents that involve confirmed malicious cyber activity for which a major incident has been declared or not yet been reasonably ruled out." は Appendix B: Incident Response Checklist の冒頭に原文のまま実在する(原文自体が文として不完全)。
+      1つ目の引用は Detection & Analysis Activities の Determine Investigation Scope の本文に実在。statement は2つの引用の範囲に収まる。as_of は表紙 "Publication: November 2021" と一致
+  F404:
+    判定: 合格
+    解消: |
+      B-3、B-4 の指摘(statement が quote にない表の値を含む)は解消。statement はフロー図のラベルだけに戻り、quote の "P2: Escalate 30 min" と "P1: Escalate IMMEDIATELY" はページの Escalation Flow(mermaid の図)に実在し、どちらも Tier 1 から Tier 2 Analyst への矢印である。value 30、unit 分は quote と一致。
+      表の値は statement に入れず、qualifiers に「別の表に数値がある」とだけ書いている。
+    備考: 'qualifiers の「原文の表を自分では照合できていない」について、表は同じページにあり、P1 は "2 Escalate to Tier 2 Tier 2 Analyst (on-call) 5 min"、P2 は "2 Escalate to Tier 2 Tier 2 Analyst 30 min"。図の「直ちに」と表の「5分以内」が並ぶことを読み手に示すため、qualifiers に「表では P1 は5分以内(quote の外)」と書くことを勧める'
+  F408:
+    判定: 合格
+    解消: |
+      statement の指摘は解消。2つ目の引用 "Note: FCEB agencies must promptly report all cybersecurity incidents, regardless of severity, to CISA" が quote に入り、statement の後半はその範囲に収まる。2つの引用は Declare Incident の項に実在し、-layout で見ても左の段の連続した文である(qualifiers の記載と一致)。
+      間の "Report major incidents to CISA and to OMB at CyberIncidentReport@omb.eop.gov." と "CISA can assist in determining ..." は qualifiers に挙げられており、statement の条件を変えるものではない。適用範囲は qualifiers に Appendix B の注記として書かれ、statement には入っていない
+  F506:
+    判定: 合格
+    解消: B-3 の指摘(179人と RSA Conference 2018 が quote の外)は解消。statement から外し、qualifiers に「quoteの外」と明記した。ページの "During the RSA Conference 2018, Imperva surveyed 179 IT professionals" と一致。quote は実在し、value 56、unit % は "56 percent" と一致

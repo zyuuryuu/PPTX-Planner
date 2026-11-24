@@ -1,0 +1,425 @@
+# スライド見出しの一覧(工程4)。章扉と章のまとめは書かない(章構成から決まる)。
+# source は見出しのすぐ下に置く出典の行(D006。docs の書式にない項目で、設計セッションが足した)。
+# 演習(ch5)のアラートは全て架空。
+- id: ch1-s1
+  chapter: ch1
+  section: null
+  question: アラートを受けたら、何を決めるのか
+  headline: 重大度 High 以上はまず上げ、残りを3つに分けて、閉じる・調べる・上げるを決める
+  from:
+  - Q0
+  evidence:
+  - F009
+  source: このSOCの運用(重大度は製品が付けた値)
+- id: ch1-s2
+  chapter: ch1
+  section: null
+  question: 何を閉じ、何を上げるのか
+  headline: 根拠をもって誤検知か想定内と言えるものだけを記録して閉じ、迷ったら上げる
+  from:
+  - Q0
+- id: ch2-s1
+  chapter: ch2
+  section: null
+  question: アラートとは何か
+  headline: アラートは、検知の仕組みが探すものを見つけたときの知らせで、本物の攻撃とは限らない
+  from:
+  - Q1.1
+  evidence:
+  - F709
+  - F619
+  - F207
+  source: Microsoft Learn(Microsoft Sentinel、Microsoft Defender for Endpoint の文書、2026年)、Yangら(USENIX Security 2024)。1つのSOCのネットワークの検知(Zeek)の2020年12月〜2022年7月のアラート約1,443万件を著者らが分類
+- id: ch2-s2
+  chapter: ch2
+  section: null
+  question: SIEMは何を根拠にアラートを出すのか
+  headline: SIEMは、最も一般的にはルールで複数のログの記録値を照合し、重要なイベントを特定する
+  from:
+  - Q1.1.1
+  evidence:
+  - F100
+  - F101
+  source: NIST SP 800-92(2006年)。ルール以外の相関もある
+- id: ch2-s3
+  chapter: ch2
+  section: null
+  question: EDRは何を根拠にアラートを出すのか
+  headline: EDRは端末の振る舞いの記録を継続して集め、製品の例では脅威を検知するとアラートを作る
+  from:
+  - Q1.1.1
+  evidence:
+  - F615
+  - F618
+  - F619
+  source: 米国 OMB の覚書 M-22-01(2021年)、サウジアラビア国家サイバーセキュリティ庁(NCA)のEDR標準のひな形、Microsoft Learn(Microsoft Defender for Endpoint の文書、2026年)
+- id: ch2-s4
+  chapter: ch2
+  section: null
+  question: アラートを確かめるには、どのログを見ればよいのか
+  headline: アラートの詳細はOSのログで確かめることが多く、認証のログは通常、接続元と成否を残す
+  from:
+  - Q1.2
+  evidence:
+  - F111
+  - F108
+  - F110
+  - F107
+  source: NIST SP 800-92(2006年)。「しばしば」「通常は」の記述
+- id: ch2-s5
+  chapter: ch2
+  section: null
+  question: 攻撃の手口の分類(ATT&CK)は、一次解析で何に使うのか
+  headline: 案として、ATT&CKの戦術で、アラートの活動が攻撃のどの段階かを表し、優先度の材料にする
+  from:
+  - Q1.3
+  evidence:
+  - F114
+  - F116
+  - F125
+  - F610
+  source: MITRE ATT&CK 公式サイト(v20.1、2026年)、NIST SP 800-61 Rev.3(2025年。インシデントのリスク評価の要因に「観測された活動の段階」)から組み立てた案
+- id: ch2-s6
+  chapter: ch2
+  section: null
+  question: 届くアラートのうち、本物の攻撃はどれだけあるのか
+  headline: 1つのSOCの実測では、侵害に至った攻撃は0.01%、攻撃の試みは27%以上、想定内は49%以上
+  from:
+  - Q1.1.3
+  evidence:
+  - F207
+  source: Yangら(USENIX Security 2024)。1つのSOCのネットワークの検知(Zeek)の2020年12月〜2022年7月のアラート約1,443万件を著者らが分類
+- id: ch2-s7
+  chapter: ch2
+  section: null
+  question: 届くアラートの8割は誤検知ではないのか
+  headline: 「8割が誤検知」に近い値は、調べた範囲ではベンダーの調査の自己申告(83%)だけだった
+  from:
+  - Q1.1.3
+  evidence:
+  - F204
+  - F220
+  objection:
+    claim: C1
+    index: 0
+  source: Vectra AI の調査(2023年、解析者2,000人の回答)。「誤検知」の定義は示されていない
+- id: ch2-s8
+  chapter: ch2
+  section: null
+  question: 誤検知はなぜ起きるのか
+  headline: 誤検知の原因には、弱いルールや緩く書かれたルールなど、検知の条件の誤りがある
+  from:
+  - Q1.1.4
+  evidence:
+  - F208
+  - F214
+  source: NIST の文書(2003年、ネットワーク型の検知)、Alahmadiら(USENIX Security 2022、一部の解析者の認識)。原文の語は signature
+- id: ch2-s9
+  chapter: ch2
+  section: null
+  question: 想定内の検知はなぜ起きるのか
+  headline: 1つのSOCの実測では、社内の脆弱性スキャンや外部の診断が想定内の検知を起こしていた
+  from:
+  - Q1.1.4
+  evidence:
+  - F215
+  - F221
+  source: Yangら(USENIX Security 2024)。1つのSOCのネットワークの検知(Zeek)の2020年12月〜2022年7月のアラート約1,443万件を著者らが分類
+- id: ch3-s1
+  chapter: ch3
+  section: null
+  question: 1件のアラートは何から確かめるのか
+  headline: 何から確かめるかは出典で食い違い、NISTは確認を、民間の解説は優先付けを判定より先に置く
+  from:
+  - Q2.2
+  evidence:
+  - F303
+  - F312
+  source: NIST SP 800-61 Rev.3(2025年。インシデントの報告の扱い)、CyberDefenders(SOC解析者の訓練事業者)の解説(2026年)。標準や公的文書ではない
+- id: ch3-s2
+  chapter: ch3
+  section: null
+  question: 閉じる・調べる・上げるの線は、どこに決められているのか
+  headline: 閉じる・調べる・上げるの線は調べた公的な文書になく、この講義の線は案とこのSOCの運用である
+  from:
+  - Q3
+  evidence:
+  - F600
+  - F610
+  objection:
+    claim: C3
+    index: 0
+  source: NIST SP 800-61 Rev.3(2025年)。インシデントの基準は組織が定めるとする
+- id: ch3-s3
+  chapter: ch3
+  section: null
+  question: この講義では、どの順で確かめるのか
+  headline: 案として、重大度で上げるものを除いた後、根拠とログで3つに分け、影響で優先度を付ける
+  from:
+  - Q2
+  evidence:
+  - F303
+  - F305
+  - F009
+  source: NIST SP 800-61 Rev.3(2025年)と、CyberDefenders(SOC解析者の訓練事業者)の解説(2026年)。標準や公的文書ではない。この2つの材料から組み立てた案
+- id: ch3-s4
+  chapter: ch3
+  section: null
+  question: アラートの根拠は、どう確かめるのか
+  headline: 案として、アラートを出したルールの条件と、含まれる利用者や端末を、元のログと照らす
+  from:
+  - Q1.1.1
+  evidence:
+  - F709
+  - F710
+  source: Microsoft Learn(Microsoft Sentinel の文書、2026年)の、ルールがアラートを出す仕組みから組み立てた案
+- id: ch3-s5
+  chapter: ch3
+  section: null
+  question: 誤検知として閉じてよいのは、どんなときか
+  headline: 案として、検知の条件かデータの誤りで出たと根拠をもって言えるときだけ、誤検知として閉じる
+  from:
+  - Q3.1.1
+  evidence:
+  - F605
+  - F609
+  - F220
+  source: Microsoft Learn(Microsoft Sentinel、Microsoft Defender for Endpoint の文書、2026年)、Yangら(2024年)の定義から組み立てた案
+- id: ch3-s6
+  chapter: ch3
+  section: null
+  question: 想定内の検知として閉じてよいのは、どんなときか
+  headline: このSOCでは、新人が想定内の検知として閉じてよいのは、リーダーの一覧にある活動だけ
+  from:
+  - Q3.1
+  evidence:
+  - F002
+  - F220
+  - F215
+  objection:
+    claim: C1
+    index: 1
+  source: このSOCの運用
+- id: ch3-s7
+  chapter: ch3
+  section: null
+  question: 優先度は何で付けるのか
+  headline: 案として、優先度は製品の重大度だけでなく、資産の重要度、影響、活動の段階で付ける
+  from:
+  - Q2.1
+  - Q3.3.1
+  evidence:
+  - F610
+  - F305
+  - F306
+  source: NIST SP 800-61 Rev.3(2025年。インシデントのリスク評価の要因の例示)、CyberDefenders(SOC解析者の訓練事業者)の解説(2026年)。標準や公的文書ではない。2つから組み立てた案
+- id: ch3-s9
+  chapter: ch3
+  section: null
+  question: 閉じるときに何を残すのか
+  headline: 案として、閉じるときは、発火した内容、調べたこと、証拠、下した判断を記録する
+  from:
+  - Q3.1.2
+  evidence:
+  - F318
+  source: CyberDefenders(SOC解析者の訓練事業者)の解説(2026年)。標準や公的文書ではない
+- id: ch3-s10
+  chapter: ch3
+  section: null
+  question: 間違って閉じたら、取り返しがつかないのではないか
+  headline: このSOCでは、新人が閉じたアラートは後で見直される
+  from:
+  - Q3.1
+  evidence:
+  - F004
+  - F318
+  objection:
+    claim: C3
+    index: 3
+  source: このSOCの運用
+- id: ch3-s11
+  chapter: ch3
+  section: null
+  question: どこまで調べたら上げてよいのか
+  headline: このSOCでは、配属から3か月の新人の持ち時間は1件30分で、過ぎたら見たことを付けて上げる
+  from:
+  - Q3.2
+  evidence:
+  - F005
+  - F403
+  source: 'このSOCの運用(測った値ではなく、外の目安より長めに取った)。参考: Decryption Digest の解説記事(2026年)は一次解析で12〜20分とする'
+- id: ch3-s16
+  chapter: ch3
+  section: null
+  question: 30分を待たずに上げるのは、どんなときか
+  headline: このSOCでは、製品の重大度が High 以上のアラートは30分を待たずにすぐ上げる
+  from:
+  - Q3.3
+  evidence:
+  - F005
+  - F009
+  source: このSOCの運用
+- id: ch3-s12
+  chapter: ch3
+  section: null
+  question: どんなときに上げるのか
+  headline: 案として、重要な資産での疑い、横展開の証拠、守備範囲の超過のどれかなら上げる
+  from:
+  - Q3.3.1
+  evidence:
+  - F406
+  - F407
+  source: Decryption Digest の解説記事(2026年)、Security Scientist の解説(日付なし)。どちらも標準や公的文書ではない
+- id: ch3-s13
+  chapter: ch3
+  section: null
+  question: 迷ったときは、どうするのか
+  headline: このSOCでは、30分調べても閉じる根拠がなく迷うなら、閉じずに上げる
+  from:
+  - Q3.3.1
+  evidence:
+  - F005
+  - F006
+  - F405
+  objection:
+    claim: C3
+    index: 1
+  source: このSOCの運用。有志の手順書(SOC-SOP「Escalation Matrix」、2026年)も、判断に迷うときは上げる側に倒すとする
+- id: ch3-s14
+  chapter: ch3
+  section: null
+  question: 攻撃の試みは閉じてよいのか。全て上げたら溢れないか
+  headline: このSOCでは、配属から3か月の新人は攻撃の試みも全て上げ、溢れたらリーダーが対処する
+  from:
+  - Q3.3
+  evidence:
+  - F003
+  - F207
+  objection:
+    claim: C3
+    index: 2
+  source: このSOCの運用
+- id: ch3-s15
+  chapter: ch3
+  section: null
+  question: 上げるときに何を添えるのか
+  headline: 案として、上げるときは、出どころとID、調べた経過、証拠、判定の仮説、次の手順を添える
+  from:
+  - Q3.3.3
+  evidence:
+  - F413
+  - F414
+  source: Decryption Digest の解説記事(2026年)、Security Scientist の解説(日付なし)。どちらも標準や公的文書ではない
+- id: ch3-s17
+  chapter: ch3
+  section: null
+  question: 1件のアラートを受けたら、新人はどう動くのか
+  headline: 配属から3か月の新人は、重大度 High 以上か攻撃の試みなら上げ、一覧なら閉じ、残りは調べる
+  from:
+  - Q2
+  - Q3
+  evidence:
+  - F002
+  - F003
+  - F005
+  - F006
+  - F007
+  - F009
+  source: このSOCの運用(上げる条件から順に確かめる)。調べる中で誤検知と言える基準は案
+- id: ch4-s1
+  chapter: ch4
+  section: null
+  question: 本物の攻撃のアラートが見過ごされた事案はあるのか
+  headline: 2013年のTargetの侵害では、緊急のアラートが出たが対応がなかったと報告されている
+  from:
+  - Q4.1
+  evidence:
+  - F500
+  source: 米上院商務委員会の多数党スタッフの報告(2014年)。報道(Bloomberg Businessweek)を引いた記述
+- id: ch4-s2
+  chapter: ch4
+  section: null
+  question: なぜ見過ごされたのか
+  headline: 米上院の報告は、アラートが頻繁だったなら、誤検知とみなされた可能性があると推定する
+  from:
+  - Q4.1
+  evidence:
+  - F501
+  source: 米上院商務委員会の多数党スタッフの報告(2014年)
+- id: ch4-s3
+  chapter: ch4
+  section: null
+  question: 誤検知に慣れた解析者は、アラートをどう扱うのか
+  headline: ベンダーの調査では、IT専門職の56%が、過去の誤検知を理由にアラートを無視したと答えた
+  from:
+  - Q4.1
+  evidence:
+  - F506
+  source: Imperva の調査(2018年、RSA Conference の参加者のIT専門職179人の自己申告)。原文の false positive
+- id: ch5-s1
+  chapter: ch5
+  section: null
+  question: 演習1では、どんなアラートが届いたのか
+  headline: '演習1: 一覧に載ったスキャン用の端末から、一覧の時刻に、多数の宛先への接続のアラートが届いた'
+- id: ch5-s2
+  chapter: ch5
+  section: null
+  question: 演習1の答えは何か
+  headline: '演習1の答え: 端末と時刻が一覧と合うため、想定内の検知として記録して閉じる'
+- id: ch5-s3
+  chapter: ch5
+  section: null
+  question: 演習2では、どんなアラートが届いたのか
+  headline: '演習2: 管理ツールの定期の通信に、緩く書かれたルールが反応したアラートが届いた'
+- id: ch5-s4
+  chapter: ch5
+  section: null
+  question: 演習2の答えは何か
+  headline: '演習2の答え: 検知の条件が無害な活動に反応した誤検知として、根拠を記録して閉じる'
+- id: ch5-s5
+  chapter: ch5
+  section: null
+  question: 演習3では、どんなアラートが届いたのか
+  headline: '演習3: 外部から既知の攻撃の通信が届き、防がれた記録があるアラートが届いた'
+- id: ch5-s6
+  chapter: ch5
+  section: null
+  question: 演習3の答えは何か
+  headline: '演習3の答え: 侵害に至らなかった攻撃の試みで、配属から3か月の新人は全て上げる'
+- id: ch5-s7
+  chapter: ch5
+  section: null
+  question: 演習4では、どんなアラートが届いたのか
+  headline: '演習4: 重要でない業務用のPCで、一覧にない見慣れないプロセスが動いたアラートが届いた'
+- id: ch5-s8
+  chapter: ch5
+  section: null
+  question: 演習4の答えは何か
+  headline: '演習4の答え: 閉じずに調べ、30分の中で誤検知と根拠をもって言えなければ、見たことを付けて上げる'
+- id: ap-s1
+  chapter: appendix
+  section: null
+  question: 1日にどれだけのアラートを扱うのか
+  headline: 扱う量は出典で大きく違い、1つのSOCの実測は1日約13,764件、自己申告は1日平均4,484件
+  from:
+  - Q1.1.2
+  evidence:
+  - F201
+  - F202
+  - F203
+  appendix_of: ch2-s6
+  source: Yangら(USENIX Security 2024)、Alahmadiら(USENIX Security 2022)、Vectra AI の調査(2023年)
+- id: ap-s2
+  chapter: appendix
+  section: null
+  question: 上げるのが遅れる誤りや、上げすぎる誤りは、どれだけ起きているのか
+  headline: 上げるのが遅れる誤りも、上げすぎる誤りも、割合を測った公開の調査は見つからなかった
+  from:
+  - Q4.2
+  - Q4.3
+  evidence:
+  - F508
+  - F509
+  - F510
+  appendix_of: ch3-s11
+  source: Kerstenら(2025年)、Moosmannら(2026年)、Alahmadiら(USENIX Security 2022)。近い調査はあるが、どれも誤りの割合は測っていない

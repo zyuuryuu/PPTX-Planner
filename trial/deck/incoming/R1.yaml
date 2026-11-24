@@ -1,0 +1,287 @@
+# 調査依頼 R1 の結果(検査の指摘による修正済み。verified は全件 false)。stance は書かない。
+- id: F100
+  statement: "SIEMは、複数のログ源のデータを分析し、ログ項目間でイベントを相関させ、重要なイベントを特定して優先順位を付ける"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 3.4 Security Information and Event Management Software"
+  as_of: "2006-09"
+  quote: "Regardless of how it receives log data (through agents or an agentless method), an SIEM server analyzes the data from all the different log sources, correlates events among the log entries, identifies and prioritizes significant events, and initiates responses to events if desired."
+  qualifiers: ["2006年版", "応答の開始は「必要な場合」", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)", "優先順位付けは一部のSIEM製品の機能。脚注37に 'Some SIEM products can prioritize events based on correlating events with other sources of information, such as the result of vulnerability scans.' とある"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F101
+  statement: "ログのイベント相関で最も一般的なのは、タイムスタンプ、IPアドレス、イベント種別などの記録値に基づいて複数のログ項目を照合するルールベース相関である"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 3.2 Functions(Analysis)"
+  as_of: "2006-09"
+  quote: "Event correlation is finding relationships between two or more log entries. The most common form of event correlation is rule-based correlation, which matches multiple log entries from a single source or multiple sources based on logged values, such as timestamps, IP addresses, and event types."
+  qualifiers: ["2006年版", "ログ管理ソフトウェア一般の機能として記述", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)", "同じ節に 'Event correlation can also be performed in other ways, such as using statistical methods or visualization tools.' とあり、ルール以外の相関もある"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F102
+  statement: "シグネチャ検知は、既知の脅威に対応するパターン(シグネチャ)を観測イベントと比較して、潜在的なインシデントを見つける方式である"
+  kind: "fact"
+  source: "NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.1 Signature-Based Detection"
+  as_of: "2007-02"
+  quote: "A signature is a pattern that corresponds to a known threat. Signature-based detection is the process of comparing signatures against observed events to identify possible incidents."
+  qualifiers: ["2007年版", "IDPS(侵入検知防止システム)の検知方式として記述。EDRやSIEMそのものの定義ではない", "後続の文で「未知の脅威には largely ineffective」と述べる", "SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)"]
+  origin: "NIST SP 800-94"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F121
+  statement: "シグネチャ検知は、既知の脅威の検知には非常に有効だが、未知の脅威、回避手法で偽装された脅威、既知の脅威の多くの変種の検知にはほとんど効果がない"
+  kind: "fact"
+  source: "NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.1 Signature-Based Detection"
+  as_of: "2007-02"
+  quote: "Signature-based detection is very effective at detecting known threats but largely ineffective at detecting previously unknown threats, threats disguised by the use of evasion techniques, and many variants of known threats."
+  qualifiers: ["2007年版", "IDPS(侵入検知防止システム)の検知方式として記述。EDRやSIEMそのものの定義ではない", "後続の文で「未知の脅威には largely ineffective」と述べる", "SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)"]
+  origin: "NIST SP 800-94"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F103
+  statement: "振る舞い異常検知は、通常とみなす活動の定義(プロファイル)を観測イベントと比較し、大きな逸脱を見つける方式である"
+  kind: "fact"
+  source: "NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.2 Anomaly-Based Detection"
+  as_of: "2007-02"
+  quote: "Anomaly-based detection is the process of comparing definitions of what activity is considered normal against observed events to identify significant deviations."
+  qualifiers: ["IDPSの検知方式として記述。EDRやSIEMそのものの定義ではない", "SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)"]
+  origin: "NIST SP 800-94"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F122
+  statement: "振る舞い異常検知の主な利点は、未知の脅威の検知に非常に有効でありうることである"
+  kind: "fact"
+  source: "NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.2 Anomaly-Based Detection"
+  as_of: "2007-02"
+  quote: "The major benefit of anomaly-based detection methods is that they can be very effective at detecting previously unknown threats."
+  qualifiers: ["IDPSの検知方式として記述。EDRやSIEMそのものの定義ではない", "原文は 'can be very effective'(有効でありうる)", "SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)"]
+  origin: "NIST SP 800-94"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F123
+  statement: "振る舞い異常検知を用いる製品は、通常の活動でもプロファイルから大きくずれるものがあると、特に多様または動的な環境で、多くの誤検知を出すことが多い"
+  kind: "fact"
+  source: "NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 2.3.2 Anomaly-Based Detection"
+  as_of: "2007-02"
+  quote: "Anomaly-based IDPS products often produce many false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments."
+  qualifiers: ["IDPSの検知方式として記述。EDRやSIEMそのものの定義ではない", "原文は 'often'(多い)で、'especially in more diverse or dynamic environments'(特に多様または動的な環境)の限定が付く", "SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)"]
+  origin: "NIST SP 800-94"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F104
+  statement: "ホスト型IDPSは、単一ホストの特性とそのホスト内のイベントを不審な活動について監視する。監視しうる特性の例として、そのホスト宛のネットワーク通信、システムログ、実行中のプロセス、アプリケーション活動、ファイルへのアクセスと変更、システムとアプリケーションの設定変更が挙げられている"
+  kind: "fact"
+  source: "NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf 第2章 IDPS技術の種類(Host-Based)"
+  as_of: "2007-02"
+  quote: "Host-Based, which monitors the characteristics of a single host and the events occurring within that host for suspicious activity. Examples of the types of characteristics a host-based IDPS might monitor are network traffic (only for that host), system logs, running processes, application activity, file access and modification, and system and application configuration changes."
+  qualifiers: ["原文は 'might monitor' と 'Examples'(監視しうるものの例であり、必ず監視するものではない)", "2007年版", "端末上で動くエージェント型の検知技術の記述。EDRという語は用いていない", "SP 800-94 は CSRC のページで Final(2007-02)。撤回の表示なし。2012年の改訂草案は最終版にならず廃止、NISTは新しい指針の開始を告知するとの注記あり(2022-07-15。確認日 2026-11-23)"]
+  origin: "NIST SP 800-94"
+  answers: ["Q1.1.1"]
+  verified: false
+- id: F105
+  statement: "セキュリティソフトのログは、主にコンピュータのセキュリティに関する情報を含む。OSログとアプリケーションログは、セキュリティ関連のデータを含む様々な情報を通常含む"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1 The Basics of Computer Security Logs"
+  as_of: "2006-09"
+  quote: "Security software logs primarily contain computer security-related information. Section 2.1.1 describes them. Operating system logs (described in Section 2.1.2) and application logs (described in Section 2.1.3) typically contain a variety of information, including computer security-related data."
+  qualifiers: ["2006年版", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)", "特に関心のあるログの種類として挙げた3つで、全てではない。同じ節の続きに、スイッチや無線アクセスポイントなどのネットワーク機器のログ、ネットワーク監視ソフトのログもセキュリティに関係しうるとある"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F106
+  statement: "侵入検知・防止システムのログは、不審な挙動や検出した攻撃の詳細と、防止システムが実行した遮断の内容を記録する"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.1 Security Software"
+  as_of: "2006-09"
+  quote: "Intrusion detection and intrusion prevention systems record detailed information on suspicious behavior and detected attacks, as well as any actions intrusion prevention systems performed to stop malicious activity in progress."
+  qualifiers: ["2006年版", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F107
+  statement: "マルウェア対策ソフトの最も一般的な形であるウイルス対策ソフトは、通常、検出した全てのマルウェア、駆除の試み、隔離を記録する"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.1 Security Software(Antimalware Software)"
+  as_of: "2006-09"
+  quote: "The most common form of antimalware software is antivirus software, which typically records all instances of detected malware, file and system disinfection attempts, and file quarantines."
+  qualifiers: ["記録する主体は、マルウェア対策ソフト全般ではなく、その最も一般的な形であるウイルス対策ソフト(antivirus software)", "2006年版", "「通常は」(typically)の記述", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F108
+  statement: "認証サーバのログは、認証の試行ごとに、接続元、ユーザー名、成否、日時を記録する"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.1 Security Software(Authentication Servers)"
+  as_of: "2006-09"
+  quote: "Authentication servers, including directory servers and single sign-on servers, typically log each authentication attempt, including its origin, username, success or failure, and date and time."
+  qualifiers: ["2006年版", "「通常は」(typically)の記述", "ディレクトリサーバとシングルサインオンサーバを含む", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F109
+  statement: "ファイアウォールは、ルータと同様にポリシーに基づいて通信を許可または遮断するが、通信の検査にはるかに高度な方法を用いる。状態の追跡と内容の検査もできる。ルータよりも複雑なポリシーと詳細な活動ログを持つ傾向がある"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.1 Security Software(Firewalls)"
+  as_of: "2006-09"
+  quote: "Like routers, firewalls permit or block activity based on a policy; however, firewalls use much more sophisticated methods to examine network traffic. Firewalls can also track the state of network traffic and perform content inspection. Firewalls tend to have more complex policies and generate more detailed logs of activity than routers."
+  qualifiers: ["原文は 'tend to'(傾向がある)", "2006年版", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F110
+  statement: "OSの監査記録は、認証の成功と失敗、ファイルアクセス、セキュリティポリシーの変更、アカウントの変更、権限の使用などのセキュリティ事象の情報を含む"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.2 Operating Systems(Audit Records)"
+  as_of: "2006-09"
+  quote: "Audit records contain security event information such as successful and failed authentication attempts, file accesses, security policy changes, account changes (e.g., account creation and deletion, account privilege assignment), and use of privileges."
+  qualifiers: ["原文は 'such as'(例示であり、全てではない)", "2006年版", "記録する事象の種類は管理者が指定できる(OSによる)", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F111
+  statement: "OSログは、特定のホストに関する不審な活動の特定と調査に最も役立つ。セキュリティソフトが不審な活動を見つけた後に、詳細を得るために参照されることが多い"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.2 Operating Systems"
+  as_of: "2006-09"
+  quote: "OS logs are most beneficial for identifying or investigating suspicious activity involving a particular host. After suspicious activity is identified by security software, OS logs are often consulted to get more information on the activity."
+  qualifiers: ["2006年版", "「しばしば」(often)の記述", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F112
+  statement: "アプリケーションでしか記録できない情報が多く、そのためアプリケーションログは、アプリケーション関連のセキュリティインシデント、監査、遵守の取り組みに特に有用である。一方、アプリケーションログは独自形式であることが多く、内容が文脈に依存することが多いため、確認に多くの資源が要る"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 2.1.3 Applications"
+  as_of: "2006-09"
+  quote: "Much of this information, particularly for applications that are not used through unencrypted network communications, can only be logged by the applications, which makes application logs particularly valuable for application-related security incidents, auditing, and compliance efforts. However, these logs are often in proprietary formats that make them more difficult to use, and the data they contain is often highly context-dependent, necessitating more resources to review their contents."
+  qualifiers: ["「アプリケーション側でしか記録できない」のは、特に暗号化されていないネットワーク通信を通じて使われないアプリケーションの情報(原文 'particularly for applications that are not used through unencrypted network communications')", "原文は 'often'(〜が多い)", "2006年版"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F113
+  statement: "複数の時間帯にシステムを持つ組織は、記録された時刻を単一の時間帯に変換する必要があることが多い。システムの時計が互いにずれている場合は、ずれたログ源の記録時刻を加減する必要が生じうる"
+  kind: "fact"
+  source: "NIST SP 800-92 Guide to Computer Security Log Management"
+  locator: "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-92.pdf 第3章 脚注24"
+  as_of: "2006-09"
+  quote: "Normalizing times is often particularly challenging. Organizations with systems in multiple time zones often need to convert all logged times to a single time zone. Also, systems’ clocks might not be in sync with each other, so it might be necessary to add or subtract times from the log entries recorded by out-of-sync sources."
+  qualifiers: ["原文は、時間帯の変換には 'often need'(多い)、時計のずれの補正には 'might be necessary'(必要になりうる)", "SP 800-92 は CSRC のページで Final(2006-09)。撤回の表示なし(確認日 2026-11-23)", "脚注の記述", "複数の時間帯にシステムを持つ組織の場合", "脚注は続けて、NTPなどの時刻同期技術を可能な限り使うべきとしている"]
+  origin: "NIST SP 800-92"
+  answers: ["Q1.2"]
+  verified: false
+- id: F114
+  statement: "MITRE ATT&CKは、実世界の観測に基づく攻撃者の戦術と技術の、世界中から利用できる知識ベースである"
+  kind: "fact"
+  source: "MITRE ATT&CK 公式サイト(トップページ)"
+  locator: "https://attack.mitre.org/ 冒頭の説明文"
+  as_of: "2026-10(ATT&CK v20.1。Version History ページでの現行版。取得時点)"
+  quote: "MITRE ATT&CK® is a globally-accessible knowledge base of adversary tactics and techniques based on real-world observations."
+  qualifiers: ["取得時点の現行版 v20.1", "日付は Version History ページの「October 13, 2026 - current」"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F115
+  statement: "ATT&CKは、攻撃者の行動を体系的に分類しようとするモデルである"
+  kind: "fact"
+  source: "MITRE ATT&CK 公式サイト Get Started"
+  locator: "https://attack.mitre.org/resources/ 節 \"What is ATT&CK?\" / Key Concepts"
+  as_of: "2026-11-23取得(ATT&CK v20.1)。ページに本文の更新日の表示なし"
+  quote: "ATT&CK is a model that attempts to systematically categorize adversary behavior."
+  qualifiers: ["取得時点の現行版 v20.1"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F116
+  statement: "ATT&CKでは、戦術は ATT&CK の技術または副技術の「なぜ」を表す"
+  kind: "fact"
+  source: "MITRE ATT&CK FAQ"
+  locator: "https://attack.mitre.org/resources/faq/ 見出し \"What are tactics?\" / \"What are techniques?\""
+  as_of: "2026-10(取得時点。ページに日付なし)"
+  quote: "Tactics represent the “why” of an ATT&CK technique or sub-technique."
+  qualifiers: ["取得時点の版"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F125
+  statement: "ATT&CKでは、技術は、攻撃者が行動を実行して戦術上の目的を達成する「どのように」を表す"
+  kind: "fact"
+  source: "MITRE ATT&CK FAQ"
+  locator: "https://attack.mitre.org/resources/faq/ 見出し \"What are techniques?\""
+  as_of: "2026-11-23取得(ページに日付なし)"
+  quote: "Techniques represent “how” an adversary achieves a tactical goal by performing an action."
+  qualifiers: ["取得時点の版"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F117
+  statement: "ATT&CKの戦術は、個々の技術の文脈となる分類であり、持続、情報の探索、横展開、ファイルの実行、データの持ち出しなど、作戦中に攻撃者が行うことを表す。技術または副技術には、技術の使用で得られる結果に応じて、1つ以上の戦術がタグとして付けられる"
+  kind: "fact"
+  source: "MITRE ATT&CK: Design and Philosophy (MITRE, Revised March 2020)"
+  locator: "https://attack.mitre.org/docs/ATTACK_Design_and_Philosophy_March_2020.pdf Tactics の節"
+  as_of: "2020-03"
+  quote: "Tactics represent the “why” of an ATT&CK technique or sub-technique. It is the adversary’s tactical objective: the reason for performing an action. Tactics serve as useful contextual categories for individual techniques and cover standard notations for things adversaries do during an operation, such as persist, discover information, move laterally, execute files, and exfiltrate data. Tactics are treated as “tags” within ATT&CK where a technique or sub-technique is associated or tagged with one or more tactic categories depending on the different results that can be achieved by using a technique."
+  qualifiers: ["2020年3月改訂版の文書", "「1つ以上の戦術」(技術ごとに戦術は複数ありうる)", "戦術の例は such as による例示"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F118
+  statement: "ATT&CKは、環境内の攻撃者の振る舞いを検知する、振る舞いに基づく分析(アナリティクス)を作り、試験する道具として使える"
+  kind: "fact"
+  source: "MITRE ATT&CK: Design and Philosophy (MITRE, Revised March 2020)"
+  locator: "https://attack.mitre.org/docs/ATTACK_Design_and_Philosophy_March_2020.pdf Behavioral Analytics Development"
+  as_of: "2020-03"
+  quote: "ATT&CK can be used as a tool to construct and test behavioral analytics to detect adversarial behavior within an environment."
+  qualifiers: ["2020年3月改訂版の文書", "用途の1つとして記述(他に敵対者エミュレーション、SOC成熟度評価など)", "同じ節の直前の段落は、振る舞い分析が 'may not rely on prior knowledge of adversary tools and indicators'(攻撃者のツールや指標の事前の知識に頼らない場合がある)と述べる"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F119
+  statement: "ATT&CKは、防御側が攻撃者の使う技術を検知するアナリティクス(分析)を作る助けになる"
+  kind: "fact"
+  source: "MITRE ATT&CK 公式サイト Get Started"
+  locator: "https://attack.mitre.org/resources/ 節 \"How can I use ATT&CK?\"(Detections and Analytics / Threat Intelligence)"
+  as_of: "2026-11-23取得(ATT&CK v20.1)。ページに本文の更新日の表示なし"
+  quote: "ATT&CK can help cyber defenders develop analytics that detect the techniques used by an adversary."
+  qualifiers: ["取得時点の現行版 v20.1", "「ATT&CK can help」(助けになりうる)"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F124
+  statement: "ATT&CKは、脅威インテリジェンスの分析者に、脅威情報を構造化し、比較し、分析するための共通言語を与える"
+  kind: "fact"
+  source: "MITRE ATT&CK 公式サイト Get Started"
+  locator: "https://attack.mitre.org/resources/ 節 \"How can I use ATT&CK?\"(Threat Intelligence)"
+  as_of: "2026-11-23取得(ATT&CK v20.1)。ページに本文の更新日の表示なし"
+  quote: "ATT&CK gives analysts a common language to structure, compare, and analyze threat intelligence."
+  qualifiers: ["取得時点の現行版 v20.1"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false
+- id: F120
+  statement: "ATT&CKの各技術の記述には、その技術が使われたことを見つけるための分析、センサー、データ、検知方針を示す項目がある"
+  kind: "fact"
+  source: "MITRE ATT&CK: Design and Philosophy (MITRE, Revised March 2020)"
+  locator: "https://attack.mitre.org/docs/ATTACK_Design_and_Philosophy_March_2020.pdf 技術ページの項目表(Detection)"
+  as_of: "2020-03"
+  quote: "High level analytic process, sensors, data, and detection strategies that can be useful to identify a (sub-)technique has been used by an adversary."
+  qualifiers: ["2020年3月改訂版の文書の記述。現行版の技術ページの構成は未確認", "同じ項目の続きに 'Detection may not always be possible for a given (sub-)technique and should be documented as such.'(技術によっては検知が可能とは限らず、その場合はそう記録するべき)とある", "検知の推奨は特定の製品に依らない方法と道具の種類にとどめる、と続く(vendor agnostic)"]
+  origin: "MITRE ATT&CK"
+  answers: ["Q1.3"]
+  verified: false

@@ -1,0 +1,26 @@
+# 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+id: ch2-s5
+status: done
+headline: 案として、ATT&CKの戦術で、アラートの活動が攻撃のどの段階かを表し、優先度の材料にする
+takeaway: 戦術に当てはめると、そのアラートが攻撃のどこにいるかを言える
+body:
+  type: tree
+  root: ATT&CK
+  children:
+  - name: 戦術(例)
+    items:
+    - 初期アクセス
+    - 実行
+    - 横展開
+    - 持ち出し
+  - name: 技術(例)
+    items:
+    - コマンドの実行
+  example: 架空のアラートを戦術「実行」に当てはめる(案)
+  highlight: 実行
+sources:
+- F114
+- F116
+- F125
+- F610
+notes: 戦術と技術の名前は例示で、ATT&CK の全体ではない。当てはめ方と優先度へのつなぎ方は案。

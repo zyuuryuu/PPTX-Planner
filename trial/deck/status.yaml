@@ -1,0 +1,78 @@
+# 状態の記録。docs/rework.md では検査のコマンドが書くとされるが、未実装のため設計セッションが手で書く。
+# ユーザーの承認は Git のタグで残すとされるが、タグの名前の付け方が docs にない。
+# この試行では作業のブランチ以外に書かないため、タグを作らず、ここに承認したコミットを記録する。
+artifacts:
+  00-brief.md:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-23
+    approved_commit: fcf0992   # このコミットの 00-brief.md を承認した
+    rounds: 1   # 問いの言い足しによる再検査1回
+  01-plan.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-23
+    approved_commit: afd7ac3   # 依頼者の指示で Q1.1.4 を足したコミット。足すことを条件にOKを得た
+    rounds: 2
+  01-hypotheses.yaml:
+    state: 作成中   # 工程2で使う。ユーザーの承認の対象ではない
+  01-sources.yaml:
+    state: 検査済み   # 重大な検査2回(初回)と再検査。138件中 verified 136件(F200、F209 は往復の上限で verified: false)
+  01-model.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-23
+    approved_commit: fc10d64   # 図(preview/model.html)と、語彙表の4語(イベント、ログ、アラート、インシデント)を見て同意
+    rounds: 2
+  terms.yaml:
+    state: 承認済み   # 凍結
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: 118679a
+  02-answers.yaml:
+    state: 検査済み   # 重大な検査2回と再検査2回。unresolved 3件
+  02-claims.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: 48be952
+    rounds: 2
+  03-chapters.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: 94da945   # 目次と章扉の資料(preview/toc.html)を見て確定
+    rounds: 2
+  style.yaml:
+    state: 承認済み   # 資料に共通の規則(common)を含む
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: 118679a
+  04-storyline.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: d47160c   # 骨組みの資料(preview/skeleton.html、46枚)を章ごとに見て同意。第3章は2回目で同意
+    rounds: 2   # 検査と直しの往復。上限の後の直し(D008、ch3-s16)は依頼者の確認だけ
+  04-chapter-states.yaml:
+    state: 承認済み   # ストーリーラインと一緒に同意(d47160c)
+  04-scenarios.yaml:
+    state: 承認済み   # ストーリーラインと一緒に同意(d47160c)
+  05-proof.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: 6f630a8   # 仮置きの資料(preview/placeholder.html)の見せ方に全体で同意。流れ図(ch3-s17)の「記録して」を足すことを条件に
+    rounds: 2   # 立証の設計全体で2回、足した流れ図で2回
+  06-patterns.yaml:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: 118679a   # 型の見本(preview/samples.html)と共通の規則を見て確定
+    rounds: 2
+  06-samples/:
+    state: 承認済み
+    approved_by: 依頼者
+    approved_on: 2026-11-24
+    approved_commit: 118679a
+    rounds: 2

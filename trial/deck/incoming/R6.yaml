@@ -1,0 +1,277 @@
+# 調査依頼 R6 への回答(収集セッション)
+# quote は全て、収集セッションが出典の原文(PDF は pdftotext で抽出、HTML はタグを除去)と照合した。
+# PDF の改行と改ページは、1行に連結して写した。行末のハイフンが語の一部であるもの(rules-based、time-critical、cyber-threats)は、ハイフンを残した。
+# as_of: Microsoft Learn の文書は、ページに表示される "Last updated on" の日付を書いた(読んだ内容がその日付の版であるため。メタデータの ms.date とは異なる場合がある)。
+# 全件 verified: false。照合と検査は設計セッションと検査セッションが行う。
+# 開けなかった出典(事実としては返していない):
+#   - MITRE「11 Strategies of a World-Class Cybersecurity Operations Center」本書と要約版 (mitre.org が HTTP 403 を返した)
+#   - CISA の文書 (cisa.gov の PDF とページが HTTP 403 を返した。例: Federal Government Cybersecurity Incident and Vulnerability Response Playbooks、TIC 3.0 Security Capabilities Catalog)
+#   - オーストラリア ASD「Priority logs for SIEM ingestion」(cyber.gov.au が接続を切った)
+# 開けたが該当する記述がなかった出典:
+#   - NIST CSRC 用語集「Endpoint Detection and Response」の項 (https://csrc.nist.gov/glossary/term/endpoint_detection_and_response)
+#     略語 EDR と出典(NIST SP 1800-24C、NIST SP 800-66r2)の記載だけで、定義文はなかった。
+#   - NIST SP 800-66r2 は EDR を例示と略語表に挙げるだけで、何を記録するかの記述はなかった。
+
+# ---------- Q3.1.1 アラートを誤検知として閉じてよい条件 ----------
+
+- id: F600
+  statement: NIST SP 800-61 Rev.3 は、インシデントを宣言するかを決めるときに、分析した活動の既知の特徴と推定される特徴にインシデントの基準を当てはめ、既知の誤検知を考慮するよう推奨している
+  kind: fact
+  source: 'NIST SP 800-61 Rev. 3, Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile'
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, DE.AE-08 (p.26)'
+  as_of: 2025-04
+  quote: "DE.AE-08 Incidents are declared when adverse events meet the defined incident criteria — R1: Apply incident criteria to known and assumed characteristics of analyzed activity, and consider known false positives to determine whether an incident should be declared."
+  qualifiers: [CSF 2.0 Community Profile の推奨事項, インシデントの宣言の判断, 組織が定めた基準(defined incident criteria)が前提, 誤検知として閉じる条件そのものは定めていない, "表の列(CSF Element、CSF Element Description、R1)を収集セッションが「 — 」で区切って連結した"]
+  origin: NIST
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F601
+  statement: NIST SP 800-61 Rev.3 は、事象の確からしさは多くの要因で変わり、異常には無害なものと悪意によるものがあると述べている
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, DE.AE (Adverse Event Analysis) N2 (p.25)'
+  as_of: 2025-04
+  quote: "N2: The fidelity of events varies based on many factors. Anomalies may have benign or malicious foundations. Some incidents are relatively easy to find amid the noise, while others require deep, specialized technical knowledge and experience."
+  qualifiers: [CSF 2.0 Community Profile の注記(N)]
+  origin: NIST
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F602
+  statement: NIST SP 800-61 Rev.3 は、継続的な監視の技術を調整して、誤検知と検知漏れを許容できる水準まで減らすよう推奨している
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, DE.CM (Continuous Monitoring) R2 (p.24)'
+  as_of: 2025-04
+  quote: "R2: Tune the continuous monitoring technologies to reduce false positives and false negatives to acceptable levels."
+  qualifiers: [CSF 2.0 Community Profile の推奨事項, 許容水準の値は示していない]
+  origin: NIST
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F603
+  statement: NIST SP 800-61 Rev.2 は、誤検知(False Positive)を「悪意のある活動が起きていると誤って示すアラート」と定義していた
+  kind: fact
+  source: NIST SP 800-61 Rev. 2, Computer Security Incident Handling Guide
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf  Appendix C Glossary (p.60)'
+  as_of: 2012-08
+  quote: "False Positive: An alert that incorrectly indicates that malicious activity is occurring."
+  qualifiers: [Rev.2 は Rev.3(2025年4月)で置き換えられた旧版]
+  origin: NIST
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F604
+  statement: NIST SP 800-61 Rev.2 は、侵入検知システムが誤検知を出すことがあり、指標は理想的には個々に正当かを評価すべきであり、指標が正確でもインシデントが起きたとは限らず、ある事象が実際にインシデントかどうかの判断は判断の問題である場合があり、他の担当者と協力して決める必要がある場合があると述べていた
+  kind: fact
+  source: NIST SP 800-61 Rev. 2
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf  3.2.4 Incident Analysis (p.28)'
+  as_of: 2012-08
+  quote: "Intrusion detection systems may produce false positives— incorrect indicators. These examples demonstrate what makes incident detection and analysis so difficult: each indicator ideally should be evaluated to determine if it is legitimate. [...] Even if an indicator is accurate, it does not necessarily mean that an incident has occurred. Some indicators, such as a server crash or modification of critical files, could happen for several reasons other than a security incident, including human error. Given the occurrence of indicators, however, it is reasonable to suspect that an incident might be occurring and to act accordingly. Determining whether a particular event is actually an incident is sometimes a matter of judgment. It may be necessary to collaborate with other technical and information security personnel to make a decision."
+  qualifiers: [Rev.2 は Rev.3(2025年4月)で置き換えられた旧版, "[...] は収集セッションによる省略", 評価は「ideally」(理想としては)すべきもの, インシデントかの判断は「sometimes」(場合によって)判断の問題, 協力は「may be necessary」(必要な場合がある)]
+  origin: NIST
+  answers: [Q3.1.1, Q3.3.1]
+  verified: false
+
+- id: F605
+  statement: Microsoft Sentinel では、インシデントを閉じるときに分類の選択が必須で、選択肢は「True Positive(疑わしい活動)」「Benign Positive(疑わしいが想定内)」「False Positive(アラートの論理が誤り)」「False Positive(データが誤り)」「Undetermined」である
+  kind: fact
+  source: Microsoft Learn, Navigate, triage, and manage Microsoft Sentinel incidents in the Azure portal
+  locator: 'https://learn.microsoft.com/en-us/azure/sentinel/incident-navigate-triage  節 "Close an incident"'
+  as_of: 2026-07-02
+  quote: "Once you resolve a particular incident (for example, when your investigation reaches its conclusion), set the incident’s status to Closed. When you do so, you're asked to classify the incident by specifying the reason you're closing it. Selecting a classification is mandatory. Select Select classification and choose one of the following from the drop-down list: True Positive – suspicious activity / Benign Positive – suspicious but expected / False Positive – incorrect alert logic / False Positive – incorrect data / Undetermined"
+  qualifiers: [製品の定義(Microsoft Sentinel), Azure portal での操作, 一覧の区切りの " / " は収集セッションが付けた(原文は箇条)]
+  origin: Microsoft(製品の公式文書)
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F606
+  statement: Microsoft Sentinel の文書は、正しく作った分析ルールでも、除外すべき利用者やIPアドレスなど特定の実体から誤検知が生じることが多いとし、例として、サービス主体の正常な活動、既知のIPアドレスからの意図的なスキャンを挙げている。自動化ルールの例外は、作成されたインシデントを閉じた理由とコメントを記録して自動で閉じる
+  kind: fact
+  source: Microsoft Learn, Handle false positives in Microsoft Sentinel
+  locator: 'https://learn.microsoft.com/en-us/azure/sentinel/false-positives  節 "False positive causes and prevention"'
+  as_of: 2026-07-02
+  quote: "Even in a correctly built analytics rule, false positives often stem from specific entities like users or IP addresses that should be excluded from the rule. Common scenarios include: Normal activities by certain users, usually service principals (automated identities used by applications and services), show a pattern that seems suspicious. Intentional security scanning activity coming from known IP addresses is detected as malicious. [...] Automation rules [...] Keep an audit trail. Exceptions immediately and automatically close created incidents, recording the reason for the closure and comments. [...] Allow applying exceptions for a limited time. For example, maintenance work might trigger false positives that outside the maintenance timeframe would be true incidents."
+  qualifiers: [製品の定義(Microsoft Sentinel), "[...] は収集セッションによる省略", この文書は既知の例外を「false positive」と呼んでおり、F605 の分類の語(Benign Positive)と用語が一致しない]
+  origin: Microsoft(製品の公式文書)
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F607
+  statement: Microsoft Defender XDR は、アラートの分類として、脅威の種別を付ける True positive(実在の脅威を正確に示す)、活動の種別を付ける Informational, expected activity(技術的には正確だが正常な振る舞いや模擬の脅威活動。通常は無視してよいが、実際の攻撃者や悪意のあるソフトによる同様の活動では今後も検知されることを期待するもの。セキュリティテスト、レッドチームの活動、信頼するアプリや利用者の想定内の異常な振る舞いに使う)、False positive(悪意のある活動がないのに作られたアラート、誤報)を定めている
+  kind: fact
+  source: Microsoft Learn, Investigate alerts in Microsoft Defender XDR
+  locator: 'https://learn.microsoft.com/en-us/defender-xdr/investigate-alerts  節 "Manage alert status and classification"'
+  as_of: 2026-11-09
+  quote: "True positive with a type of threat. Use this classification for alerts that accurately indicate a real threat. [...] Informational, expected activity with a type of activity. Use this option for alerts that are technically accurate, but represent normal behavior or simulated threat activity. You generally want to ignore these alerts but expect them for similar activities in the future where the activities are triggered by actual attackers or malware. Use the options in this category to classify alerts for security tests, red team activity, and expected unusual behavior from trusted apps and users. False positive for types of alerts that were created even when there's no malicious activity or for a false alarm. Use the options in this category to classify alerts that are mistakenly identified as normal events or activities as malicious or suspicious. Unlike alerts for 'Informational, expected activity', which can also be useful for catching real threats, you generally don't want to see these alerts again."
+  qualifiers: [製品の定義(Microsoft Defender XDR), "[...] は収集セッションによる省略", "True positive は「with a type of threat」、Informational, expected activity は「with a type of activity」を選ぶ", False positive も「the options in this category」から選ぶ]
+  origin: Microsoft(製品の公式文書)
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F608
+  statement: Microsoft Defender XDR は、アラートの分析を終えて解決できる場合に、状態を Resolved にし、True positive、Informational, expected activity、False positive のいずれかに分類する手順を示している
+  kind: fact
+  source: Microsoft Learn, Investigate alerts in Microsoft Defender XDR
+  locator: 'https://learn.microsoft.com/en-us/defender-xdr/investigate-alerts  節 "Resolve an alert"'
+  as_of: 2026-11-09
+  quote: "Once you're done analyzing an alert and it can be resolved, go to the Manage alert pane for the alert or similar alerts and mark the status as Resolved and then classify it as a True positive with a type of threat, an Informational, expected activity with a type of activity, or a False positive."
+  qualifiers: [製品の定義(Microsoft Defender XDR)]
+  origin: Microsoft(製品の公式文書)
+  answers: [Q3.1.1]
+  verified: false
+
+- id: F609
+  statement: Microsoft Defender for Endpoint の文書は、分類や抑制の前に、アラートが正確か、誤検知か、無害かを判断するよう求め、誤検知なら False positive に分類して抑制し、正確だが無害(重要でない)なら True positive に分類して抑制するとしている
+  kind: fact
+  source: Microsoft Learn, Address false positives/negatives in Microsoft Defender for Endpoint
+  locator: 'https://learn.microsoft.com/en-us/defender-endpoint/defender-endpoint-false-positives-negatives  節 "Part 1: Review and classify alerts"'
+  as_of: 2026-09-02
+  quote: "Before you classify or suppress an alert, determine whether the alert is accurate, a false positive, or benign. [...] The alert is accurate — Assign the alert, and then investigate it further. The alert is a false positive — 1. Classify the alert as a false positive. 2. Suppress the alert. 3. Create an indicator for Microsoft Defender for Endpoint. 4. Submit a file to Microsoft for analysis. The alert is accurate, but benign (unimportant) — Classify the alert as a true positive, and then suppress the alert."
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), "[...] は収集セッションによる省略、表の列の区切りの「—」は収集セッションが付けた", "正確だが無害なアラートの分類が F607 の Informational, expected activity と一致しない(同じ会社の製品の文書の間で扱いが異なる)"]
+  origin: Microsoft(製品の公式文書)
+  answers: [Q3.1.1]
+  verified: false
+
+# ---------- Q3.3.1 エスカレーションの条件 ----------
+
+- id: F610
+  statement: NIST SP 800-61 Rev.3 は、インシデントのトリアージ、優先度付け、エスカレーション、上位への引き上げ、復旧を始める判断を、一連のリスク評価の要因に基づかせるよう推奨し、要因の例として、資産の重要度、機能への影響、データへの影響、観測された活動の段階、脅威主体の特徴、回復可能性を挙げている
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, RS.MA (Incident Management) R2, N2 (p.26-27)'
+  as_of: 2025-04
+  quote: "R2: Incident triage, prioritization, escalation, and elevation and decisions regarding when to initiate recovery processes should all be based on a set of risk evaluation factors. This set can range from simple to incredibly complex, depending on the needs and maturity of an organization. N2: Examples of possible risk evaluation factors include asset criticality, functional impact of the incident, data impact of the incident, stage of observed activity, threat actor characterization, and recoverability."
+  qualifiers: [CSF 2.0 Community Profile の推奨事項と注記, 要因は例示, 要因の組み合わせは組織の必要と成熟度による]
+  origin: NIST
+  answers: [Q3.3.1]
+  verified: false
+
+- id: F611
+  statement: NIST SP 800-61 Rev.3 は、エスカレーションは一般に資源や時間枠を増やすことを指し、エレベーションは、通常、上位の管理者を対応に関与させることを示すと説明し、対応の資源の追加や戦略の変更が必要なインシデントを見つけるために、進行中の全インシデントの状況を追跡し検証するよう推奨している
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, RS.MA-04 (p.28)'
+  as_of: 2025-04
+  quote: "RS.MA-04 Incidents are escalated or elevated as needed — N1: Escalation generally refers to increasing resources or time frames, while elevation usually indicates involving a higher level of management in the response efforts. R1: Track and validate the status of all ongoing incidents so that incidents in need of more response resources or a change in response strategy can be identified and the necessary changes initiated rapidly."
+  qualifiers: [CSF 2.0 Community Profile の推奨事項と注記, 定義は「generally」「usually」付きで確定した定義ではない, 対象は進行中のインシデント(ongoing incidents), "表の列(CSF Element、CSF Element Description、N1)を収集セッションが「 — 」で区切って連結した"]
+  origin: NIST
+  answers: [Q3.3.1]
+  verified: false
+
+- id: F612
+  statement: NIST SP 800-61 Rev.3 は、サイバーセキュリティのリスクを算出する標準化した方法が、対応のエスカレーションや上位への引き上げの時期を判断する基準づくりにも使えるとしている
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.1節 Table 2, GV.RM-06 N2 (p.12-13)'
+  as_of: 2025-04
+  quote: "N2: Such a method can also be used to establish criteria and inform decision making on when to escalate or elevate incident response activities."
+  qualifiers: [CSF 2.0 Community Profile の注記, Such a method は GV.RM-06 の標準化したリスクの算出方法を指す]
+  origin: NIST
+  answers: [Q3.3.1]
+  verified: false
+
+- id: F613
+  statement: NIST SP 800-61 Rev.3 は、新しいインシデントの報告に予備的な確認を行い、インシデントが起きたことを確かめた後に、深刻度と対応の緊急度を見積もるよう推奨し、さらに範囲、想定される影響、時間的な切迫性、資源の利用可能性に基づいて対応の速さの優先度を付けるよう推奨している
+  kind: fact
+  source: NIST SP 800-61 Rev. 3
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf  3.2節 Table 3, RS.MA-02 R1 (p.27), RS.MA-03 R2 (p.28)'
+  as_of: 2025-04
+  quote: "RS.MA-02 Incident reports are triaged and validated — R1: Perform a preliminary review of a new incident report to verify that a cybersecurity incident has occurred, then estimate the severity of the incident and the level of urgency needed to respond to it. [...] RS.MA-03 [...] R2: Prioritize how quickly incident response should be performed for each incident based on its scope, likely impact, time-critical nature, and resource availability."
+  qualifiers: [CSF 2.0 Community Profile の推奨事項, "[...] は収集セッションによる省略", "表の列(CSF Element、CSF Element Description、R1)を収集セッションが「 — 」で区切って連結した", RS.MA-02 と RS.MA-03 の2つの行を連結した]
+  origin: NIST
+  answers: [Q3.3.1]
+  verified: false
+
+- id: F614
+  statement: NIST SP 800-61 Rev.2 は、指定時間内にチームが応答しない場合のエスカレーションの手順を定めるよう推奨し、例として、最初の連絡を繰り返し、15分ほど待って応答がなければインシデント対応チームの管理者など上位へ上げ、応答があるまで繰り返すとしていた
+  kind: fact
+  value: 15
+  unit: 分
+  metric: エスカレーションまでの待ち時間(例示)
+  source: NIST SP 800-61 Rev. 2
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf  3.2.6 Incident Prioritization (p.33)'
+  as_of: 2012-08
+  quote: "Organizations should also establish an escalation process for those instances when the team does not respond to an incident within the designated time. This can happen for many reasons: for example, cell phones may fail or people may have personal emergencies. The escalation process should state how long a person should wait for a response and what to do if no response occurs. Generally, the first step is to duplicate the initial contact. After waiting for a brief time—perhaps 15 minutes—the caller should escalate the incident to a higher level, such as the incident response team manager. If that person does not respond within a certain time, then the incident should be escalated again to a higher level of management. This process should be repeated until someone responds."
+  qualifiers: [Rev.2 は Rev.3(2025年4月)で置き換えられた旧版, 15分は「perhaps」付きの例示, 対象は応答がない場合のエスカレーション(分析の結果による上げではない)]
+  origin: NIST
+  answers: [Q3.3.1]
+  verified: false
+
+# ---------- Q1.1.1 のうち EDR の部分 ----------
+
+- id: F615
+  statement: 米国 OMB の覚書 M-22-01 は、EDRを、端末のデータのリアルタイムで継続的な監視と収集に、ルールに基づく自動の対応と分析の機能を組み合わせたものと説明している
+  kind: fact
+  source: OMB Memorandum M-22-01, Improving Detection of Cybersecurity Vulnerabilities and Incidents on Federal Government Systems through Endpoint Detection and Response
+  locator: 'https://bidenwhitehouse.archives.gov/wp-content/uploads/2021/10/M-22-01.pdf  p.1 "Endpoint Detection and Response"'
+  as_of: 2021-10-08
+  quote: "EDR combines real-time continuous monitoring and collection of endpoint data (for example, networked computing devices such as workstations, mobile phones, servers) with rules-based automated response and analysis capabilities."
+  qualifiers: [米国連邦政府機関向けの覚書, 国防総省と情報機関は対象外(覚書の脚注2), "原文 PDF では rules- と based が行末で分かれている。ハイフンは語の一部として残した"]
+  origin: 米国 行政管理予算局(OMB)
+  answers: [Q1.1.1]
+  verified: false
+
+- id: F616
+  statement: サウジアラビア国家サイバーセキュリティ庁(NCA)のEDR標準のひな形は、EDRのエージェントが、プロセス、接続、活動量、データの転送などの端末のデータを中央のデータベースに集め、収集するデータにプロセス、接続、ファイル、ドライバ、自動起動、システム、マシン、利用者の領域を含めることを求めている
+  kind: fact
+  source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
+  locator: 'https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  2 Data Collection and Monitoring, Objective と 2-6, 2-7 (下端の番号 p.6-7、PDF の7-8ページ目)'
+  as_of: 2023-11
+  quote: "Objective: EDR software agents must properly monitor and collect endpoint data, such as processes, connections, volume of activity and data transfers into a central database. [...] 2-6 EDR solution must collect and monitor relevant data to build a complete picture of endpoint activity. 2-7 Relevant data for EDR solution must include information covering the following areas: Processes, Connections, Files, Drivers, Autorun, System, Machine, Users. Additional data sources may be used, including but not limited to: logs, performance monitoring, file details, running processes, and configuration data."
+  qualifiers: [組織が自組織に合わせて直して使う例示のひな形(文書の Disclaimer), 版 1.0, as_of は PDF の作成日, "[...] は収集セッションによる省略", "「Objective:」と項番(2-6、2-7)は表の左列の見出しと番号で、収集セッションが右列の本文の先頭に置いて連結した。行 2-7 は Relevant data ... から configuration data. までの1つの行", 2-7 の箇条(原文は「•」付き)をコンマで連結した]
+  origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
+  answers: [Q1.1.1]
+  verified: false
+
+- id: F617
+  statement: NCAのEDR標準のひな形は、EDRが全端末から集めたデータに基づいて脅威のパターンを識別し、新しいデータのパターンを過去のものと比べて未知と既知の悪意のある活動を識別し、振る舞いによる脅威の検知の機能を持ち、MITRE ATT&CK などの知識ベースを使い、検知に重大度と確信度でリスクの点数を付けることを求めている
+  kind: fact
+  source: National Cybersecurity Authority (Saudi Arabia), Endpoint Detection and Response Standard Template
+  locator: 'https://cdn.nca.gov.sa/api/files/public/upload/e0790c91-e283-4349-995b-eca0639bb989_Standard_EDR_Template_en_.pdf  3 Data Analysis and Threat Pattern Identification, 3-3〜3-7 (下端の番号 p.8、PDF の9ページ目)'
+  as_of: 2023-11
+  quote: "3-3 EDR solution must identify threat patterns based on aggregated data from all endpoints, rather than a single one. 3-4 EDR solution must compare new dataset patterns to the previous ones, in order to identify previously unknown or known malicious activities. 3-5 EDR solution must provide behavioral threat detection capabilities. 3-6 EDR solution must use globally accessible knowledge databases concerning cybersecurity threat categorization (e.g., MITRE ATT&CK globally accessible knowledge base of adversary tactics and techniques based on real-world observations). 3-7 EDR solution must assign risk scorings and categorize cyber-threats based on criticality and confidence. Criticality estimates the impact on the cyber environment of a potentially ineffective detection. Confidence means how likely it is that the detection is valid and not a false-positive."
+  qualifiers: [組織が自組織に合わせて直して使う例示のひな形, 版 1.0, as_of は PDF の作成日, 要件(must)であり製品の実際の動作の記述ではない, "項番(3-3〜3-7)は表の左列の番号で、収集セッションが右列の本文の先頭に置いて連結した"]
+  origin: サウジアラビア 国家サイバーセキュリティ庁(NCA)
+  answers: [Q1.1.1]
+  verified: false
+
+- id: F618
+  statement: Microsoft Defender for Endpoint は、プロセスの情報、ネットワークの活動、カーネルとメモリ管理の深い観測、利用者のログオンの活動、レジストリとファイルシステムの変更などの振る舞いのテレメトリを継続的に集め、6か月保存する
+  kind: fact
+  value: 6
+  unit: か月
+  metric: EDRのテレメトリの保存期間
+  source: Microsoft Learn, Overview of endpoint detection and response capabilities - Microsoft Defender for Endpoint
+  locator: 'https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response  本文'
+  as_of: 2026-06-02
+  quote: "Inspired by the \"assume breach\" mindset, Defender for Endpoint continuously collects behavioral cyber telemetry. This includes process information, network activities, deep optics into the kernel and memory manager, user login activities, registry and file system changes, and others. The information is stored for six months, enabling an analyst to travel back in time to the start of an attack."
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2 と Microsoft Defender XDR(Applies to)]
+  origin: Microsoft(製品の公式文書)
+  answers: [Q1.1.1]
+  verified: false
+
+- id: F619
+  statement: Microsoft Defender for Endpoint では、脅威を検知するとアラートが作られ、同じ攻撃の手法や同じ攻撃者によるアラートはインシデントにまとめられる。検知の機能は端末の全ての操作を記録する監査やログの仕組みではなく、センサーには同じ事象の大量の繰り返しを間引く仕組みがある
+  kind: fact
+  source: Microsoft Learn, Overview of endpoint detection and response capabilities - Microsoft Defender for Endpoint
+  locator: 'https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response  本文と Note'
+  as_of: 2026-06-02
+  quote: "When a threat is detected, alerts are created in the system for an analyst to investigate. Alerts with the same attack techniques or attributed to the same attacker are aggregated into an entity called an incident. [...] Defender for Endpoint detection is not intended to be an auditing or logging solution that records every operation or activity that happens on a given endpoint. Our sensor has an internal throttling mechanism, so the high rate of repeat identical events don't flood the logs."
+  qualifiers: [製品の定義(Microsoft Defender for Endpoint), 文書の適用範囲は Microsoft Defender for Endpoint Plans 1 and 2 と Microsoft Defender XDR(Applies to), "[...] は収集セッションによる省略"]
+  origin: Microsoft(製品の公式文書)
+  answers: [Q1.1.1]
+  verified: false
+
+- id: F620
+  statement: NIST SP 1800-24C は、構築例に使った Symantec EDR を、Symantec Endpoint Protection からの端末の事象に振る舞いの分析を行って悪意のある可能性のある振る舞いを識別するものと説明している
+  kind: fact
+  source: 'NIST SP 1800-24C, Securing Picture Archiving and Communication System (PACS): How-To Guides'
+  locator: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1800-24.pdf  2.7.6 Symantec Endpoint Detection and Response (EDR) (1800-24C p.180、PDF の311ページ目)'
+  as_of: 2020-12
+  quote: "Symantec Endpoint Detection and Response performs behavioral analytics on endpoint events from Symantec Endpoint Protection to identify potentially malicious behavior. It can sandbox impacted endpoints, prioritize risks, and provide tailored remediation guides."
+  qualifiers: [特定の製品(Symantec EDR)についての記述, NIST NCCoE の医療分野(PACS)の構築例の手順書]
+  origin: NIST NCCoE
+  answers: [Q1.1.1]
+  verified: false

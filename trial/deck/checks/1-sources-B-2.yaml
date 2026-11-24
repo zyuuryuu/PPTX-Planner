@@ -1,0 +1,719 @@
+検査の名前: 素材台帳の重大な検査(引用の実在と切り取り、statement と qualifiers の一致)
+対象: trial/deck/01-sources.yaml のうち request が R2/R4/R5 の事実 45件(F200〜F218、F400〜F414、F500〜F510)
+判定者: Claude Sonnet 5.5(claude-sonnet-5-5)
+回: B-2(別セッションの検査とは独立)
+件数:
+  合格: 22
+  不合格: 21
+  判定できない: 2
+方法: 出典を取得して全文を文字列照合し(表記は正規化)、前後の本文を読んで条件2〜4を判断した。cisa.gov はこの環境から403で開けず、代替の取得経路は試していない。全引用のうち、機械の照合で一致しなかったもの(F208、F400、F409、F412、F500、F501)は、ページ跨ぎ、ハイフネーション、脚注番号、『pre-defined』の綴りの違いが原因で、本文を目視して実在を確認した。
+注意: locator の節番号(§2.2、§4.3.3.2、付録 0.A.3 など)は一部しか確かめていない。F509 の『付録 0.A.3』は本文中に該当する見出しを見つけられなかった(quoteは付録の『Dealing with uncertainties』に実在)。
+結果:
+- id: F200
+  quote: we observe that SOC analysts are facing excessive alerts (24K–134K per day), but only a small percentage of the alerts (0.01%) are associated with true attacks.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+    理由: abstract に実在(par.nsf.gov PDF)。『115 million alerts』を『約1.16億件』と書くのは本文の 115,617,526 件と合う。
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 不合格
+    理由: 出典§6.1は、24,000件/日(第2期)と134,000件/日(第1期)を「daily alerts」の総数として示し、第2期には自動遮断(BHR)で処理された44.9%を含む。引用 'during the first period (April 2018 to August 2020), the average number of daily alerts is 134,000,
+      which is 5-6 times higher than the 24,000 alerts per day in the second period'。同じ§6.1に 'after BHR filtering, there are still ... (about 13,764 alerts per day)'。statementと qualifiers は「解析者が直面する」(abstractの語)のまま、2.4万に自動遮断分が含まれることを落としており、F201(1.3764万)と並べると食い違って見える。qualifiersに『自動遮断(BHR)で処理された分を含む総数』を足すこと。
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F201
+  quote: Even so, after BHR filtering, there are still a large number of alerts that need to be handled and processed by analysts (about 13,764 alerts per day).
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F202
+  quote: 45% of analysts reported that they receive less than 5K alerts daily. Participants receiving over 100K alerts were from large enterprises with fewer than 20 analysts working in the SOC,
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F203
+  quote: SOC teams receive 4,484 alerts each day on average . Analysts spend nearly 3 hours (2.7) each day manually triaging alerts,
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 不合格
+    理由: qualifiersの『標本数と調査方法は本ページで未確認』は、ページ本文と食い違う。同ページに 'based on a global study of 2,000 SOC analysts' と 'March-April 2023 study commissioned by Vectra and carried out by Sapio Research. Sapio surveyed
+      2,000 IT security analysts working at organizations with more than 1,000 employees across the US (200), UK (200), Fra...' とある。標本数2,000、従業員1,000人超の組織、2023年3〜4月、委託先の調査会社を限定に挙げ、『未確認』は削る。
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F204
+  quote: On average, security analysts are unable to deal with over two-thirds (67%) of the daily alerts they receive . What’s more, they say 83% of these alerts are false positives and not worth their
+    time .
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 不合格
+    理由: F203と同じ。qualifiersの『標本数は未確認』は誤り(同ページに 'surveyed 2,000 IT security analysts working at organizations with more than 1,000 employees' )。また、67%・83%は平均値/自己申告の語('On average', 'they say')であり、この点は挙げられている。
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F205
+  quote: 'When describing the overwhelming number of alarms received, B3 quantified it as 99%, stating: “We know 99% of the alarms we generate are false positives, but we still have to look at them.”'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの後半『この99%は、多くが良性のトリガーで、技術の性能の測定値ではないと論文は分析している』は、quote(B3の発言)にない。論文は abstract で 'most are attributed to benign triggers' と一般に述べるが、B3の99%がそうだと述べる箇所は確認できなかった。論文の分析として書くなら別の事実(F503など)にし、この事実のstatementはB3の発言までに留める。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F206
+  quote: one participant indicated that one out of every 100 alerts investigated is an actual threat, while another stated that in every 200 alerts, 50 were found to be legitimate.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 不合格
+    理由: qualifiersの『回答者間で1%〜25%と大きく異なる』は、quote の2例(1/100 と 50/200)から算出した範囲で、回答した10人全体の範囲ではない。出典は 'some analysts (n = 10) shared ... For example, one participant ... while another' とあるのみ。『挙げた2例の比が1%と25%』に直す。
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F207
+  quote: Furthermore, we observe a significant portion of the alerts are related to “attack attempts” (attacks that did not lead to true compromises, 27%), and “benign triggers” (correctly matched security
+    events but had business-justified explanations, 49%).
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの『真の攻撃に関連するアラートは0.01%』は quote にない(quoteは 'attack attempts ... 27%' と 'benign triggers ... 49%' の文のみ。0.01%は abstract の前の文)。qualifiersに『真の攻撃0.01%はabstractの別の文』と自認している。quoteを前の文まで広げるか、0.01%を別の事実に分ける。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 不合格
+    理由: value 0.01 %(台帳)は quote の中の数値に一致しない(quoteにあるのは 27% と 49%)。機械の照合で落ちる。
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F208
+  quote: A false positive or false alarm is an alert caused by normal non-malicious background traffic. Some causes for Network IDS (NIDS) include weak signatures that alert on all traffic to a high-numbered
+    port used by a backdoor; search for the occurrence of a common word such as help in the first 100 bytes of SNMP or other TCP connections; or detection of common violations of the TCP protocol. They
+    can also be caused by normal network monitoring and maintenance traffic generated by network management tools.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F209
+  quote: When an IDPS incorrectly identifies benign activity as being malicious, a false positive has occurred. When an IDPS fails to identify malicious activity, a false negative has occurred. It is not
+    possible to eliminate all false positives and negatives; in most cases, reducing the occurrences of one increases the occurrences of the other.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの『チューニングで調整する』は quote にない。出典は quote の直後に 'Many organizations choose to decrease false negatives at the cost of increasing false positives ...' と、設定を変えることを tuning と呼ぶ文が続く。quote は 'reducing
+      the occurrences of one increases the occurrences of the other.' で終わる。quoteを広げるか、statementから外す。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F210
+  quote: Anomaly-based IDPS products often produce many false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: (軽)statementの『(保守作業など)』は quote にない。出典で quote の前の文("if a particular maintenance activity that performs large file transfers occurs only once a month ...")の例。quoteを前の文まで広げるか、例を外す。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F211
+  quote: Another common problem with network-based IDPSs’ accuracy is that they typically require considerable tuning and customization to take into account the characteristics of the monitored environment.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの『新規導入では調整が済むまで多数の誤検知が出る』は quote にない。quote は 'they typically require considerable tuning and customization ...' だけ。この内容は同文書の §3.3.1.2 の 'a new deployment is likely to generate a large number
+      of false positives until fully tuned and customized'(IDPS全般の導入の節)にあり、locator(§4.3.3.2)とも違う。別の事実に分けるか、quoteとlocatorを足す。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F212
+  quote: False positives can also be caused by benign changes in the environment. For example, if a new service is added to a host and a few hosts start using it, an NBA sensor is likely to detect this
+    as anomalous.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 不合格
+    理由: quoteは 'an NBA sensor is likely to detect this as anomalous.' で切れているが、出典は直後に 'However, typically this would be a low-priority alert, and not reported as an attack, so it is debatable whether this
+      can truly be considered a false positive.' と続ける。この限定は qualifiers に書かれているが、quote とstatementは落としている。quoteをこの文まで広げる。
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの『サービスの移設』は quote にない(出典の次の文 'If a major service is moved from one host to another ...' )。また、statementは出典が『誤検知と呼べるか議論の余地』とした事例を、ヘッジなしで『誤検知が起きる』と述べている。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F213
+  quote: In contrast, benign triggers are true alarms; meaning they match an existing signature (e.g., vulnerable java version) but the organization chooses to ignore it (e.g., due to legacy systems).
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの冒頭『誤検知の多くは「良性のトリガー」…ツールの欠陥ではない』は quote にない。quote は benign triggers の定義(' benign triggers are true alarms; meaning they match an existing signature ... but the organization chooses to ignore
+      it')のみ。『多くは』は abstract('most are attributed to benign triggers')、『ツールの欠陥ではない』は出典に見当たらず推測。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F214
+  quote: Some analysts reported that signatures are “loosely written”, meaning written to be general to capture a variety of activities. This results in a high volume of FPs,
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 不合格
+    理由: (軽)quoteは 'Some analysts reported that signatures are "loosely written"' で、一部の解析者の報告。statementは『SOC実務者の証言』と主語を広く取り、qualifiersにも『一部の』が挙がっていない。
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F215
+  quote: The first common cause of benign triggers is scheduled internal scanning to proactively check for vulnerabilities and misconfigurations. These scans have similar behavior patterns as malicious
+    scans, but the alerts can be safely ignored.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+    理由: quote は実在(§6.4)。locator の『Table 7』は本文の参照。
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementは5つのパターン(内部の脆弱性スキャン、外部委託ペネトレーションテスト、DNS設定、SSLとレガシー、情報提供目的)を挙げ、『これらは正当な活動が悪性の活動と似た振る舞いをするために起きる』と述べるが、quoteは内部スキャンだけ('scheduled internal scanning ... similar behavior patterns as malicious
+      scans')。外部委託ペネトレーションテスト(出典は 'External Pen Test ... (2.7 million alerts)')は F216〜F218 にもなく、qualifiersの『他のパターンの記述はF216〜F218』と食い違う。statementを内部スキャンに絞るか、事実を分ける。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F216
+  quote: We identified benign triggers related to DNS services (1.4 million), and the vast majority are triggered due to external domains hosted under a local/internal IP. The detection rules are designed
+    to capture internal host compromises. However, the research center often has collaborative projects with other organizations and there are websites (with external domain names) hosted on internal IPs.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: (軽)statementは『外部ドメインを内部IPで運用していることがDNS関連アラートを大量に引き起こした(約140万件)』と、140万件の全体をこの原因に結ぶ。quoteは『DNSサービス関連の良性のトリガー(140万件)のうち、大半(the vast majority)がこの原因』と述べる。『大半』を落としている。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F217
+  quote: Benign triggers related to SSL (e.g., weak key, weak cipher, old version) are mostly due to legacy systems—SOC determined they are either difficult to change or safe to ignore.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F218
+  quote: More than 2.5 million alerts are not related to attacks but are generated for information/context purposes. For example, most of such alerts are related to logging failures from Zeek. Others are
+    related to new IP ranges or hosts added to the network.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F400
+  quote: The incident response team should work quickly to analyze and validate each incident, following a pre-defined process and documenting each step taken. When the team believes that an incident has
+    occurred, the team should rapidly perform an initial analysis to determine the incident’s scope, such as which networks, systems, or applications are affected; who or what originated the incident; and
+    how the incident is occurring (e.g., what tools or attack methods are being used, what vulnerabilities are being exploited). The initial analysis should provide enough information for the team to prioritize
+    subsequent activities, such as containment of the incident and deeper analysis of the effects of the incident.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F401
+  quote: Determining whether a particular event is actually an incident is sometimes a matter of judgment. It may be necessary to collaborate with other technical and information security personnel to make
+    a decision.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F402
+  quote: Use available data to identify the type of access, the extent to which assets have been affected, the level of privilege attained by the adversary, and the operational or informational impact.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 判定できない
+    理由: 出典のPDF(cisa.gov)は、このセッションの環境から403(Access Denied)で開けなかった。別の取得経路は試していない。
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 判定できない
+    理由: 同上
+  - 条件: statement が quote と合う
+    判定: 判定できない
+    理由: 同上
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 判定できない
+    理由: 同上
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 判定できない
+    理由: 同上。版の表記も未確認。
+  総合(条件1〜4): 判定できない
+- id: F403
+  quote: Set a per-alert triage budget (12-20 minutes is typical for Tier 1). ... If you cannot reach a verdict within that window, escalate to Tier 2 with a documented summary
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F404
+  quote: '"P2: Escalate 30 min" / "P1: Escalate IMMEDIATELY"'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 不合格
+    理由: '同じ文書の別の表が、P1の条件を落としている。''🔴 P1 Critical Incident ... 2 Escalate to Tier 2 Tier 2 Analyst (on-call) 5 min Phone + Ticket''(Escalation Matrix)。フロー図のラベル ''P1: Escalate IMMEDIATELY'' だけを写すと、表の『5分以内』が落ちる。P2は表も
+      ''Escalate to Tier 2 ... 30 min'' で一致。qualifiersに、表で P1 は5分以内とあることを足す。同ページには ''⚠️ Replace with your actual contacts.'' とあり、雛形の性格も限定に挙げうる。'
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F405
+  quote: '"Never delay a P1 escalation to "investigate more" — escalate first, investigate in parallel" / "Over-escalate if unsure — it''s better to escalate and be wrong than to miss a real incident"'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 不合格
+    理由: (軽)qualifiersの『P1(最重大)の場合の規則』は、2つ目の引用に当たらない。'Over-escalate if unsure — it's better to escalate and be wrong than to miss a real incident' は Do's の一般規則で、P1に限る記述ではない。1つ目('Never delay a P1 escalation')だけがP1の規則。
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F406
+  quote: '"Tier 1 analysts resolve false positives and benign true positives. Everything else escalates." / "Any confirmed or likely TP on a Tier 1 asset" / "Evidence of lateral movement (multiple hosts
+    involved)" / "Any alert where the analyst cannot reach a verdict within the time budget"'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F407
+  quote: '"You should trigger an escalation when you encounter an incident that exceeds your predefined technical scope" / "Escalate as soon as you hit the limit of your investigative authority."'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 不合格
+    理由: (軽)quoteは 'exceeds your predefined technical scope' で切れるが、出典は続けて 'or requires deeper investigation than simple monitoring allows' と別の条件を並べる。statementの『上げる条件は、担当者の技術的な守備範囲を超えたとき』は、条件を1つに絞る形になる。
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの『標準の手順を超える調査(詳細なパケット検査、複雑なログの突き合わせ)が要るときは引き継ぐ』は quote にない。出典の後続の文('If an alert requires deep packet inspection or complex log correlation that goes beyond your standard operating procedures,
+      it is time to hand it off.')にある。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F408
+  quote: Declare an incident by reporting it to CISA at https://www.cisa.gov/report and alerting agency IT leadership to the need for investigation and response.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 判定できない
+    理由: 出典のPDF(cisa.gov)は403で開けなかった。
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 判定できない
+    理由: 同上
+  - 条件: statement が quote と合う
+    判定: 判定できない
+    理由: 同上
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 判定できない
+    理由: 同上
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 判定できない
+    理由: 同上
+  総合(条件1〜4): 判定できない
+- id: F409
+  quote: 'When an incident is analyzed and prioritized, the incident response team needs to notify the appropriate individuals so that all who need to be involved will play their roles. Incident response
+    policies should include provisions concerning incident reporting—at a minimum, what must be reported to whom and at what times (e.g., initial notification, regular status updates). The exact reporting
+    requirements vary among organizations, but parties that are typically notified include:'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: (軽)statementの通知先の例(CIO、情報セキュリティ責任者、組織内外の他のインシデント対応チーム)は quote にない(quoteは 'parties that are typically notified include:' で終わる)。出典の箇条書きは 'External incident response teams (if appropriate)' で、statement
+      の『組織内外』は '(if appropriate)' を落としている。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F410
+  quote: 'Prioritizing the handling of the incident is perhaps the most critical decision point in the incident handling process. Incidents should not be handled on a first-come, first-served basis as a
+    result of resource limitations. Instead, handling should be prioritized based on the relevant factors, such as the following:'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: (軽)statementの要因(機能への影響、情報への影響、復旧の可能性)は quote にない(quoteは 'such as the following:' で終わる)。また、quoteは 'Incidents should not be handled on a first-come, first-served basis as a result of resource limitations'
+      で、資源の制約という理由付きだが、statementは理由なしに『先着順にしない』と述べる。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F411
+  quote: Organizations should also establish an escalation process for those instances when the team does not respond to an incident within the designated time. ... Generally, the first step is to duplicate
+    the initial contact. After waiting for a brief time—perhaps 15 minutes—the caller should escalate the incident to a higher level, such as the incident response team manager.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F412
+  quote: 'The issue tracking system should contain information on the following: The current status of the incident (new, in progress, forwarded for investigation, resolved, etc.) A summary of the incident
+    Indicators related to the incident Other incidents related to this incident Actions taken by all incident handlers on this incident Chain of custody, if applicable Impact assessments related to the
+    incident Contact information for other involved parties (e.g., system owners, system administrators) A list of evidence gathered during the incident investigation Comments from incident handlers Next
+    steps to be taken (e.g., rebuild the host, upgrade an application).'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F413
+  quote: 'Escalation should always include: alert source and ID, triage timeline, evidence collected, current verdict hypothesis ... and recommended next step. Handoffs without context force Tier 2 to start
+    over.'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F414
+  quote: '"To prevent this, always ensure your handoff includes all relevant metadata and initial findings." / "Use standardized templates for all escalation notes to ensure no critical data is missed during
+    the transition."'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F500
+  quote: According to a Bloomberg Businessweek report, Target’s FireEye malware intrusion detection system triggered urgent alerts with each installation of the data exfiltration malware. However, Target’s
+    security team neither reacted to the alarms nor allowed the FireEye software to automatically delete the malware in question.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F501
+  quote: According to Businessweek, the FireEye software sent an alert with the generic name “malware.binary” to Target security staff. It is possible that Target staff could have viewed this alert as a
+    false positive if the system was frequently alarming.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F502
+  quote: Analysts are also under constant pressure to close tickets, as some SOCs evaluate their practitioners’ performance accordingly [40]. This process not only leads to human error [13] but causes analyst
+    fatigue and burnout [40].
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F503
+  quote: Our results highlight that, despite the perceived volume of FPs, most are attributed to benign triggers—true alarms, explained by legitimate behavior in the organization’s environment, which analysts
+    may choose to ignore.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F504
+  quote: The decision was correct in 83% of the answers, but 61% of the explanations were incorrect or imprecise
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの『説明が実際の根本原因を反映していたのは39%』は quote にない。quote(Introduction)は 'The decision was correct in 83% of the answers, but 61% of the explanations were incorrect or imprecise'。39%は abstract の別の文('only
+      39% of the provided explanations reflected the actual root cause')。『誤りまたは不正確が61%』と『根本原因を反映が39%』は言い換えで同じとは言えない(『不正確でない』≠『根本原因を反映』)。quoteにabstractの文を足す。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F505
+  quote: some cases were perceived as systematically harder to triage, with participants commenting that there was “missing information” (even though they were provided with all the necessary tooling).
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F506
+  quote: In our survey, 56 percent of IT professionals admitted to having ignored an alert based on past false-positive experiences.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 不合格
+    理由: statementの『分析者が使うSOCの運用で…ことがあると答えた割合』は quote と合わない。出典は 'During the RSA Conference 2018, Imperva surveyed 179 IT professionals' で、SOCの解析者に限らない。qualifiersには『ITの専門職179人』とあり、statementと食い違う。
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 不合格
+- id: F507
+  quote: More than one-third of IT security managers and security analysts ignore threat alerts when the queue is full
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F508
+  quote: Moreover, we find that alerts that ought to be escalated (i.e., Att alerts) require more actions on average to investigate than NAtt ones. Therefore, analysts are more likely to spend time and
+    cognitive effort when analyzing escalation-worthy alerts.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F509
+  quote: Dealing with uncertainties 92% stated that they consulted colleagues in case of uncertainties; however 71% participants also relied on their own research, analysing additional logs and comparing
+    with existing playbooks. Only 33% stated that they would create a ticket and pass the case on if they were unsure.
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格
+- id: F510
+  quote: 'However, monitoring for such a customer introduces pressure on the analysts to raise every possible suspicious alarm to avoid appearing incompetent or receiving possible fines (A1, A2, D6, E7).
+    As D6 remarks: “Being analysts, most of them are afraid not to raise them to the customer. They do tend to raise quite a lot of alarms to the customers, obviously to be on the safe side.”'
+  条件ごとの判定:
+  - 条件: quote が出典に実在する
+    判定: 合格
+  - 条件: 切り取りが条件・範囲・主体を落としていない
+    判定: 合格
+  - 条件: statement が quote と合う
+    判定: 合格
+  - 条件: qualifiers が漏れなく、value/unit が quote と一致
+    判定: 合格
+  - 条件: as_of と撤回・旧版の扱い(参考)
+    判定: 合格
+  総合(条件1〜4): 合格

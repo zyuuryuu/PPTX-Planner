@@ -1,0 +1,378 @@
+# 収集セッション R2 の結果(再検査の指摘を受けて修正)。stance は書かない。verified は再検査まで false。
+- id: F200
+  statement: 実在のSOCの4年間のネットワークアラートログ(1.15億件)では、解析者が直面するアラートは1日あたり2.4万〜13.4万件で、真の攻撃に関連するのはそのうち0.01%だった
+  value: 24000-134000
+  unit: 件/日
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 Abstract
+  as_of: '2024'
+  metric: SOCが受けるアラート数(1日あたり)
+  superseded_by: null
+  quote: we fill the gap by working with a real-world SOC and collecting and analyzing their network alert logs over 4 years (115 million alerts, from 2018 to 2022). To further understand how alerts are associated with true attacks, we also obtain the ground truth of 227 successful attacks in the past 20 years (11 during the overlapping period). Through analysis, we observe that SOC analysts are facing excessive alerts (24K–134K per day), but only a small percentage of the alerts (0.01%) are associated with true attacks.
+  qualifiers:
+  - 1つのSOC
+  - 2018〜2022年のネットワークアラートログ(115 million alerts)
+  - 1日あたりの件数は幅(24K–134K)で示されている
+  - ほかのホストIDS・商用ツールのアラートは含まない(本文§3、下限)
+  - 13.4万件/日は第1期(2018-04〜2020-08)の平均で、自動遮断(BHR)はまだない
+  - 2.4万件/日は第2期(2020-12〜2022-07)の平均で、自動遮断(BHR)で処理された分(第2期の44.9%)を含む
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.2
+  verified: false
+- id: F201
+  statement: 同SOCの第2期で、自動遮断(BHR)で人手を介さず処理されたアラートは約44.9%(6,474,204件)あり、それを除いても解析者が処理するアラートは1日あたり約13,764件残った
+  value: 13764
+  unit: 件/日
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.1 Excessive Alert Volume
+  as_of: '2024'
+  metric: SOCが受けるアラート数(1日あたり)
+  superseded_by: null
+  quote: 6,474,204 alerts are handled by BHR during the second period (44.9%) without involving human analysts. Many of these alerts are associated with attack attempts that match high-confident signatures and some may involve known benign triggers (e.g., scanning from third-party security vendors, see §6.2). Even so, after BHR filtering, there are still a large number of alerts that need to be handled and processed by analysts (about 13,764 alerts per day).
+  qualifiers:
+  - 1つのSOC
+  - 第2期(2020-12〜2022-07)
+  - BHR処理分には、既知の良性のトリガー(第三者ベンダーのスキャンなど)も含まれうる
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.2
+  verified: false
+- id: F202
+  statement: SOC実務者の調査(n=20)で、1日に受けるアラートが5,000件未満と答えたのは45%。10万件超を受ける回答者もいた
+  value: 45
+  unit: '%'
+  kind: fact
+  source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Quantitative Method: Online Survey'' の結果(Survey Results)'
+  as_of: 2022-08
+  metric: 1日5,000件未満のアラートを受ける回答者の割合
+  superseded_by: null
+  quote: 45% of analysts reported that they receive less than 5K alerts daily. Participants receiving over 100K alerts were from large enterprises with fewer than 20 analysts working in the SOC,
+  qualifiers:
+  - SOC実務者のオンライン調査 n=20(小標本)
+  - 自己申告
+  - 10万件超の回答者は、解析者20人未満の大企業のSOC
+  origin: 著者らのオンライン調査(n=20)
+  answers:
+  - Q1.1.2
+  verified: false
+- id: F203
+  statement: 業界調査(ベンダーのVectra)では、SOCは1日平均4,484件のアラートを受け、解析者は1日に約2.7時間を手作業のトリアージに使う
+  value: 4484
+  unit: 件/日
+  kind: fact
+  source: Vectra AI, 2023 State of Threat Detection
+  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文 / 要約) / Methodology
+  as_of: '2023'
+  metric: SOCが受けるアラート数(1日あたり)
+  superseded_by: null
+  quote: SOC teams receive 4,484 alerts each day on average . Analysts spend nearly 3 hours (2.7) each day manually triaging alerts,
+  qualifiers:
+  - ベンダー(脅威検知製品の会社)の調査。宣伝目的を含むため一次情報として扱わない
+  - 自己申告の平均
+  - Sapio Research(Vectra委託)の2023年3〜4月の調査。対象は従業員1,000人超の組織のIT security analysts 2,000人(米英仏独伊など。出典 Methodology)
+  origin: Vectra AI の調査(2023)
+  answers:
+  - Q1.1.2
+  verified: false
+- id: F204
+  statement: 業界調査(ベンダーのVectra)では、解析者は受けるアラートの67%に対応できず、アラートの83%が誤検知で時間をかける価値がないと答えた
+  value: 83
+  unit: '%'
+  kind: fact
+  source: Vectra AI, 2023 State of Threat Detection
+  locator: https://www.vectra.ai/resources/research-reports/2023-state-of-threat-detection (ページ本文) / Methodology
+  as_of: '2023'
+  metric: 誤検知の割合
+  superseded_by: null
+  quote: On average, security analysts are unable to deal with over two-thirds (67%) of the daily alerts they receive . What’s more, they say 83% of these alerts are false positives and not worth their time .
+  qualifiers:
+  - ベンダーの調査。宣伝目的を含むため一次情報として扱わない
+  - 解析者の自己申告(測定値ではない)
+  - 「誤検知」の定義は示されていない(下のF205・F207は、この語に正当な検知を含めうることを示す)
+  - Sapio Research(Vectra委託)の2023年3〜4月の調査。対象は従業員1,000人超の組織のIT security analysts 2,000人(米英仏独伊など。出典 Methodology)
+  origin: Vectra AI の調査(2023)
+  answers:
+  - Q1.1.3
+  verified: false
+- id: F205
+  statement: SOC実務者へのインタビューで、ある解析者(B3)は「自分たちが出すアラームの99%は誤検知だ」と述べた
+  value: 99
+  unit: '%'
+  kind: fact
+  source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''RQ2: Definition of FPs'''
+  as_of: 2022-08
+  metric: 誤検知の割合
+  superseded_by: null
+  quote: 'When describing the overwhelming number of alarms received, B3 quantified it as 99%, stating: “We know 99% of the alarms we generate are false positives, but we still have to look at them.”'
+  qualifiers:
+  - インタビュー参加者1人の体感の発言
+  - 統計ではない
+  origin: 著者らのインタビュー(n=21)
+  answers:
+  - Q1.1.3
+  verified: false
+- id: F206
+  statement: 同論文のアンケートで、10人が1日に処理するアラートと、そのうち正当な検知だった割合を答えた。例として、調査したアラート100件のうち実際の脅威は1件、別の回答者では200件のうち50件だった
+  value: 1/100, 50/200
+  unit: 件
+  kind: fact
+  source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Quantitative Method: Online Survey'' の結果(Survey Results)'
+  as_of: 2022-08
+  metric: アラートのうち正当な検知の割合
+  superseded_by: null
+  quote: some analysts (n = 10) shared the number of alerts they processed daily and the proportion of these that they found to be legitimate. For example, one participant indicated that one out of every 100 alerts investigated is an actual threat, while another stated that in every 200 alerts, 50 were found to be legitimate.
+  qualifiers:
+  - 回答した10人(アンケート全体はn=20)のうちの2例
+  - 自己申告
+  origin: 著者らのオンライン調査(n=20、うち10人が数値を回答)
+  answers:
+  - Q1.1.3
+  verified: false
+- id: F207
+  statement: 実SOCの実測では、アラートのうち真の攻撃に関連するのは0.01%。攻撃の試み(侵害に至らなかった攻撃)が27%、正当な業務上の理由がある「良性のトリガー」が49%を占めた
+  value: 0.01
+  unit: '%'
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 Abstract
+  as_of: '2024'
+  metric: 真の攻撃に関連するアラートの割合
+  superseded_by: null
+  quote: Through analysis, we observe that SOC analysts are facing excessive alerts (24K–134K per day), but only a small percentage of the alerts (0.01%) are associated with true attacks. While the majority of true attacks can be detected within the same day, the post-attack investigation takes much longer time (53 days on average). Furthermore, we observe a significant portion of the alerts are related to “attack attempts” (attacks that did not lead to true compromises, 27%), and “benign triggers” (correctly matched security events but had business-justified explanations, 49%).
+  qualifiers:
+  - 1つのSOC
+  - 割合は表4の期間(2020-12〜2022-07、14,429,534件)のもの
+  - 27%と49%は下限(論文は『at least』と述べる。良性のトリガーは明確な証拠があるものだけを数えた)
+  - 分類不能(Unknown)が23.72%残る
+  - 「攻撃の試み」は侵害に至らなかった攻撃、「良性のトリガー」は正しく一致したが業務上の説明があるセキュリティ事象と定義されている
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.3
+  - Q1.1.4
+  verified: false
+- id: F208
+  statement: NISTの文書は、誤検知を『通常の非悪性の背景トラフィックで起きたアラート』と定義し、ネットワークIDSでの原因に、弱いシグネチャ、正当なネットワーク管理ツールのトラフィックを挙げる。誤検知率はネットワーク環境ごとに異なることがある
+  kind: fact
+  source: NIST ITL Bulletin 'Testing Intrusion Detection Systems' (2003-07)
+  locator: https://csrc.nist.gov/files/pubs/shared/itlb/itlbul2003-07.pdf p.1-2 (Probability of False Alarms。引用はp.1末尾からp.2先頭へ改ページをまたぐ)
+  as_of: 2003-07
+  superseded_by: null
+  quote: A false positive or false alarm is an alert caused by normal non-malicious background traffic. Some causes for Network IDS (NIDS) include weak signatures that alert on all traffic to a high-numbered port used by a backdoor; search for the occurrence of a common word such as help in the first 100 bytes of SNMP or other TCP connections; or detection of common violations of the TCP protocol. They can also be caused by normal network monitoring and maintenance traffic generated by network management tools. It is difficult to measure false alarms because an IDS may have a different false positive rate in each network environment, and there is no such thing as a standard network.
+  qualifiers:
+  - NIDS(ネットワーク型IDS)について
+  - 2003年の文書
+  - 「標準的なネットワークはない」ため、誤検知の測定は難しいとされている
+  origin: NIST ITL Bulletin (2003-07)
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F209
+  statement: 'NIST SP 800-94: 良性の活動を悪性と誤認すると誤検知になる。すべての誤検知をなくすことはできず、多くの場合、一方を減らすと他方が増える。多くの組織は偽陰性を減らす代わりに偽陽性が増える設定を選び、その分の分析資源が要る。設定を調整して検知精度を改善することをチューニングと呼ぶ'
+  kind: fact
+  source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §2.2 Key Functions of IDPS Technologies
+  as_of: 2007-02
+  superseded_by: null
+  quote: When an IDPS incorrectly identifies benign activity as being malicious, a false positive has occurred. When an IDPS fails to identify malicious activity, a false negative has occurred. It is not possible to eliminate all false positives and negatives; in most cases, reducing the occurrences of one increases the occurrences of the other. Many organizations choose to decrease false negatives at the cost of increasing false positives, which means that more malicious events are detected but more analysis resources are needed to differentiate false positives from true malicious events. Altering the configuration of an IDPS to improve its detection accuracy is known as tuning.
+  qualifiers:
+  - IDPS全般
+  - SP 800-94(2007年)
+  - 原文は『in most cases』(例外がある)
+  origin: NIST SP 800-94
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F210
+  statement: 'NIST SP 800-94: 月1回だけの保守作業などは学習期間に観測されず、プロファイルからの大きな逸脱として警告を起こしうる。異常検知型IDPSは、プロファイルから大きく外れる良性の活動のために多くの誤検知を出し、環境が多様・動的なほど多い'
+  kind: fact
+  source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §2.3.2 Anomaly-Based Detection
+  as_of: 2007-02
+  superseded_by: null
+  quote: Another problem with building profiles is that it can be very challenging in some cases to make them accurate, because computing activity can be so complex. For example, if a particular maintenance activity that performs large file transfers occurs only once a month, it might not be observed during the training period; when the maintenance occurs, it is likely to be considered a significant deviation from the profile and trigger an alert. Anomaly-based IDPS products often produce many false positives because of benign activity that deviates significantly from profiles, especially in more diverse or dynamic environments.
+  qualifiers:
+  - 異常検知型の検知方式について
+  origin: NIST SP 800-94
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F211
+  statement: 'NIST SP 800-94: ネットワーク型IDPSの精度に関する一般的な問題として、監視対象の環境の特性に合わせた多大なチューニングとカスタマイズが必要である'
+  kind: fact
+  source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §4.3.3.2 Detection Accuracy
+  as_of: 2007-02
+  superseded_by: null
+  quote: Another common problem with network-based IDPSs’ accuracy is that they typically require considerable tuning and customization to take into account the characteristics of the monitored environment.
+  qualifiers:
+  - ネットワーク型IDPSについて
+  origin: NIST SP 800-94
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F212
+  statement: 'NIST SP 800-94: NBA型では、環境の良性の変化(新サービスの追加)でも異常として検知されうる。ただし通常は低優先度のアラートで、誤検知と呼べるかは議論の余地がある'
+  kind: fact
+  source: NIST SP 800-94 Guide to Intrusion Detection and Prevention Systems (IDPS)
+  locator: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-94.pdf §6.2.3.2 Detection Accuracy (NBA)
+  as_of: 2007-02
+  superseded_by: null
+  quote: False positives can also be caused by benign changes in the environment. For example, if a new service is added to a host and a few hosts start using it, an NBA sensor is likely to detect this as anomalous. However, typically this would be a low-priority alert, and not reported as an attack, so it is debatable whether this can truly be considered a false positive.
+  qualifiers:
+  - NBA(ネットワーク挙動分析)型について
+  - 『誤検知と呼べるか議論の余地がある』と同文書が述べている
+  origin: NIST SP 800-94
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F213
+  statement: Alahmadiらは、「良性のトリガー」を、既存のシグネチャに一致する(正しい)アラームだが、レガシーシステムなどの理由で組織が無視するもの、と定義する
+  kind: fact
+  source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Introduction''(用語の定義)'
+  as_of: 2022-08
+  superseded_by: null
+  quote: In contrast, benign triggers are true alarms; meaning they match an existing signature (e.g., vulnerable java version) but the organization chooses to ignore it (e.g., due to legacy systems).
+  qualifiers:
+  - 論文中の用語の定義
+  - インタビュー(n=21、7つのSOC)に基づく定性研究
+  origin: 著者らのインタビュー(n=21)
+  answers:
+  - Q1.1.4
+  - Q1.1.3
+  verified: false
+- id: F214
+  statement: SOC実務者の一部は、シグネチャが『緩く(広く)書かれている』ことで多くの誤検知が出ると述べた
+  kind: fact
+  source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''Reported by Interviewees'' 内の ''Unreliable signature'''
+  as_of: 2022-08
+  superseded_by: null
+  quote: Some analysts reported that signatures are “loosely written”, meaning written to be general to capture a variety of activities. This results in a high volume of FPs,
+  qualifiers:
+  - インタビュー参加者の一部(『Some analysts』)の認識(定性)
+  origin: 著者らのインタビュー(n=21)
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F215
+  statement: 同SOCで、定期的な内部スキャン(脆弱性・設定不備の確認)は、悪性のスキャンと似た振る舞いをするが、アラートは無視してよい良性のトリガーの共通の原因の1つだった
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.4 Understanding Benign Triggers (Table 7)
+  as_of: '2024'
+  superseded_by: null
+  quote: The first common cause of benign triggers is scheduled internal scanning to proactively check for vulnerabilities and misconfigurations. These scans have similar behavior patterns as malicious scans, but the alerts can be safely ignored.
+  qualifiers:
+  - 1つのSOC
+  - 本文は『最初の一般的な原因』と述べる
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F216
+  statement: 同SOCで、DNS関連の良性のトリガー(約140万件)の大半は、外部ドメインを内部IPで運用していることによるものだった。検知ルールは内部ホストの侵害を捉える設計だったが、共同研究のサイトが該当した
+  value: 1.4
+  unit: 百万件
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.4 DNS Configurations
+  as_of: '2024'
+  metric: DNS設定に起因する良性のトリガーの件数
+  superseded_by: null
+  quote: We identified benign triggers related to DNS services (1.4 million), and the vast majority are triggered due to external domains hosted under a local/internal IP. The detection rules are designed to capture internal host compromises. However, the research center often has collaborative projects with other organizations and there are websites (with external domain names) hosted on internal IPs.
+  qualifiers:
+  - 1つのSOC
+  - 2020〜2022年
+  - 『大半(the vast majority)』は原文の語で、割合は示されていない
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F217
+  statement: 同SOCで、SSLの弱い鍵・弱い暗号・旧版に関するアラートは、主にレガシーシステムに起因し、変更が難しい、または無視して安全と判断されていた
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.4 SSL and Legacy Systems
+  as_of: '2024'
+  superseded_by: null
+  quote: Benign triggers related to SSL (e.g., weak key, weak cipher, old version) are mostly due to legacy systems—SOC determined they are either difficult to change or safe to ignore.
+  qualifiers:
+  - 1つのSOC
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F218
+  statement: '同SOCで、2.5百万件超のアラートは攻撃と無関係で、情報・文脈の提供目的(例: Zeekのログ失敗、新しいIP範囲やホストの追加)だった'
+  value: 2.5
+  unit: 百万件超
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.4 Alerts for Information Purposes
+  as_of: '2024'
+  metric: 情報提供目的のアラートの件数
+  superseded_by: null
+  quote: More than 2.5 million alerts are not related to attacks but are generated for information/context purposes. For example, most of such alerts are related to logging failures from Zeek. Others are related to new IP ranges or hosts added to the network.
+  qualifiers:
+  - 1つのSOC
+  - 2020〜2022年
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.4
+  verified: false
+- id: F219
+  statement: Alahmadiらは、解析者の報告した99%の誤検知は、主に良性のトリガーであり、技術の性能の測定値とは限らないと分析している
+  kind: fact
+  source: 'Alahmadi, Axon, Martinovic, ''99% False Positives: A Qualitative Study of SOC Analysts'' Perspectives on Security Alarms'' (USENIX Security 2022)'
+  locator: 'https://www.usenix.org/conference/usenixsecurity22/presentation/alahmadi (全文: https://ora.ox.ac.uk/objects/uuid%3A0be05f6b-7470-4210-acb6-2018d5dc6ca0/files/rsj139244b) 節 ''RQ2: Definition of FPs'''
+  as_of: 2022-08
+  superseded_by: null
+  quote: When the analyst reported a 99% FP rate, this is found to be mostly benign triggers and not necessarily a measurement of the performance of the technology itself.
+  qualifiers:
+  - 著者らの分析
+  - インタビュー参加者1人の99%の発言について
+  origin: 著者らのインタビュー(n=21)
+  answers:
+  - Q1.1.3
+  verified: false
+- id: F220
+  statement: Yangらは、良性のトリガーを『組織の環境における業務上正当で許容される挙動によって説明される、正しく発火したアラート』と定義し、一般的な『誤検知』(良性の挙動に対して誤って発火したアラート。悪い規則・エラー・誤設定による等)とは異なると述べる
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.2 Benign Triggers
+  as_of: '2024'
+  superseded_by: null
+  quote: Alerts that are neither “true attacks” nor “attack attempts” cannot be simply marked as false positives (FP). Many of them can be benign triggers. Benign triggers [4] are correctly fired alerts, explained by business-justified, acceptable behaviors in the organization’s environment. As such, analysts may choose to ignore them. An example would be an alert fired correctly because a weak SSL key is detected, but SOC can ignore the alert knowing the host is retiring and disconnected from the public network. This definition is different from the generic “false positives” which usually refer to alerts that are incorrectly fired on benign behaviors (e.g., due to bad rules, errors, or misconfigurations).
+  qualifiers:
+  - 論文中の用語の定義
+  origin: Yang ら(論文内の定義。[4]=Alahmadi らを引用)
+  answers:
+  - Q1.1.3
+  - Q1.1.4
+  verified: false
+- id: F221
+  statement: 同SOCで、第三者のセキュリティベンダーによる外部のペネトレーションテストと年次の監査に対応するアラートが約270万件あった。うち92%は2022年前半のLog4j関連だった
+  value: 2.7
+  unit: 百万件
+  kind: fact
+  source: Yang et al., 'True Attacks, Attack Attempts, or Benign Triggers? An Empirical Measurement of Network Alerts in a Security Operations Center' (USENIX Security 2024)
+  locator: https://par.nsf.gov/servlets/purl/10530815 §6.4 External Pen Test
+  as_of: '2024'
+  metric: 外部ペンテストに起因する良性のトリガーの件数
+  superseded_by: null
+  quote: The SOC also worked with third-party (external) security vendors to perform penetration tests and the annual compliance auditing. The corresponding alerts are identified based on known vendor IPs (2.7 million alerts). While the external scanners have triggered varied types of alerts such as address scan, port scan, and vulnerability scan, the majority (92%) are related to Log4j in early 2022.
+  qualifiers:
+  - 1つのSOC
+  - 既知のベンダーIPで識別
+  - 92%はLog4j関連(2022年前半)
+  origin: 同SOCのZeekアラートログ(著者らが実測)
+  answers:
+  - Q1.1.4
+  verified: false

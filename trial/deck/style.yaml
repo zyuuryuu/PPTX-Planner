@@ -1,0 +1,116 @@
+# 資料の表現規約(SOC試行)
+# 資料の型の定義(docs/deck-types.md の training)の limits は null であるため、値を写せない。
+# 主張の数の上限などは、使う工程(工程2)に入る前に、ユーザーと決めて書き足す。決めるまでは null とする。
+deck_type: training
+delivery: oral
+limits:
+  max_claims: 5   # 設計セッションが決めた(D003)。研修資料の分解の4つに、1つの余裕
+  headline_chars: 50   # 見出しは2行まで(D006)。骨組みの資料の画面で1行が約37字
+# 個人の表現規約は、資料のディレクトリの外に置くとされるが、実体がない。
+# docs/style-rules.md が定める個人の表現規約の初期値を、ここに写す。
+# 機械で検出する辞書(docs/writing.md)がまだないため、全て inspection とする。
+rules:
+  - id: P001
+    rule: 情報を足さない飾りの形容を書かない
+    reason: 読み手の注意を、情報のない語に使わせない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P002
+    rule: 読み手が知っている前提を説明しない
+    reason: ブリーフの「読み手が既に知っていること」は資料で説明しない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P003
+    rule: 本題の前に前置きを書かない
+    reason: 情報のない文で読み手の時間を使わない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P004
+    rule: 資料自身の狙いや構成を語る文を書かない
+    reason: 構成は目次と章扉で示す。本文で繰り返さない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P005
+    rule: 依頼や検討の経緯を写した文を書かない
+    reason: 読み手に要るのは結論と根拠で、作る過程ではない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P006
+    rule: 専門用語と略語は、補足なしに使わない
+    reason: 読み手はセキュリティ製品の経験がない
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P007
+    rule: 接続詞の代わりに矢印や記号を使わない
+    reason: 記号は、因果、順序、変換のどれを指すかが曖昧になる
+    check: inspection
+    issue: null
+    exceptions: []
+  - id: P008
+    rule: 意味を持たないアイコン、見た目のために揃えた項目の数、意味のない囲みを使わない
+    reason: 形は読み手に意味を伝える(docs/visual-grammar.md)
+    check: inspection
+    issue: null
+    exceptions: []
+# 資料に共通の規則(工程6、docs/stages/06-patterns.md の表)。テンプレートがないため全て設計セッションが決め、見本で依頼者の同意を得る。
+# 大きさは 16:9、1280×720 ピクセルの描画で測る(1pt = 4/3 px として換算)。
+common:
+  font_min:                    # 文字の大きさの下限
+    headline: 24pt
+    source_line: 16pt          # 出典の行。後ろの席から読める大きさ(D006 の依頼者の条件)
+    body: 18pt                 # 説明、箇条書き、表のセル、図の外に置く説明の文
+    figure_text: 16pt          # 図の中の文字
+    note: 14pt                 # 図の注記
+  colors:                      # 同じ対象は全ての図で同じ色。割り当てた色を別の対象に使わない
+    閉じる: '#2563EB'
+    調べる: '#B45309'
+    上げる: '#DC2626'
+    誤検知: '#6B7280'
+    想定内の検知: '#0E7490'
+    攻撃の試み: '#EA580C'
+    侵害に至った攻撃: '#7F1D1D'
+    分類できないもの: '#D1D5DB'
+    案の印: '#7C3AED'          # 「案」の札と、案の部分の破線の枠
+    このSOCの運用の印: '#111827' # 「運用」の札
+    仕組みの部品: '#E5E7EB'    # 仕組みの図の部品の塗り(色で区別しない)
+  emphasis: 注目させる点だけを、太い黒(#111827)の枠と太字で示す。強調に色を使わない(色は対象の区別に使っているため)。1枚に1か所
+  arrows:
+    実線の矢印: 流れ(次の段に進む、データが渡る、行き先に進む)
+    太い実線の矢印と「ので」のラベル: 因果
+    ラベル付きの細い線(矢印なし): 流れでない関係(問い合わせる、含む など)。ラベルで関係を書く
+    線なし: 出典につながりがない(仕組みの定義の途切れ)。途切れには「経路は出典にない」の注記を付け、近さでつながりを読ませない位置に置く
+  shapes:
+    角の丸い四角: 部品、データ、段、状態
+    ひし形: 分かれ目(判定)
+    両端の丸い札: 行き先(閉じる、調べる、上げる)
+    破線の枠: 案の部分
+  flow_direction: 左から右(時間、手順、因果、データの流れ)。分かれ目からの行き先だけは下に出す
+  positions:
+    headline: 上端
+    source_line: 見出しのすぐ下(D006)
+    figure: 中央
+    legend: 図の右上
+    unit: 値のすぐ後ろ、または凡例
+    note: 図の左下
+    takeaway: 下端の帯(結論1行)
+  max_hues_per_slide: 4        # 灰色と黒を除き、colors で割り当てた色を1つずつ数える(色相の近さでまとめない)
+  takeaway_on_slide: true      # 結論1行を下端の帯に載せる
+  summary_form: 要約の文だけ。読み手に求めることは載せない(研修資料で、新人に判断を求める資料ではないため)
+  metadata: 作成者の欄は空にする。題は「SOCのアラートの一次解析(新人研修)」とし、会社名、社内の名前を入れない(ブリーフの出せない情報)
+exceptions:
+  - target: 02-claims.yaml summary
+    rule: summary は1文で、結論と理由をまとめる(docs/stages/02-claims.md の合格条件)
+    reason: 依頼者の指定。研修資料の冒頭と最後に置く文は新人に覚えさせる文であり、結論だけの短い2文にする(D004)
+  - target: 04-storyline.yaml の演習の問題のスライド(ch5-s1、s3、s5、s7)
+    rule: 見出しが否定の検査と具体性の検査を通る(docs/stages/04-storyline.md の合格条件)
+    reason: 演習の問題は架空のアラートの描写で、主張ではない。否定の検査の対象外とし、question は「どんなアラートが届いたのか」として見出しが答える形にする(D007)
+  - target: 03-chapters.yaml ch1 の章のまとめ
+    rule: 全ての章に章扉と章のまとめを置く(docs/vocabulary.md の半導出。tools/check.py の工程4の枚数の検査は、章の枚数に章扉と章のまとめの2枚を足して数える)
+    reason: 依頼者の指示。第1章は扉も中身2枚も結論そのもので、まとめを足すと同じ文が3回続く(D010)。工程4の枚数の機械の検査は ch1 で不合格になるが、この例外による
+terms: terms.yaml
