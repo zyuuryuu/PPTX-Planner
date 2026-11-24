@@ -1,0 +1,15 @@
+# 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+id: ch1-s1
+status: done
+headline: アラートを誤検知、想定内の検知、攻撃の疑いの3つに分け、閉じる・調べる・上げるを決める
+takeaway: まず3つに分け、それから行き先を決める
+body:
+  type: step-flow
+  steps:
+  - name: 3つに分ける
+    description: 誤検知、想定内の検知、攻撃の疑い
+  - name: 行き先を決める
+    description: 閉じる、調べる、上げる
+  highlight: steps[0]
+sources: []
+notes: 分け方は第2章、行き先の決め方は第3章で扱う。

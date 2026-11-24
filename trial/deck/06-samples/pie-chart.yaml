@@ -1,0 +1,22 @@
+# 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+id: ch2-s6
+status: done
+headline: 1つのSOCの実測では、侵害に至った攻撃は0.01%、攻撃の試みは27%以上、想定内は49%以上
+takeaway: 誤検知でも想定内でもない攻撃の試みが、少なくとも4分の1ある
+body:
+  type: pie-chart
+  data:
+  - label: 侵害に至った攻撃
+    value: F207
+  - label: 攻撃の試み
+    value: F207
+    bound: 以上
+  - label: 想定内の検知
+    value: F207
+    bound: 以上
+  - label: 分類できないもの
+    value: F207
+  highlight: 攻撃の試み
+sources:
+- F207
+notes: 27%と49%は論文が「少なくとも」とする下限。想定内の検知は明確な証拠があるものだけを数えた。

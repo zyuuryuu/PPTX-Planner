@@ -1,0 +1,27 @@
+# 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+id: ap-s1
+status: done
+headline: 扱う量は出典で大きく違い、1つのSOCの実測は1日約13,764件、自己申告は1日平均4,484件
+takeaway: 届く量の数字は、調べ方をそろえないと比べられない
+body:
+  type: table
+  columns:
+  - 出典
+  - 調べ方
+  - 値
+  rows:
+  - - Yangら
+    - 実測
+    - F201
+  - - Alahmadiら
+    - 自己申告
+    - F202
+  - - Vectra AI
+    - 自己申告
+    - F203
+  highlight: 調べ方の列
+sources:
+- F201
+- F202
+- F203
+notes: 実測と自己申告は、数え方が違う。

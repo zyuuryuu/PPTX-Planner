@@ -1,0 +1,23 @@
+# 型の見本のスライド仕様(工程6)。工程7でそのまま使う。
+id: ch2-s1
+status: done
+headline: アラートは、検知の仕組みが探すものを見つけたときの知らせで、本物の攻撃とは限らない
+takeaway: アラートは「条件に合った」という知らせで、「攻撃だ」という判定ではない
+body:
+  type: er-diagram
+  elements:
+  - E-sentinel-source
+  - D-sentinel-data
+  - E-sentinel-rule
+  - D-sentinel-alert
+  relations:
+  - R-sentinel-source-data
+  - R-sentinel-rule-data
+  - R-sentinel-rule-alert
+  highlight: D-sentinel-alert
+text: 1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは {F207}
+sources:
+- F709
+- F619
+- F207
+notes: 製品の例は Microsoft Sentinel。ほかの製品でも、条件に合うと知らせる点は同じだが、仕組みの細部は製品ごとに違う。

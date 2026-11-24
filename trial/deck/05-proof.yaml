@@ -308,6 +308,7 @@
   base: none
   holds:
   - ordered
+  - connected
 - id: ch3-s14
   relation: statement
   relation_reason: このSOCの運用の規則を1つ述べるスライドで、比べる対象も順序もない
