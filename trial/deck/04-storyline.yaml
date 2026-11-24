@@ -85,7 +85,7 @@
   - Q1.1.3
   evidence:
   - F207
-  source: Yangら(USENIX Security 2024)。1つのSOCのネットワークの検知(Zeek)の2020年12月〜2022年7月のアラート約1,443万件を著者らが分類。27%と49%は下限。分類できないものが約24%残る
+  source: Yangら(USENIX Security 2024)。1つのSOCのネットワークの検知(Zeek)の2020年12月〜2022年7月のアラート約1,443万件を著者らが分類
 - id: ch2-s7
   chapter: ch2
   section: null

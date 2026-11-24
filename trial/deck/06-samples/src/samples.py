@@ -140,14 +140,17 @@ samples['flowchart'] = dict(spec=dict(id='ch3-s17', status='done', headline=S['c
 a = text(0, 26, 'EDRの要件の例(NCA)', 24, bold=True)
 a += box(14, 54, 140, 68, '端末') + arrow(154, 88, 194, 88) + box(194, 54, 170, 68, 'エージェント') + arrow(364, 88, 404, 88) + box(404, 54, 170, 68, '中央の\nデータベース')
 a += emph_rect(0, 42, 590, 92)
-a += text(0, 170, 'プロセス、接続、ファイルなどの端末の記録を集める', FIG, color='#374151')
+a += text(0, 172, 'プロセス、接続、ファイルなどの端末の記録を集める', 24, color='#374151')
 a += text(640, 26, '製品の例(Microsoft Defender for Endpoint)', 24, bold=True)
 a += box(640, 50, 300, 130, '', fill='#E5E7EB')
 a += text(790, 84, 'Defender for Endpoint', FIG, 'middle')
 a += box(700, 104, 180, 56, 'センサー', fill='#fff')
 a += arrow(790, 180, 790, 240, '作る') + box(700, 242, 180, 56, 'アラート')
-a += f'<rect x="640" y="320" width="540" height="64" rx="8" fill="#F9FAFB" stroke="#9CA3AF" stroke-dasharray="4 4"/>'
-a += text(654, 346, '製品が集める記録: プロセス、ネットワーク、ログオン、レジストリ', NOTE) + text(654, 372, 'とファイルの変更(製品やアラートとの経路は出典にない)', NOTE)
+a += f'<rect x="980" y="50" width="204" height="250" rx="8" fill="#F9FAFB" stroke="#9CA3AF" stroke-dasharray="4 4"/>'
+a += text(992, 78, '製品が集める記録', NOTE, bold=True)
+for i, l in enumerate(['プロセス', 'ネットワーク', 'ログオン', 'レジストリと', 'ファイルの変更']):
+    a += text(1000, 110 + i*28, l, NOTE)
+a += text(992, 262, '製品やアラートとの', NOTE, color='#4B5563') + text(992, 286, '経路は出典にない', NOTE, color='#4B5563')
 tk = 'EDRの材料は、端末の振る舞いを集め続けた記録である'
 samples['architecture-diagram'] = dict(spec=dict(id='ch2-s3', status='done', headline=S['ch2-s3']['headline'], takeaway=tk,
     body=dict(type='architecture-diagram', elements=['E-endpoint', 'E-edr-agent', 'E-edr-central-db', 'E-mde', 'E-mde-sensor', 'D-mde-telemetry', 'D-mde-alert'],
@@ -192,10 +195,10 @@ samples['table'] = dict(spec=dict(id='ap-s1', status='done', headline=S['ap-s1']
 
 # 8. er-diagram: ch2-s1(問い合わせはルールの上から下へ。流れは左から右)
 e = box(0, 170, 210, 80, 'データソース') + arrow(210, 210, 300, 210, '集める') + box(300, 170, 230, 80, '集めたデータ')
-e += box(300, 10, 230, 80, '分析ルール') + arrow(415, 90, 415, 168, '問い合わせる')
+e += box(300, 10, 230, 80, '分析ルール') + '<line x1="415" y1="90" x2="415" y2="170" stroke="#374151" stroke-width="2"/>' + text(425, 138, '問い合わせる', FIG, color='#374151')
 e += arrow(530, 50, 720, 50, '生成する') + box(720, 10, 240, 90, 'アラート', fs=26, bold=True, sw=5, stroke=INK)
 e += text(720, 130, 'ルールが探すものを見つけたときに出る', FIG, color='#374151')
-e += text(0, 310, '1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは 0.01%', FIG, color='#374151')
+e += text(0, 310, '1つのSOCのネットワークの検知の実測では、侵害に至った攻撃に関連するアラートは 0.01%', 24, color='#374151')
 tk = 'アラートは「条件に合った」という知らせで、「攻撃だ」という判定ではない'
 samples['er-diagram'] = dict(spec=dict(id='ch2-s1', status='done', headline=S['ch2-s1']['headline'], takeaway=tk,
     body=dict(type='er-diagram', elements=['E-sentinel-source', 'D-sentinel-data', 'E-sentinel-rule', 'D-sentinel-alert'], relations=['R-sentinel-source-data', 'R-sentinel-rule-data', 'R-sentinel-rule-alert'], highlight='D-sentinel-alert'),
@@ -229,7 +232,7 @@ cc += '<line x1="330" y1="100" x2="430" y2="100" stroke="#374151" stroke-width="
 cc += box(440, 40, 330, 120, '無害な通信にも\n条件が合ってしまう', fs=24)
 cc += '<line x1="770" y1="100" x2="870" y2="100" stroke="#374151" stroke-width="6" marker-end="url(#a)"/>' + text(820, 84, 'ので', FIG, 'middle')
 cc += box(880, 40, 280, 120, '誤検知', fs=28, fill='#fff', stroke=C['誤検知'], sw=3, color=C['誤検知'])
-cc += text(0, 220, '架空の例: 「宛先のポートが443」だけを条件にしたルールは、ふつうのWebの閲覧にも合う', FIG, color='#374151')
+cc += text(0, 220, '架空の例: 「宛先のポートが443」だけを条件にしたルールは、ふつうのWebの閲覧にも合う', 24, color='#374151')
 tk = '誤検知の原因は、活動の側ではなく検知の条件の側にある'
 samples['cause-chain'] = dict(spec=dict(id='ch2-s8', status='done', headline=S['ch2-s8']['headline'], takeaway=tk,
     body=dict(type='cause-chain', chain=['検知のルールが緩く書かれている', '無害な通信にも条件が合ってしまう', '誤検知'], example='架空の例', highlight='chain[0]'),
