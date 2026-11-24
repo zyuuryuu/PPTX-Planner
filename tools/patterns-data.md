@@ -33,6 +33,8 @@ python tools/render.py trial/deck --only ch2-s3 --no-png   # 1枚だけ描き直
 
 参照した事実が台帳にない、`sources` にない、`value` がない場合は診断に出す。
 
+`text` と `notes` には、事実の value でなくても、事実の本文(statement、quote、qualifiers、metric)にそのまま書かれた数値を、同じ文に事実の参照(`{F204}`、`{F204:metric}`、または `F204`)を置いて直接書いてよい(D016)。道具は文(「。」と改行で区切る)ごとに、直接書いた数値が、同じ文で参照した事実の本文にあるかを照合し、ない場合と、文に事実の参照がない場合を警告(`number`)に出す。次は数値として扱わない: 事実やスライドのID、文書や版の番号(SP 800-61、Rev.3、M-22-01 など)、数え方の語(2つ、3つ目、4項目、4行、第3章、演習2)。
+
 仕組みの定義を参照する型(flowchart、er-diagram、architecture-diagram)は、要素とつながりの名前を定義から引く。順は `body.labels` の指定 → 語彙表の `model_labels` → 定義の `name`(日本語を含まない括弧書きを除く。`端末(endpoints)` → `端末`)。図に載せる短い名前が定義にないときだけ `labels` に書く。
 
 文字の大きさは style.yaml の下限から決め、縮めない。図の中 22px(16pt)、注記 19px(14pt)、本文 24px(18pt)。
@@ -226,6 +228,7 @@ body:
 | `font-too-small` | 文字の大きさが style.yaml の下限より小さい |
 | `overlap` | 図形どうし、図形と文字の重なり(入れ子と、自分の枠の中の文字は除く) |
 | `unrendered` | 描けなかった内容(参照先がない、書式の誤り、型の描画がない) |
+| `number` | `text`、`notes` に直接書いた数値が、同じ文で参照した事実の本文にない、または文に事実の参照がない(警告。D016) |
 | `hue-count`、`contrast` | 1枚の色相の数、色と白地の差 |
 | `placeholder` | スライド仕様がない、または `status: blocked`(保留)(情報)。保留のスライドは body を読まず、立証設計から仮置きを描く。`issue` があれば診断に添える |
 

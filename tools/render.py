@@ -414,6 +414,36 @@ class Ctx:
         return None, '', ''
 
 
+_IDS = re.compile(r'\{F\d+(?::\w+)?\}|\b(?:F|D|Q|C|H|P|A)\d+(?:\.\d+)*\b|\b(?:ch\d+|ap)-s\d+\b|\b[A-Z]-[\w-]+')
+_DOCNO = re.compile(r'[A-Za-z][A-Za-z.]*[ .]?\d[\w.-]*|\d+(?:-\d+)+')
+_COUNT = re.compile(r'(?:(?<=演習)|(?<=第))\d+|\d+(?=つ|項目|行|枚|章|段|番目|問)')
+_NUM = re.compile(r'(?<![A-Za-z0-9_.])\d[\d,]*(?:\.\d+)?')
+
+
+def check_numbers(ctx, field, s):
+    """D016: text と notes に直接書いた数値は、同じ文で参照した事実の本文(statement、quote、qualifiers、metric、value)にあること。
+    合わなければ警告に出す。"""
+    for sent in re.split(r'(?<=[。\n])', str(s)):
+        refs = set(re.findall(r'\b(F\d+)\b', sent))
+        bare = _IDS.sub(' ', sent)
+        bare = _DOCNO.sub(' ', bare)       # 文書や版の番号(SP 800-61、Rev.3、Tier 1、M-22-01 など)は数値として扱わない
+        bare = _COUNT.sub(' ', bare)       # 数え方の語(2つ、3つ目、4項目)は数値として扱わない
+        nums = _NUM.findall(bare)
+        if not nums:
+            continue
+        hay = ''
+        for fid in refs:
+            f = ctx.deck.facts.get(fid) or {}
+            hay += ' ' + ' '.join(str(f.get(k) or '') for k in ('statement', 'quote', 'metric', 'value')) + ' ' + ' '.join(map(str, f.get('qualifiers') or []))
+        hay = hay.replace(',', '')
+        for n in nums:
+            k = n.replace(',', '')
+            if not refs:
+                ctx.diag('number', f'{field} の数値「{n}」の文に、事実の参照がない(D016): 「{sent.strip()[:40]}」', 'warning', field)
+            elif not re.search(r'(?<![\d.])' + re.escape(k) + r'(?![\d])', hay):
+                ctx.diag('number', f'{field} の数値「{n}」が、同じ文で参照した事実({", ".join(sorted(refs))})の本文にない(D016)', 'warning', field)
+
+
 def fmt_num(v):
     if isinstance(v, bool):
         return str(v)
@@ -1480,6 +1510,9 @@ def render_content(deck, sid):
         ctx.diag('unrendered', f'body.type {t} が表現の対応表の型 {want} と違う', 'warning', 'body.type')
     if not spec.get('takeaway') and s.get('chapter') != 'appendix':
         ctx.diag('unrendered', '結論1行(takeaway)がない', 'error', 'takeaway')
+    for fld in ('text', 'notes'):
+        if spec.get(fld):
+            check_numbers(ctx, fld, spec[fld])
     mark = b.get('mark') if t != 'plain-list' else None
     text_after = spec.get('text')
     after_h = 0
